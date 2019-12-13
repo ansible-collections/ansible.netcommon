@@ -1,0 +1,8 @@
+---
+authors:
+  - Ansible Network Community (ansible-network)
+license_file: LICENSE
+name: netcommon
+namespace: ansible
+readme: README.rst
+repository: https://github.com/ansible-network/ansible_collections.ansible.netcommon
