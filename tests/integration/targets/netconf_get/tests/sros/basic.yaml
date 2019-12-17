@@ -3,9 +3,9 @@
     }}"
 
 - name: Get complete configuration data (SROS)
-  netconf_get:
-    filter: <configure xmlns="urn:nokia.com:sros:ns:yang:sr:conf"/>
   register: result
+  ansible.netcommon.netconf_get:
+    filter: <configure xmlns="urn:nokia.com:sros:ns:yang:sr:conf"/>
 
 - assert:
     that:
@@ -13,9 +13,9 @@
       - '''urn:nokia.com:sros:ns:yang:sr:state'' not in result.stdout'
 
 - name: Get complete state data (SROS)
-  netconf_get:
-    filter: <state xmlns="urn:nokia.com:sros:ns:yang:sr:state"/>
   register: result
+  ansible.netcommon.netconf_get:
+    filter: <state xmlns="urn:nokia.com:sros:ns:yang:sr:state"/>
 
 - assert:
     that:
@@ -23,29 +23,29 @@
       - '''urn:nokia.com:sros:ns:yang:sr:conf'' not in result.stdout'
 
 - name: Get service configuration data from candidate datastore (SROS)
-  netconf_get:
+  register: result
+  ansible.netcommon.netconf_get:
     source: candidate
     filter: <configure xmlns="urn:nokia.com:sros:ns:yang:sr:conf"><service/></configure>
     display: json
-  register: result
 
 - assert:
     that:
       - '''<service>'' in result.stdout'
 
 - name: Get system configuration data from running datastore (SROS)
-  netconf_get:
+  register: result
+  ansible.netcommon.netconf_get:
     source: running
     filter: <configure xmlns="urn:nokia.com:sros:ns:yang:sr:conf"><system/></configure>
-  register: result
 
 - assert:
     that:
       - '''<system>'' in result.stdout'
 
 - name: Get complete configuration and state data (SROS)
-  netconf_get:
   register: result
+  ansible.netcommon.netconf_get:
 
 - assert:
     that:
