@@ -3,10 +3,10 @@
     }}"
 
 - name: save config test
-  netconf_config:
-    backup: true
   register: result
   connection: netconf
+  ansible.netcommon.netconf_config:
+    backup: true
 
 - assert:
     that:

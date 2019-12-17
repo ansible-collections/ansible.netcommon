@@ -9,10 +9,10 @@
   register: result
 
 - name: Get system configuration data from running datastore state
-  netconf_get:
+  register: result
+  ansible.netcommon.netconf_get:
     source: running
     filter: <configuration><system><syslog></syslog></system></configuration>
-  register: result
 
 - assert:
     that:
@@ -23,32 +23,32 @@
       - '''<interface>'' not in result.stdout'
 
 - name: Failure scenario, fetch config from startup
-  netconf_get:
-    source: startup
   register: result
   ignore_errors: true
+  ansible.netcommon.netconf_get:
+    source: startup
 
 - assert:
     that:
       - '''startup source is not supported'' in result.msg'
 
 - name: Failure scenario, fetch config from running with lock
-  netconf_get:
-    lock: always
-    source: running
   register: result
   ignore_errors: true
+  ansible.netcommon.netconf_get:
+    lock: always
+    source: running
 
 - assert:
     that:
       - '''syntax error'' in result.msg'
 
 - name: Get system configuration data from running datastore state and lock if-supported
-  netconf_get:
+  register: result
+  ansible.netcommon.netconf_get:
     source: running
     filter: <configuration><system><syslog></syslog></system></configuration>
     lock: if-supported
-  register: result
 
 - assert:
     that:
@@ -59,30 +59,30 @@
       - '''<interface>'' not in result.stdout'
 
 - name: get configuration and state data in json format
-  netconf_get:
+  register: result
+  ansible.netcommon.netconf_get:
     source: running
     display: json
-  register: result
 
 - assert:
     that:
       - '{{ result[''output''][''rpc-reply''][''data''][''configuration''] is defined}}'
 
 - name: get configuration and state data in xml pretty format
-  netconf_get:
+  register: result
+  ansible.netcommon.netconf_get:
     source: running
     display: pretty
-  register: result
 
 - assert:
     that:
       - '{{ result[''output''] is defined}}'
 
 - name: get configuration data in xml with namespace stripped
-  netconf_get:
+  register: result
+  ansible.netcommon.netconf_get:
     source: running
     display: xml
-  register: result
 
 - assert:
     that:
@@ -90,9 +90,9 @@
       - '{{ ''xmlns'' not in result.output }}'
 
 - name: get configuration and state data without datastore lock
-  netconf_get:
-    lock: never
   register: result
+  ansible.netcommon.netconf_get:
+    lock: never
 
 - assert:
     that:
@@ -100,9 +100,9 @@
       - '''</configuration>'' in result.stdout'
 
 - name: get configuration and state data and lock data-store if supported
-  netconf_get:
-    lock: if-supported
   register: result
+  ansible.netcommon.netconf_get:
+    lock: if-supported
 
 - assert:
     that:
@@ -110,10 +110,10 @@
       - '''</configuration>'' in result.stdout'
 
 - name: Failure scenario, unsupported filter
-  netconf_get:
-    filter: configuration/state
   register: result
   ignore_errors: true
+  ansible.netcommon.netconf_get:
+    filter: configuration/state
 
 - assert:
     that:
