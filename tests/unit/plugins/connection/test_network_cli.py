@@ -62,7 +62,7 @@ class TestConnectionClass(unittest.TestCase):
         )
 
     @patch(
-        "ansible_collections.ansible.netcommon.plugins.connection.ansible.netcommon.network_cli.terminal_loader"
+        "ansible_collections.ansible.netcommon.plugins.connection.network_cli.terminal_loader"
     )
     @patch("ansible.plugins.connection.paramiko_ssh.Connection._connect")
     def test_network_cli__connect(self, mocked_super, mocked_terminal_loader):
@@ -129,10 +129,10 @@ class TestConnectionClass(unittest.TestCase):
         mock_send.assert_called_with(command=b"command")
 
     @patch(
-        "ansible_collections.ansible.netcommon.plugins.connection.ansible.netcommon.network_cli.Connection._get_terminal_std_re"
+        "ansible_collections.ansible.netcommon.plugins.connection.network_cli.Connection._get_terminal_std_re"
     )
     @patch(
-        "ansible_collections.ansible.netcommon.plugins.connection.ansible.netcommon.network_cli.Connection._connect"
+        "ansible_collections.ansible.netcommon.plugins.connection.network_cli.Connection._connect"
     )
     def test_network_cli_send(self, mocked_connect, mocked_terminal_re):
 

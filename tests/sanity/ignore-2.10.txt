@@ -31,6 +31,7 @@ plugins/modules/netconf_rpc.py validate-modules:parameter-type-not-in-doc
 plugins/modules/netconf_rpc.py validate-modules:return-syntax-error
 plugins/modules/restconf_config.py validate-modules:doc-missing-type
 plugins/modules/restconf_get.py validate-modules:doc-missing-type
+plugins/action/net_base.py action-plugin-docs # base class for other net_* action plugins which have a matching module
 plugins/action/netconf.py action-plugin-docs # base class for deprecated network platform modules using `connection: local`
 plugins/action/network.py action-plugin-docs # base class for network action plugins
 plugins/doc_fragments/netconf.py future-import-boilerplate
