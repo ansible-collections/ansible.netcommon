@@ -117,8 +117,8 @@
 
 - assert:
     that:
-      - '''filter value \''configuration/state\'' of type xpath is not supported'' in
-        result.msg'
+      - '''filter value \''configuration/state\'' of type xpath is not supported''
+        in result.msg'
 
 - name: Configure syslog file - teardown
   junos_config:

@@ -44,7 +44,7 @@ class TestConnectionClass(unittest.TestCase):
         self.assertRaises(
             AnsibleConnectionFailure,
             connection_loader.get,
-            "ansible.netcommon.network_cli",
+            "network_cli",
             pc,
             "/dev/null",
         )
@@ -56,7 +56,7 @@ class TestConnectionClass(unittest.TestCase):
         self.assertRaises(
             AnsibleConnectionFailure,
             connection_loader.get,
-            "ansible.netcommon.network_cli",
+            "network_cli",
             pc,
             "/dev/null",
         )
@@ -68,9 +68,7 @@ class TestConnectionClass(unittest.TestCase):
     def test_network_cli__connect(self, mocked_super, mocked_terminal_loader):
         pc = PlayContext()
         pc.network_os = "ios"
-        conn = connection_loader.get(
-            "ansible.netcommon.network_cli", pc, "/dev/null"
-        )
+        conn = connection_loader.get("network_cli", pc, "/dev/null")
 
         conn.ssh = MagicMock()
         conn.receive = MagicMock()
@@ -91,9 +89,7 @@ class TestConnectionClass(unittest.TestCase):
     def test_network_cli_close(self, mocked_super):
         pc = PlayContext()
         pc.network_os = "ios"
-        conn = connection_loader.get(
-            "ansible.netcommon.network_cli", pc, "/dev/null"
-        )
+        conn = connection_loader.get("network_cli", pc, "/dev/null")
 
         terminal = MagicMock(supports_multiplexing=False)
         conn._terminal = terminal
@@ -110,9 +106,7 @@ class TestConnectionClass(unittest.TestCase):
     def test_network_cli_exec_command(self, mocked_super):
         pc = PlayContext()
         pc.network_os = "ios"
-        conn = connection_loader.get(
-            "ansible.netcommon.network_cli", pc, "/dev/null"
-        )
+        conn = connection_loader.get("network_cli", pc, "/dev/null")
 
         mock_send = MagicMock(return_value=b"command response")
         conn.send = mock_send
@@ -138,9 +132,7 @@ class TestConnectionClass(unittest.TestCase):
 
         pc = PlayContext()
         pc.network_os = "ios"
-        conn = connection_loader.get(
-            "ansible.netcommon.network_cli", pc, "/dev/null"
-        )
+        conn = connection_loader.get("network_cli", pc, "/dev/null")
 
         mock__terminal = MagicMock()
         mocked_terminal_re.side_effect = [
