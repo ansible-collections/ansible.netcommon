@@ -24,8 +24,8 @@
       - '''<description>this is test interface Loopback999</description>'' in result.stdout'
       - '''<usernames>'' not in result.stdout'
 
-- name: test lock=never, get-config, running interface confiugration with filter without
-    lock
+- name: test lock=never, get-config, running interface confiugration with filter
+    without lock
   register: result
   connection: netconf
   ansible.netcommon.netconf_get:
@@ -38,8 +38,8 @@
       - '''<description>this is test interface Loopback999</description>'' in result.stdout'
       - '''<usernames>'' not in result.stdout'
 
-- name: test lock=if-supported, get-config, running interface confiugration with filter
-    without lock
+- name: test lock=if-supported, get-config, running interface confiugration with
+    filter without lock
   register: result
   connection: netconf
   ansible.netcommon.netconf_get:
@@ -151,8 +151,8 @@
 
 - assert:
     that:
-      - '''filter value \''configuration/state\'' of type xpath is not supported'' in
-        result.msg'
+      - '''filter value \''configuration/state\'' of type xpath is not supported''
+        in result.msg'
 
 - name: setup - teardown
   iosxr_config:

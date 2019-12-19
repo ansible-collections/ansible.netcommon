@@ -6,8 +6,7 @@ vars:
     desc: "{{ item.desc }}"
     interface: "{{ item.intf }}"
     enabled: "{{ item.state.get('inactive') != 'inactive' }}"
-    state: "{% if item.state.get('inactive') == 'inactive'%}inactive{% else %}active{%\
-      \ endif %}"
+    state: "{% if item.state.get('inactive') == 'inactive'%}inactive{% else %}active{% endif %}"
 
 keys:
   vlans:
