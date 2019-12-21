@@ -24,13 +24,13 @@
   ansible.netcommon.netconf_rpc:
     rpc: unlock
     xmlns: urn:ietf:params:xml:ns:netconf:base:1.0
-    content: '{''target'': {''candidate'': None}}'
+    content: "{'target': {'candidate': None}}"
     display: json
 
 - assert:
     that:
-      - '{{ result[''output''][''rpc-reply''] is defined}}'
-      - '{{ result[''output''][''rpc-reply''][''ok''] is defined}}'
+      - "{{ result['output']['rpc-reply'] is defined}}"
+      - "{{ result['output']['rpc-reply']['ok'] is defined}}"
 
 - name: validate candidate (content is single line of XML)
   register: result
@@ -42,8 +42,8 @@
 
 - assert:
     that:
-      - '{{ result[''output''][''rpc-reply''] is defined}}'
-      - '{{ result[''output''][''rpc-reply''][''ok''] is defined}}'
+      - "{{ result['output']['rpc-reply'] is defined}}"
+      - "{{ result['output']['rpc-reply']['ok'] is defined}}"
 
 - name: copy running to startup
   register: result
@@ -67,11 +67,10 @@
 
 - assert:
     that:
-      - '{{ result[''output''][''data''] is defined}}'
-      - '{{ result[''output''][''data''][''netconf-state''] is defined}}'
-      - '{{ result[''output''][''data''][''netconf-state''][''schemas''] is defined}}'
-      - '{{ result[''output''][''data''][''netconf-state''][''schemas''][''schema'']
-        is defined}}'
+      - "{{ result['output']['data'] is defined}}"
+      - "{{ result['output']['data']['netconf-state'] is defined}}"
+      - "{{ result['output']['data']['netconf-state']['schemas'] is defined}}"
+      - "{{ result['output']['data']['netconf-state']['schemas']['schema'] is defined}}"
 
 - name: Failure scenario, unsupported content (xpath value)
   register: result
@@ -83,7 +82,7 @@
 
 - assert:
     that:
-      - '''unsupported content value'' in result.msg'
+      - "'unsupported content value' in result.msg"
 
 - name: Failure scenario, unsupported content type (list)
   register: result
@@ -97,7 +96,7 @@
 
 - assert:
     that:
-      - '''unsupported content data-type'' in result.msg'
+      - "'unsupported content data-type' in result.msg"
 
 - name: Failure scenario, RPC is close-session
   register: result
@@ -108,7 +107,7 @@
 
 - assert:
     that:
-      - '''unsupported operation'' in result.msg'
+      - "'unsupported operation' in result.msg"
 
 - name: Failure scenario, attribute rpc missing
   register: result
@@ -119,7 +118,7 @@
 
 - assert:
     that:
-      - '''missing required arguments'' in result.msg'
+      - "'missing required arguments' in result.msg"
 
 - name: Failure scenario, attribute rpc is None
   register: result
@@ -131,7 +130,7 @@
 
 - assert:
     that:
-      - '''must not be None'' in result.msg'
+      - "'must not be None' in result.msg"
 
 - name: Failure scenario, attribute rpc is zero-length string
   register: result
@@ -143,7 +142,7 @@
 
 - assert:
     that:
-      - '''must not be empty'' in result.msg'
+      - "'must not be empty' in result.msg"
 
 - name: Failure scenario, attribute rpc only contains white-spaces
   register: result
@@ -155,7 +154,7 @@
 
 - assert:
     that:
-      - '''must not be empty'' in result.msg'
+      - "'must not be empty' in result.msg"
 
 - debug: msg="END netconf_rpc sros/basic.yaml on connection={{ ansible_connection
     }}"

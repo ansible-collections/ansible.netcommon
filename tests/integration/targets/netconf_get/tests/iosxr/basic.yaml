@@ -21,8 +21,8 @@
 
 - assert:
     that:
-      - '''<description>this is test interface Loopback999</description>'' in result.stdout'
-      - '''<usernames>'' not in result.stdout'
+      - "'<description>this is test interface Loopback999</description>' in result.stdout"
+      - "'<usernames>' not in result.stdout"
 
 - name: test lock=never, get-config, running interface confiugration with filter
     without lock
@@ -35,8 +35,8 @@
 
 - assert:
     that:
-      - '''<description>this is test interface Loopback999</description>'' in result.stdout'
-      - '''<usernames>'' not in result.stdout'
+      - "'<description>this is test interface Loopback999</description>' in result.stdout"
+      - "'<usernames>' not in result.stdout"
 
 - name: test lock=if-supported, get-config, running interface confiugration with
     filter without lock
@@ -49,8 +49,8 @@
 
 - assert:
     that:
-      - '''<description>this is test interface Loopback999</description>'' in result.stdout'
-      - '''<usernames>'' not in result.stdout'
+      - "'<description>this is test interface Loopback999</description>' in result.stdout"
+      - "'<usernames>' not in result.stdout"
 
 - name: Failure scenario, get-config information with lock
   register: result
@@ -62,7 +62,7 @@
 
 - assert:
     that:
-      - '''<bad-element>running</bad-element>'' in result.msg'
+      - "'<bad-element>running</bad-element>' in result.msg"
 
 - name: Failure scenario, fetch config from startup
   register: result
@@ -73,7 +73,7 @@
 
 - assert:
     that:
-      - '''startup source is not supported'' in result.msg'
+      - "'startup source is not supported' in result.msg"
 
 - name: test get, information from running datastore without lock
   register: result
@@ -84,7 +84,7 @@
 
 - assert:
     that:
-      - '''<description>this is test interface Loopback999</description>'' in result.stdout'
+      - "'<description>this is test interface Loopback999</description>' in result.stdout"
 
 - name: test get, information from running datastore with lock if supported
   register: result
@@ -95,7 +95,7 @@
 
 - assert:
     that:
-      - '''<description>this is test interface Loopback999</description>'' in result.stdout'
+      - "'<description>this is test interface Loopback999</description>' in result.stdout"
 
 - name: Failure scenario, get information from running with lock
   register: result
@@ -106,7 +106,7 @@
 
 - assert:
     that:
-      - '''<bad-element>running</bad-element>'' in result.msg'
+      - "'<bad-element>running</bad-element>' in result.msg"
 
 - name: get configuration and state data in json format
   register: result
@@ -117,7 +117,7 @@
 
 - assert:
     that:
-      - '{{ result[''output''][''data''][''aaa''] is defined}}'
+      - "{{ result['output']['data']['aaa'] is defined}}"
 
 - name: get configuration data in xml pretty format
   register: result
@@ -128,7 +128,7 @@
 
 - assert:
     that:
-      - '{{ result[''output''] is defined}}'
+      - "{{ result['output'] is defined}}"
 
 - name: get configuration data in xml with namespace stripped
   register: result
@@ -139,8 +139,8 @@
 
 - assert:
     that:
-      - '{{ result[''output''] is defined}}'
-      - '{{ ''xmlns'' not in result.output }}'
+      - "{{ result['output'] is defined}}"
+      - "{{ 'xmlns' not in result.output }}"
 
 - name: Failure scenario, unsupported filter
   register: result
@@ -151,8 +151,8 @@
 
 - assert:
     that:
-      - '''filter value \''configuration/state\'' of type xpath is not supported''
-        in result.msg'
+      - "'filter value \\'configuration/state\\' of type xpath is not supported'\
+        \ in result.msg"
 
 - name: setup - teardown
   iosxr_config:
