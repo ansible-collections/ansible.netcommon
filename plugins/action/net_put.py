@@ -25,14 +25,16 @@ import hashlib
 from ansible.errors import AnsibleError
 from ansible.module_utils._text import to_text, to_bytes
 from ansible.module_utils.connection import Connection, ConnectionError
-from ansible.plugins.action import ActionBase
+from ansible_collections.ansible.netcommon.plugins.action.network import (
+    ActionModule as ActionNetworkModule,
+)
 from ansible.module_utils.six.moves.urllib.parse import urlsplit
 from ansible.utils.display import Display
 
 display = Display()
 
 
-class ActionModule(ActionBase):
+class ActionModule(ActionNetworkModule):
     def run(self, tmp=None, task_vars=None):
         socket_path = None
         network_os = self._get_network_os(task_vars).split(".")[-1]
@@ -75,7 +77,7 @@ class ActionModule(ActionBase):
 
         if mode == "text":
             try:
-                self._handle_template(convert_data=False)
+                self._handle_src_option(convert_data=False)
             except ValueError as exc:
                 return dict(failed=True, msg=to_text(exc))
 
