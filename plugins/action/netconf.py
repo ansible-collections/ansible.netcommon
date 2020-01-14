@@ -40,6 +40,7 @@ class ActionModule(ActionNetworkModule):
             True if module_name == "netconf_config" else False
         )
         persistent_connection = self._play_context.connection.split(".")[-1]
+        warnings = []
 
         if (
             persistent_connection not in ["netconf", "local"]
@@ -68,7 +69,7 @@ class ActionModule(ActionNetworkModule):
         ):
             args = self._task.args
             pc = copy.deepcopy(self._play_context)
-            pc.connection = "netconf"
+            pc.connection = "ansible.netcommon.netconf"
             pc.port = int(args.get("port") or self._play_context.port or 830)
 
             pc.remote_user = (
@@ -79,12 +80,23 @@ class ActionModule(ActionNetworkModule):
                 args.get("ssh_keyfile") or self._play_context.private_key_file
             )
 
+            connection = self._shared_loader_obj.connection_loader.get(
+                "ansible.netcommon.persistent",
+                pc,
+                sys.stdin,
+                task_uuid=self._task._uuid,
+            )
+
+            # TODO: Remove below code after ansible minimal is cut out
+            if connection is None:
+                pc.connection = "netconf"
+                connection = self._shared_loader_obj.connection_loader.get(
+                    "persistent", pc, sys.stdin, task_uuid=self._task._uuid
+                )
+
             display.vvv(
                 "using connection plugin %s (was local)" % pc.connection,
                 pc.remote_addr,
-            )
-            connection = self._shared_loader_obj.connection_loader.get(
-                "persistent", pc, sys.stdin, task_uuid=self._task._uuid
             )
 
             timeout = args.get("timeout")
@@ -112,5 +124,17 @@ class ActionModule(ActionNetworkModule):
                 }
 
             task_vars["ansible_socket"] = socket_path
+            warnings.append(
+                [
+                    "connection local support for this module is deprecated and will be removed in version 2.14, use connection %s"
+                    % pc.connection
+                ]
+            )
 
-        return super(ActionModule, self).run(task_vars=task_vars)
+        result = super(ActionModule, self).run(task_vars=task_vars)
+        if warnings:
+            if "warnings" in result:
+                result["warnings"].extend(warnings)
+            else:
+                result["warnings"] = warnings
+        return result
