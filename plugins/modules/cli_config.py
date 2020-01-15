@@ -18,6 +18,10 @@ ANSIBLE_METADATA = {
 
 DOCUMENTATION = """module: cli_config
 author: Trishna Guha (@trishnaguha)
+notes:
+- The commands will be returned only for platforms that do not support onbox diff.
+  The C(--diff) option with the playbook will return the difference in configuration
+  for devices that has support for onbox diff
 short_description: Push text based configuration to network devices over network_cli
 description:
 - This module provides platform agnostic way of pushing text based configuration to
@@ -329,6 +333,7 @@ def run(
             if commit:
                 connection.edit_config(**kwargs)
             result["changed"] = True
+            result["commands"] = config_diff.split("\n")
 
         if banner_diff:
             candidate = json.dumps(banner_diff)
