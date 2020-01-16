@@ -3,14 +3,14 @@
     }}"
 
 - name: setup interface
-  iosxr_config:
+  connection: ansible.netcommon.network_cli
+  cisco.iosxr.iosxr_config:
     commands:
       - description this is test interface Loopback999
       - no shutdown
     parents:
       - interface Loopback999
     match: none
-  connection: ansible.netcommon.network_cli
 
 - name: get running interface confiugration with filter
   register: result
@@ -155,14 +155,14 @@
         \ in result.msg"
 
 - name: setup - teardown
-  iosxr_config:
+  connection: ansible.netcommon.network_cli
+  cisco.iosxr.iosxr_config:
     commands:
       - no description
       - shutdown
     parents:
       - interface Loopback999
     match: none
-  connection: ansible.netcommon.network_cli
 
 - debug: msg="END netconf_get iosxr/basic.yaml on connection={{ ansible_connection
     }}"
