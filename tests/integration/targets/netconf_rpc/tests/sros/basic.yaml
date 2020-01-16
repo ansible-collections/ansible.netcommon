@@ -4,7 +4,7 @@
 
 - name: lock candidate (content is dict)
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_rpc:
     rpc: lock
     content:
@@ -13,14 +13,14 @@
 
 - name: discard changes (w/o content)
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_rpc:
     rpc: discard-changes
     display: xml
 
 - name: unlock candidate (content is dict as json)
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_rpc:
     rpc: unlock
     xmlns: urn:ietf:params:xml:ns:netconf:base:1.0
@@ -34,7 +34,7 @@
 
 - name: validate candidate (content is single line of XML)
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_rpc:
     rpc: validate
     content: <source><candidate/></source>
@@ -47,7 +47,7 @@
 
 - name: copy running to startup
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_rpc:
     rpc: copy-config
     content:
@@ -58,7 +58,7 @@
 
 - name: get schema list (content is multiple lines of XML)
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_rpc:
     rpc: get
     content: "<filter>\n  <netconf-state xmlns=\"urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring\"\
@@ -74,7 +74,7 @@
 
 - name: Failure scenario, unsupported content (xpath value)
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ignore_errors: true
   ansible.netcommon.netconf_rpc:
     rpc: get
@@ -86,7 +86,7 @@
 
 - name: Failure scenario, unsupported content type (list)
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ignore_errors: true
   ansible.netcommon.netconf_rpc:
     rpc: get
@@ -100,7 +100,7 @@
 
 - name: Failure scenario, RPC is close-session
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ignore_errors: true
   ansible.netcommon.netconf_rpc:
     rpc: close-session
@@ -111,7 +111,7 @@
 
 - name: Failure scenario, attribute rpc missing
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ignore_errors: true
   ansible.netcommon.netconf_rpc:
     display: json
@@ -122,7 +122,7 @@
 
 - name: Failure scenario, attribute rpc is None
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ignore_errors: true
   ansible.netcommon.netconf_rpc:
     rpc:
@@ -134,7 +134,7 @@
 
 - name: Failure scenario, attribute rpc is zero-length string
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ignore_errors: true
   ansible.netcommon.netconf_rpc:
     rpc: ''
@@ -146,7 +146,7 @@
 
 - name: Failure scenario, attribute rpc only contains white-spaces
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ignore_errors: true
   ansible.netcommon.netconf_rpc:
     rpc: '   '

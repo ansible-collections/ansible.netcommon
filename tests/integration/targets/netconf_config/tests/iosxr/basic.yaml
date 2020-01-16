@@ -4,7 +4,7 @@
 
 - name: save config test
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
     backup: true
 
