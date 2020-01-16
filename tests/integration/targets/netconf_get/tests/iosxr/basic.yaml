@@ -14,7 +14,7 @@
 
 - name: get running interface confiugration with filter
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     filter: <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"></interface-configurations>
@@ -27,7 +27,7 @@
 - name: test lock=never, get-config, running interface confiugration with filter
     without lock
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     lock: never
@@ -41,7 +41,7 @@
 - name: test lock=if-supported, get-config, running interface confiugration with
     filter without lock
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     lock: if-supported
@@ -55,7 +55,7 @@
 - name: Failure scenario, get-config information with lock
   register: result
   ignore_errors: true
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     lock: always
@@ -67,7 +67,7 @@
 - name: Failure scenario, fetch config from startup
   register: result
   ignore_errors: true
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: startup
 
@@ -77,7 +77,7 @@
 
 - name: test get, information from running datastore without lock
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     lock: never
     filter: <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"></interface-configurations>
@@ -88,7 +88,7 @@
 
 - name: test get, information from running datastore with lock if supported
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     lock: if-supported
     filter: <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"></interface-configurations>
@@ -100,7 +100,7 @@
 - name: Failure scenario, get information from running with lock
   register: result
   ignore_errors: true
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     lock: always
 
@@ -110,7 +110,7 @@
 
 - name: get configuration and state data in json format
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     display: json
@@ -121,7 +121,7 @@
 
 - name: get configuration data in xml pretty format
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     display: pretty
@@ -132,7 +132,7 @@
 
 - name: get configuration data in xml with namespace stripped
   register: result
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     display: xml
@@ -145,7 +145,7 @@
 - name: Failure scenario, unsupported filter
   register: result
   ignore_errors: true
-  connection: netconf
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     filter: configuration/state
 
