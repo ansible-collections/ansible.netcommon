@@ -5,6 +5,6 @@
     - netconf
 
 - include: iosxr.yaml
-  when: ansible_network_os == 'iosxr'
+  when: ansible_network_os == 'cisco.iosxr.iosxr'
   tags:
     - netconf
