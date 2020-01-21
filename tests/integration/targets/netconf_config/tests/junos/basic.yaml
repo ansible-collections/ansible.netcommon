@@ -5,7 +5,7 @@
 - include_vars: '{{playbook_dir }}/targets/netconf_config/tests/junos/fixtures/config.yml'
 
 - name: syslog file config- setup
-  junos_config:
+  junipernetworks.junos.junos_config:
     lines:
       - delete system syslog file test_netconf_config
 
@@ -60,7 +60,7 @@
       - "'backup_path' in result"
 
 - name: syslog file config- teardown
-  junos_config:
+  junipernetworks.junos.junos_config:
     lines:
       - delete system syslog file test_netconf_config
 
