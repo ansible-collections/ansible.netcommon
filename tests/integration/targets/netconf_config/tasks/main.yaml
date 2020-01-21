@@ -1,6 +1,6 @@
 ---
 - include: junos.yaml
-  when: ansible_network_os == 'junos'
+  when: ansible_network_os == 'junipernetworks.junos.junos'
   tags:
     - netconf
 

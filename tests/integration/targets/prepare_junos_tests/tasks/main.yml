@@ -2,10 +2,10 @@
 - debug: msg="START prepare_junos_tests/main.yaml"
 
 - name: Ensure netconf is enabled
-  junos_netconf:
-    state: present
   connection: ansible.netcommon.network_cli
   tags: netconf
+  junipernetworks.junos.junos_netconf:
+    state: present
 
 - name: wait for netconf server to come up
   delegate_to: localhost

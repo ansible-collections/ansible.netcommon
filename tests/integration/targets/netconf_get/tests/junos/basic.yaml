@@ -3,10 +3,10 @@
     }}"
 
 - name: Configure syslog file - setup
-  junos_config:
+  register: result
+  junipernetworks.junos.junos_config:
     lines:
       - set system syslog file test1 any any
-  register: result
 
 - name: Get system configuration data from running datastore state
   register: result
@@ -121,7 +121,7 @@
         \ in result.msg"
 
 - name: Configure syslog file - teardown
-  junos_config:
+  junipernetworks.junos.junos_config:
     lines:
       - delete system syslog file test1 any any
 
