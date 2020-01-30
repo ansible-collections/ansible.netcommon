@@ -213,7 +213,7 @@ class Connection(NetworkConnectionBase):
         )
 
         # If network_os is not specified then set the network os to auto
-        # This will be used to trigger the the use of guess_network_os when connecting.
+        # This will be used to trigger the use of guess_network_os when connecting.
         self._network_os = self._network_os or "auto"
 
         self.netconf = netconf_loader.get(self._network_os, self)
