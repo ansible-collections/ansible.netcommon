@@ -16,8 +16,10 @@ plugins/module_utils/network/netconf/netconf.py future-import-boilerplate
 plugins/module_utils/network/netconf/netconf.py metaclass-boilerplate
 plugins/module_utils/network/restconf/restconf.py future-import-boilerplate
 plugins/module_utils/network/restconf/restconf.py metaclass-boilerplate
+plugins/modules/cli_command.py validate-modules:parameter-list-no-elements
 plugins/modules/cli_command.py validate-modules:parameter-type-not-in-doc
 plugins/modules/cli_config.py validate-modules:doc-missing-type
+plugins/modules/cli_config.py validate-modules:parameter-list-no-elements
 plugins/modules/cli_config.py validate-modules:parameter-type-not-in-doc
 plugins/modules/netconf_config.py validate-modules:doc-choices-do-not-match-spec
 plugins/modules/netconf_config.py validate-modules:doc-missing-type
