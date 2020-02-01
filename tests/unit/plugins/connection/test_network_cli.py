@@ -64,7 +64,9 @@ class TestConnectionClass(unittest.TestCase):
     @patch(
         "ansible_collections.ansible.netcommon.plugins.connection.network_cli.terminal_loader"
     )
-    @patch("ansible.plugins.connection.paramiko_ssh.Connection._connect")
+    @patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.paramiko_ssh.Connection._connect"
+    )
     def test_network_cli__connect(self, mocked_super, mocked_terminal_loader):
         pc = PlayContext()
         pc.network_os = "ios"
@@ -85,7 +87,9 @@ class TestConnectionClass(unittest.TestCase):
         conn._connect()
         conn._terminal.on_become.assert_called_with(passwd="password")
 
-    @patch("ansible.plugins.connection.paramiko_ssh.Connection.close")
+    @patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.paramiko_ssh.Connection.close"
+    )
     def test_network_cli_close(self, mocked_super):
         pc = PlayContext()
         pc.network_os = "ios"
@@ -102,7 +106,9 @@ class TestConnectionClass(unittest.TestCase):
         self.assertIsNone(conn._ssh_shell)
         self.assertIsNone(conn._paramiko_conn)
 
-    @patch("ansible.plugins.connection.paramiko_ssh.Connection._connect")
+    @patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.paramiko_ssh.Connection._connect"
+    )
     def test_network_cli_exec_command(self, mocked_super):
         pc = PlayContext()
         pc.network_os = "ios"
