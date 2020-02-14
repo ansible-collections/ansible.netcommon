@@ -27,7 +27,7 @@ description:
 - This module provides platform agnostic way of pushing text based configuration to
   network devices over network_cli connection plugin.
 extends_documentation_fragment:
-- network_agnostic
+- ansible.netcommon.network_agnostic
 options:
   config:
     description:

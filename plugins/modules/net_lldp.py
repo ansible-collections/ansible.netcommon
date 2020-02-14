@@ -27,7 +27,7 @@ deprecated:
   alternative: Use platform-specific "[netos]_lldp_global" module
   why: Updated modules released with more functionality
 extends_documentation_fragment:
-- network_agnostic
+- ansible.netcommon.network_agnostic
 options:
   state:
     description:
