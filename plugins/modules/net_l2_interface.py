@@ -25,7 +25,7 @@ deprecated:
   alternative: Use platform-specific "[netos]_l2_interfaces" module
   why: Updated modules released with more functionality
 extends_documentation_fragment:
-- network_agnostic
+- ansible.netcommon.network_agnostic
 options:
   name:
     description:

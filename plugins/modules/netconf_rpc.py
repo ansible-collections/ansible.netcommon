@@ -27,7 +27,7 @@ description:
 - This module allows the user to execute NETCONF RPC requests as defined by IETF RFC
   standards as well as proprietary requests.
 extends_documentation_fragment:
-- network_agnostic
+- ansible.netcommon.network_agnostic
 options:
   rpc:
     description:

@@ -24,7 +24,7 @@ description:
 - For Windows targets, use the M(win_ping) module instead.
 - For targets running Python, use the M(ping) module instead.
 extends_documentation_fragment:
-- network_agnostic
+- ansible.netcommon.network_agnostic
 options:
   count:
     description:

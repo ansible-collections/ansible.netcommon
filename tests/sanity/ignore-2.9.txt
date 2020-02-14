@@ -42,6 +42,8 @@ plugins/action/netconf.py action-plugin-docs # base class for deprecated network
 plugins/action/network.py action-plugin-docs # base class for network action plugins
 plugins/doc_fragments/netconf.py future-import-boilerplate
 plugins/doc_fragments/netconf.py metaclass-boilerplate
+plugins/doc_fragments/network_agnostic.py future-import-boilerplate
+plugins/doc_fragments/network_agnostic.py metaclass-boilerplate
 tests/unit/mock/path.py future-import-boilerplate
 tests/unit/mock/path.py metaclass-boilerplate
 tests/unit/mock/yaml_helper.py future-import-boilerplate

@@ -25,7 +25,7 @@ description:
   and detects if there was a configuration change.
 extends_documentation_fragment:
 - ansible.netcommon.netconf
-- network_agnostic
+- ansible.netcommon.network_agnostic
 options:
   content:
     description:

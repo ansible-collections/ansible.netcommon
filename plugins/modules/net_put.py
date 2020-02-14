@@ -23,7 +23,7 @@ description:
 - This module provides functionality to copy file from Ansible controller to network
   devices.
 extends_documentation_fragment:
-- network_agnostic
+- ansible.netcommon.network_agnostic
 options:
   src:
     description:
