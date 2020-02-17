@@ -5,4 +5,4 @@ license_file: LICENSE
 name: netcommon
 namespace: ansible
 readme: README.rst
-repository: https://github.com/ansible-network/ansible_collections.ansible.netcommon
+repository: https://github.com/ansible-collections/netcommon
