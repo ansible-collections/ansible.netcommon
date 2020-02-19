@@ -28,7 +28,9 @@ plugins/modules/cli_config.py validate-modules:parameter-type-not-in-doc
 plugins/modules/netconf_config.py validate-modules:doc-choices-do-not-match-spec
 plugins/modules/netconf_config.py validate-modules:doc-missing-type
 plugins/modules/netconf_config.py validate-modules:doc-required-mismatch
+plugins/modules/netconf_config.py validate-modules:mutually_exclusive-unknown
 plugins/modules/netconf_config.py validate-modules:parameter-type-not-in-doc
+plugins/modules/netconf_config.py validate-modules:required_one_of-unknown
 plugins/modules/netconf_get.py validate-modules:doc-missing-type
 plugins/modules/netconf_get.py validate-modules:return-syntax-error
 plugins/modules/netconf_rpc.py validate-modules:doc-missing-type
