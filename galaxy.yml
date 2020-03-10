@@ -6,3 +6,4 @@ name: netcommon
 namespace: ansible
 readme: README.rst
 repository: https://github.com/ansible-collections/netcommon
+tags: [networking, security, cloud, network_cli, netconf, httpapi, grpc]
