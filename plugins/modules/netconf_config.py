@@ -16,7 +16,9 @@ ANSIBLE_METADATA = {
 
 
 DOCUMENTATION = """module: netconf_config
-author: Leandro Lisboa Penz (@lpenz)
+author:
+- Leandro Lisboa Penz (@lpenz)
+- Ganesh Nalawade (@ganeshrn)
 short_description: netconf device configuration
 description:
 - Netconf is a network management protocol developed and standardized by the IETF.
