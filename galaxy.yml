@@ -5,5 +5,5 @@ license_file: LICENSE
 name: netcommon
 namespace: ansible
 readme: README.rst
-repository: https://github.com/ansible-collections/netcommon
+repository: https://github.com/ansible-collections/ansible.netcommon
 tags: [networking, security, cloud, network_cli, netconf, httpapi, grpc]
