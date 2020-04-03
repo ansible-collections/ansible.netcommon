@@ -184,7 +184,7 @@ class ActionModule(_ActionModule):
                         searchpath.append(role._role_path)
         searchpath.append(os.path.dirname(source))
         self._templar.environment.loader.searchpath = searchpath
-        self._task.args['src'] = self._templar.template(template_data)
+        self._task.args["src"] = self._templar.template(template_data)
 
     def _get_network_os(self, task_vars):
         if "network_os" in self._task.args and self._task.args["network_os"]:
