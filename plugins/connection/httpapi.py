@@ -59,6 +59,16 @@ options:
     - name: ansible_password
     - name: ansible_httpapi_pass
     - name: ansible_httpapi_password
+  session_key:
+    type: dict
+    description:
+      - Configures the session key to be used to authenticate to the remote device
+        when needed for the device API.
+      - This should contain a dictionary representing the key name and value for the
+        token.
+      - When specified, I(password) is ignored.
+    vars:
+      - name: ansible_httpapi_session_key
   use_ssl:
     type: boolean
     description:
@@ -252,9 +262,12 @@ class Connection(NetworkConnectionBase):
             self.httpapi.set_become(self._play_context)
             self._connected = True
 
-            self.httpapi.login(
-                self.get_option("remote_user"), self.get_option("password")
-            )
+            if self.get_option("session_key"):
+                self._auth = self.get_option("session_key")
+            else:
+                self.httpapi.login(
+                    self.get_option("remote_user"), self.get_option("password")
+                )
 
     def close(self):
         """
