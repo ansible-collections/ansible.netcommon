@@ -34,6 +34,7 @@ import operator
 import socket
 import json
 
+from copy import deepcopy
 from itertools import chain
 
 from ansible.module_utils._text import to_text, to_bytes
@@ -341,7 +342,7 @@ def dict_merge(base, other):
 
     combined = dict()
 
-    for key, value in iteritems(base):
+    for key, value in iteritems(deepcopy(base)):
         if isinstance(value, dict):
             if key in other:
                 item = other.get(key)
