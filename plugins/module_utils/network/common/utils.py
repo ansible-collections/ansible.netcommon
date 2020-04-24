@@ -35,6 +35,7 @@ import socket
 import json
 
 from itertools import chain
+from functools import reduce  # forward compatibility for Python 3
 
 from ansible.module_utils._text import to_text, to_bytes
 from ansible.module_utils.common._collections_compat import Mapping
@@ -640,6 +641,35 @@ def search_obj_in_list(name, lst, key="name"):
         for item in lst:
             if item.get(key) == name:
                 return item
+
+
+def get_from_dict(data_dict, keypath):
+    """ get from dictionary
+    """
+    map_list = keypath.split(".")
+    try:
+        return reduce(operator.getitem, map_list, data_dict)
+    except KeyError:
+        return None
+
+
+def compare_partial_dict(want, have, compare_keys):
+    """ compare
+    """
+    rmkeys = [ckey[1:] for ckey in compare_keys if ckey.startswith("!")]
+    kkeys = [ckey for ckey in compare_keys if not ckey.startswith("!")]
+
+    wantd = {}
+    for key, val in want.items():
+        if key not in rmkeys or key in kkeys:
+            wantd[key] = val
+
+    haved = {}
+    for key, val in have.items():
+        if key not in rmkeys or key in kkeys:
+            haved[key] = val
+
+    return wantd == haved
 
 
 class Template:
