@@ -35,6 +35,7 @@ import socket
 import json
 
 from itertools import chain
+from yaml import safe_load
 
 from ansible.module_utils._text import to_text, to_bytes
 from ansible.module_utils.common._collections_compat import Mapping
@@ -68,6 +69,24 @@ except ImportError:
 OPERATORS = frozenset(["ge", "gt", "eq", "neq", "lt", "le"])
 ALIASES = frozenset(
     [("min", "ge"), ("max", "le"), ("exactly", "eq"), ("neq", "ne")]
+)
+
+OPTION_METADATA = (
+    "type",
+    "choices",
+    "default",
+    "required",
+    "aliases",
+    "elements",
+    "fallback",
+    "no_log",
+)
+OPTION_CONDITIONALS = (
+    "mutually_exclusive",
+    "required_one_of",
+    "required_together",
+    "required_by",
+    "required_if",
 )
 
 
@@ -684,3 +703,24 @@ class Template:
                 if marker in data:
                     return True
         return False
+
+
+# TODO: Support extends_documentation_fragment
+def _extract_argspec(doc_obj, argpsec):
+    options_obj = doc_obj.get("options")
+    for okey, ovalue in iteritems(options_obj):
+        argpsec[okey] = {}
+        for metakey in list(ovalue):
+            if metakey == "suboptions":
+                argpsec[okey].update({"options": {}})
+                suboptions_obj = {"options": ovalue["suboptions"]}
+                _extract_argspec(suboptions_obj, argpsec[okey]["options"])
+            elif metakey in OPTION_METADATA + OPTION_CONDITIONALS:
+                argpsec[okey].update({metakey: ovalue[metakey]})
+
+
+def convert_doc_to_module_argument_spec(doc):
+    doc_obj = safe_load(doc)
+    argspec = {}
+    _extract_argspec(doc_obj, argspec)
+    return argspec
