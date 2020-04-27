@@ -35,7 +35,6 @@ import socket
 import json
 
 from itertools import chain
-from yaml import safe_load
 
 from ansible.module_utils._text import to_text, to_bytes
 from ansible.module_utils.common._collections_compat import Mapping
@@ -65,6 +64,13 @@ try:
 except ImportError:
     HAS_JINJA2 = False
 
+try:
+    # use C version if possible for speedup
+    from yaml import CSafeLoader as SafeLoader
+except ImportError:
+    from yaml import SafeLoader
+
+from yaml import load
 
 OPERATORS = frozenset(["ge", "gt", "eq", "neq", "lt", "le"])
 ALIASES = frozenset(
@@ -88,6 +94,13 @@ OPTION_CONDITIONALS = (
     "required_by",
     "required_if",
 )
+
+VALID_ANSIBLEMODULE_ARGS = (
+    "bypass_checks",
+    "no_log",
+    "add_file_common_args",
+    "supports_check_mode",
+) + OPTION_CONDITIONALS
 
 
 def to_list(val):
@@ -705,8 +718,7 @@ class Template:
         return False
 
 
-# TODO: Support extends_documentation_fragment
-def _extract_argspec(doc_obj, argpsec):
+def extract_argspec(doc_obj, argpsec):
     options_obj = doc_obj.get("options")
     for okey, ovalue in iteritems(options_obj):
         argpsec[okey] = {}
@@ -714,13 +726,19 @@ def _extract_argspec(doc_obj, argpsec):
             if metakey == "suboptions":
                 argpsec[okey].update({"options": {}})
                 suboptions_obj = {"options": ovalue["suboptions"]}
-                _extract_argspec(suboptions_obj, argpsec[okey]["options"])
+                extract_argspec(suboptions_obj, argpsec[okey]["options"])
             elif metakey in OPTION_METADATA + OPTION_CONDITIONALS:
                 argpsec[okey].update({metakey: ovalue[metakey]})
 
 
-def convert_doc_to_module_argument_spec(doc):
-    doc_obj = safe_load(doc)
+# TODO: Support extends_documentation_fragment
+def convert_doc_to_ansible_module_kwargs(doc):
+    doc_obj = load(doc, SafeLoader)
     argspec = {}
-    _extract_argspec(doc_obj, argspec)
-    return argspec
+    spec = {}
+    extract_argspec(doc_obj, argspec)
+    spec.update({"argument_spec": doc_obj})
+    for item in doc_obj:
+        if item in VALID_ANSIBLEMODULE_ARGS:
+            spec.update({item: doc_obj[item]})
+    return spec
