@@ -1,6 +1,6 @@
 - project:
     check:
       jobs:
-        - ansible-test-units-netcommon
+        - ansible-test-units-netcommon:
             vars:
               ansible_test_collections: true
