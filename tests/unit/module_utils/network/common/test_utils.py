@@ -23,6 +23,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import pytest
+from copy import deepcopy
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     to_list,
@@ -188,6 +189,28 @@ def test_dict_merge():
     assert "b2" in result
     assert result["b3"]
     assert result["b4"]
+
+
+def test_dict_merge_src_unchanged():
+    base = {
+        "flist": [
+            {"dir": "out", "rmap": "rmap_1"},
+            {"dir": "in", "rmap": "rmap_2"},
+        ]
+    }
+    basecp = deepcopy(base)
+    other = {
+        "flist": [
+            {"dir": "out", "rmap": "rmap_12"},
+            {"dir": "in", "rmap": "rmap_2"},
+        ]
+    }
+    othercp = deepcopy(other)
+
+    dict_merge(base, other)
+    # dict_merge() should not modify the source dicts
+    assert base == basecp
+    assert other == othercp
 
 
 def test_conditional():
