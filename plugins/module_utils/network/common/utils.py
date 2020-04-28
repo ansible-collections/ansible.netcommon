@@ -737,7 +737,7 @@ def convert_doc_to_ansible_module_kwargs(doc):
     argspec = {}
     spec = {}
     extract_argspec(doc_obj, argspec)
-    spec.update({"argument_spec": doc_obj})
+    spec.update({"argument_spec": argspec})
     for item in doc_obj:
         if item in VALID_ANSIBLEMODULE_ARGS:
             spec.update({item: doc_obj[item]})
