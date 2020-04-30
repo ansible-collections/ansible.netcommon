@@ -77,6 +77,11 @@ class NetworkTemplate(object):
         except KeyError:
             return None
         if res and negate:
+            if isinstance(res, list):
+                cmd = []
+                for each in res:
+                    cmd.append(("no " + each))
+                return cmd
             return "no " + res
         return res
 
