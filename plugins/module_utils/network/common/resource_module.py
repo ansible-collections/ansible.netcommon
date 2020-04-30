@@ -34,6 +34,16 @@ class ResourceModule(object):  # pylint: disable=R0902
         self.want = remove_empties(self._module.params).get(
             "config", self._empty_fact_val
         )
+        # Error out if empty config is passed for following states
+        if (
+            self.state in ("overridden", "merged", "replaced", "rendered")
+            and not self.want
+        ):
+            self._module.fail_json(
+                msg="value of config parameter must not be empty for state {0}".format(
+                    self.state
+                )
+            )
 
         self._get_connection()
 
