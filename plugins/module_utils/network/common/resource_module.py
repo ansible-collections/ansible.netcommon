@@ -40,6 +40,7 @@ class ResourceModule(object):  # pylint: disable=R0902
         self.changed = False
         self.commands = []
         self.warnings = []
+
         self.have = deepcopy(self.before)
         self.want = remove_empties(self._module.params).get(
             "config", self._empty_fact_val
