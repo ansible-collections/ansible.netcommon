@@ -25,25 +25,25 @@ class ResourceModule(object):  # pylint: disable=R0902
 
         self._connection = None
         self.state = self._module.params["state"]
-        self.before = self.gather_current()
-        self.changed = False
-        self.commands = []
-        self.warnings = []
-
-        self.have = deepcopy(self.before)
-        self.want = remove_empties(self._module.params).get(
-            "config", self._empty_fact_val
-        )
         # Error out if empty config is passed for following states
         if (
-            self.state in ("overridden", "merged", "replaced", "rendered")
-            and not self.want
+                self.state in ("overridden", "merged", "replaced", "rendered")
+                and not self.want
         ):
             self._module.fail_json(
                 msg="value of config parameter must not be empty for state {0}".format(
                     self.state
                 )
             )
+
+        self.before = self.gather_current()
+        self.changed = False
+        self.commands = []
+        self.warnings = []
+        self.have = deepcopy(self.before)
+        self.want = remove_empties(self._module.params).get(
+            "config", self._empty_fact_val
+        )
 
         self._get_connection()
 
