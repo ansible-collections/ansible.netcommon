@@ -89,7 +89,6 @@ OPTION_METADATA = (
     "apply_defaults",
     "deprecated_aliases",
     "removed_in_version",
-
 )
 OPTION_CONDITIONALS = (
     "mutually_exclusive",
