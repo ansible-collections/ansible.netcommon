@@ -66,11 +66,46 @@ try:
 except ImportError:
     HAS_JINJA2 = False
 
+try:
+    # use C version if possible for speedup
+    from yaml import CSafeLoader as SafeLoader
+except ImportError:
+    from yaml import SafeLoader
+
+from yaml import load
 
 OPERATORS = frozenset(["ge", "gt", "eq", "neq", "lt", "le"])
 ALIASES = frozenset(
     [("min", "ge"), ("max", "le"), ("exactly", "eq"), ("neq", "ne")]
 )
+
+OPTION_METADATA = (
+    "type",
+    "choices",
+    "default",
+    "required",
+    "aliases",
+    "elements",
+    "fallback",
+    "no_log",
+    "apply_defaults",
+    "deprecated_aliases",
+    "removed_in_version",
+)
+OPTION_CONDITIONALS = (
+    "mutually_exclusive",
+    "required_one_of",
+    "required_together",
+    "required_by",
+    "required_if",
+)
+
+VALID_ANSIBLEMODULE_ARGS = (
+    "bypass_checks",
+    "no_log",
+    "add_file_common_args",
+    "supports_check_mode",
+) + OPTION_CONDITIONALS
 
 
 def to_list(val):
@@ -715,3 +750,29 @@ class Template:
                 if marker in data:
                     return True
         return False
+
+
+def extract_argspec(doc_obj, argpsec):
+    options_obj = doc_obj.get("options")
+    for okey, ovalue in iteritems(options_obj):
+        argpsec[okey] = {}
+        for metakey in list(ovalue):
+            if metakey == "suboptions":
+                argpsec[okey].update({"options": {}})
+                suboptions_obj = {"options": ovalue["suboptions"]}
+                extract_argspec(suboptions_obj, argpsec[okey]["options"])
+            elif metakey in OPTION_METADATA + OPTION_CONDITIONALS:
+                argpsec[okey].update({metakey: ovalue[metakey]})
+
+
+# TODO: Support extends_documentation_fragment
+def convert_doc_to_ansible_module_kwargs(doc):
+    doc_obj = load(doc, SafeLoader)
+    argspec = {}
+    spec = {}
+    extract_argspec(doc_obj, argspec)
+    spec.update({"argument_spec": argspec})
+    for item in doc_obj:
+        if item in VALID_ANSIBLEMODULE_ARGS:
+            spec.update({item: doc_obj[item]})
+    return spec
