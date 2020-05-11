@@ -27,8 +27,8 @@ class ResourceModule(object):  # pylint: disable=R0902
         self.state = self._module.params["state"]
         # Error out if empty config is passed for following states
         if (
-                self.state in ("overridden", "merged", "replaced", "rendered")
-                and not self.want
+            self.state in ("overridden", "merged", "replaced", "rendered")
+            and not self.want
         ):
             self._module.fail_json(
                 msg="value of config parameter must not be empty for state {0}".format(
