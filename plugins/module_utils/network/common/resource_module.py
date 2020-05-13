@@ -25,6 +25,9 @@ class ResourceModule(object):  # pylint: disable=R0902
 
         self._connection = None
         self.state = self._module.params["state"]
+        self.want = remove_empties(self._module.params).get(
+            "config", self._empty_fact_val
+        )
         # Error out if empty config is passed for following states
         if (
             self.state in ("overridden", "merged", "replaced", "rendered")
@@ -37,14 +40,10 @@ class ResourceModule(object):  # pylint: disable=R0902
             )
 
         self.before = self.gather_current()
+        self.have = deepcopy(self.before)
         self.changed = False
         self.commands = []
         self.warnings = []
-
-        self.have = deepcopy(self.before)
-        self.want = remove_empties(self._module.params).get(
-            "config", self._empty_fact_val
-        )
 
         self._get_connection()
 
