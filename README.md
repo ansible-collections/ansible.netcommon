@@ -8,15 +8,15 @@ Ansible Network Collection for Common Code
 # Become plugins
 Name | Description
 --- | ---
-[enable](https://github.com/cidrblock/arista.eos/blob/master/docs/enable.rst)|Switch to elevated permissions on a network device
+[ansible.netcommon.enable](https://github.com/cidrblock/arista.eos/blob/master/docs/ansible.netcommon.enable.rst)|Switch to elevated permissions on a network device
 # Connection plugins
 Name | Description
 --- | ---
-[httpapi](https://github.com/cidrblock/arista.eos/blob/master/docs/httpapi.rst)|Use httpapi to run command on network appliances
-[napalm](https://github.com/cidrblock/arista.eos/blob/master/docs/napalm.rst)|Provides persistent connection using NAPALM
-[netconf](https://github.com/cidrblock/arista.eos/blob/master/docs/netconf.rst)|Provides a persistent connection using the netconf protocol
-[network_cli](https://github.com/cidrblock/arista.eos/blob/master/docs/network_cli.rst)|Use network_cli to run command on network appliances
-[persistent](https://github.com/cidrblock/arista.eos/blob/master/docs/persistent.rst)|Use a persistent unix socket for connection
+[ansible.netcommon.httpapi](https://github.com/cidrblock/arista.eos/blob/master/docs/ansible.netcommon.httpapi.rst)|Use httpapi to run command on network appliances
+[ansible.netcommon.napalm](https://github.com/cidrblock/arista.eos/blob/master/docs/ansible.netcommon.napalm.rst)|Provides persistent connection using NAPALM
+[ansible.netcommon.netconf](https://github.com/cidrblock/arista.eos/blob/master/docs/ansible.netcommon.netconf.rst)|Provides a persistent connection using the netconf protocol
+[ansible.netcommon.network_cli](https://github.com/cidrblock/arista.eos/blob/master/docs/ansible.netcommon.network_cli.rst)|Use network_cli to run command on network appliances
+[ansible.netcommon.persistent](https://github.com/cidrblock/arista.eos/blob/master/docs/ansible.netcommon.persistent.rst)|Use a persistent unix socket for connection
 # Filter plugins
 Name | Description
 --- | ---
