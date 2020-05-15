@@ -74,11 +74,8 @@ class ResourceModule(object):  # pylint: disable=R0902
         else:
             result["commands"] = self.commands
             result["before"] = self.before
-            result["after"] = (
-                self.get_facts(self._empty_fact_val)
-                if result["commands"]
-                else result["before"]
-            )
+            if self.commands:
+                result["after"] = self.get_facts(self._empty_fact_val)
         result["changed"] = self.changed
         return result
 
