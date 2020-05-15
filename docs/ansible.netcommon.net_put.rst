@@ -5,7 +5,7 @@
 ansible.netcommon.net_put -- Copy a file from Ansible Controller to a network device
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. versionadded:: 1.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:

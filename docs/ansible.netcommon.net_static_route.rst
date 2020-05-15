@@ -5,7 +5,7 @@
 ansible.netcommon.net_static_route -- (deprecated) Manage static IP routes on network appliances (routers, switches et. al.)
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. versionadded:: 1.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:

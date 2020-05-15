@@ -5,7 +5,7 @@
 ansible.netcommon.netconf_config -- netconf device configuration
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. versionadded:: 1.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:

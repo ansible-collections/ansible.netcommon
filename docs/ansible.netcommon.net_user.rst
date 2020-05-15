@@ -5,7 +5,7 @@
 ansible.netcommon.net_user -- (deprecated) Manage the aggregate of local users on network device
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. versionadded:: 1.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:

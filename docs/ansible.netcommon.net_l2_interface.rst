@@ -5,7 +5,7 @@
 ansible.netcommon.net_l2_interface -- (deprecated) Manage Layer-2 interface on network devices
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. versionadded:: 1.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:

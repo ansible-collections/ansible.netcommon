@@ -5,7 +5,7 @@
 ansible.netcommon.net_get -- Copy a file from a network device to Ansible Controller
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. versionadded:: 1.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:

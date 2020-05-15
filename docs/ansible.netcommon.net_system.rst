@@ -5,7 +5,7 @@
 ansible.netcommon.net_system -- (deprecated) Manage the system attributes on network devices
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. versionadded:: 1.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:

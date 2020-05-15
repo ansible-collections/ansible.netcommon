@@ -5,7 +5,7 @@
 ansible.netcommon.telnet -- Executes a low-down and dirty telnet command
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. versionadded:: 1.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:

@@ -5,7 +5,7 @@
 ansible.netcommon.restconf_get -- Fetch configuration/state data from RESTCONF enabled devices.
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. versionadded:: 1.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:

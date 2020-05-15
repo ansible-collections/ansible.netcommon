@@ -5,7 +5,7 @@
 ansible.netcommon.cli_command -- Run a cli command on cli-based network devices
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-.. versionadded:: 1.0.0
+Version added: 1.0.0
 
 .. contents::
    :local:
