@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.restconf_config_:
 
@@ -7,6 +5,7 @@
 ansible.netcommon.restconf_config -- Handles create, update, read and delete of configuration data on RESTCONF enabled devices.
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -124,23 +123,23 @@ Examples
 
     
     - name: create l3vpn services
-      restconf_config:
+      ansible.netcommon.restconf_config:
         path: /config/ietf-l3vpn-svc:l3vpn-svc/vpn-services
         content: |
-              {
-                "vpn-service":[
-                                {
-                                  "vpn-id": "red_vpn2",
-                                  "customer-name": "blue",
-                                  "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
-                                },
-                                {
-                                  "vpn-id": "blue_vpn1",
-                                  "customer-name": "red",
-                                  "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
-                                }
-                              ]
-               }
+          {
+            "vpn-service":[
+                            {
+                              "vpn-id": "red_vpn2",
+                              "customer-name": "blue",
+                              "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
+                            },
+                            {
+                              "vpn-id": "blue_vpn1",
+                              "customer-name": "red",
+                              "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
+                            }
+                          ]
+           }
 
 
 
@@ -218,11 +217,6 @@ Common return values are documented :ref:`here <common_return_values>`, the foll
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

@@ -9,18 +9,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: net_vrf
+DOCUMENTATION = """
+module: net_vrf
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
-short_description: Manage VRFs on network devices
+short_description: (deprecated) Manage VRFs on network devices
 description:
 - This module provides declarative management of VRFs on network devices.
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_vrf" module
@@ -47,33 +42,34 @@ options:
     choices:
     - present
     - absent
+
 """
 
 EXAMPLES = """
 - name: Create VRF named MANAGEMENT
-  net_vrf:
+  ansible.netcommon.net_vrf:
     name: MANAGEMENT
 
 - name: remove VRF named MANAGEMENT
-  net_vrf:
+  ansible.netcommon.net_vrf:
     name: MANAGEMENT
     state: absent
 
 - name: Create aggregate of VRFs with purge
-  net_vrf:
+  ansible.netcommon.net_vrf:
     aggregate:
-      - { name: test4, rd: "1:204" }
-      - { name: test5, rd: "1:205" }
+    - {name: test4, rd: 1:204}
+    - {name: test5, rd: 1:205}
     state: present
     purge: yes
 
 - name: Delete aggregate of VRFs
-  net_vrf:
+  ansible.netcommon.net_vrf:
     aggregate:
-      - name: test2
-      - name: test3
-      - name: test4
-      - name: test5
+    - name: test2
+    - name: test3
+    - name: test4
+    - name: test5
     state: absent
 """
 

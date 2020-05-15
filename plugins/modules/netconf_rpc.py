@@ -9,14 +9,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: netconf_rpc
+DOCUMENTATION = """
+module: netconf_rpc
 author:
 - Ganesh Nalawade (@ganeshrn)
 - Sven Wisotzky (@wisotzky)
@@ -26,6 +20,7 @@ description:
   It is documented in RFC 6241.
 - This module allows the user to execute NETCONF RPC requests as defined by IETF RFC
   standards as well as proprietary requests.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -67,32 +62,32 @@ notes:
 
 EXAMPLES = """
 - name: lock candidate
-  netconf_rpc:
+  ansible.netcommon.netconf_rpc:
     rpc: lock
     content:
       target:
         candidate:
 
 - name: unlock candidate
-  netconf_rpc:
+  ansible.netcommon.netconf_rpc:
     rpc: unlock
-    xmlns: "urn:ietf:params:xml:ns:netconf:base:1.0"
+    xmlns: urn:ietf:params:xml:ns:netconf:base:1.0
     content: "{'target': {'candidate': None}}"
 
 - name: discard changes
-  netconf_rpc:
+  ansible.netcommon.netconf_rpc:
     rpc: discard-changes
 
 - name: get-schema
-  netconf_rpc:
+  ansible.netcommon.netconf_rpc:
     rpc: get-schema
     xmlns: urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring
     content:
       identifier: ietf-netconf
-      version: "2011-06-01"
+      version: '2011-06-01'
 
 - name: copy running to startup
-  netconf_rpc:
+  ansible.netcommon.netconf_rpc:
     rpc: copy-config
     content:
       source:
@@ -101,7 +96,7 @@ EXAMPLES = """
         startup:
 
 - name: get schema list with JSON output
-  netconf_rpc:
+  ansible.netcommon.netconf_rpc:
     rpc: get
     content: |
       <filter>
@@ -112,9 +107,9 @@ EXAMPLES = """
     display: json
 
 - name: get schema using XML request
-  netconf_rpc:
-    rpc: "get-schema"
-    xmlns: "urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring"
+  ansible.netcommon.netconf_rpc:
+    rpc: get-schema
+    xmlns: urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring
     content: |
       <identifier>ietf-netconf-monitoring</identifier>
       <version>2010-10-04</version>
@@ -185,12 +180,7 @@ def get_xml_request(module, request, xmlns, content):
             if xmlns is None:
                 return "<%s>%s</%s>" % (request, content, request)
             else:
-                return '<%s xmlns="%s">%s</%s>' % (
-                    request,
-                    xmlns,
-                    content,
-                    request,
-                )
+                return '<%s xmlns="%s">%s</%s>' % (request, xmlns, content, request,)
 
         try:
             # trying if content contains dict
@@ -212,16 +202,9 @@ def get_xml_request(module, request, xmlns, content):
         if xmlns is None:
             return "<%s>%s</%s>" % (request, payload, request)
         else:
-            return '<%s xmlns="%s">%s</%s>' % (
-                request,
-                xmlns,
-                payload,
-                request,
-            )
+            return '<%s xmlns="%s">%s</%s>' % (request, xmlns, payload, request,)
 
-    module.fail_json(
-        msg="unsupported content data-type `%s`" % type(content).__name__
-    )
+    module.fail_json(msg="unsupported content data-type `%s`" % type(content).__name__)
 
 
 def main():
@@ -234,9 +217,7 @@ def main():
         display=dict(choices=["json", "pretty", "xml"]),
     )
 
-    module = AnsibleModule(
-        argument_spec=argument_spec, supports_check_mode=True
-    )
+    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
 
     rpc = module.params["rpc"]
     xmlns = module.params["xmlns"]

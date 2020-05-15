@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.netconf_rpc_:
 
@@ -7,6 +5,7 @@
 ansible.netcommon.netconf_rpc -- Execute operations on NETCONF enabled network devices.
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -135,32 +134,32 @@ Examples
 
     
     - name: lock candidate
-      netconf_rpc:
+      ansible.netcommon.netconf_rpc:
         rpc: lock
         content:
           target:
             candidate:
 
     - name: unlock candidate
-      netconf_rpc:
+      ansible.netcommon.netconf_rpc:
         rpc: unlock
-        xmlns: "urn:ietf:params:xml:ns:netconf:base:1.0"
+        xmlns: urn:ietf:params:xml:ns:netconf:base:1.0
         content: "{'target': {'candidate': None}}"
 
     - name: discard changes
-      netconf_rpc:
+      ansible.netcommon.netconf_rpc:
         rpc: discard-changes
 
     - name: get-schema
-      netconf_rpc:
+      ansible.netcommon.netconf_rpc:
         rpc: get-schema
         xmlns: urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring
         content:
           identifier: ietf-netconf
-          version: "2011-06-01"
+          version: '2011-06-01'
 
     - name: copy running to startup
-      netconf_rpc:
+      ansible.netcommon.netconf_rpc:
         rpc: copy-config
         content:
           source:
@@ -169,7 +168,7 @@ Examples
             startup:
 
     - name: get schema list with JSON output
-      netconf_rpc:
+      ansible.netcommon.netconf_rpc:
         rpc: get
         content: |
           <filter>
@@ -180,9 +179,9 @@ Examples
         display: json
 
     - name: get schema using XML request
-      netconf_rpc:
-        rpc: "get-schema"
-        xmlns: "urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring"
+      ansible.netcommon.netconf_rpc:
+        rpc: get-schema
+        xmlns: urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring
         content: |
           <identifier>ietf-netconf-monitoring</identifier>
           <version>2010-10-04</version>
@@ -274,11 +273,6 @@ Common return values are documented :ref:`here <common_return_values>`, the foll
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

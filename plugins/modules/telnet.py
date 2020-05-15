@@ -6,18 +6,15 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "community",
-}
 
-DOCUMENTATION = """module: telnet
+DOCUMENTATION = """
+module: telnet
 short_description: Executes a low-down and dirty telnet command
 description:
 - Executes a low-down and dirty telnet command, not going through the module subsystem.
 - This is mostly to be used for enabling ssh on devices that only have telnet enabled
   by default.
+version_added: 1.0.0
 options:
   command:
     description:
@@ -81,27 +78,27 @@ author:
 
 EXAMPLES = """
 - name: send configuration commands to IOS
-  telnet:
+  ansible.netcommon.telnet:
     user: cisco
     password: cisco
-    login_prompt: "Username: "
+    login_prompt: 'Username: '
     prompts:
-      - "[>#]"
+    - '[>#]'
     command:
-      - terminal length 0
-      - configure terminal
-      - hostname ios01
+    - terminal length 0
+    - configure terminal
+    - hostname ios01
 
 - name: run show commands
-  telnet:
+  ansible.netcommon.telnet:
     user: cisco
     password: cisco
-    login_prompt: "Username: "
+    login_prompt: 'Username: '
     prompts:
-      - "[>#]"
+    - '[>#]'
     command:
-      - terminal length 0
-      - show version
+    - terminal length 0
+    - show version
 """
 
 RETURN = """

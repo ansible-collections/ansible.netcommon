@@ -9,17 +9,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-DOCUMENTATION = """module: net_l2_interface
+DOCUMENTATION = """
+module: net_l2_interface
 author: Ganesh Nalawade (@ganeshrn)
-short_description: Manage Layer-2 interface on network devices
+short_description: (deprecated) Manage Layer-2 interface on network devices
 description:
 - This module provides declarative management of Layer-2 interface on network devices.
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_l2_interfaces" module
@@ -59,17 +55,18 @@ options:
     choices:
     - present
     - absent
+
 """
 
 EXAMPLES = """
 - name: configure Layer-2 interface
-  net_l2_interface:
+  ansible.netcommon.net_l2_interface:
     name: gigabitethernet0/0/1
     mode: access
     access_vlan: 30
 
 - name: remove Layer-2 interface configuration
-  net_l2_interface:
+  ansible.netcommon.net_l2_interface:
     name: gigabitethernet0/0/1
     state: absent
 """

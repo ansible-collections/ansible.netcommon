@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.httpapi_:
 
@@ -321,11 +319,6 @@ Parameters
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

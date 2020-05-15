@@ -7,14 +7,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: restconf_get
+DOCUMENTATION = """
+module: restconf_get
 author: Ganesh Nalawade (@ganeshrn)
 short_description: Fetch configuration/state data from RESTCONF enabled devices.
 description:
@@ -23,6 +17,7 @@ description:
   RFC 8040.
 - This module allows the user to fetch configuration and state data from RESTCONF
   enabled devices.
+version_added: 1.0.0
 options:
   path:
     description:
@@ -53,8 +48,8 @@ options:
 
 EXAMPLES = """
 - name: get l3vpn services
-  restconf_get:
-      path: /config/ietf-l3vpn-svc:l3vpn-svc/vpn-services
+  ansible.netcommon.restconf_get:
+    path: /config/ietf-l3vpn-svc:l3vpn-svc/vpn-services
 """
 
 RETURN = """
@@ -94,9 +89,7 @@ def main():
         output=dict(choices=["json", "xml"], default="json"),
     )
 
-    module = AnsibleModule(
-        argument_spec=argument_spec, supports_check_mode=True
-    )
+    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
 
     result = {"changed": False}
 

@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_lldp_interface_:
 
 
-ansible.netcommon.net_lldp_interface -- Manage LLDP interfaces configuration on network devices
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_lldp_interface -- (deprecated) Manage LLDP interfaces configuration on network devices
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -133,37 +132,37 @@ Examples
 
     
     - name: Configure LLDP on specific interfaces
-      net_lldp_interface:
+      ansible.netcommon.net_lldp_interface:
         name: eth1
         state: present
 
     - name: Disable LLDP on specific interfaces
-      net_lldp_interface:
+      ansible.netcommon.net_lldp_interface:
         name: eth1
         state: disabled
 
     - name: Enable LLDP on specific interfaces
-      net_lldp_interface:
+      ansible.netcommon.net_lldp_interface:
         name: eth1
         state: enabled
 
     - name: Delete LLDP on specific interfaces
-      net_lldp_interface:
+      ansible.netcommon.net_lldp_interface:
         name: eth1
         state: absent
 
     - name: Create aggregate of LLDP interface configurations
-      net_lldp_interface:
+      ansible.netcommon.net_lldp_interface:
         aggregate:
-        - { name: eth1 }
-        - { name: eth2 }
+        - {name: eth1}
+        - {name: eth2}
         state: present
 
     - name: Delete aggregate of LLDP interface configurations
-      net_lldp_interface:
+      ansible.netcommon.net_lldp_interface:
         aggregate:
-        - { name: eth1 }
-        - { name: eth2 }
+        - {name: eth1}
+        - {name: eth2}
         state: absent
 
 

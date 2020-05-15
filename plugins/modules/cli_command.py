@@ -7,18 +7,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: cli_command
+DOCUMENTATION = """
+module: cli_command
 author: Nathaniel Case (@Qalthos)
 short_description: Run a cli command on cli-based network devices
 description:
 - Sends a command to a network device and returns the result read from the device.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -68,49 +63,49 @@ options:
 
 EXAMPLES = """
 - name: run show version on remote devices
-  cli_command:
+  ansible.netcommon.cli_command:
     command: show version
 
 - name: run command with json formatted output
-  cli_command:
+  ansible.netcommon.cli_command:
     command: show version | json
 
 - name: run command expecting user confirmation
-  cli_command:
+  ansible.netcommon.cli_command:
     command: commit replace
     prompt: This commit will replace or remove the entire running configuration
     answer: yes
 
 - name: run command expecting user confirmation
-  cli_command:
+  ansible.netcommon.cli_command:
     command: show interface summary
     prompt: Press any key to continue
     answer: y
     newline: false
 
 - name: run config mode command and handle prompt/answer
-  cli_command:
-    command: "{{ item }}"
+  ansible.netcommon.cli_command:
+    command: '{{ item }}'
     prompt:
-      - "Exit with uncommitted changes"
-    answer: 'y'
+    - Exit with uncommitted changes
+    answer: y
   loop:
-    - configure
-    - set system syslog file test any any
-    - exit
+  - configure
+  - set system syslog file test any any
+  - exit
 
 - name: multiple prompt, multiple answer (mandatory check for all prompts)
-  cli_command:
-    command: "copy sftp sftp://user@host//user/test.img"
-    check_all: True
+  ansible.netcommon.cli_command:
+    command: copy sftp sftp://user@host//user/test.img
+    check_all: true
     prompt:
-      - "Confirm download operation"
-      - "Password"
-      - "Do you want to change that to the standby image"
+    - Confirm download operation
+    - Password
+    - Do you want to change that to the standby image
     answer:
-      - 'y'
-      - <password>
-      - 'y'
+    - y
+    - <password>
+    - y
 """
 
 RETURN = """

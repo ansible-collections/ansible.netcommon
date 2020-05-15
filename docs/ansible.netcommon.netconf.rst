@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.netconf_:
 
@@ -319,11 +317,6 @@ Parameters
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

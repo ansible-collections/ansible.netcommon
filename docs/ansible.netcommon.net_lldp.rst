@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_lldp_:
 
 
-ansible.netcommon.net_lldp -- Manage LLDP service configuration on network devices
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_lldp -- (deprecated) Manage LLDP service configuration on network devices
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -79,11 +78,11 @@ Examples
 
     
     - name: Enable LLDP service
-      net_lldp:
+      ansible.netcommon.net_lldp:
         state: present
 
     - name: Disable LLDP service
-      net_lldp:
+      ansible.netcommon.net_lldp:
         state: absent
 
 

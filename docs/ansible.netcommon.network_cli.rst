@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.network_cli_:
 
@@ -465,11 +463,6 @@ Parameters
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

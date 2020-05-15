@@ -9,18 +9,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: net_logging
+DOCUMENTATION = """
+module: net_logging
 author: Ganesh Nalawade (@ganeshrn)
-short_description: Manage logging on network devices
+short_description: (deprecated) Manage logging on network devices
 description:
 - This module provides declarative management of logging on network devices.
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_logging" module
@@ -56,29 +51,30 @@ options:
     choices:
     - present
     - absent
+
 """
 
 EXAMPLES = """
 - name: configure console logging
-  net_logging:
+  ansible.netcommon.net_logging:
     dest: console
     facility: any
     level: critical
 
 - name: remove console logging configuration
-  net_logging:
+  ansible.netcommon.net_logging:
     dest: console
     state: absent
 
 - name: configure host logging
-  net_logging:
+  ansible.netcommon.net_logging:
     dest: host
     name: 192.0.2.1
     facility: kernel
     level: critical
 
 - name: Configure file logging using aggregate
-  net_logging:
+  ansible.netcommon.net_logging:
     dest: file
     aggregate:
     - name: test-1
@@ -88,7 +84,7 @@ EXAMPLES = """
       facility: kernel
       level: emergency
 - name: Delete file logging using aggregate
-  net_logging:
+  ansible.netcommon.net_logging:
     dest: file
     aggregate:
     - name: test-1

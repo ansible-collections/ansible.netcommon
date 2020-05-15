@@ -9,18 +9,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: net_get
+DOCUMENTATION = """
+module: net_get
 author: Deepak Agrawal (@dagrawal)
 short_description: Copy a file from a network device to Ansible Controller
 description:
 - This module provides functionality to copy file from network device to ansible controller.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -58,13 +53,13 @@ notes:
 
 EXAMPLES = """
 - name: copy file from the network device to Ansible controller
-  net_get:
+  ansible.netcommon.net_get:
     src: running_cfg_ios1.txt
 
 - name: copy file from ios to common location at /tmp
-  net_get:
+  ansible.netcommon.net_get:
     src: running_cfg_sw1.txt
-    dest : /tmp/ios1.txt
+    dest: /tmp/ios1.txt
 """
 
 RETURN = """

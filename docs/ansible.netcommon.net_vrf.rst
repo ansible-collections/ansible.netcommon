@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_vrf_:
 
 
-ansible.netcommon.net_vrf -- Manage VRFs on network devices
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_vrf -- (deprecated) Manage VRFs on network devices
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -148,29 +147,29 @@ Examples
 
     
     - name: Create VRF named MANAGEMENT
-      net_vrf:
+      ansible.netcommon.net_vrf:
         name: MANAGEMENT
 
     - name: remove VRF named MANAGEMENT
-      net_vrf:
+      ansible.netcommon.net_vrf:
         name: MANAGEMENT
         state: absent
 
     - name: Create aggregate of VRFs with purge
-      net_vrf:
+      ansible.netcommon.net_vrf:
         aggregate:
-          - { name: test4, rd: "1:204" }
-          - { name: test5, rd: "1:205" }
+        - {name: test4, rd: 1:204}
+        - {name: test5, rd: 1:205}
         state: present
         purge: yes
 
     - name: Delete aggregate of VRFs
-      net_vrf:
+      ansible.netcommon.net_vrf:
         aggregate:
-          - name: test2
-          - name: test3
-          - name: test4
-          - name: test5
+        - name: test2
+        - name: test3
+        - name: test4
+        - name: test5
         state: absent
 
 

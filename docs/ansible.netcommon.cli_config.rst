@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.cli_config_:
 
@@ -7,6 +5,7 @@
 ansible.netcommon.cli_config -- Push text based configuration to network devices over network_cli
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -42,7 +41,7 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                                                                    <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>yes</li>
                                                                                     </ul>
@@ -172,7 +171,7 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                                                                    <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>yes</li>
                                                                                     </ul>
@@ -316,40 +315,40 @@ Examples
 
     
     - name: configure device with config
-      cli_config:
+      ansible.netcommon.cli_config:
         config: "{{ lookup('template', 'basic/config.j2') }}"
 
     - name: multiline config
-      cli_config:
+      ansible.netcommon.cli_config:
         config: |
           hostname foo
           feature nxapi
 
     - name: configure device with config with defaults enabled
-      cli_config:
+      ansible.netcommon.cli_config:
         config: "{{ lookup('template', 'basic/config.j2') }}"
         defaults: yes
 
     - name: Use diff_match
-      cli_config:
+      ansible.netcommon.cli_config:
         config: "{{ lookup('file', 'interface_config') }}"
         diff_match: none
 
     - name: nxos replace config
-      cli_config:
-        replace: 'bootflash:nxoscfg'
+      ansible.netcommon.cli_config:
+        replace: bootflash:nxoscfg
 
     - name: junos replace config
-      cli_config:
-        replace: '/var/home/ansible/junos01.cfg'
+      ansible.netcommon.cli_config:
+        replace: /var/home/ansible/junos01.cfg
 
     - name: commit with comment
-      cli_config:
+      ansible.netcommon.cli_config:
         config: set system host-name foo
         commit_comment: this is a test
 
     - name: configurable backup path
-      cli_config:
+      ansible.netcommon.cli_config:
         config: "{{ lookup('template', 'basic/config.j2') }}"
         backup: yes
         backup_options:
@@ -411,11 +410,6 @@ Common return values are documented :ref:`here <common_return_values>`, the foll
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

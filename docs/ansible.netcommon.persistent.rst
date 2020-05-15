@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.persistent_:
 
@@ -67,11 +65,6 @@ Parameters
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

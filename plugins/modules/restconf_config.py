@@ -7,14 +7,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: restconf_config
+DOCUMENTATION = """
+module: restconf_config
 author: Ganesh Nalawade (@ganeshrn)
 short_description: Handles create, update, read and delete of configuration data on
   RESTCONF enabled devices.
@@ -22,6 +16,7 @@ description:
 - RESTCONF is a standard mechanisms to allow web applications to configure and manage
   data. RESTCONF is a IETF standard and documented on RFC 8040.
 - This module allows the user to configure data on RESTCONF enabled devices.
+version_added: 1.0.0
 options:
   path:
     description:
@@ -57,23 +52,23 @@ options:
 
 EXAMPLES = """
 - name: create l3vpn services
-  restconf_config:
+  ansible.netcommon.restconf_config:
     path: /config/ietf-l3vpn-svc:l3vpn-svc/vpn-services
     content: |
-          {
-            "vpn-service":[
-                            {
-                              "vpn-id": "red_vpn2",
-                              "customer-name": "blue",
-                              "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
-                            },
-                            {
-                              "vpn-id": "blue_vpn1",
-                              "customer-name": "red",
-                              "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
-                            }
-                          ]
-           }
+      {
+        "vpn-service":[
+                        {
+                          "vpn-id": "red_vpn2",
+                          "customer-name": "blue",
+                          "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
+                        },
+                        {
+                          "vpn-id": "blue_vpn1",
+                          "customer-name": "red",
+                          "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
+                        }
+                      ]
+       }
 """
 
 RETURN = """
@@ -133,9 +128,7 @@ def main():
     argument_spec = dict(
         path=dict(required=True),
         content=dict(),
-        method=dict(
-            choices=["post", "put", "patch", "delete"], default="post"
-        ),
+        method=dict(choices=["post", "put", "patch", "delete"], default="post"),
         format=dict(choices=["json", "xml"], default="json"),
     )
     required_if = [
@@ -145,9 +138,7 @@ def main():
     ]
 
     module = AnsibleModule(
-        argument_spec=argument_spec,
-        required_if=required_if,
-        supports_check_mode=True,
+        argument_spec=argument_spec, required_if=required_if, supports_check_mode=True,
     )
 
     path = module.params["path"]
@@ -179,15 +170,12 @@ def main():
                 result["changed"] = True
             else:
                 warnings.append(
-                    "delete not executed as resource '%s' does not exist"
-                    % path
+                    "delete not executed as resource '%s' does not exist" % path
                 )
         else:
             if running:
                 if method == "post":
-                    module.fail_json(
-                        msg="resource '%s' already exist" % path, code=409
-                    )
+                    module.fail_json(msg="resource '%s' already exist" % path, code=409)
                 diff = dict_diff(running, candidate)
                 result["candidate"] = candidate
                 result["running"] = running

@@ -9,19 +9,14 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: net_put
+DOCUMENTATION = """
+module: net_put
 author: Deepak Agrawal (@dagrawal)
 short_description: Copy a file from Ansible Controller to a network device
 description:
 - This module provides functionality to copy file from Ansible controller to network
   devices.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -68,14 +63,14 @@ notes:
 
 EXAMPLES = """
 - name: copy file from ansible controller to a network device
-  net_put:
+  ansible.netcommon.net_put:
     src: running_cfg_ios1.txt
 
 - name: copy file at root dir of flash in slot 3 of sw1(ios)
-  net_put:
+  ansible.netcommon.net_put:
     src: running_cfg_sw1.txt
     protocol: sftp
-    dest : flash3:/running_cfg_sw1.txt
+    dest: flash3:/running_cfg_sw1.txt
 """
 
 RETURN = """

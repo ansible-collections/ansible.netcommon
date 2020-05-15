@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_l3_interface_:
 
 
-ansible.netcommon.net_l3_interface -- Manage L3 interfaces on network devices
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_l3_interface -- (deprecated) Manage L3 interfaces on network devices
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -165,26 +164,26 @@ Examples
 
     
     - name: Set eth0 IPv4 address
-      net_l3_interface:
+      ansible.netcommon.net_l3_interface:
         name: eth0
         ipv4: 192.168.0.1/24
 
     - name: Remove eth0 IPv4 address
-      net_l3_interface:
+      ansible.netcommon.net_l3_interface:
         name: eth0
         state: absent
 
     - name: Set IP addresses on aggregate
-      net_l3_interface:
+      ansible.netcommon.net_l3_interface:
         aggregate:
-          - { name: eth1, ipv4: 192.168.2.10/24 }
-          - { name: eth2, ipv4: 192.168.3.10/24, ipv6: "fd5d:12c9:2201:1::1/64" }
+        - {name: eth1, ipv4: 192.168.2.10/24}
+        - {name: eth2, ipv4: 192.168.3.10/24, ipv6: fd5d:12c9:2201:1::1/64}
 
     - name: Remove IP addresses on aggregate
-      net_l3_interface:
+      ansible.netcommon.net_l3_interface:
         aggregate:
-          - { name: eth1, ipv4: 192.168.2.10/24 }
-          - { name: eth2, ipv4: 192.168.3.10/24, ipv6: "fd5d:12c9:2201:1::1/64" }
+        - {name: eth1, ipv4: 192.168.2.10/24}
+        - {name: eth2, ipv4: 192.168.3.10/24, ipv6: fd5d:12c9:2201:1::1/64}
         state: absent
 
 

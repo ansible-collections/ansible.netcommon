@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.enable_:
 
@@ -76,11 +74,6 @@ Notes
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_banner_:
 
 
-ansible.netcommon.net_banner -- Manage multiline banners on network devices
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_banner -- (deprecated) Manage multiline banners on network devices
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -117,7 +116,7 @@ Examples
 
     
     - name: configure the login banner
-      net_banner:
+      ansible.netcommon.net_banner:
         banner: login
         text: |
           this is my login banner
@@ -126,13 +125,13 @@ Examples
         state: present
 
     - name: remove the motd banner
-      net_banner:
+      ansible.netcommon.net_banner:
         banner: motd
         state: absent
 
     - name: Configure banner from file
-      net_banner:
-        banner:  motd
+      ansible.netcommon.net_banner:
+        banner: motd
         text: "{{ lookup('file', './config_partial/raw_banner.cfg') }}"
         state: present
 

@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_logging_:
 
 
-ansible.netcommon.net_logging -- Manage logging on network devices
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_logging -- (deprecated) Manage logging on network devices
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -186,25 +185,25 @@ Examples
 
     
     - name: configure console logging
-      net_logging:
+      ansible.netcommon.net_logging:
         dest: console
         facility: any
         level: critical
 
     - name: remove console logging configuration
-      net_logging:
+      ansible.netcommon.net_logging:
         dest: console
         state: absent
 
     - name: configure host logging
-      net_logging:
+      ansible.netcommon.net_logging:
         dest: host
         name: 192.0.2.1
         facility: kernel
         level: critical
 
     - name: Configure file logging using aggregate
-      net_logging:
+      ansible.netcommon.net_logging:
         dest: file
         aggregate:
         - name: test-1
@@ -214,7 +213,7 @@ Examples
           facility: kernel
           level: emergency
     - name: Delete file logging using aggregate
-      net_logging:
+      ansible.netcommon.net_logging:
         dest: file
         aggregate:
         - name: test-1

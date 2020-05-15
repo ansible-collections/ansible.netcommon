@@ -9,18 +9,14 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-DOCUMENTATION = """module: net_lldp_interface
+DOCUMENTATION = """
+module: net_lldp_interface
 author: Ganesh Nalawade (@ganeshrn)
-short_description: Manage LLDP interfaces configuration on network devices
+short_description: (deprecated) Manage LLDP interfaces configuration on network devices
 description:
 - This module provides declarative management of LLDP interfaces configuration on
   network devices.
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_lldp_interfaces" module
@@ -46,41 +42,42 @@ options:
     - absent
     - enabled
     - disabled
+
 """
 
 EXAMPLES = """
 - name: Configure LLDP on specific interfaces
-  net_lldp_interface:
+  ansible.netcommon.net_lldp_interface:
     name: eth1
     state: present
 
 - name: Disable LLDP on specific interfaces
-  net_lldp_interface:
+  ansible.netcommon.net_lldp_interface:
     name: eth1
     state: disabled
 
 - name: Enable LLDP on specific interfaces
-  net_lldp_interface:
+  ansible.netcommon.net_lldp_interface:
     name: eth1
     state: enabled
 
 - name: Delete LLDP on specific interfaces
-  net_lldp_interface:
+  ansible.netcommon.net_lldp_interface:
     name: eth1
     state: absent
 
 - name: Create aggregate of LLDP interface configurations
-  net_lldp_interface:
+  ansible.netcommon.net_lldp_interface:
     aggregate:
-    - { name: eth1 }
-    - { name: eth2 }
+    - {name: eth1}
+    - {name: eth2}
     state: present
 
 - name: Delete aggregate of LLDP interface configurations
-  net_lldp_interface:
+  ansible.netcommon.net_lldp_interface:
     aggregate:
-    - { name: eth1 }
-    - { name: eth2 }
+    - {name: eth1}
+    - {name: eth2}
     state: absent
 """
 

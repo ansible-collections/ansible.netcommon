@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.netconf_config_:
 
@@ -7,6 +5,7 @@
 ansible.netcommon.netconf_config -- netconf device configuration
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -49,7 +48,7 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                                                                    <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>yes</li>
                                                                                     </ul>
@@ -163,7 +162,7 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                                                                    <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>yes</li>
                                                                                     </ul>
@@ -224,7 +223,7 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                                                                    <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>yes</li>
                                                                                     </ul>
@@ -586,47 +585,47 @@ Examples
 
     
     - name: use lookup filter to provide xml configuration
-      netconf_config:
+      ansible.netcommon.netconf_config:
         content: "{{ lookup('file', './config.xml') }}"
 
     - name: set ntp server in the device
-      netconf_config:
+      ansible.netcommon.netconf_config:
         content: |
-            <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
-                <system xmlns="urn:ietf:params:xml:ns:yang:ietf-system">
-                    <ntp>
-                        <enabled>true</enabled>
-                        <server>
-                            <name>ntp1</name>
-                            <udp><address>127.0.0.1</address></udp>
-                        </server>
-                    </ntp>
-                </system>
-            </config>
+          <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+              <system xmlns="urn:ietf:params:xml:ns:yang:ietf-system">
+                  <ntp>
+                      <enabled>true</enabled>
+                      <server>
+                          <name>ntp1</name>
+                          <udp><address>127.0.0.1</address></udp>
+                      </server>
+                  </ntp>
+              </system>
+          </config>
 
     - name: wipe ntp configuration
-      netconf_config:
+      ansible.netcommon.netconf_config:
         content: |
-            <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
-                <system xmlns="urn:ietf:params:xml:ns:yang:ietf-system">
-                    <ntp>
-                        <enabled>false</enabled>
-                        <server operation="remove">
-                            <name>ntp1</name>
-                        </server>
-                    </ntp>
-                </system>
-            </config>
+          <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+              <system xmlns="urn:ietf:params:xml:ns:yang:ietf-system">
+                  <ntp>
+                      <enabled>false</enabled>
+                      <server operation="remove">
+                          <name>ntp1</name>
+                      </server>
+                  </ntp>
+              </system>
+          </config>
 
     - name: configure interface while providing different private key file path (for connection=netconf)
-      netconf_config:
+      ansible.netcommon.netconf_config:
         backup: yes
       register: backup_junos_location
       vars:
         ansible_private_key_file: /home/admin/.ssh/newprivatekeyfile
 
     - name: configurable backup path
-      netconf_config:
+      ansible.netcommon.netconf_config:
         backup: yes
         backup_options:
           filename: backup.cfg
@@ -704,11 +703,6 @@ Common return values are documented :ref:`here <common_return_values>`, the foll
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

@@ -9,14 +9,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: cli_config
+DOCUMENTATION = """
+module: cli_config
 author: Trishna Guha (@trishnaguha)
 notes:
 - The commands will be returned only for platforms that do not support onbox diff.
@@ -26,6 +20,7 @@ short_description: Push text based configuration to network devices over network
 description:
 - This module provides platform agnostic way of pushing text based configuration to
   network devices over network_cli connection plugin.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -59,7 +54,7 @@ options:
       playbook root directory or role root directory, if playbook is part of an ansible
       role. If the directory does not exist, it is created.
     type: bool
-    default: 'no'
+    default: no
   rollback:
     description:
     - The C(rollback) argument instructs the module to rollback the current configuration
@@ -80,7 +75,7 @@ options:
       from the device.  When the value is set to true, the command used to collect
       the running-config is append with the all keyword.  When the value is set to
       false, the command is issued without the all keyword.
-    default: 'no'
+    default: no
     type: bool
   multiline_delimiter:
     description:
@@ -148,40 +143,40 @@ options:
 
 EXAMPLES = """
 - name: configure device with config
-  cli_config:
+  ansible.netcommon.cli_config:
     config: "{{ lookup('template', 'basic/config.j2') }}"
 
 - name: multiline config
-  cli_config:
+  ansible.netcommon.cli_config:
     config: |
       hostname foo
       feature nxapi
 
 - name: configure device with config with defaults enabled
-  cli_config:
+  ansible.netcommon.cli_config:
     config: "{{ lookup('template', 'basic/config.j2') }}"
     defaults: yes
 
 - name: Use diff_match
-  cli_config:
+  ansible.netcommon.cli_config:
     config: "{{ lookup('file', 'interface_config') }}"
     diff_match: none
 
 - name: nxos replace config
-  cli_config:
-    replace: 'bootflash:nxoscfg'
+  ansible.netcommon.cli_config:
+    replace: bootflash:nxoscfg
 
 - name: junos replace config
-  cli_config:
-    replace: '/var/home/ansible/junos01.cfg'
+  ansible.netcommon.cli_config:
+    replace: /var/home/ansible/junos01.cfg
 
 - name: commit with comment
-  cli_config:
+  ansible.netcommon.cli_config:
     config: set system host-name foo
     commit_comment: this is a test
 
 - name: configurable backup path
-  cli_config:
+  ansible.netcommon.cli_config:
     config: "{{ lookup('template', 'basic/config.j2') }}"
     backup: yes
     backup_options:
@@ -238,9 +233,7 @@ def validate_args(module, device_operations):
                 )
 
 
-def run(
-    module, device_operations, connection, candidate, running, rollback_id
-):
+def run(module, device_operations, connection, candidate, running, rollback_id):
     result = {}
     resp = {}
     config_diff = []
@@ -260,11 +253,7 @@ def run(
     elif replace in ("no", "false", "False"):
         replace = False
 
-    if (
-        replace is not None
-        and replace not in [True, False]
-        and candidate is not None
-    ):
+    if replace is not None and replace not in [True, False] and candidate is not None:
         module.fail_json(
             msg="Replace value '%s' is a configuration file path already"
             " present on the device. Hence 'replace' and 'config' options"
@@ -278,13 +267,9 @@ def run(
 
     elif device_operations.get("supports_onbox_diff"):
         if diff_replace:
-            module.warn(
-                "diff_replace is ignored as the device supports onbox diff"
-            )
+            module.warn("diff_replace is ignored as the device supports onbox diff")
         if diff_match:
-            module.warn(
-                "diff_mattch is ignored as the device supports onbox diff"
-            )
+            module.warn("diff_mattch is ignored as the device supports onbox diff")
         if diff_ignore_lines:
             module.warn(
                 "diff_ignore_lines is ignored as the device supports onbox diff"
@@ -412,9 +397,7 @@ def main():
 
     candidate = module.params["config"]
     candidate = (
-        to_text(candidate, errors="surrogate_then_replace")
-        if candidate
-        else None
+        to_text(candidate, errors="surrogate_then_replace") if candidate else None
     )
     running = connection.get_config(flags=flags)
     rollback_id = module.params["rollback"]

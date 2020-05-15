@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.napalm_:
 
@@ -262,11 +260,6 @@ Parameters
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

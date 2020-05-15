@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.telnet_:
 
@@ -7,6 +5,7 @@
 ansible.netcommon.telnet -- Executes a low-down and dirty telnet command
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -252,27 +251,27 @@ Examples
 
     
     - name: send configuration commands to IOS
-      telnet:
+      ansible.netcommon.telnet:
         user: cisco
         password: cisco
-        login_prompt: "Username: "
+        login_prompt: 'Username: '
         prompts:
-          - "[>#]"
+        - '[>#]'
         command:
-          - terminal length 0
-          - configure terminal
-          - hostname ios01
+        - terminal length 0
+        - configure terminal
+        - hostname ios01
 
     - name: run show commands
-      telnet:
+      ansible.netcommon.telnet:
         user: cisco
         password: cisco
-        login_prompt: "Username: "
+        login_prompt: 'Username: '
         prompts:
-          - "[>#]"
+        - '[>#]'
         command:
-          - terminal length 0
-          - show version
+        - terminal length 0
+        - show version
 
 
 
@@ -312,11 +311,6 @@ Common return values are documented :ref:`here <common_return_values>`, the foll
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

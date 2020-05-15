@@ -9,18 +9,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: net_vlan
+DOCUMENTATION = """
+module: net_vlan
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
-short_description: Manage VLANs on network devices
+short_description: (deprecated) Manage VLANs on network devices
 description:
 - This module provides declarative management of VLANs on network devices.
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_vlans" module
@@ -52,20 +47,21 @@ options:
     - absent
     - active
     - suspend
+
 """
 
 EXAMPLES = """
 - name: configure VLAN ID and name
-  net_vlan:
+  ansible.netcommon.net_vlan:
     vlan_id: 20
     name: test-vlan
 
 - name: remove configuration
-  net_vlan:
+  ansible.netcommon.net_vlan:
     state: absent
 
 - name: configure VLAN state
-  net_vlan:
+  ansible.netcommon.net_vlan:
     vlan_id:
     state: suspend
 

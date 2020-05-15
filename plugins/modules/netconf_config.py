@@ -8,14 +8,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: netconf_config
+DOCUMENTATION = """
+module: netconf_config
 author:
 - Leandro Lisboa Penz (@lpenz)
 - Ganesh Nalawade (@ganeshrn)
@@ -25,6 +19,7 @@ description:
   It is documented in RFC 6241.
 - This module allows the user to send a configuration XML file to a netconf device,
   and detects if there was a configuration change.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.netconf
 - ansible.netcommon.network_agnostic
@@ -97,7 +92,7 @@ options:
     - This argument will execute commit operation on remote device. It can be used
       to confirm a previous commit.
     type: bool
-    default: 'no'
+    default: no
   error_option:
     description:
     - This option controls the netconf server action after an error occurs while editing
@@ -129,13 +124,13 @@ options:
       playbook root directory or role root directory, if playbook is part of an ansible
       role. If the directory does not exist, it is created.
     type: bool
-    default: 'no'
+    default: no
   delete:
     description:
     - It instructs the module to delete the configuration from value mentioned in
       C(target) datastore.
     type: bool
-    default: 'no'
+    default: no
   commit:
     description:
     - This boolean flag controls if the configuration changes should be committed
@@ -201,47 +196,47 @@ notes:
 
 EXAMPLES = """
 - name: use lookup filter to provide xml configuration
-  netconf_config:
+  ansible.netcommon.netconf_config:
     content: "{{ lookup('file', './config.xml') }}"
 
 - name: set ntp server in the device
-  netconf_config:
+  ansible.netcommon.netconf_config:
     content: |
-        <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
-            <system xmlns="urn:ietf:params:xml:ns:yang:ietf-system">
-                <ntp>
-                    <enabled>true</enabled>
-                    <server>
-                        <name>ntp1</name>
-                        <udp><address>127.0.0.1</address></udp>
-                    </server>
-                </ntp>
-            </system>
-        </config>
+      <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+          <system xmlns="urn:ietf:params:xml:ns:yang:ietf-system">
+              <ntp>
+                  <enabled>true</enabled>
+                  <server>
+                      <name>ntp1</name>
+                      <udp><address>127.0.0.1</address></udp>
+                  </server>
+              </ntp>
+          </system>
+      </config>
 
 - name: wipe ntp configuration
-  netconf_config:
+  ansible.netcommon.netconf_config:
     content: |
-        <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
-            <system xmlns="urn:ietf:params:xml:ns:yang:ietf-system">
-                <ntp>
-                    <enabled>false</enabled>
-                    <server operation="remove">
-                        <name>ntp1</name>
-                    </server>
-                </ntp>
-            </system>
-        </config>
+      <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+          <system xmlns="urn:ietf:params:xml:ns:yang:ietf-system">
+              <ntp>
+                  <enabled>false</enabled>
+                  <server operation="remove">
+                      <name>ntp1</name>
+                  </server>
+              </ntp>
+          </system>
+      </config>
 
 - name: configure interface while providing different private key file path (for connection=netconf)
-  netconf_config:
+  ansible.netcommon.netconf_config:
     backup: yes
   register: backup_junos_location
   vars:
     ansible_private_key_file: /home/admin/.ssh/newprivatekeyfile
 
 - name: configurable backup path
-  netconf_config:
+  ansible.netcommon.netconf_config:
     backup: yes
     backup_options:
       filename: backup.cfg
@@ -315,18 +310,12 @@ def main():
         ),
         source_datastore=dict(aliases=["source"]),
         format=dict(choices=["xml", "text"], default="xml"),
-        lock=dict(
-            choices=["never", "always", "if-supported"], default="always"
-        ),
+        lock=dict(choices=["never", "always", "if-supported"], default="always"),
         default_operation=dict(choices=["merge", "replace", "none"]),
         confirm=dict(type="int", default=0),
         confirm_commit=dict(type="bool", default=False),
         error_option=dict(
-            choices=[
-                "stop-on-error",
-                "continue-on-error",
-                "rollback-on-error",
-            ],
+            choices=["stop-on-error", "continue-on-error", "rollback-on-error",],
             default="stop-on-error",
         ),
         backup=dict(type="bool", default=False),
@@ -358,22 +347,14 @@ def main():
             removed_in_version=2.11,
             type="path",
         ),
-        "hostkey_verify": dict(
-            removed_in_version=2.11, type="bool", default=True
-        ),
-        "look_for_keys": dict(
-            removed_in_version=2.11, type="bool", default=True
-        ),
+        "hostkey_verify": dict(removed_in_version=2.11, type="bool", default=True),
+        "look_for_keys": dict(removed_in_version=2.11, type="bool", default=True),
         "timeout": dict(removed_in_version=2.11, type="int", default=10),
     }
     argument_spec.update(netconf_top_spec)
 
-    mutually_exclusive = [
-        ("content", "src", "source", "delete", "confirm_commit")
-    ]
-    required_one_of = [
-        ("content", "src", "source", "delete", "confirm_commit")
-    ]
+    mutually_exclusive = [("content", "src", "source", "delete", "confirm_commit")]
+    required_one_of = [("content", "src", "source", "delete", "confirm_commit")]
 
     module = AnsibleModule(
         argument_spec=argument_spec,
@@ -405,16 +386,12 @@ def main():
     operations = capabilities["device_operations"]
 
     supports_commit = operations.get("supports_commit", False)
-    supports_writable_running = operations.get(
-        "supports_writable_running", False
-    )
+    supports_writable_running = operations.get("supports_writable_running", False)
     supports_startup = operations.get("supports_startup", False)
 
     # identify target datastore
     if target == "candidate" and not supports_commit:
-        module.fail_json(
-            msg=":candidate is not supported by this netconf server"
-        )
+        module.fail_json(msg=":candidate is not supported by this netconf server")
     elif target == "running" and not supports_writable_running:
         module.fail_json(
             msg=":writable-running is not supported by this netconf server"
@@ -437,9 +414,7 @@ def main():
         )
 
     if confirm_commit and not operations.get("supports_confirm_commit", False):
-        module.fail_json(
-            msg="confirm commit is not supported by Netconf server"
-        )
+        module.fail_json(msg="confirm commit is not supported by Netconf server")
 
     if (confirm > 0) and not operations.get("supports_confirm_commit", False):
         module.fail_json(
@@ -448,9 +423,7 @@ def main():
         )
 
     if validate and not operations.get("supports_validate", False):
-        module.fail_json(
-            msg="validate is not supported by this netconf server"
-        )
+        module.fail_json(msg="validate is not supported by this netconf server")
 
     if filter_type == "xpath" and not operations.get("supports_xpath", False):
         module.fail_json(
@@ -468,8 +441,7 @@ def main():
     else:
         # lock is requested (always/if-supported) but not supported => issue warning
         module.warn(
-            "lock operation on '%s' source is not supported on this device"
-            % target
+            "lock operation on '%s' source is not supported on this device" % target
         )
         execute_lock = lock == "always"
 
@@ -482,9 +454,7 @@ def main():
     locked = False
     try:
         if module.params["backup"]:
-            response = get_config(
-                module, target, filter_spec, lock=execute_lock
-            )
+            response = get_config(module, target, filter_spec, lock=execute_lock)
             before = to_text(
                 tostring(response), errors="surrogate_then_replace"
             ).strip()
@@ -538,9 +508,7 @@ def main():
                 if not module.check_mode:
                     confirm_timeout = confirm if confirm > 0 else None
                     confirmed_commit = True if confirm_timeout else False
-                    conn.commit(
-                        confirmed=confirmed_commit, timeout=confirm_timeout
-                    )
+                    conn.commit(confirmed=confirmed_commit, timeout=confirm_timeout)
                 else:
                     conn.discard_changes()
 
@@ -565,9 +533,7 @@ def main():
                     }
 
     except ConnectionError as e:
-        module.fail_json(
-            msg=to_text(e, errors="surrogate_then_replace").strip()
-        )
+        module.fail_json(msg=to_text(e, errors="surrogate_then_replace").strip())
     finally:
         if locked:
             conn.unlock(target=target)

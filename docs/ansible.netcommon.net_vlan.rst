@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_vlan_:
 
 
-ansible.netcommon.net_vlan -- Manage VLANs on network devices
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_vlan -- (deprecated) Manage VLANs on network devices
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -167,16 +166,16 @@ Examples
 
     
     - name: configure VLAN ID and name
-      net_vlan:
+      ansible.netcommon.net_vlan:
         vlan_id: 20
         name: test-vlan
 
     - name: remove configuration
-      net_vlan:
+      ansible.netcommon.net_vlan:
         state: absent
 
     - name: configure VLAN state
-      net_vlan:
+      ansible.netcommon.net_vlan:
         vlan_id:
         state: suspend
 

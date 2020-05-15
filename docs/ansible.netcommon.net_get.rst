@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.net_get_:
 
@@ -7,6 +5,7 @@
 ansible.netcommon.net_get -- Copy a file from a network device to Ansible Controller
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -116,13 +115,13 @@ Examples
 
     
     - name: copy file from the network device to Ansible controller
-      net_get:
+      ansible.netcommon.net_get:
         src: running_cfg_ios1.txt
 
     - name: copy file from ios to common location at /tmp
-      net_get:
+      ansible.netcommon.net_get:
         src: running_cfg_sw1.txt
-        dest : /tmp/ios1.txt
+        dest: /tmp/ios1.txt
 
 
 
@@ -130,11 +129,6 @@ Examples
 
 Status
 ------
-
-
-
-
-
 
 
 Authors

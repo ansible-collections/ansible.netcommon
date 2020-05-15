@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_linkagg_:
 
 
-ansible.netcommon.net_linkagg -- Manage link aggregation groups on network devices
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_linkagg -- (deprecated) Manage link aggregation groups on network devices
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -101,7 +100,7 @@ Parameters
                                     </td>
                                 <td>
                                                                                                                                                                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li>on</li>
+                                                                                                                                                                                                                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>active</li>
                                                                                                                                                                                                 <li>passive</li>
                                                                                     </ul>
@@ -190,28 +189,28 @@ Examples
 
     
     - name: configure link aggregation group
-      net_linkagg:
+      ansible.netcommon.net_linkagg:
         name: bond0
         members:
-          - eth0
-          - eth1
+        - eth0
+        - eth1
 
     - name: remove configuration
-      net_linkagg:
+      ansible.netcommon.net_linkagg:
         name: bond0
         state: absent
 
     - name: Create aggregate of linkagg definitions
-      net_linkagg:
+      ansible.netcommon.net_linkagg:
         aggregate:
-            - { name: bond0, members: [eth1] }
-            - { name: bond1, members: [eth2] }
+        - {name: bond0, members: [eth1]}
+        - {name: bond1, members: [eth2]}
 
     - name: Remove aggregate of linkagg definitions
-      net_linkagg:
+      ansible.netcommon.net_linkagg:
         aggregate:
-          - name: bond0
-          - name: bond1
+        - name: bond0
+        - name: bond1
         state: absent
 
 

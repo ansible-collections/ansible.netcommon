@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_system_:
 
 
-ansible.netcommon.net_system -- Manage the system attributes on network devices
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_system -- (deprecated) Manage the system attributes on network devices
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -164,31 +163,31 @@ Examples
 
     
     - name: configure hostname and domain name
-      net_system:
+      ansible.netcommon.net_system:
         hostname: ios01
         domain_name: test.example.com
         domain_search:
-          - ansible.com
-          - redhat.com
-          - cisco.com
+        - ansible.com
+        - redhat.com
+        - cisco.com
 
     - name: domain search on single domain
-      net_system:
+      ansible.netcommon.net_system:
         domain_search: ansible.com
 
     - name: remove configuration
-      net_system:
+      ansible.netcommon.net_system:
         state: absent
 
     - name: configure DNS lookup sources
-      net_system:
+      ansible.netcommon.net_system:
         lookup_source: MgmtEth0/0/CPU0/0
 
     - name: configure name servers
-      net_system:
+      ansible.netcommon.net_system:
         name_servers:
-          - 8.8.8.8
-          - 8.8.4.4
+        - 8.8.8.8
+        - 8.8.4.4
 
 
 

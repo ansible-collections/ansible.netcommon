@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_l2_interface_:
 
 
-ansible.netcommon.net_l2_interface -- Manage Layer-2 interface on network devices
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_l2_interface -- (deprecated) Manage Layer-2 interface on network devices
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -202,13 +201,13 @@ Examples
 
     
     - name: configure Layer-2 interface
-      net_l2_interface:
+      ansible.netcommon.net_l2_interface:
         name: gigabitethernet0/0/1
         mode: access
         access_vlan: 30
 
     - name: remove Layer-2 interface configuration
-      net_l2_interface:
+      ansible.netcommon.net_l2_interface:
         name: gigabitethernet0/0/1
         state: absent
 

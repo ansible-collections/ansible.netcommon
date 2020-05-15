@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_interface_:
 
 
-ansible.netcommon.net_interface -- Manage Interface on network devices
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_interface -- (deprecated) Manage Interface on network devices
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -279,54 +278,54 @@ Examples
 
     
     - name: configure interface
-      net_interface:
+      ansible.netcommon.net_interface:
         name: ge-0/0/1
         description: test-interface
 
     - name: remove interface
-      net_interface:
+      ansible.netcommon.net_interface:
         name: ge-0/0/1
         state: absent
 
     - name: make interface up
-      net_interface:
+      ansible.netcommon.net_interface:
         name: ge-0/0/1
         description: test-interface
-        enabled: True
+        enabled: true
 
     - name: make interface down
-      net_interface:
+      ansible.netcommon.net_interface:
         name: ge-0/0/1
         description: test-interface
-        enabled: False
+        enabled: false
 
     - name: Create interface using aggregate
-      net_interface:
+      ansible.netcommon.net_interface:
         aggregate:
-          - { name: ge-0/0/1, description: test-interface-1 }
-          - { name: ge-0/0/2, description: test-interface-2 }
+        - {name: ge-0/0/1, description: test-interface-1}
+        - {name: ge-0/0/2, description: test-interface-2}
         speed: 1g
         duplex: full
         mtu: 512
 
     - name: Delete interface using aggregate
-      net_interface:
+      ansible.netcommon.net_interface:
         aggregate:
-          - { name: ge-0/0/1 }
-          - { name: ge-0/0/2 }
+        - {name: ge-0/0/1}
+        - {name: ge-0/0/2}
         state: absent
 
     - name: Check intent arguments
-      net_interface:
+      ansible.netcommon.net_interface:
         name: fxp0
         state: up
         tx_rate: ge(0)
         rx_rate: le(0)
 
     - name: Config + intent
-      net_interface:
+      ansible.netcommon.net_interface:
         name: fxp0
-        enabled: False
+        enabled: false
         state: down
 
 

@@ -1,12 +1,11 @@
-:source: 
-
 
 .. _ansible.netcommon.net_user_:
 
 
-ansible.netcommon.net_user -- Manage the aggregate of local users on network device
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_user -- (deprecated) Manage the aggregate of local users on network device
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -244,27 +243,27 @@ Examples
 
     
     - name: create a new user
-      net_user:
+      ansible.netcommon.net_user:
         name: ansible
         sshkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
         state: present
 
     - name: remove all users except admin
-      net_user:
+      ansible.netcommon.net_user:
         purge: yes
 
     - name: set multiple users to privilege level 15
-      net_user:
+      ansible.netcommon.net_user:
         aggregate:
-          - { name: netop }
-          - { name: netend }
+        - {name: netop}
+        - {name: netend}
         privilege: 15
         state: present
 
     - name: Change Password for User netop
-      net_user:
+      ansible.netcommon.net_user:
         name: netop
-        configured_password: "{{ new_password }}"
+        configured_password: '{{ new_password }}'
         update_password: always
         state: present
 

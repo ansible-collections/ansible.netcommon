@@ -1,5 +1,3 @@
-:source: 
-
 
 .. _ansible.netcommon.restconf_get_:
 
@@ -7,6 +5,7 @@
 ansible.netcommon.restconf_get -- Fetch configuration/state data from RESTCONF enabled devices.
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+.. versionadded:: 1.0.0
 
 .. contents::
    :local:
@@ -106,8 +105,8 @@ Examples
 
     
     - name: get l3vpn services
-      restconf_get:
-          path: /config/ietf-l3vpn-svc:l3vpn-svc/vpn-services
+      ansible.netcommon.restconf_get:
+        path: /config/ietf-l3vpn-svc:l3vpn-svc/vpn-services
 
 
 
@@ -157,11 +156,6 @@ Common return values are documented :ref:`here <common_return_values>`, the foll
 
 Status
 ------
-
-
-
-
-
 
 
 Authors
