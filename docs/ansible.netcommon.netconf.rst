@@ -2,9 +2,11 @@
 .. _ansible.netcommon.netconf_:
 
 
+*****
 ansible.netcommon.netconf
+*****
 
-Provides a persistent connection using the netconf protocol
+**Provides a persistent connection using the netconf protocol**
 
 
 

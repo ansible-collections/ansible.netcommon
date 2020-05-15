@@ -2,9 +2,11 @@
 .. _ansible.netcommon.network_cli_:
 
 
+*****
 ansible.netcommon.network_cli
+*****
 
-Use network_cli to run command on network appliances
+**Use network_cli to run command on network appliances**
 
 
 

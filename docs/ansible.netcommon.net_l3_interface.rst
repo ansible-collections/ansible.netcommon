@@ -2,9 +2,11 @@
 .. _ansible.netcommon.net_l3_interface_:
 
 
+*****
 ansible.netcommon.net_l3_interface
+*****
 
-(deprecated) Manage L3 interfaces on network devices
+**(deprecated) Manage L3 interfaces on network devices**
 
 
 Version added: 1.0.0

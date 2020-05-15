@@ -2,9 +2,11 @@
 .. _ansible.netcommon.net_user_:
 
 
+*****
 ansible.netcommon.net_user
+*****
 
-(deprecated) Manage the aggregate of local users on network device
+**(deprecated) Manage the aggregate of local users on network device**
 
 
 Version added: 1.0.0

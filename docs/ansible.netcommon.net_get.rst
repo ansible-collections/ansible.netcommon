@@ -2,9 +2,11 @@
 .. _ansible.netcommon.net_get_:
 
 
+*****
 ansible.netcommon.net_get
+*****
 
-Copy a file from a network device to Ansible Controller
+**Copy a file from a network device to Ansible Controller**
 
 
 Version added: 1.0.0

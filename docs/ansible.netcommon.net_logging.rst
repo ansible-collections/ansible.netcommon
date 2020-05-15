@@ -2,9 +2,11 @@
 .. _ansible.netcommon.net_logging_:
 
 
+*****
 ansible.netcommon.net_logging
+*****
 
-(deprecated) Manage logging on network devices
+**(deprecated) Manage logging on network devices**
 
 
 Version added: 1.0.0

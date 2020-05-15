@@ -2,9 +2,11 @@
 .. _ansible.netcommon.cli_command_:
 
 
+*****
 ansible.netcommon.cli_command
+*****
 
-Run a cli command on cli-based network devices
+**Run a cli command on cli-based network devices**
 
 
 Version added: 1.0.0

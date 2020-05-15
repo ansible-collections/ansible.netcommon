@@ -2,9 +2,11 @@
 .. _ansible.netcommon.net_put_:
 
 
+*****
 ansible.netcommon.net_put
+*****
 
-Copy a file from Ansible Controller to a network device
+**Copy a file from Ansible Controller to a network device**
 
 
 Version added: 1.0.0

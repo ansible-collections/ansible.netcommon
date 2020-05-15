@@ -2,9 +2,11 @@
 .. _ansible.netcommon.net_linkagg_:
 
 
+*****
 ansible.netcommon.net_linkagg
+*****
 
-(deprecated) Manage link aggregation groups on network devices
+**(deprecated) Manage link aggregation groups on network devices**
 
 
 Version added: 1.0.0

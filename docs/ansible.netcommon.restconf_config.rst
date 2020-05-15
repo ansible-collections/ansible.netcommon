@@ -2,9 +2,11 @@
 .. _ansible.netcommon.restconf_config_:
 
 
+*****
 ansible.netcommon.restconf_config
+*****
 
-Handles create, update, read and delete of configuration data on RESTCONF enabled devices.
+**Handles create, update, read and delete of configuration data on RESTCONF enabled devices.**
 
 
 Version added: 1.0.0
