@@ -2,8 +2,10 @@
 .. _ansible.netcommon.netconf_rpc_:
 
 
-ansible.netcommon.netconf_rpc -- Execute operations on NETCONF enabled network devices.
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.netconf_rpc
+
+Execute operations on NETCONF enabled network devices.
+
 
 Version added: 1.0.0
 

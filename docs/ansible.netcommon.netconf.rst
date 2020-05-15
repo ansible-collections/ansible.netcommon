@@ -2,8 +2,10 @@
 .. _ansible.netcommon.netconf_:
 
 
-ansible.netcommon.netconf -- Provides a persistent connection using the netconf protocol
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.netconf
+
+Provides a persistent connection using the netconf protocol
+
 
 
 .. contents::

@@ -2,8 +2,10 @@
 .. _ansible.netcommon.net_lldp_:
 
 
-ansible.netcommon.net_lldp -- (deprecated) Manage LLDP service configuration on network devices
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_lldp
+
+(deprecated) Manage LLDP service configuration on network devices
+
 
 Version added: 1.0.0
 

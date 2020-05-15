@@ -2,8 +2,10 @@
 .. _ansible.netcommon.napalm_:
 
 
-ansible.netcommon.napalm -- Provides persistent connection using NAPALM
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.napalm
+
+Provides persistent connection using NAPALM
+
 
 
 .. contents::

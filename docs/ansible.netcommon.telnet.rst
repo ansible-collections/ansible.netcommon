@@ -2,8 +2,10 @@
 .. _ansible.netcommon.telnet_:
 
 
-ansible.netcommon.telnet -- Executes a low-down and dirty telnet command
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.telnet
+
+Executes a low-down and dirty telnet command
+
 
 Version added: 1.0.0
 

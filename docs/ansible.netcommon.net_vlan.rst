@@ -2,8 +2,10 @@
 .. _ansible.netcommon.net_vlan_:
 
 
-ansible.netcommon.net_vlan -- (deprecated) Manage VLANs on network devices
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_vlan
+
+(deprecated) Manage VLANs on network devices
+
 
 Version added: 1.0.0
 

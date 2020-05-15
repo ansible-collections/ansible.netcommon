@@ -2,8 +2,10 @@
 .. _ansible.netcommon.httpapi_:
 
 
-ansible.netcommon.httpapi -- Use httpapi to run command on network appliances
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.httpapi
+
+Use httpapi to run command on network appliances
+
 
 
 .. contents::

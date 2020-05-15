@@ -2,8 +2,10 @@
 .. _ansible.netcommon.enable_:
 
 
-ansible.netcommon.enable -- Switch to elevated permissions on a network device
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.enable
+
+Switch to elevated permissions on a network device
+
 
 
 .. contents::

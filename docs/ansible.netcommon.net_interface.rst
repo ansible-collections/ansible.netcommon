@@ -2,8 +2,10 @@
 .. _ansible.netcommon.net_interface_:
 
 
-ansible.netcommon.net_interface -- (deprecated) Manage Interface on network devices
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_interface
+
+(deprecated) Manage Interface on network devices
+
 
 Version added: 1.0.0
 

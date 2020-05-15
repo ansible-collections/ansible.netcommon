@@ -2,8 +2,10 @@
 .. _ansible.netcommon.persistent_:
 
 
-ansible.netcommon.persistent -- Use a persistent unix socket for connection
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.persistent
+
+Use a persistent unix socket for connection
+
 
 
 .. contents::

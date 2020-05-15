@@ -2,8 +2,10 @@
 .. _ansible.netcommon.cli_config_:
 
 
-ansible.netcommon.cli_config -- Push text based configuration to network devices over network_cli
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.cli_config
+
+Push text based configuration to network devices over network_cli
+
 
 Version added: 1.0.0
 

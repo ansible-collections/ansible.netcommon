@@ -2,8 +2,10 @@
 .. _ansible.netcommon.net_banner_:
 
 
-ansible.netcommon.net_banner -- (deprecated) Manage multiline banners on network devices
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_banner
+
+(deprecated) Manage multiline banners on network devices
+
 
 Version added: 1.0.0
 

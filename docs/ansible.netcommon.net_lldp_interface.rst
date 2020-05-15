@@ -2,8 +2,10 @@
 .. _ansible.netcommon.net_lldp_interface_:
 
 
-ansible.netcommon.net_lldp_interface -- (deprecated) Manage LLDP interfaces configuration on network devices
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_lldp_interface
+
+(deprecated) Manage LLDP interfaces configuration on network devices
+
 
 Version added: 1.0.0
 

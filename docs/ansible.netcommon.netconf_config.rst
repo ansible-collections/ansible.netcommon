@@ -2,8 +2,10 @@
 .. _ansible.netcommon.netconf_config_:
 
 
-ansible.netcommon.netconf_config -- netconf device configuration
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.netconf_config
+
+netconf device configuration
+
 
 Version added: 1.0.0
 

@@ -2,8 +2,10 @@
 .. _ansible.netcommon.net_ping_:
 
 
-ansible.netcommon.net_ping -- Tests reachability using ping from a network device
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_ping
+
+Tests reachability using ping from a network device
+
 
 Version added: 1.0.0
 

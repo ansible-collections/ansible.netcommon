@@ -2,8 +2,10 @@
 .. _ansible.netcommon.netconf_get_:
 
 
-ansible.netcommon.netconf_get -- Fetch configuration/state data from NETCONF enabled network devices.
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.netconf_get
+
+Fetch configuration/state data from NETCONF enabled network devices.
+
 
 Version added: 1.0.0
 

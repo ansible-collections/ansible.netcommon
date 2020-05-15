@@ -2,8 +2,10 @@
 .. _ansible.netcommon.net_vrf_:
 
 
-ansible.netcommon.net_vrf -- (deprecated) Manage VRFs on network devices
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.net_vrf
+
+(deprecated) Manage VRFs on network devices
+
 
 Version added: 1.0.0
 
