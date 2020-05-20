@@ -155,7 +155,8 @@ output:
   type: complex
   contains:
     formatted_output:
-      - Contains formatted response received from remote host as per the value in display format.
+      description:
+        - Contains formatted response received from remote host as per the value in display format.
 """
 import sys
 
