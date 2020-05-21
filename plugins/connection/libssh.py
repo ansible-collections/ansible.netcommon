@@ -326,7 +326,7 @@ class Connection(ConnectionBase):
         bufsize = 4096
 
         try:
-            chan = self.ssh.new_channel()
+            self.chan = self.ssh.new_channel()
         except Exception as e:
             text_e = to_text(e)
             msg = u"Failed to open session"
@@ -338,7 +338,7 @@ class Connection(ConnectionBase):
         # we give it one by default (pty=True in ansible.cfg), and we try
         # to initialise from the calling environment when sudoable is enabled
         if self.get_option("pty") and sudoable:
-            chan.request_shell()
+            self.chan.request_shell()
 
         display.vvv("EXEC %s" % cmd, host=self._play_context.remote_addr)
 
@@ -355,12 +355,12 @@ class Connection(ConnectionBase):
             if self.become and self.become.expect_prompt():
                 passprompt = False
                 become_sucess = False
-                chan.sendall(cmd)
+                self.chan.sendall(cmd)
 
                 while not (become_sucess or passprompt):
                     display.debug("Waiting for Privilege Escalation input")
-                    chan.poll(timeout=self._play_context.timeout)
-                    chunk = chan.recv(bufsize)
+                    self.chan.poll(timeout=self._play_context.timeout)
+                    chunk = self.chan.recv(bufsize)
                     display.debug("chunk is: %s" % chunk)
 
                     if not chunk:
@@ -392,7 +392,7 @@ class Connection(ConnectionBase):
                         become_pass = self.become.get_option(
                             "become_pass", playcontext=self._play_context
                         )
-                        chan.sendall(
+                        self.chan.sendall(
                             to_bytes(become_pass, errors="surrogate_or_strict")
                             + b"\n"
                         )
@@ -404,7 +404,7 @@ class Connection(ConnectionBase):
                     no_prompt_out += become_output
                     no_prompt_err += become_output
             else:
-                result = chan.exec_command(
+                result = self.chan.exec_command(
                     to_text(cmd, errors="surrogate_or_strict")
                 )
         except socket.timeout:
@@ -418,7 +418,7 @@ class Connection(ConnectionBase):
             out = result.stdout
             err = result.stderr
         else:
-            rc = chan.get_channel_exit_status()
+            rc = self.chan.get_channel_exit_status()
         return rc, out, err
 
     def put_file(self, in_path, out_path):
@@ -496,6 +496,10 @@ class Connection(ConnectionBase):
         if hasattr(self, "sftp"):
             if self.sftp is not None:
                 self.sftp.close()
+
+        if hasattr(self, "chan"):
+            if self.chan is not None:
+                self.chan.close()
 
         self.ssh.close()
         self._connected = False
