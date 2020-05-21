@@ -77,10 +77,7 @@ class ResourceModule(object):  # pylint: disable=R0902
         """
         command = self._tmplt.render(data, tmplt, negate)
         if command:
-            if isinstance(command, list):
-                self.commands.extend(command)
-            else:
-                self.commands.append(command)
+            self.commands.extend(to_list(command))
 
     def addcmd_first_found(self, data, tmplts, negate=False):
         """ addcmd first found

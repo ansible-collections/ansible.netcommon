@@ -78,9 +78,7 @@ class NetworkTemplate(object):
             return None
         if res and negate:
             if isinstance(res, list):
-                cmd = []
-                for each in res:
-                    cmd.append(("no " + each))
+                cmd = [("no " + each) for each in res]
                 return cmd
             return "no " + res
         return res
