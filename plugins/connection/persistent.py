@@ -7,7 +7,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Core Team
+author: Ansible Networking Team
 connection: persistent
 short_description: Use a persistent unix socket for connection
 description:
