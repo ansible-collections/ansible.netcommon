@@ -9,20 +9,15 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: net_static_route
+DOCUMENTATION = """
+module: net_static_route
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
 short_description: Manage static IP routes on network appliances (routers, switches
   et. al.)
 description:
 - This module provides declarative management of static IP routes on network appliances
   (routers, switches et. al.).
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_static_route" module

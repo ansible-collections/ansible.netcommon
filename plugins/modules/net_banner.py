@@ -7,19 +7,14 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: net_banner
+DOCUMENTATION = """
+module: net_banner
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
 short_description: Manage multiline banners on network devices
 description:
 - This will configure both login and motd banners on network devices. It allows playbooks
   to add or remove banner text from the active running configuration.
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_banner" module

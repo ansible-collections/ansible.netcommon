@@ -9,13 +9,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-DOCUMENTATION = """module: net_user
+DOCUMENTATION = """
+module: net_user
 author: Trishna Guha (@trishnaguha)
 short_description: Manage the aggregate of local users on network device
 description:
@@ -23,6 +18,7 @@ description:
   network devices. It allows playbooks to manage either individual usernames or the
   aggregate of usernames in the current running config. It also supports purging usernames
   from the configuration that are not explicitly defined.
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_user" module

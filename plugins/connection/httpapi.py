@@ -5,12 +5,14 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = """author: Ansible Networking Team
+DOCUMENTATION = """
+author: Ansible Networking Team
 connection: httpapi
 short_description: Use httpapi to run command on network appliances
 description:
 - This connection plugin provides a connection to remote devices over a HTTP(S)-based
   api.
+version_added: 1.0.0
 options:
   host:
     description:

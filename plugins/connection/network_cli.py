@@ -6,13 +6,15 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = """author: Ansible Networking Team
+DOCUMENTATION = """
+author: Ansible Networking Team
 connection: network_cli
 short_description: Use network_cli to run command on network appliances
 description:
 - This connection plugin provides a connection to remote devices over the SSH and
   implements a CLI shell.  This connection plugin is typically used by network devices
   for sending and receiving CLi commands to network devices.
+version_added: 1.0.0
 options:
   host:
     description:

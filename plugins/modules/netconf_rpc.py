@@ -9,14 +9,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: netconf_rpc
+DOCUMENTATION = """
+module: netconf_rpc
 author:
 - Ganesh Nalawade (@ganeshrn)
 - Sven Wisotzky (@wisotzky)
@@ -26,6 +20,7 @@ description:
   It is documented in RFC 6241.
 - This module allows the user to execute NETCONF RPC requests as defined by IETF RFC
   standards as well as proprietary requests.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:

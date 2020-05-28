@@ -9,20 +9,15 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: net_system
+DOCUMENTATION = """
+module: net_system
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
 short_description: Manage the system attributes on network devices
 description:
 - This module provides declarative management of node system attributes on network
   devices.  It provides an option to configure host system parameters or remove those
   parameters from the device active configuration.
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_system" module

@@ -6,18 +6,15 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "community",
-}
 
-DOCUMENTATION = """module: telnet
+DOCUMENTATION = """
+module: telnet
 short_description: Executes a low-down and dirty telnet command
 description:
 - Executes a low-down and dirty telnet command, not going through the module subsystem.
 - This is mostly to be used for enabling ssh on devices that only have telnet enabled
   by default.
+version_added: 1.0.0
 options:
   command:
     description:
