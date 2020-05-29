@@ -6,7 +6,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = """author: Ansible Networking Team
+DOCUMENTATION = """
+author: Ansible Networking Team
 connection: napalm
 short_description: Provides persistent connection using NAPALM
 description:
@@ -14,6 +15,7 @@ description:
   network device abstraction library.  This library requires certain features to be
   enabled on network devices depending on the destination device operating system.  The
   connection plugin requires C(napalm) to be installed locally on the Ansible controller.
+version_added: 1.0.0
 requirements:
 - napalm
 options:

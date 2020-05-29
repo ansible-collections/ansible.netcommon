@@ -8,14 +8,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: netconf_config
+DOCUMENTATION = """
+module: netconf_config
 author:
 - Leandro Lisboa Penz (@lpenz)
 - Ganesh Nalawade (@ganeshrn)
@@ -25,6 +19,7 @@ description:
   It is documented in RFC 6241.
 - This module allows the user to send a configuration XML file to a netconf device,
   and detects if there was a configuration change.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.netconf
 - ansible.netcommon.network_agnostic
@@ -97,7 +92,7 @@ options:
     - This argument will execute commit operation on remote device. It can be used
       to confirm a previous commit.
     type: bool
-    default: 'no'
+    default: no
   error_option:
     description:
     - This option controls the netconf server action after an error occurs while editing
@@ -129,13 +124,13 @@ options:
       playbook root directory or role root directory, if playbook is part of an ansible
       role. If the directory does not exist, it is created.
     type: bool
-    default: 'no'
+    default: no
   delete:
     description:
     - It instructs the module to delete the configuration from value mentioned in
       C(target) datastore.
     type: bool
-    default: 'no'
+    default: no
   commit:
     description:
     - This boolean flag controls if the configuration changes should be committed

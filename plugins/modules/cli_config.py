@@ -9,14 +9,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: cli_config
+DOCUMENTATION = """
+module: cli_config
 author: Trishna Guha (@trishnaguha)
 notes:
 - The commands will be returned only for platforms that do not support onbox diff.
@@ -26,6 +20,7 @@ short_description: Push text based configuration to network devices over network
 description:
 - This module provides platform agnostic way of pushing text based configuration to
   network devices over network_cli connection plugin.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -59,7 +54,7 @@ options:
       playbook root directory or role root directory, if playbook is part of an ansible
       role. If the directory does not exist, it is created.
     type: bool
-    default: 'no'
+    default: no
   rollback:
     description:
     - The C(rollback) argument instructs the module to rollback the current configuration
@@ -80,7 +75,7 @@ options:
       from the device.  When the value is set to true, the command used to collect
       the running-config is append with the all keyword.  When the value is set to
       false, the command is issued without the all keyword.
-    default: 'no'
+    default: no
     type: bool
   multiline_delimiter:
     description:

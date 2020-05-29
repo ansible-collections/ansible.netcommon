@@ -7,14 +7,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: restconf_config
+DOCUMENTATION = """
+module: restconf_config
 author: Ganesh Nalawade (@ganeshrn)
 short_description: Handles create, update, read and delete of configuration data on
   RESTCONF enabled devices.
@@ -22,6 +16,7 @@ description:
 - RESTCONF is a standard mechanisms to allow web applications to configure and manage
   data. RESTCONF is a IETF standard and documented on RFC 8040.
 - This module allows the user to configure data on RESTCONF enabled devices.
+version_added: 1.0.0
 options:
   path:
     description:

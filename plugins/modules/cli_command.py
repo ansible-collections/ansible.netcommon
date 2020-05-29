@@ -7,18 +7,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: cli_command
+DOCUMENTATION = """
+module: cli_command
 author: Nathaniel Case (@Qalthos)
 short_description: Run a cli command on cli-based network devices
 description:
 - Sends a command to a network device and returns the result read from the device.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:

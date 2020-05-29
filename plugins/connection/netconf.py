@@ -6,7 +6,8 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = """author: Ansible Networking Team
+DOCUMENTATION = """
+author: Ansible Networking Team
 connection: netconf
 short_description: Provides a persistent connection using the netconf protocol
 description:
@@ -15,6 +16,7 @@ description:
   and receiving RPC calls over NETCONF.
 - Note this connection plugin requires ncclient to be installed on the local Ansible
   controller.
+version_added: 1.0.0
 requirements:
 - ncclient
 options:
@@ -144,12 +146,10 @@ options:
     ini:
     - section: netconf_connection
       key: ssh_config
-      version_added: '2.7'
     env:
     - name: ANSIBLE_NETCONF_SSH_CONFIG
     vars:
     - name: ansible_netconf_ssh_config
-      version_added: '2.7'
   persistent_log_messages:
     type: boolean
     description:

@@ -20,11 +20,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = """author: Ansible Networking Team
+DOCUMENTATION = """
+author: Ansible Networking Team
 httpapi: restconf
 short_description: HttpApi Plugin for devices supporting Restconf API
 description:
 - This HttpApi plugin provides methods to connect to Restconf API endpoints.
+version_added: 1.0.0
 options:
   root_path:
     type: str

@@ -9,19 +9,14 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: net_linkagg
+DOCUMENTATION = """
+module: net_linkagg
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
 short_description: Manage link aggregation groups on network devices
 description:
 - This module provides declarative management of link aggregation groups on network
   devices.
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_lag_interfaces" module
@@ -41,7 +36,7 @@ options:
       when received them from another link.
     default: true
     choices:
-    - 'on'
+    - on
     - active
     - passive
   members:

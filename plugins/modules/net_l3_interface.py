@@ -9,18 +9,13 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["deprecated"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: net_l3_interface
+DOCUMENTATION = """
+module: net_l3_interface
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
 short_description: Manage L3 interfaces on network devices
 description:
 - This module provides declarative management of L3 interfaces on network devices.
+version_added: 1.0.0
 deprecated:
   removed_in: '2.13'
   alternative: Use platform-specific "[netos]_l3_interfaces" module

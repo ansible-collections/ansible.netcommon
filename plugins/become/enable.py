@@ -5,11 +5,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = """become: enable
+DOCUMENTATION = """
+author: Ansible Networking Team
+become: enable
 short_description: Switch to elevated permissions on a network device
 description:
 - This become plugins allows elevated permissions on a remote network device.
-author: ansible (@core)
+version_added: 1.0.0
 options:
   become_pass:
     description: password

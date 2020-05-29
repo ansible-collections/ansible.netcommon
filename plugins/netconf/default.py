@@ -20,13 +20,15 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = """author: Ansible Networking Team
+DOCUMENTATION = """
+author: Ansible Networking Team
 netconf: default
 short_description: Use default netconf plugin to run standard netconf commands as
   per RFC
 description:
 - This default plugin provides low level abstraction apis for sending and receiving
   netconf commands as per Netconf RFC specification.
+version_added: 1.0.0
 options:
   ncclient_device_handler:
     type: str

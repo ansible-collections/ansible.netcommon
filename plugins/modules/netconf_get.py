@@ -9,14 +9,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: netconf_get
+DOCUMENTATION = """
+module: netconf_get
 author:
 - Ganesh Nalawade (@ganeshrn)
 - Sven Wisotzky (@wisotzky)
@@ -26,6 +20,7 @@ description:
   It is documented in RFC 6241.
 - This module allows the user to fetch configuration and state data from NETCONF enabled
   network devices.
+version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:

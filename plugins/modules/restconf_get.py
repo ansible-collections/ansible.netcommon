@@ -7,14 +7,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {
-    "metadata_version": "1.1",
-    "status": ["preview"],
-    "supported_by": "network",
-}
-
-
-DOCUMENTATION = """module: restconf_get
+DOCUMENTATION = """
+module: restconf_get
 author: Ganesh Nalawade (@ganeshrn)
 short_description: Fetch configuration/state data from RESTCONF enabled devices.
 description:
@@ -23,6 +17,7 @@ description:
   RFC 8040.
 - This module allows the user to fetch configuration and state data from RESTCONF
   enabled devices.
+version_added: 1.0.0
 options:
   path:
     description:
