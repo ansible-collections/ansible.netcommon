@@ -2,6 +2,7 @@
 
 # (c) 2016, Leandro Lisboa Penz <lpenz at lpenz.org>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# pylint: skip-file
 
 from __future__ import absolute_import, division, print_function
 

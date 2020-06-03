@@ -25,6 +25,7 @@
 # LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
+# pylint: skip-file
 
 # Networking tools for network modules only
 
@@ -67,12 +68,16 @@ except ImportError:
     HAS_JINJA2 = False
 
 try:
-    # use C version if possible for speedup
-    from yaml import CSafeLoader as SafeLoader
-except ImportError:
-    from yaml import SafeLoader
+    import yaml
 
-from yaml import load
+    try:
+        # use C version if possible for speedup
+        from yaml import CSafeLoader as SafeLoader
+    except ImportError:
+        from yaml import SafeLoader
+    HAS_YAML = True
+except ImportError:
+    HAS_YAML = False
 
 OPERATORS = frozenset(["ge", "gt", "eq", "neq", "lt", "le"])
 ALIASES = frozenset(
@@ -767,7 +772,7 @@ def extract_argspec(doc_obj, argpsec):
 
 # TODO: Support extends_documentation_fragment
 def convert_doc_to_ansible_module_kwargs(doc):
-    doc_obj = load(doc, SafeLoader)
+    doc_obj = yaml.load(doc, SafeLoader)
     argspec = {}
     spec = {}
     extract_argspec(doc_obj, argspec)
