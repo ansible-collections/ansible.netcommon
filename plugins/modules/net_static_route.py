@@ -13,16 +13,16 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_static_route
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
-short_description: Manage static IP routes on network appliances (routers, switches
-  et. al.)
+short_description: (deprecated, removed after 2022-06-01) Manage static IP routes
+  on network appliances (routers, switches et. al.)
 description:
 - This module provides declarative management of static IP routes on network appliances
   (routers, switches et. al.).
 version_added: 1.0.0
 deprecated:
-  removed_in: '2.13'
   alternative: Use platform-specific "[netos]_static_route" module
   why: Updated modules released with more functionality
+  removed_at_date: '2022-06-01'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -54,33 +54,34 @@ options:
     choices:
     - present
     - absent
+
 """
 
 EXAMPLES = """
 - name: configure static route
-  net_static_route:
+  ansible.netcommon.net_static_route:
     prefix: 192.168.2.0
     mask: 255.255.255.0
     next_hop: 10.0.0.1
 
 - name: remove configuration
-  net_static_route:
+  ansible.netcommon.net_static_route:
     prefix: 192.168.2.0
     mask: 255.255.255.0
     next_hop: 10.0.0.1
     state: absent
 
 - name: configure aggregates of static routes
-  net_static_route:
+  ansible.netcommon.net_static_route:
     aggregate:
-      - { prefix: 192.168.2.0, mask: 255.255.255.0, next_hop: 10.0.0.1 }
-      - { prefix: 192.168.3.0, mask: 255.255.255.0, next_hop: 10.0.2.1 }
+    - {prefix: 192.168.2.0, mask: 255.255.255.0, next_hop: 10.0.0.1}
+    - {prefix: 192.168.3.0, mask: 255.255.255.0, next_hop: 10.0.2.1}
 
 - name: Remove static route collections
-  net_static_route:
+  ansible.netcommon.net_static_route:
     aggregate:
-      - { prefix: 172.24.1.0/24, next_hop: 192.168.42.64 }
-      - { prefix: 172.24.3.0/24, next_hop: 192.168.42.64 }
+    - {prefix: 172.24.1.0/24, next_hop: 192.168.42.64}
+    - {prefix: 172.24.3.0/24, next_hop: 192.168.42.64}
     state: absent
 """
 

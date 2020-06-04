@@ -11,15 +11,16 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_banner
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
-short_description: Manage multiline banners on network devices
+short_description: (deprecated, removed after 2022-06-01) Manage multiline banners
+  on network devices
 description:
 - This will configure both login and motd banners on network devices. It allows playbooks
   to add or remove banner text from the active running configuration.
 version_added: 1.0.0
 deprecated:
-  removed_in: '2.13'
   alternative: Use platform-specific "[netos]_banner" module
   why: Updated modules released with more functionality
+  removed_at_date: '2022-06-01'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -42,11 +43,12 @@ options:
     choices:
     - present
     - absent
+
 """
 
 EXAMPLES = """
 - name: configure the login banner
-  net_banner:
+  ansible.netcommon.net_banner:
     banner: login
     text: |
       this is my login banner
@@ -55,13 +57,13 @@ EXAMPLES = """
     state: present
 
 - name: remove the motd banner
-  net_banner:
+  ansible.netcommon.net_banner:
     banner: motd
     state: absent
 
 - name: Configure banner from file
-  net_banner:
-    banner:  motd
+  ansible.netcommon.net_banner:
+    banner: motd
     text: "{{ lookup('file', './config_partial/raw_banner.cfg') }}"
     state: present
 

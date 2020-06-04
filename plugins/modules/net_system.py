@@ -13,16 +13,17 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_system
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
-short_description: Manage the system attributes on network devices
+short_description: (deprecated, removed after 2022-06-01) Manage the system attributes
+  on network devices
 description:
 - This module provides declarative management of node system attributes on network
   devices.  It provides an option to configure host system parameters or remove those
   parameters from the device active configuration.
 version_added: 1.0.0
 deprecated:
-  removed_in: '2.13'
   alternative: Use platform-specific "[netos]_system" module
   why: Updated modules released with more functionality
+  removed_at_date: '2022-06-01'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -57,35 +58,36 @@ options:
     choices:
     - present
     - absent
+
 """
 
 EXAMPLES = """
 - name: configure hostname and domain name
-  net_system:
+  ansible.netcommon.net_system:
     hostname: ios01
     domain_name: test.example.com
     domain_search:
-      - ansible.com
-      - redhat.com
-      - cisco.com
+    - ansible.com
+    - redhat.com
+    - cisco.com
 
 - name: domain search on single domain
-  net_system:
+  ansible.netcommon.net_system:
     domain_search: ansible.com
 
 - name: remove configuration
-  net_system:
+  ansible.netcommon.net_system:
     state: absent
 
 - name: configure DNS lookup sources
-  net_system:
+  ansible.netcommon.net_system:
     lookup_source: MgmtEth0/0/CPU0/0
 
 - name: configure name servers
-  net_system:
+  ansible.netcommon.net_system:
     name_servers:
-      - 8.8.8.8
-      - 8.8.4.4
+    - 8.8.8.8
+    - 8.8.4.4
 """
 
 RETURN = """

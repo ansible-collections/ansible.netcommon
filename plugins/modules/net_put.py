@@ -63,14 +63,14 @@ notes:
 
 EXAMPLES = """
 - name: copy file from ansible controller to a network device
-  net_put:
+  ansible.netcommon.net_put:
     src: running_cfg_ios1.txt
 
 - name: copy file at root dir of flash in slot 3 of sw1(ios)
-  net_put:
+  ansible.netcommon.net_put:
     src: running_cfg_sw1.txt
     protocol: sftp
-    dest : flash3:/running_cfg_sw1.txt
+    dest: flash3:/running_cfg_sw1.txt
 """
 
 RETURN = """

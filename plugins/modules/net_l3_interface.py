@@ -13,14 +13,15 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_l3_interface
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
-short_description: Manage L3 interfaces on network devices
+short_description: (deprecated, removed after 2022-06-01) Manage L3 interfaces on
+  network devices
 description:
 - This module provides declarative management of L3 interfaces on network devices.
 version_added: 1.0.0
 deprecated:
-  removed_in: '2.13'
   alternative: Use platform-specific "[netos]_l3_interfaces" module
   why: Updated modules released with more functionality
+  removed_at_date: '2022-06-01'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -46,30 +47,31 @@ options:
     choices:
     - present
     - absent
+
 """
 
 EXAMPLES = """
 - name: Set eth0 IPv4 address
-  net_l3_interface:
+  ansible.netcommon.net_l3_interface:
     name: eth0
     ipv4: 192.168.0.1/24
 
 - name: Remove eth0 IPv4 address
-  net_l3_interface:
+  ansible.netcommon.net_l3_interface:
     name: eth0
     state: absent
 
 - name: Set IP addresses on aggregate
-  net_l3_interface:
+  ansible.netcommon.net_l3_interface:
     aggregate:
-      - { name: eth1, ipv4: 192.168.2.10/24 }
-      - { name: eth2, ipv4: 192.168.3.10/24, ipv6: "fd5d:12c9:2201:1::1/64" }
+    - {name: eth1, ipv4: 192.168.2.10/24}
+    - {name: eth2, ipv4: 192.168.3.10/24, ipv6: fd5d:12c9:2201:1::1/64}
 
 - name: Remove IP addresses on aggregate
-  net_l3_interface:
+  ansible.netcommon.net_l3_interface:
     aggregate:
-      - { name: eth1, ipv4: 192.168.2.10/24 }
-      - { name: eth2, ipv4: 192.168.3.10/24, ipv6: "fd5d:12c9:2201:1::1/64" }
+    - {name: eth1, ipv4: 192.168.2.10/24}
+    - {name: eth2, ipv4: 192.168.3.10/24, ipv6: fd5d:12c9:2201:1::1/64}
     state: absent
 """
 
