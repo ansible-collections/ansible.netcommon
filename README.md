@@ -8,50 +8,82 @@ This includes  connection plugins, such as ``network_cli``, ``httpapi``, and ``n
 
 ## Included content
 
-This collection includes:
-- Common network modules, such as ``net_*``, ``cli_*``, ``netconf_*``, and ``restconf_*`` modules.
-- Common connection plugins, such ``network_cli``, ``httpapi``, and ``network_cli``.
-- IP address, network manipulation, and network output filters.
-
-Click the ``Content`` button to see the full list of content included in this collection.
-
-### Included filters
-
-This collection includes the following IP and network filters:
-- cidr_merge
-- ipaddr
-- ipmath
-- ipwrap
-- ip4_hex
-- ipv4
-- ipv6
-- ipsubnet
-- next_nth_usable
-- network_in_network
-- network_in_usable
-- reduce_on_network
-- nthhost
-- previous_nth_usable
-- slaac
-
-
-MAC and Hardware address filters:
-- hwaddr
-- macaddr
-
-See the [ipaddr filter](https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html) documentation for details on these filters.
-
-This collection also includes the following output filters:
-
-- parse_cli
-- parse_cli_textfsm
-- parse_xml
-- type5_pw
-- hash_salt
-- comp_type5
-- vlan_parser
-
-See the [network filters](https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters.html#network-cli-filters) documentation for more details on these filters.
+<!--start collection content-->
+## Become plugins
+Name | Description
+--- | ---
+[ansible.netcommon.enable](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.enable.rst)|Switch to elevated permissions on a network device
+## Connection plugins
+Name | Description
+--- | ---
+[ansible.netcommon.httpapi](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.httpapi.rst)|Use httpapi to run command on network appliances
+[ansible.netcommon.napalm](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.napalm.rst)|Provides persistent connection using NAPALM
+[ansible.netcommon.netconf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf.rst)|Provides a persistent connection using the netconf protocol
+[ansible.netcommon.network_cli](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.network_cli.rst)|Use network_cli to run command on network appliances
+[ansible.netcommon.persistent](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.persistent.rst)|Use a persistent unix socket for connection
+## Filter plugins
+Name | Description
+--- | ---
+ansible.netcommon.cidr_merge|ansible.netcommon cidr_merge filter plugin
+ansible.netcommon.comp_type5|ansible.netcommon comp_type5 filter plugin
+ansible.netcommon.hash_salt|ansible.netcommon hash_salt filter plugin
+ansible.netcommon.hwaddr|Check if string is a HW/MAC address and filter it
+ansible.netcommon.ip4_hex|Convert an IPv4 address to Hexadecimal notation
+ansible.netcommon.ipaddr|Check if string is an IP address or network and filter it
+ansible.netcommon.ipmath|ansible.netcommon ipmath filter plugin
+ansible.netcommon.ipsubnet|Manipulate IPv4/IPv6 subnets
+ansible.netcommon.ipv4|ansible.netcommon ipv4 filter plugin
+ansible.netcommon.ipv6|ansible.netcommon ipv6 filter plugin
+ansible.netcommon.ipwrap|ansible.netcommon ipwrap filter plugin
+ansible.netcommon.macaddr|ansible.netcommon macaddr filter plugin
+ansible.netcommon.network_in_network|Checks whether the 'test' address or addresses are in 'value', including broadcast and network
+ansible.netcommon.network_in_usable|Checks whether 'test' is a useable address or addresses in 'value'
+ansible.netcommon.next_nth_usable|ansible.netcommon next_nth_usable filter plugin
+ansible.netcommon.nthhost|Get the nth host within a given network
+ansible.netcommon.parse_cli|ansible.netcommon parse_cli filter plugin
+ansible.netcommon.parse_cli_textfsm|ansible.netcommon parse_cli_textfsm filter plugin
+ansible.netcommon.parse_xml|ansible.netcommon parse_xml filter plugin
+ansible.netcommon.previous_nth_usable|ansible.netcommon previous_nth_usable filter plugin
+ansible.netcommon.reduce_on_network|Reduces a list of addresses to only the addresses that match a given network.
+ansible.netcommon.slaac|Get the SLAAC address within given network
+ansible.netcommon.type5_pw|ansible.netcommon type5_pw filter plugin
+ansible.netcommon.vlan_parser|Input: Unsorted list of vlan integers
+## Httpapi plugins
+Name | Description
+--- | ---
+[ansible.netcommon.restconf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.restconf.rst)|HttpApi Plugin for devices supporting Restconf API
+## Netconf plugins
+Name | Description
+--- | ---
+[ansible.netcommon.default](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.default.rst)|Use default netconf plugin to run standard netconf commands as per RFC
+## Modules
+Name | Description
+--- | ---
+[ansible.netcommon.cli_command](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.cli_command.rst)|Run a cli command on cli-based network devices
+[ansible.netcommon.cli_config](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.cli_config.rst)|Push text based configuration to network devices over network_cli
+[ansible.netcommon.net_banner](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_banner.rst)|(deprecated, removed after 2022-06-01) Manage multiline banners on network devices
+[ansible.netcommon.net_get](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_get.rst)|Copy a file from a network device to Ansible Controller
+[ansible.netcommon.net_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_interface.rst)|(deprecated, removed after 2022-06-01) Manage Interface on network devices
+[ansible.netcommon.net_l2_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_l2_interface.rst)|(deprecated, removed after 2022-06-01) Manage Layer-2 interface on network devices
+[ansible.netcommon.net_l3_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_l3_interface.rst)|(deprecated, removed after 2022-06-01) Manage L3 interfaces on network devices
+[ansible.netcommon.net_linkagg](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_linkagg.rst)|(deprecated, removed after 2022-06-01) Manage link aggregation groups on network devices
+[ansible.netcommon.net_lldp](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_lldp.rst)|(deprecated, removed after 2022-06-01) Manage LLDP service configuration on network devices
+[ansible.netcommon.net_lldp_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_lldp_interface.rst)|(deprecated, removed after 2022-06-01) Manage LLDP interfaces configuration on network devices
+[ansible.netcommon.net_logging](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_logging.rst)|(deprecated, removed after 2022-06-01) Manage logging on network devices
+[ansible.netcommon.net_ping](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_ping.rst)|Tests reachability using ping from a network device
+[ansible.netcommon.net_put](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_put.rst)|Copy a file from Ansible Controller to a network device
+[ansible.netcommon.net_static_route](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_static_route.rst)|(deprecated, removed after 2022-06-01) Manage static IP routes on network appliances (routers, switches et. al.)
+[ansible.netcommon.net_system](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_system.rst)|(deprecated, removed after 2022-06-01) Manage the system attributes on network devices
+[ansible.netcommon.net_user](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_user.rst)|(deprecated, removed after 2022-06-01) Manage the aggregate of local users on network device
+[ansible.netcommon.net_vlan](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_vlan.rst)|(deprecated, removed after 2022-06-01) Manage VLANs on network devices
+[ansible.netcommon.net_vrf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_vrf.rst)|(deprecated, removed after 2022-06-01) Manage VRFs on network devices
+[ansible.netcommon.netconf_config](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_config.rst)|netconf device configuration
+[ansible.netcommon.netconf_get](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_get.rst)|Fetch configuration/state data from NETCONF enabled network devices.
+[ansible.netcommon.netconf_rpc](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_rpc.rst)|Execute operations on NETCONF enabled network devices.
+[ansible.netcommon.restconf_config](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.restconf_config.rst)|Handles create, update, read and delete of configuration data on RESTCONF enabled devices.
+[ansible.netcommon.restconf_get](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.restconf_get.rst)|Fetch configuration/state data from RESTCONF enabled devices.
+[ansible.netcommon.telnet](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.telnet.rst)|Executes a low-down and dirty telnet command
+<!--end collection content-->
 
 
 ## Installing this collection
