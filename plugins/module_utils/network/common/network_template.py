@@ -54,9 +54,9 @@ class NetworkTemplate(object):
                 cap = re.match(parser["getval"], line)
                 if cap:
                     capdict = cap.groupdict()
-                    capdict = {
-                        k: v for k, v in capdict.items() if v is not None
-                    }
+                    capdict = dict(
+                        (k, v) for k, v in capdict.items() if v is not None
+                    )
                     if parser.get("shared"):
                         shared = capdict
                     vals = dict_merge(capdict, shared)
