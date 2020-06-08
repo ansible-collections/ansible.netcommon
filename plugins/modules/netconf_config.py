@@ -336,31 +336,52 @@ def main():
 
     # deprecated options
     netconf_top_spec = {
-        "src": dict(type="path", removed_in_version=2.11),
-        "host": dict(removed_in_version=2.11),
-        "port": dict(removed_in_version=2.11, type="int", default=830),
+        "src": dict(
+            type="path", removed_in_version=2.11, removed_at_date="2020-12-01"
+        ),
+        "host": dict(removed_in_version=2.11, removed_at_date="2020-12-01"),
+        "port": dict(
+            removed_in_version=2.11,
+            removed_at_date="2020-12-01",
+            type="int",
+            default=830,
+        ),
         "username": dict(
             fallback=(env_fallback, ["ANSIBLE_NET_USERNAME"]),
             removed_in_version=2.11,
+            removed_at_date="2020-12-01",
             no_log=True,
         ),
         "password": dict(
             fallback=(env_fallback, ["ANSIBLE_NET_PASSWORD"]),
             removed_in_version=2.11,
+            removed_at_date="2020-12-01",
             no_log=True,
         ),
         "ssh_keyfile": dict(
             fallback=(env_fallback, ["ANSIBLE_NET_SSH_KEYFILE"]),
             removed_in_version=2.11,
+            removed_at_date="2020-12-01",
             type="path",
         ),
         "hostkey_verify": dict(
-            removed_in_version=2.11, type="bool", default=True
+            removed_in_version=2.11,
+            removed_at_date="2020-12-01",
+            type="bool",
+            default=True,
         ),
         "look_for_keys": dict(
-            removed_in_version=2.11, type="bool", default=True
+            removed_in_version=2.11,
+            removed_at_date="2020-12-01",
+            type="bool",
+            default=True,
         ),
-        "timeout": dict(removed_in_version=2.11, type="int", default=10),
+        "timeout": dict(
+            removed_in_version=2.11,
+            removed_at_date="2020-12-01",
+            type="int",
+            default=10,
+        ),
     }
     argument_spec.update(netconf_top_spec)
 
@@ -377,12 +398,6 @@ def main():
         mutually_exclusive=mutually_exclusive,
         supports_check_mode=True,
     )
-
-    if module.params["src"]:
-        module.deprecate(
-            msg="argument 'src' has been deprecated. Use file lookup plugin instead to read file contents.",
-            version="2.11",
-        )
 
     config = module.params["content"] or module.params["src"]
     target = module.params["target"]
