@@ -2088,7 +2088,11 @@ class _BaseV6(object):
             raise ValueError("IPv6 address is too large")
 
         hex_str = "%032x" % ip_int
-        hextets = ["%x" % int(hex_str[x : x + 4], 16) for x in range(0, 32, 4)]
+        # fmt:off
+        hextets = [  # fmt:off
+            "%x" % int(hex_str[x: x + 4], 16) for x in range(0, 32, 4)
+        ]
+        # fmt: on
 
         hextets = cls._compress_hextets(hextets)
         return ":".join(hextets)
@@ -2112,7 +2116,9 @@ class _BaseV6(object):
 
         ip_int = self._ip_int_from_string(ip_str)
         hex_str = "%032x" % ip_int
-        parts = [hex_str[x : x + 4] for x in range(0, 32, 4)]
+        # fmt: off
+        parts = [hex_str[x: x + 4] for x in range(0, 32, 4)]
+        # fmt: on
         if isinstance(self, (_BaseNetwork, IPv6Interface)):
             return "%s/%d" % (":".join(parts), self._prefixlen)
         return ":".join(parts)
