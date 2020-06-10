@@ -78,10 +78,7 @@ class FactsBase(object):
             if subset not in valid_subsets:
                 self._module.fail_json(
                     msg="Subset must be one of [%s], got %s"
-                    % (
-                        ", ".join(sorted([item for item in valid_subsets])),
-                        subset,
-                    )
+                    % (", ".join(sorted(valid_subsets)), subset)
                 )
 
             if exclude:
