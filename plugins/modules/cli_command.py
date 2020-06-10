@@ -64,49 +64,49 @@ options:
 
 EXAMPLES = """
 - name: run show version on remote devices
-  cli_command:
+  ansible.netcommon.cli_command:
     command: show version
 
 - name: run command with json formatted output
-  cli_command:
+  ansible.netcommon.cli_command:
     command: show version | json
 
 - name: run command expecting user confirmation
-  cli_command:
+  ansible.netcommon.cli_command:
     command: commit replace
     prompt: This commit will replace or remove the entire running configuration
     answer: yes
 
 - name: run command expecting user confirmation
-  cli_command:
+  ansible.netcommon.cli_command:
     command: show interface summary
     prompt: Press any key to continue
     answer: y
     newline: false
 
 - name: run config mode command and handle prompt/answer
-  cli_command:
-    command: "{{ item }}"
+  ansible.netcommon.cli_command:
+    command: '{{ item }}'
     prompt:
-      - "Exit with uncommitted changes"
-    answer: 'y'
+    - Exit with uncommitted changes
+    answer: y
   loop:
-    - configure
-    - set system syslog file test any any
-    - exit
+  - configure
+  - set system syslog file test any any
+  - exit
 
 - name: multiple prompt, multiple answer (mandatory check for all prompts)
-  cli_command:
-    command: "copy sftp sftp://user@host//user/test.img"
-    check_all: True
+  ansible.netcommon.cli_command:
+    command: copy sftp sftp://user@host//user/test.img
+    check_all: true
     prompt:
-      - "Confirm download operation"
-      - "Password"
-      - "Do you want to change that to the standby image"
+    - Confirm download operation
+    - Password
+    - Do you want to change that to the standby image
     answer:
-      - 'y'
-      - <password>
-      - 'y'
+    - y
+    - <password>
+    - y
 """
 
 RETURN = """

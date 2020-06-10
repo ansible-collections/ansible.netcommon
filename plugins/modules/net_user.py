@@ -12,7 +12,8 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_user
 author: Trishna Guha (@trishnaguha)
-short_description: Manage the aggregate of local users on network device
+short_description: (deprecated, removed after 2022-06-01) Manage the aggregate of
+  local users on network device
 description:
 - This module provides declarative management of the local usernames configured on
   network devices. It allows playbooks to manage either individual usernames or the
@@ -20,9 +21,10 @@ description:
   from the configuration that are not explicitly defined.
 version_added: 1.0.0
 deprecated:
-  removed_in: '2.13'
   alternative: Use platform-specific "[netos]_user" module
   why: Updated modules released with more functionality
+  removed_at_date: '2022-06-01'
+  removed_in: '2.14'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
@@ -86,31 +88,32 @@ options:
     choices:
     - present
     - absent
+
 """
 
 EXAMPLES = """
 - name: create a new user
-  net_user:
+  ansible.netcommon.net_user:
     name: ansible
     sshkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
     state: present
 
 - name: remove all users except admin
-  net_user:
+  ansible.netcommon.net_user:
     purge: yes
 
 - name: set multiple users to privilege level 15
-  net_user:
+  ansible.netcommon.net_user:
     aggregate:
-      - { name: netop }
-      - { name: netend }
+    - {name: netop}
+    - {name: netend}
     privilege: 15
     state: present
 
 - name: Change Password for User netop
-  net_user:
+  ansible.netcommon.net_user:
     name: netop
-    configured_password: "{{ new_password }}"
+    configured_password: '{{ new_password }}'
     update_password: always
     state: present
 """

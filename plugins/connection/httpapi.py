@@ -64,13 +64,13 @@ options:
   session_key:
     type: dict
     description:
-      - Configures the session key to be used to authenticate to the remote device
-        when needed for the device API.
-      - This should contain a dictionary representing the key name and value for the
-        token.
-      - When specified, I(password) is ignored.
+    - Configures the session key to be used to authenticate to the remote device when
+      needed for the device API.
+    - This should contain a dictionary representing the key name and value for the
+      token.
+    - When specified, I(password) is ignored.
     vars:
-      - name: ansible_httpapi_session_key
+    - name: ansible_httpapi_session_key
   use_ssl:
     type: boolean
     description:

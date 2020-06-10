@@ -79,51 +79,51 @@ notes:
 
 EXAMPLES = """
 - name: Get running configuration and state data
-  netconf_get:
+  ansible.netcommon.netconf_get:
 
 - name: Get configuration and state data from startup datastore
-  netconf_get:
+  ansible.netcommon.netconf_get:
     source: startup
 
 - name: Get system configuration data from running datastore state (junos)
-  netconf_get:
+  ansible.netcommon.netconf_get:
     source: running
     filter: <configuration><system></system></configuration>
 
 - name: Get configuration and state data in JSON format
-  netconf_get:
+  ansible.netcommon.netconf_get:
     display: json
 
 - name: get schema list using subtree w/ namespaces
-  netconf_get:
+  ansible.netcommon.netconf_get:
     display: json
     filter: <netconf-state xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring"><schemas><schema/></schemas></netconf-state>
     lock: never
 
 - name: get schema list using xpath
-  netconf_get:
+  ansible.netcommon.netconf_get:
     display: xml
     filter: /netconf-state/schemas/schema
 
 - name: get interface configuration with filter (iosxr)
-  netconf_get:
+  ansible.netcommon.netconf_get:
     display: pretty
     filter: <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"></interface-configurations>
     lock: if-supported
 
 - name: Get system configuration data from running datastore state (junos)
-  netconf_get:
+  ansible.netcommon.netconf_get:
     source: running
     filter: <configuration><system></system></configuration>
     lock: if-supported
 
 - name: Get complete configuration data from running datastore (SROS)
-  netconf_get:
+  ansible.netcommon.netconf_get:
     source: running
     filter: <configure xmlns="urn:nokia.com:sros:ns:yang:sr:conf"/>
 
 - name: Get complete state data (SROS)
-  netconf_get:
+  ansible.netcommon.netconf_get:
     filter: <state xmlns="urn:nokia.com:sros:ns:yang:sr:state"/>
 """
 

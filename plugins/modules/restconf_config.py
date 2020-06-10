@@ -53,23 +53,23 @@ options:
 
 EXAMPLES = """
 - name: create l3vpn services
-  restconf_config:
+  ansible.netcommon.restconf_config:
     path: /config/ietf-l3vpn-svc:l3vpn-svc/vpn-services
     content: |
-          {
-            "vpn-service":[
-                            {
-                              "vpn-id": "red_vpn2",
-                              "customer-name": "blue",
-                              "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
-                            },
-                            {
-                              "vpn-id": "blue_vpn1",
-                              "customer-name": "red",
-                              "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
-                            }
-                          ]
-           }
+      {
+        "vpn-service":[
+                        {
+                          "vpn-id": "red_vpn2",
+                          "customer-name": "blue",
+                          "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
+                        },
+                        {
+                          "vpn-id": "blue_vpn1",
+                          "customer-name": "red",
+                          "vpn-service-topology": "ietf-l3vpn-svc:any-to-any"
+                        }
+                      ]
+       }
 """
 
 RETURN = """

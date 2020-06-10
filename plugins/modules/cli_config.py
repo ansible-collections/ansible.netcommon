@@ -144,40 +144,40 @@ options:
 
 EXAMPLES = """
 - name: configure device with config
-  cli_config:
+  ansible.netcommon.cli_config:
     config: "{{ lookup('template', 'basic/config.j2') }}"
 
 - name: multiline config
-  cli_config:
+  ansible.netcommon.cli_config:
     config: |
       hostname foo
       feature nxapi
 
 - name: configure device with config with defaults enabled
-  cli_config:
+  ansible.netcommon.cli_config:
     config: "{{ lookup('template', 'basic/config.j2') }}"
     defaults: yes
 
 - name: Use diff_match
-  cli_config:
+  ansible.netcommon.cli_config:
     config: "{{ lookup('file', 'interface_config') }}"
     diff_match: none
 
 - name: nxos replace config
-  cli_config:
-    replace: 'bootflash:nxoscfg'
+  ansible.netcommon.cli_config:
+    replace: bootflash:nxoscfg
 
 - name: junos replace config
-  cli_config:
-    replace: '/var/home/ansible/junos01.cfg'
+  ansible.netcommon.cli_config:
+    replace: /var/home/ansible/junos01.cfg
 
 - name: commit with comment
-  cli_config:
+  ansible.netcommon.cli_config:
     config: set system host-name foo
     commit_comment: this is a test
 
 - name: configurable backup path
-  cli_config:
+  ansible.netcommon.cli_config:
     config: "{{ lookup('template', 'basic/config.j2') }}"
     backup: yes
     backup_options:
