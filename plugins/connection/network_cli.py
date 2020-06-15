@@ -843,23 +843,33 @@ class Connection(NetworkConnectionBase):
         errored_response = None
         is_error_message = False
 
-        for regex in self._terminal_stderr_re:
-            if regex.search(response):
+        for stderr_regex in self._terminal_stderr_re:
+            if stderr_regex.search(response):
                 is_error_message = True
-
+                self._log_messages(
+                    "matched error regex (terminal_stderr_re) '%s' from response '%s'"
+                    % (stderr_regex.pattern, response)
+                )
                 # Check if error response ends with command prompt if not
                 # receive it buffered prompt
-                for regex in self._terminal_stdout_re:
-                    match = regex.search(response)
+                for stdout_regex in self._terminal_stdout_re:
+                    match = stdout_regex.search(response)
                     if match:
                         errored_response = response
-                        self._matched_pattern = regex.pattern
+                        self._matched_pattern = stdout_regex.pattern
                         self._matched_prompt = match.group()
                         self._log_messages(
-                            "matched error regex '%s' from response '%s'"
+                            "matched stdout regex (terminal_stdout_re) '%s' from error response '%s'"
                             % (self._matched_pattern, errored_response)
                         )
                         break
+                else:
+                    self._log_messages(
+                        "Ignoring matched error regex (terminal_stderr_re) '%s' from response '%s' as the cli prompt is not in the same response"
+                        % (stderr_regex.pattern, response)
+                    )
+                if errored_response:
+                    break
 
         if not is_error_message:
             for regex in self._terminal_stdout_re:
