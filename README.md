@@ -106,6 +106,8 @@ The most common use case for this collection is to include it as a dependency in
 See the [Vyos collection](https://github.com/ansible-collections/vyos) for an example of this.
 
 
+**NOTE**: For Ansible 2.9, you may not see deprecation warnings when you run your playbooks with this collection. Use this documentation to track when a module is deprecated.
+
 ### See Also:
 
 * [Ansible Using collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html) for more details.
