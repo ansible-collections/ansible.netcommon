@@ -267,7 +267,8 @@ options:
     ini:
         - section: persistent_connection
           key: ssh_type
-    version_added: "2.10"
+    vars:
+    - name: ansible_network_cli_ssh_type
 """
 
 from functools import wraps
