@@ -869,10 +869,8 @@ class Connection(NetworkConnectionBase):
                         % (stderr_regex.pattern, response)
                     )
                 if errored_response:
-                    self._log_messages("--break from outer for loop with errored_response: %s--" % errored_response)
                     break
 
-        self._log_messages("--Value of is_error_message: %s--" % is_error_message)
         if not is_error_message:
             for regex in self._terminal_stdout_re:
                 match = regex.search(response)
@@ -887,17 +885,12 @@ class Connection(NetworkConnectionBase):
                             response,
                         )
                     )
-                    self._log_messages("--Value of errored_response 1: %s--" % errored_response)
                     if not errored_response:
-                        self._log_messages("--return from _find_prompt--")
                         return True
 
-        self._log_messages("--Value of errored_response 2: %s--" % errored_response)
         if errored_response:
-            self._log_messages("--raise execption with message: %s--" % errored_response)
             raise AnsibleConnectionFailure(errored_response)
 
-        self._log_messages("--return false--")
         return False
 
     def _validate_timeout_value(self, timeout, timer_name):
