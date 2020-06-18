@@ -1,11 +1,11 @@
-.. _ansible.netcommon.napalm_connection:
+.. _ansible.netcommon.netconf_connection:
 
 
-************************
-ansible.netcommon.napalm
-************************
+*************************
+ansible.netcommon.netconf
+*************************
 
-**Provides persistent connection using NAPALM**
+**Provides a persistent connection using the netconf protocol**
 
 
 Version added: 1.0.0
@@ -14,17 +14,11 @@ Version added: 1.0.0
    :local:
    :depth: 1
 
-DEPRECATED
-----------
-:Removed in collection release after 2022-06-01
-:Why: I am pretty sure no one has ever tried to use these modules
-:Alternative: None. If anyone actually wants to use this plugin, open an issue and we'll rescind the deprecation
-
-
 
 Synopsis
 --------
-- This connection plugin provides connectivity to network devices using the NAPALM network device abstraction library.  This library requires certain features to be enabled on network devices depending on the destination device operating system.  The connection plugin requires ``napalm`` to be installed locally on the Ansible controller.
+- This connection plugin provides a connection to remote devices over the SSH NETCONF subsystem.  This connection plugin is typically used by network devices for sending and receiving RPC calls over NETCONF.
+- Note this connection plugin requires ncclient to be installed on the local Ansible controller.
 
 
 
@@ -32,7 +26,7 @@ Requirements
 ------------
 The below requirements are needed on the local master node that executes this connection.
 
-- napalm
+- ncclient
 
 
 Parameters
@@ -69,24 +63,73 @@ Parameters
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>host_key_auto_add</b>
+                    <b>host_key_checking</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">boolean</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                                                                <b>Default:</b><br/><div style="color: blue">"no"</div>
+                                                                                                                                                                                                                <b>Default:</b><br/><div style="color: blue">"yes"</div>
                                     </td>
                                                     <td>
                                                     <div> ini entries:
-                                                                    <p>[paramiko_connection]<br>host_key_auto_add = no</p>
+                                                                    <p>[defaults]<br>host_key_checking = yes</p>
+                                                                    <p>[paramiko_connection]<br>host_key_checking = yes</p>
                                                             </div>
-                                                                                                            <div>env:ANSIBLE_HOST_KEY_AUTO_ADD</div>
+                                                                                                            <div>env:ANSIBLE_HOST_KEY_CHECKING</div>
+                                                            <div>env:ANSIBLE_SSH_HOST_KEY_CHECKING</div>
+                                                            <div>env:ANSIBLE_NETCONF_HOST_KEY_CHECKING</div>
+                                                                                                                                        <div>var: ansible_host_key_checking</div>
+                                                            <div>var: ansible_ssh_host_key_checking</div>
+                                                            <div>var: ansible_netconf_host_key_checking</div>
+                                                                        </td>
+                                                <td>
+                                            <div>Set this to &quot;False&quot; if you want to avoid host key checking by the underlying tools Ansible uses to connect to the host</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>look_for_keys</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                                                                                <b>Default:</b><br/><div style="color: blue">"yes"</div>
+                                    </td>
+                                                    <td>
+                                                    <div> ini entries:
+                                                                    <p>[paramiko_connection]<br>look_for_keys = yes</p>
+                                                            </div>
+                                                                                                            <div>env:ANSIBLE_PARAMIKO_LOOK_FOR_KEYS</div>
                                                                                                 </td>
                                                 <td>
-                                            <div>By default, Ansible will prompt the user before adding SSH keys to the known hosts file. By enabling this option, unknown host keys will automatically be added to the known hosts file.</div>
-                                            <div>Be sure to fully understand the security implications of enabling this option on production systems as it could create a security vulnerability.</div>
+                                            <div>Enables looking for ssh keys in the usual locations for ssh keys (e.g. :file:`~/.ssh/id_*`).</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>netconf_ssh_config</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                    <td>
+                                                    <div> ini entries:
+                                                                    <p>[netconf_connection]<br>ssh_config = VALUE</p>
+                                                            </div>
+                                                                                                            <div>env:ANSIBLE_NETCONF_SSH_CONFIG</div>
+                                                                                                                                        <div>var: ansible_netconf_ssh_config</div>
+                                                                        </td>
+                                                <td>
+                                            <div>This variable is used to enable bastion/jump host with netconf connection. If set to True the bastion/jump host ssh settings should be present in ~/.ssh/config file, alternatively it can be set to custom ssh configuration file path to read the bastion/jump host settings.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -104,7 +147,7 @@ Parameters
                                                                                                                                     <div>var: ansible_network_os</div>
                                                                         </td>
                                                 <td>
-                                            <div>Configures the device platform network operating system.  This value is used to load a napalm device abstraction.</div>
+                                            <div>Configures the device platform network operating system.  This value is used to load a device specific netconf plugin.  If this option is not configured (or set to <code>auto</code>), then Ansible will attempt to guess the correct network_os to use. If it can not guess a network_os correctly it will use <code>default</code>.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -122,6 +165,7 @@ Parameters
                                                                                                                                     <div>var: ansible_password</div>
                                                             <div>var: ansible_ssh_pass</div>
                                                             <div>var: ansible_ssh_password</div>
+                                                            <div>var: ansible_netconf_password</div>
                                                                         </td>
                                                 <td>
                                             <div>Configures the user password used to authenticate to the remote device when first establishing the SSH connection.</div>
@@ -176,6 +220,30 @@ Parameters
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>persistent_log_messages</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                                                                                <b>Default:</b><br/><div style="color: blue">"no"</div>
+                                    </td>
+                                                    <td>
+                                                    <div> ini entries:
+                                                                    <p>[persistent_connection]<br>log_messages = no</p>
+                                                            </div>
+                                                                                                            <div>env:ANSIBLE_PERSISTENT_LOG_MESSAGES</div>
+                                                                                                                                        <div>var: ansible_persistent_log_messages</div>
+                                                                        </td>
+                                                <td>
+                                            <div>This flag will enable logging the command executed and response received from target device in the ansible log file. For this option to work &#x27;log_path&#x27; ansible configuration option is required to be set to a file path with write access.</div>
+                                            <div>Be sure to fully understand the security implications of enabling this option as it could create a security vulnerability by logging sensitive information in log file.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>port</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -183,11 +251,11 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">22</div>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">830</div>
                                     </td>
                                                     <td>
                                                     <div> ini entries:
-                                                                    <p>[defaults]<br>remote_port = 22</p>
+                                                                    <p>[defaults]<br>remote_port = 830</p>
                                                             </div>
                                                                                                             <div>env:ANSIBLE_REMOTE_PORT</div>
                                                                                                                                         <div>var: ansible_port</div>
@@ -241,24 +309,6 @@ Parameters
                                             <div>Can be configured from the CLI via the <code>--user</code> or <code>-u</code> options.</div>
                                                         </td>
             </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>timeout</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">120</div>
-                                    </td>
-                                                    <td>
-                                                                                            </td>
-                                                <td>
-                                            <div>Sets the connection time, in seconds, for communicating with the remote device.  This timeout is used as the default timeout value for commands when issuing a command to the network CLI.  If the command does not return in timeout seconds, an error is generated.</div>
-                                                        </td>
-            </tr>
                         </table>
     <br/>
 
@@ -271,10 +321,6 @@ Parameters
 
 Status
 ------
-
-
-- This connection will be removed in version . *[deprecated]*
-- For more information see `DEPRECATED`_.
 
 
 Authors

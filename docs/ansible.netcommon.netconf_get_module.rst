@@ -1,13 +1,11 @@
-:orphan:
-
-.. _ansible.netcommon.netconf_rpc_module:
+.. _ansible.netcommon.netconf_get_module:
 
 
 *****************************
-ansible.netcommon.netconf_rpc
+ansible.netcommon.netconf_get
 *****************************
 
-**Execute operations on NETCONF enabled network devices.**
+**Fetch configuration/state data from NETCONF enabled network devices.**
 
 
 Version added: 1.0.0
@@ -20,7 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - NETCONF is a network management protocol developed and standardized by the IETF. It is documented in RFC 6241.
-- This module allows the user to execute NETCONF RPC requests as defined by IETF RFC standards as well as proprietary requests.
+- This module allows the user to fetch configuration and state data from NETCONF enabled network devices.
 
 
 
@@ -46,21 +44,6 @@ Parameters
                     <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>content</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>This argument specifies the optional request content (all RPC attributes). The <em>content</em> value can either be provided as XML formatted string or as dictionary.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>display</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -81,7 +64,7 @@ Parameters
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>rpc</b>
+                    <b>filter</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
@@ -90,22 +73,47 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>This argument specifies the request (name of the operation) to be executed on the remote NETCONF enabled device.</div>
+                                            <div>This argument specifies the XML string which acts as a filter to restrict the portions of the data to be are retrieved from the remote device. If this option is not specified entire configuration or state data is returned in result depending on the value of <code>source</code> option. The <code>filter</code> value can be either XML string or XPath, if the filter is in XPath format the NETCONF server running on remote host should support xpath capability else it will result in an error.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>xmlns</b>
+                    <b>lock</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                            </td>
+                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                <li><div style="color: blue"><b>never</b>&nbsp;&larr;</div></li>
+                                                                                                                                                                                                <li>always</li>
+                                                                                                                                                                                                <li>if-supported</li>
+                                                                                    </ul>
+                                                                            </td>
                                                                 <td>
-                                            <div>NETCONF operations not defined in rfc6241 typically require the appropriate XML namespace to be set. In the case the <em>request</em> option is not already provided in XML format, the namespace can be defined by the <em>xmlns</em> option.</div>
+                                            <div>Instructs the module to explicitly lock the datastore specified as <code>source</code>. If no <em>source</em> is defined, the <em>running</em> datastore will be locked. By setting the option value <em>always</em> is will explicitly lock the datastore mentioned in <code>source</code> option. By setting the option value <em>never</em> it will not lock the <code>source</code> datastore. The value <em>if-supported</em> allows better interworking with NETCONF servers, which do not support the (un)lock operation for all supported datastores.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>source</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                <li>running</li>
+                                                                                                                                                                                                <li>candidate</li>
+                                                                                                                                                                                                <li>startup</li>
+                                                                                    </ul>
+                                                                            </td>
+                                                                <td>
+                                            <div>This argument specifies the datastore from which configuration data should be fetched. Valid values are <em>running</em>, <em>candidate</em> and <em>startup</em>. If the <code>source</code> value is not set both configuration and state information are returned in response from running datastore.</div>
                                                         </td>
             </tr>
                         </table>
@@ -118,7 +126,6 @@ Notes
 .. note::
    - This module requires the NETCONF system service be enabled on the remote device being managed.
    - This module supports the use of connection=netconf
-   - To execute ``get-config``, ``get`` or ``edit-config`` requests it is recommended to use the Ansible *netconf_get* and *netconf_config* modules.
    - This module is supported on ``ansible_network_os`` network platforms. See the :ref:`Network Platform Options <platform_options>` for details.
 
 
@@ -129,59 +136,53 @@ Examples
 .. code-block:: yaml+jinja
 
 
-    - name: lock candidate
-      ansible.netcommon.netconf_rpc:
-        rpc: lock
-        content:
-          target:
-            candidate:
+    - name: Get running configuration and state data
+      ansible.netcommon.netconf_get:
 
-    - name: unlock candidate
-      ansible.netcommon.netconf_rpc:
-        rpc: unlock
-        xmlns: urn:ietf:params:xml:ns:netconf:base:1.0
-        content: "{'target': {'candidate': None}}"
+    - name: Get configuration and state data from startup datastore
+      ansible.netcommon.netconf_get:
+        source: startup
 
-    - name: discard changes
-      ansible.netcommon.netconf_rpc:
-        rpc: discard-changes
+    - name: Get system configuration data from running datastore state (junos)
+      ansible.netcommon.netconf_get:
+        source: running
+        filter: <configuration><system></system></configuration>
 
-    - name: get-schema
-      ansible.netcommon.netconf_rpc:
-        rpc: get-schema
-        xmlns: urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring
-        content:
-          identifier: ietf-netconf
-          version: '2011-06-01'
-
-    - name: copy running to startup
-      ansible.netcommon.netconf_rpc:
-        rpc: copy-config
-        content:
-          source:
-            running:
-          target:
-            startup:
-
-    - name: get schema list with JSON output
-      ansible.netcommon.netconf_rpc:
-        rpc: get
-        content: |
-          <filter>
-            <netconf-state xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring">
-              <schemas/>
-            </netconf-state>
-          </filter>
+    - name: Get configuration and state data in JSON format
+      ansible.netcommon.netconf_get:
         display: json
 
-    - name: get schema using XML request
-      ansible.netcommon.netconf_rpc:
-        rpc: get-schema
-        xmlns: urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring
-        content: |
-          <identifier>ietf-netconf-monitoring</identifier>
-          <version>2010-10-04</version>
+    - name: get schema list using subtree w/ namespaces
+      ansible.netcommon.netconf_get:
         display: json
+        filter: <netconf-state xmlns="urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring"><schemas><schema/></schemas></netconf-state>
+        lock: never
+
+    - name: get schema list using xpath
+      ansible.netcommon.netconf_get:
+        display: xml
+        filter: /netconf-state/schemas/schema
+
+    - name: get interface configuration with filter (iosxr)
+      ansible.netcommon.netconf_get:
+        display: pretty
+        filter: <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"></interface-configurations>
+        lock: if-supported
+
+    - name: Get system configuration data from running datastore state (junos)
+      ansible.netcommon.netconf_get:
+        source: running
+        filter: <configuration><system></system></configuration>
+        lock: if-supported
+
+    - name: Get complete configuration data from running datastore (SROS)
+      ansible.netcommon.netconf_get:
+        source: running
+        filter: <configure xmlns="urn:nokia.com:sros:ns:yang:sr:conf"/>
+
+    - name: Get complete state data (SROS)
+      ansible.netcommon.netconf_get:
+        filter: <state xmlns="urn:nokia.com:sros:ns:yang:sr:state"/>
 
 
 
@@ -277,7 +278,3 @@ Authors
 
 - Ganesh Nalawade (@ganeshrn)
 - Sven Wisotzky (@wisotzky)
-
-
-.. hint::
-    Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.

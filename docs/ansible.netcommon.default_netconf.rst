@@ -1,4 +1,3 @@
-
 .. _ansible.netcommon.default_netconf:
 
 
