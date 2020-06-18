@@ -261,7 +261,7 @@ options:
     description:
       - The type of the transport used by C(network_cli) connection plugin to connection to remote host.
         Valid value is either I(paramiko) or I(libssh)
-    default: libssh
+    default: paramiko
     env:
         - name: ANSIBLE_NETWORK_CLI_SSH_TYPE
     ini:
