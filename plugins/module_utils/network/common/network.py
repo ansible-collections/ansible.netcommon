@@ -236,7 +236,7 @@ def get_resource_connection(module):
 
     capabilities = get_capabilities(module)
     network_api = capabilities.get("network_api")
-    if network_api in ("cliconf", "nxapi", "eapi", "exosapi"):
+    if network_api in ("cliconf", "nxapi", "eapi", "exosapi", "sonic_rest"):
         module._connection = Connection(module._socket_path)
     elif network_api == "netconf":
         module._connection = NetconfConnection(module._socket_path)
