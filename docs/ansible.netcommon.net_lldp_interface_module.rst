@@ -1,13 +1,13 @@
 :orphan:
 
-.. _ansible.netcommon.net_l3_interface_module:
+.. _ansible.netcommon.net_lldp_interface_module:
 
 
-**********************************
-ansible.netcommon.net_l3_interface
-**********************************
+************************************
+ansible.netcommon.net_lldp_interface
+************************************
 
-**(deprecated, removed after 2022-06-01) Manage L3 interfaces on network devices**
+**(deprecated, removed after 2022-06-01) Manage LLDP interfaces configuration on network devices**
 
 
 Version added: 1.0.0
@@ -20,13 +20,13 @@ DEPRECATED
 ----------
 :Removed in collection release after 2022-06-01
 :Why: Updated modules released with more functionality
-:Alternative: Use platform-specific "[netos]_l3_interfaces" module
+:Alternative: Use platform-specific "[netos]_lldp_interfaces" module
 
 
 
 Synopsis
 --------
-- This module provides declarative management of L3 interfaces on network devices.
+- This module provides declarative management of LLDP interfaces configuration on network devices.
 
 
 
@@ -54,37 +54,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>List of L3 interfaces definitions</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>ipv4</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>IPv4 of the L3 interface.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>ipv6</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>IPv6 of the L3 interface.</div>
+                                            <div>List of interfaces LLDP should be configured on.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -99,7 +69,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>Name of the L3 interface.</div>
+                                            <div>Name of the interface LLDP should be configured on.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -115,7 +85,7 @@ Parameters
                                                                                                                                                                                                                 <b>Default:</b><br/><div style="color: blue">"no"</div>
                                     </td>
                                                                 <td>
-                                            <div>Purge L3 interfaces not defined in the <em>aggregate</em> parameter.</div>
+                                            <div>Purge interfaces not defined in the aggregate parameter.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -131,10 +101,12 @@ Parameters
                                                                                                                             <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>absent</li>
+                                                                                                                                                                                                <li>enabled</li>
+                                                                                                                                                                                                <li>disabled</li>
                                                                                     </ul>
                                                                             </td>
                                                                 <td>
-                                            <div>State of the L3 interface configuration.</div>
+                                            <div>State of the LLDP configuration.</div>
                                                         </td>
             </tr>
                         </table>
@@ -154,28 +126,39 @@ Examples
 
 .. code-block:: yaml+jinja
 
+    
+    - name: Configure LLDP on specific interfaces
+      ansible.netcommon.net_lldp_interface:
+        name: eth1
+        state: present
 
-    - name: Set eth0 IPv4 address
-      ansible.netcommon.net_l3_interface:
-        name: eth0
-        ipv4: 192.168.0.1/24
+    - name: Disable LLDP on specific interfaces
+      ansible.netcommon.net_lldp_interface:
+        name: eth1
+        state: disabled
 
-    - name: Remove eth0 IPv4 address
-      ansible.netcommon.net_l3_interface:
-        name: eth0
+    - name: Enable LLDP on specific interfaces
+      ansible.netcommon.net_lldp_interface:
+        name: eth1
+        state: enabled
+
+    - name: Delete LLDP on specific interfaces
+      ansible.netcommon.net_lldp_interface:
+        name: eth1
         state: absent
 
-    - name: Set IP addresses on aggregate
-      ansible.netcommon.net_l3_interface:
+    - name: Create aggregate of LLDP interface configurations
+      ansible.netcommon.net_lldp_interface:
         aggregate:
-        - {name: eth1, ipv4: 192.168.2.10/24}
-        - {name: eth2, ipv4: 192.168.3.10/24, ipv6: fd5d:12c9:2201:1::1/64}
+        - {name: eth1}
+        - {name: eth2}
+        state: present
 
-    - name: Remove IP addresses on aggregate
-      ansible.netcommon.net_l3_interface:
+    - name: Delete aggregate of LLDP interface configurations
+      ansible.netcommon.net_lldp_interface:
         aggregate:
-        - {name: eth1, ipv4: 192.168.2.10/24}
-        - {name: eth2, ipv4: 192.168.3.10/24, ipv6: fd5d:12c9:2201:1::1/64}
+        - {name: eth1}
+        - {name: eth2}
         state: absent
 
 
@@ -207,7 +190,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                                                         <div>The list of configuration mode commands to send to the device</div>
                                                                 <br/>
                                             <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&quot;set interfaces ethernet eth0 address &#x27;192.168.0.1/24&#x27;&quot;]</div>
+                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;set service lldp eth1 disable&#x27;]</div>
                                     </td>
             </tr>
                         </table>
@@ -218,14 +201,14 @@ Status
 ------
 
 
-- This module will be removed in version . *[deprecated]*
+- This module will be removed in version 2.14. *[deprecated]*
 - For more information see `DEPRECATED`_.
 
 
 Authors
 ~~~~~~~
 
-- Ricardo Carrillo Cruz (@rcarrillocruz)
+- Ganesh Nalawade (@ganeshrn)
 
 
 .. hint::

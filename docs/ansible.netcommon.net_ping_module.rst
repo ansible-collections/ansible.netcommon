@@ -137,7 +137,7 @@ Examples
 
 .. code-block:: yaml+jinja
 
-
+    
     - name: Test reachability to 10.10.10.10 using default vrf
       ansible.netcommon.net_ping:
         dest: 10.10.10.10

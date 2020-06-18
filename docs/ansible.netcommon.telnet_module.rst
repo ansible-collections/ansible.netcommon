@@ -231,7 +231,7 @@ Examples
 
 .. code-block:: yaml+jinja
 
-
+    
     - name: send configuration commands to IOS
       ansible.netcommon.telnet:
         user: cisco

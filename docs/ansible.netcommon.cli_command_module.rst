@@ -154,7 +154,7 @@ Examples
 
 .. code-block:: yaml+jinja
 
-
+    
     - name: run show version on remote devices
       ansible.netcommon.cli_command:
         command: show version

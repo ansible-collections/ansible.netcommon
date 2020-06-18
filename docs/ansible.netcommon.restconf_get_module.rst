@@ -101,7 +101,7 @@ Examples
 
 .. code-block:: yaml+jinja
 
-
+    
     - name: get l3vpn services
       ansible.netcommon.restconf_get:
         path: /config/ietf-l3vpn-svc:l3vpn-svc/vpn-services

@@ -1,13 +1,13 @@
 :orphan:
 
-.. _ansible.netcommon.net_logging_module:
+.. _ansible.netcommon.net_vlan_module:
 
 
-*****************************
-ansible.netcommon.net_logging
-*****************************
+**************************
+ansible.netcommon.net_vlan
+**************************
 
-**(deprecated, removed after 2022-06-01) Manage logging on network devices**
+**(deprecated, removed after 2022-06-01) Manage VLANs on network devices**
 
 
 Version added: 1.0.0
@@ -20,13 +20,13 @@ DEPRECATED
 ----------
 :Removed in collection release after 2022-06-01
 :Why: Updated modules released with more functionality
-:Alternative: Use platform-specific "[netos]_logging" module
+:Alternative: Use platform-specific "[netos]_vlans" module
 
 
 
 Synopsis
 --------
-- This module provides declarative management of logging on network devices.
+- This module provides declarative management of VLANs on network devices.
 
 
 
@@ -54,32 +54,13 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>List of logging definitions.</div>
+                                            <div>List of VLANs definitions.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>dest</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li>console</li>
-                                                                                                                                                                                                <li>host</li>
-                                                                                    </ul>
-                                                                            </td>
-                                                                <td>
-                                            <div>Destination of the logs.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>facility</b>
+                    <b>interfaces</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
@@ -88,22 +69,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>Set logging facility.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>level</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>Set logging severity levels.</div>
+                                            <div>List of interfaces the VLAN should be configured on.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -118,7 +84,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>If value of <code>dest</code> is <em>host</em> it indicates file-name the host name to be notified.</div>
+                                            <div>Name of the VLAN.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -134,7 +100,7 @@ Parameters
                                                                                                                                                                                                                 <b>Default:</b><br/><div style="color: blue">"no"</div>
                                     </td>
                                                                 <td>
-                                            <div>Purge logging not defined in the <em>aggregate</em> parameter.</div>
+                                            <div>Purge VLANs not defined in the <em>aggregate</em> parameter.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -150,10 +116,27 @@ Parameters
                                                                                                                             <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>absent</li>
+                                                                                                                                                                                                <li>active</li>
+                                                                                                                                                                                                <li>suspend</li>
                                                                                     </ul>
                                                                             </td>
                                                                 <td>
-                                            <div>State of the logging configuration.</div>
+                                            <div>State of the VLAN configuration.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>vlan_id</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>ID of the VLAN.</div>
                                                         </td>
             </tr>
                         </table>
@@ -173,46 +156,21 @@ Examples
 
 .. code-block:: yaml+jinja
 
+    
+    - name: configure VLAN ID and name
+      ansible.netcommon.net_vlan:
+        vlan_id: 20
+        name: test-vlan
 
-    - name: configure console logging
-      ansible.netcommon.net_logging:
-        dest: console
-        facility: any
-        level: critical
-
-    - name: remove console logging configuration
-      ansible.netcommon.net_logging:
-        dest: console
+    - name: remove configuration
+      ansible.netcommon.net_vlan:
         state: absent
 
-    - name: configure host logging
-      ansible.netcommon.net_logging:
-        dest: host
-        name: 192.0.2.1
-        facility: kernel
-        level: critical
+    - name: configure VLAN state
+      ansible.netcommon.net_vlan:
+        vlan_id:
+        state: suspend
 
-    - name: Configure file logging using aggregate
-      ansible.netcommon.net_logging:
-        dest: file
-        aggregate:
-        - name: test-1
-          facility: pfe
-          level: critical
-        - name: test-2
-          facility: kernel
-          level: emergency
-    - name: Delete file logging using aggregate
-      ansible.netcommon.net_logging:
-        dest: file
-        aggregate:
-        - name: test-1
-          facility: pfe
-          level: critical
-        - name: test-2
-          facility: kernel
-          level: emergency
-        state: absent
 
 
 
@@ -243,7 +201,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                                                         <div>The list of configuration mode commands to send to the device</div>
                                                                 <br/>
                                             <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;logging console critical&#x27;]</div>
+                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;vlan 20&#x27;, &#x27;name test-vlan&#x27;]</div>
                                     </td>
             </tr>
                         </table>
@@ -254,14 +212,14 @@ Status
 ------
 
 
-- This module will be removed in version . *[deprecated]*
+- This module will be removed in version 2.14. *[deprecated]*
 - For more information see `DEPRECATED`_.
 
 
 Authors
 ~~~~~~~
 
-- Ganesh Nalawade (@ganeshrn)
+- Ricardo Carrillo Cruz (@rcarrillocruz)
 
 
 .. hint::

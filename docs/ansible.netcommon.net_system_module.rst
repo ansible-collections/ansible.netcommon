@@ -1,13 +1,13 @@
 :orphan:
 
-.. _ansible.netcommon.net_static_route_module:
+.. _ansible.netcommon.net_system_module:
 
 
-**********************************
-ansible.netcommon.net_static_route
-**********************************
+****************************
+ansible.netcommon.net_system
+****************************
 
-**(deprecated, removed after 2022-06-01) Manage static IP routes on network appliances (routers, switches et. al.)**
+**(deprecated, removed after 2022-06-01) Manage the system attributes on network devices**
 
 
 Version added: 1.0.0
@@ -20,13 +20,13 @@ DEPRECATED
 ----------
 :Removed in collection release after 2022-06-01
 :Why: Updated modules released with more functionality
-:Alternative: Use platform-specific "[netos]_static_route" module
+:Alternative: Use platform-specific "[netos]_system" module
 
 
 
 Synopsis
 --------
-- This module provides declarative management of static IP routes on network appliances (routers, switches et. al.).
+- This module provides declarative management of node system attributes on network devices.  It provides an option to configure host system parameters or remove those parameters from the device active configuration.
 
 
 
@@ -45,7 +45,7 @@ Parameters
                     <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>admin_distance</b>
+                    <b>domain_name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
@@ -54,13 +54,13 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>Admin distance of the static route.</div>
+                                            <div>Configure the IP domain name on the remote device to the provided value. Value should be in the dotted name form and will be appended to the <code>hostname</code> to create a fully-qualified domain name.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>aggregate</b>
+                    <b>domain_search</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
@@ -69,68 +69,52 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>List of static route definitions</div>
+                                            <div>Provides the list of domain suffixes to append to the hostname for the purpose of doing name resolution. This argument accepts a name or list of names and will be reconciled with the current active configuration on the running node.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>mask</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                 / <span style="color: red">required</span>                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>Network prefix mask of the static route.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>next_hop</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                 / <span style="color: red">required</span>                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>Next hop IP of the static route.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>prefix</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                 / <span style="color: red">required</span>                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>Network prefix of the static route.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>purge</b>
+                    <b>hostname</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                                                                <b>Default:</b><br/><div style="color: blue">"no"</div>
-                                    </td>
+                                                                                                                                                            </td>
                                                                 <td>
-                                            <div>Purge static routes not defined in the <em>aggregate</em> parameter.</div>
+                                            <div>Configure the device hostname parameter. This option takes an ASCII string value.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>lookup_source</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>Provides one or more source interfaces to use for performing DNS lookups.  The interface provided in <code>lookup_source</code> must be a valid interface configured on the device.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>name_servers</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>List of DNS name servers by IP address to use to perform name resolution lookups.  This argument accepts either a list of DNS servers See examples.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -149,7 +133,7 @@ Parameters
                                                                                     </ul>
                                                                             </td>
                                                                 <td>
-                                            <div>State of the static route configuration.</div>
+                                            <div>State of the configuration values in the device&#x27;s current active configuration.  When set to <em>present</em>, the values should be configured in the device active configuration and when set to <em>absent</em> the values should not be in the device active configuration</div>
                                                         </td>
             </tr>
                         </table>
@@ -169,32 +153,33 @@ Examples
 
 .. code-block:: yaml+jinja
 
+    
+    - name: configure hostname and domain name
+      ansible.netcommon.net_system:
+        hostname: ios01
+        domain_name: test.example.com
+        domain_search:
+        - ansible.com
+        - redhat.com
+        - cisco.com
 
-    - name: configure static route
-      ansible.netcommon.net_static_route:
-        prefix: 192.168.2.0
-        mask: 255.255.255.0
-        next_hop: 10.0.0.1
+    - name: domain search on single domain
+      ansible.netcommon.net_system:
+        domain_search: ansible.com
 
     - name: remove configuration
-      ansible.netcommon.net_static_route:
-        prefix: 192.168.2.0
-        mask: 255.255.255.0
-        next_hop: 10.0.0.1
+      ansible.netcommon.net_system:
         state: absent
 
-    - name: configure aggregates of static routes
-      ansible.netcommon.net_static_route:
-        aggregate:
-        - {prefix: 192.168.2.0, mask: 255.255.255.0, next_hop: 10.0.0.1}
-        - {prefix: 192.168.3.0, mask: 255.255.255.0, next_hop: 10.0.2.1}
+    - name: configure DNS lookup sources
+      ansible.netcommon.net_system:
+        lookup_source: MgmtEth0/0/CPU0/0
 
-    - name: Remove static route collections
-      ansible.netcommon.net_static_route:
-        aggregate:
-        - {prefix: 172.24.1.0/24, next_hop: 192.168.42.64}
-        - {prefix: 172.24.3.0/24, next_hop: 192.168.42.64}
-        state: absent
+    - name: configure name servers
+      ansible.netcommon.net_system:
+        name_servers:
+        - 8.8.8.8
+        - 8.8.4.4
 
 
 
@@ -220,12 +205,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                       <span style="color: purple">list</span>
                                           </div>
                                     </td>
-                <td>always</td>
+                <td>always, except for the platforms that use Netconf transport to manage the device.</td>
                 <td>
                                                                         <div>The list of configuration mode commands to send to the device</div>
                                                                 <br/>
                                             <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;ip route 192.168.2.0/24 10.0.0.1&#x27;]</div>
+                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;hostname ios01&#x27;, &#x27;ip domain name test.example.com&#x27;]</div>
                                     </td>
             </tr>
                         </table>
@@ -236,7 +221,7 @@ Status
 ------
 
 
-- This module will be removed in version . *[deprecated]*
+- This module will be removed in version 2.14. *[deprecated]*
 - For more information see `DEPRECATED`_.
 
 

@@ -1,13 +1,13 @@
 :orphan:
 
-.. _ansible.netcommon.net_linkagg_module:
+.. _ansible.netcommon.net_logging_module:
 
 
 *****************************
-ansible.netcommon.net_linkagg
+ansible.netcommon.net_logging
 *****************************
 
-**(deprecated, removed after 2022-06-01) Manage link aggregation groups on network devices**
+**(deprecated, removed after 2022-06-01) Manage logging on network devices**
 
 
 Version added: 1.0.0
@@ -20,13 +20,13 @@ DEPRECATED
 ----------
 :Removed in collection release after 2022-06-01
 :Why: Updated modules released with more functionality
-:Alternative: Use platform-specific "[netos]_lag_interfaces" module
+:Alternative: Use platform-specific "[netos]_logging" module
 
 
 
 Synopsis
 --------
-- This module provides declarative management of link aggregation groups on network devices.
+- This module provides declarative management of logging on network devices.
 
 
 
@@ -54,58 +54,56 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>List of link aggregation definitions.</div>
+                                            <div>List of logging definitions.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>members</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                 / <span style="color: red">required</span>                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>List of members interfaces of the link aggregation group. The value can be single interface or list of interfaces.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>min_links</b>
+                    <b>dest</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>Minimum members that should be up before bringing up the link aggregation group.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>mode</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                                                                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
-                                                                                                                                                                                                <li>active</li>
-                                                                                                                                                                                                <li>passive</li>
+                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                <li>console</li>
+                                                                                                                                                                                                <li>host</li>
                                                                                     </ul>
-                                                                                    <b>Default:</b><br/><div style="color: blue">"yes"</div>
-                                    </td>
+                                                                            </td>
                                                                 <td>
-                                            <div>Mode of the link aggregation group. A value of <code>on</code> will enable LACP. <code>active</code> configures the link to actively information about the state of the link, or it can be configured in <code>passive</code> mode ie. send link state information only when received them from another link.</div>
+                                            <div>Destination of the logs.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>facility</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>Set logging facility.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>level</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>Set logging severity levels.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -115,12 +113,12 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
-                                                 / <span style="color: red">required</span>                    </div>
+                                                                    </div>
                                     </td>
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>Name of the link aggregation group.</div>
+                                            <div>If value of <code>dest</code> is <em>host</em> it indicates file-name the host name to be notified.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -136,7 +134,7 @@ Parameters
                                                                                                                                                                                                                 <b>Default:</b><br/><div style="color: blue">"no"</div>
                                     </td>
                                                                 <td>
-                                            <div>Purge link aggregation groups not defined in the <em>aggregate</em> parameter.</div>
+                                            <div>Purge logging not defined in the <em>aggregate</em> parameter.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -152,12 +150,10 @@ Parameters
                                                                                                                             <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>absent</li>
-                                                                                                                                                                                                <li>up</li>
-                                                                                                                                                                                                <li>down</li>
                                                                                     </ul>
                                                                             </td>
                                                                 <td>
-                                            <div>State of the link aggregation group.</div>
+                                            <div>State of the logging configuration.</div>
                                                         </td>
             </tr>
                         </table>
@@ -177,30 +173,45 @@ Examples
 
 .. code-block:: yaml+jinja
 
+    
+    - name: configure console logging
+      ansible.netcommon.net_logging:
+        dest: console
+        facility: any
+        level: critical
 
-    - name: configure link aggregation group
-      ansible.netcommon.net_linkagg:
-        name: bond0
-        members:
-        - eth0
-        - eth1
-
-    - name: remove configuration
-      ansible.netcommon.net_linkagg:
-        name: bond0
+    - name: remove console logging configuration
+      ansible.netcommon.net_logging:
+        dest: console
         state: absent
 
-    - name: Create aggregate of linkagg definitions
-      ansible.netcommon.net_linkagg:
-        aggregate:
-        - {name: bond0, members: [eth1]}
-        - {name: bond1, members: [eth2]}
+    - name: configure host logging
+      ansible.netcommon.net_logging:
+        dest: host
+        name: 192.0.2.1
+        facility: kernel
+        level: critical
 
-    - name: Remove aggregate of linkagg definitions
-      ansible.netcommon.net_linkagg:
+    - name: Configure file logging using aggregate
+      ansible.netcommon.net_logging:
+        dest: file
         aggregate:
-        - name: bond0
-        - name: bond1
+        - name: test-1
+          facility: pfe
+          level: critical
+        - name: test-2
+          facility: kernel
+          level: emergency
+    - name: Delete file logging using aggregate
+      ansible.netcommon.net_logging:
+        dest: file
+        aggregate:
+        - name: test-1
+          facility: pfe
+          level: critical
+        - name: test-2
+          facility: kernel
+          level: emergency
         state: absent
 
 
@@ -232,7 +243,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                                                         <div>The list of configuration mode commands to send to the device</div>
                                                                 <br/>
                                             <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;set interfaces bonding bond0&#x27;, &quot;set interfaces ethernet eth0 bond-group &#x27;bond0&#x27;&quot;, &quot;set interfaces ethernet eth1 bond-group &#x27;bond0&#x27;&quot;]</div>
+                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;logging console critical&#x27;]</div>
                                     </td>
             </tr>
                         </table>
@@ -243,14 +254,14 @@ Status
 ------
 
 
-- This module will be removed in version . *[deprecated]*
+- This module will be removed in version 2.14. *[deprecated]*
 - For more information see `DEPRECATED`_.
 
 
 Authors
 ~~~~~~~
 
-- Ricardo Carrillo Cruz (@rcarrillocruz)
+- Ganesh Nalawade (@ganeshrn)
 
 
 .. hint::

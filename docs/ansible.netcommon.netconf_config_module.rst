@@ -108,7 +108,7 @@ Parameters
                                             <div>The filename to be used to store the backup configuration. If the filename is not given it will be generated based on the hostname, current time and date in format defined by &lt;hostname&gt;_config.&lt;current-date&gt;@&lt;current-time&gt;</div>
                                                         </td>
             </tr>
-
+                    
                                                 <tr>
                                                                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
@@ -533,7 +533,7 @@ Examples
 
 .. code-block:: yaml+jinja
 
-
+    
     - name: use lookup filter to provide xml configuration
       ansible.netcommon.netconf_config:
         content: "{{ lookup('file', './config.xml') }}"

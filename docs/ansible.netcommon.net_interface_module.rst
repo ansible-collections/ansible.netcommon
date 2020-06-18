@@ -1,13 +1,13 @@
 :orphan:
 
-.. _ansible.netcommon.net_user_module:
+.. _ansible.netcommon.net_interface_module:
 
 
-**************************
-ansible.netcommon.net_user
-**************************
+*******************************
+ansible.netcommon.net_interface
+*******************************
 
-**(deprecated, removed after 2022-06-01) Manage the aggregate of local users on network device**
+**(deprecated, removed after 2022-06-01) Manage Interface on network devices**
 
 
 Version added: 1.0.0
@@ -20,13 +20,13 @@ DEPRECATED
 ----------
 :Removed in collection release after 2022-06-01
 :Why: Updated modules released with more functionality
-:Alternative: Use platform-specific "[netos]_user" module
+:Alternative: Use platform-specific "[netos]_interfaces" module
 
 
 
 Synopsis
 --------
-- This module provides declarative management of the local usernames configured on network devices. It allows playbooks to manage either individual usernames or the aggregate of usernames in the current running config. It also supports purging usernames from the configuration that are not explicitly defined.
+- This module provides declarative management of Interfaces on network devices.
 
 
 
@@ -54,13 +54,29 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>The set of username objects to be configured on the remote network device. The list entries can either be the username or a hash of username and properties. This argument is mutually exclusive with the <code>name</code> argument.</div>
+                                            <div>List of Interfaces definitions.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>configured_password</b>
+                    <b>delay</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">10</div>
+                                    </td>
+                                                                <td>
+                                            <div>Time in seconds to wait before checking for the operational state on remote device. This wait is applicable for operational state argument which are <em>state</em> with values <code>up</code>/<code>down</code>, <em>tx_rate</em> and <em>rx_rate</em>.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>description</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
@@ -69,7 +85,57 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>The password to be configured on the remote network device. The password needs to be provided in clear and it will be encrypted on the device. Please note that this option is not same as <code>provider password</code>.</div>
+                                            <div>Description of Interface.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>duplex</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                <li>full</li>
+                                                                                                                                                                                                <li>half</li>
+                                                                                                                                                                                                <li><div style="color: blue"><b>auto</b>&nbsp;&larr;</div></li>
+                                                                                    </ul>
+                                                                            </td>
+                                                                <td>
+                                            <div>Interface link status</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>enabled</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>Configure interface link status.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>mtu</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>Maximum size of transmit packet.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -79,46 +145,12 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
-                                                                    </div>
+                                                 / <span style="color: red">required</span>                    </div>
                                     </td>
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>The username to be configured on the remote network device. This argument accepts a string value and is mutually exclusive with the <code>aggregate</code> argument. Please note that this option is not same as <code>provider username</code>.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>nopassword</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li>no</li>
-                                                                                                                                                                                                <li>yes</li>
-                                                                                    </ul>
-                                                                            </td>
-                                                                <td>
-                                            <div>Defines the username without assigning a password. This will allow the user to login to the system without being authenticated by a password.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>privilege</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>The <code>privilege</code> argument configures the privilege level of the user when logged into the system. This argument accepts integer values in the range of 1 to 15.</div>
+                                            <div>Name of the Interface.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -127,23 +159,20 @@ Parameters
                     <b>purge</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
+                        <span style="color: purple">-</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                                                                    <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                                                                                                                                                                                <li>yes</li>
-                                                                                    </ul>
-                                                                            </td>
+                                                                                                                                                                                                                <b>Default:</b><br/><div style="color: blue">"no"</div>
+                                    </td>
                                                                 <td>
-                                            <div>Instructs the module to consider the resource definition absolute. It will remove any previously configured usernames on the device with the exception of the `admin` user (the current defined set of users).</div>
+                                            <div>Purge Interfaces not defined in the aggregate parameter. This applies only for logical interface.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>role</b>
+                    <b>rx_rate</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
@@ -152,13 +181,15 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>Configures the role for the username in the device running configuration. The argument accepts a string value defining the role name. This argument does not check if the role has been configured on the device.</div>
+                                            <div>Receiver rate in bits per second (bps).</div>
+                                            <div>This is state check parameter only.</div>
+                                            <div>Supports conditionals, see <a href='../network/user_guide/network_working_with_command_output.html'>Conditionals in Networking Modules</a></div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>sshkey</b>
+                    <b>speed</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
@@ -167,7 +198,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>Specifies the SSH public key to configure for the given username. This argument accepts a valid SSH key value.</div>
+                                            <div>Interface link speed.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -183,29 +214,29 @@ Parameters
                                                                                                                             <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>absent</li>
+                                                                                                                                                                                                <li>up</li>
+                                                                                                                                                                                                <li>down</li>
                                                                                     </ul>
                                                                             </td>
                                                                 <td>
-                                            <div>Configures the state of the username definition as it relates to the device operational configuration. When set to <em>present</em>, the username(s) should be configured in the device active configuration and when set to <em>absent</em> the username(s) should not be in the device active configuration</div>
+                                            <div>State of the Interface configuration, <code>up</code> indicates present and operationally up and <code>down</code> indicates present and operationally <code>down</code></div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>update_password</b>
+                    <b>tx_rate</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li>on_create</li>
-                                                                                                                                                                                                <li><div style="color: blue"><b>always</b>&nbsp;&larr;</div></li>
-                                                                                    </ul>
-                                                                            </td>
+                                                                                                                                                            </td>
                                                                 <td>
-                                            <div>Since passwords are encrypted in the device running config, this argument will instruct the module when to change the password.  When set to <code>always</code>, the password will always be updated in the device and when set to <code>on_create</code> the password will be updated only if the username is created.</div>
+                                            <div>Transmit rate in bits per second (bps).</div>
+                                            <div>This is state check parameter only.</div>
+                                            <div>Supports conditionals, see <a href='../network/user_guide/network_working_with_command_output.html'>Conditionals in Networking Modules</a></div>
                                                         </td>
             </tr>
                         </table>
@@ -225,31 +256,57 @@ Examples
 
 .. code-block:: yaml+jinja
 
+    
+    - name: configure interface
+      ansible.netcommon.net_interface:
+        name: ge-0/0/1
+        description: test-interface
 
-    - name: create a new user
-      ansible.netcommon.net_user:
-        name: ansible
-        sshkey: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
-        state: present
+    - name: remove interface
+      ansible.netcommon.net_interface:
+        name: ge-0/0/1
+        state: absent
 
-    - name: remove all users except admin
-      ansible.netcommon.net_user:
-        purge: yes
+    - name: make interface up
+      ansible.netcommon.net_interface:
+        name: ge-0/0/1
+        description: test-interface
+        enabled: true
 
-    - name: set multiple users to privilege level 15
-      ansible.netcommon.net_user:
+    - name: make interface down
+      ansible.netcommon.net_interface:
+        name: ge-0/0/1
+        description: test-interface
+        enabled: false
+
+    - name: Create interface using aggregate
+      ansible.netcommon.net_interface:
         aggregate:
-        - {name: netop}
-        - {name: netend}
-        privilege: 15
-        state: present
+        - {name: ge-0/0/1, description: test-interface-1}
+        - {name: ge-0/0/2, description: test-interface-2}
+        speed: 1g
+        duplex: full
+        mtu: 512
 
-    - name: Change Password for User netop
-      ansible.netcommon.net_user:
-        name: netop
-        configured_password: '{{ new_password }}'
-        update_password: always
-        state: present
+    - name: Delete interface using aggregate
+      ansible.netcommon.net_interface:
+        aggregate:
+        - {name: ge-0/0/1}
+        - {name: ge-0/0/2}
+        state: absent
+
+    - name: Check intent arguments
+      ansible.netcommon.net_interface:
+        name: fxp0
+        state: up
+        tx_rate: ge(0)
+        rx_rate: le(0)
+
+    - name: Config + intent
+      ansible.netcommon.net_interface:
+        name: fxp0
+        enabled: false
+        state: down
 
 
 
@@ -275,12 +332,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                       <span style="color: purple">list</span>
                                           </div>
                                     </td>
-                <td>always</td>
+                <td>always, except for the platforms that use Netconf transport to manage the device.</td>
                 <td>
-                                                                        <div>The list of configuration mode commands to send to the device</div>
+                                                                        <div>The list of configuration mode commands to send to the device.</div>
                                                                 <br/>
                                             <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;username ansible secret password&#x27;, &#x27;username admin secret admin&#x27;]</div>
+                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;interface 20&#x27;, &#x27;name test-interface&#x27;]</div>
                                     </td>
             </tr>
                         </table>
@@ -291,14 +348,14 @@ Status
 ------
 
 
-- This module will be removed in version . *[deprecated]*
+- This module will be removed in version 2.14. *[deprecated]*
 - For more information see `DEPRECATED`_.
 
 
 Authors
 ~~~~~~~
 
-- Trishna Guha (@trishnaguha)
+- Ganesh Nalawade (@ganeshrn)
 
 
 .. hint::

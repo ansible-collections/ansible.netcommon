@@ -78,7 +78,7 @@ Examples
 
 .. code-block:: yaml+jinja
 
-
+    
     - name: Enable LLDP service
       ansible.netcommon.net_lldp:
         state: present
@@ -127,7 +127,7 @@ Status
 ------
 
 
-- This module will be removed in version . *[deprecated]*
+- This module will be removed in version 2.14. *[deprecated]*
 - For more information see `DEPRECATED`_.
 
 
