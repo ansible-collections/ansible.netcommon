@@ -236,7 +236,6 @@ def get_resource_connection(module):
 
     capabilities = get_capabilities(module)
     network_api = capabilities.get("network_api")
-    
     if network_api == "netconf":
         module._connection = NetconfConnection(module._socket_path)
     elif network_api == "local":
@@ -245,7 +244,7 @@ def get_resource_connection(module):
         module._connection = LocalResourceConnection(module)
     else:
         module._connection = Connection(module._socket_path)
-        
+
     return module._connection
 
 
