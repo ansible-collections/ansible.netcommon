@@ -379,6 +379,7 @@ class Connection(NetworkConnectionBase):
                 "manually configure ansible_network_os value for this host"
             )
         self.queue_message("log", "network_os is set to %s" % self._network_os)
+        self.queue_message("vvvv", "ssh_type is set to: %s" % self.get_option("ssh_type"))
 
     @property
     def ssh_type_conn(self):
@@ -506,10 +507,6 @@ class Connection(NetworkConnectionBase):
 
         self.queue_message(
             "vvvv", "invoked shell using ssh_type: %s" % self._ssh_type
-        )
-        self.queue_message(
-            "vvvv",
-            "loaded terminal plugin for network_os %s" % self._network_os,
         )
 
         if not self.connected:
@@ -859,9 +856,6 @@ class Connection(NetworkConnectionBase):
         """
         Sends the command to the device in the opened shell
         """
-        self.queue_message(
-            "vvvv", "invoked shell using ssh_type: %s" % self._ssh_type
-        )
         if check_all:
             prompt_len = len(to_list(prompt))
             answer_len = len(to_list(answer))
