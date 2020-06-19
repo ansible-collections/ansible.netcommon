@@ -24,7 +24,6 @@ deprecated:
   alternative: Use platform-specific "[netos]_user" module
   why: Updated modules released with more functionality
   removed_at_date: '2022-06-01'
-  removed_in: '2.14'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:

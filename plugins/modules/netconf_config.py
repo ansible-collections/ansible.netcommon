@@ -2,7 +2,6 @@
 
 # (c) 2016, Leandro Lisboa Penz <lpenz at lpenz.org>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-# pylint: skip-file
 
 from __future__ import absolute_import, division, print_function
 
@@ -337,48 +336,53 @@ def main():
     # deprecated options
     netconf_top_spec = {
         "src": dict(
-            type="path", removed_in_version=2.11, removed_at_date="2020-12-01"
-        ),
-        "host": dict(removed_in_version=2.11, removed_at_date="2020-12-01"),
-        "port": dict(
-            removed_in_version=2.11,
+            type="path",
             removed_at_date="2020-12-01",
+            removed_from_collection="ansible.netcommon",
+        ),
+        "host": dict(
+            removed_at_date="2020-12-01",
+            removed_from_collection="ansible.netcommon",
+        ),
+        "port": dict(
+            removed_at_date="2020-12-01",
+            removed_from_collection="ansible.netcommon",
             type="int",
             default=830,
         ),
         "username": dict(
             fallback=(env_fallback, ["ANSIBLE_NET_USERNAME"]),
-            removed_in_version=2.11,
             removed_at_date="2020-12-01",
+            removed_from_collection="ansible.netcommon",
             no_log=True,
         ),
         "password": dict(
             fallback=(env_fallback, ["ANSIBLE_NET_PASSWORD"]),
-            removed_in_version=2.11,
             removed_at_date="2020-12-01",
+            removed_from_collection="ansible.netcommon",
             no_log=True,
         ),
         "ssh_keyfile": dict(
             fallback=(env_fallback, ["ANSIBLE_NET_SSH_KEYFILE"]),
-            removed_in_version=2.11,
             removed_at_date="2020-12-01",
+            removed_from_collection="ansible.netcommon",
             type="path",
         ),
         "hostkey_verify": dict(
-            removed_in_version=2.11,
             removed_at_date="2020-12-01",
+            removed_from_collection="ansible.netcommon",
             type="bool",
             default=True,
         ),
         "look_for_keys": dict(
-            removed_in_version=2.11,
             removed_at_date="2020-12-01",
+            removed_from_collection="ansible.netcommon",
             type="bool",
             default=True,
         ),
         "timeout": dict(
-            removed_in_version=2.11,
             removed_at_date="2020-12-01",
+            removed_from_collection="ansible.netcommon",
             type="int",
             default=10,
         ),

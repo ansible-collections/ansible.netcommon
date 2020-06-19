@@ -1,7 +1,6 @@
 #!/usr/bin/python
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-# pylint: skip-file
 
 from __future__ import absolute_import, division, print_function
 
@@ -21,7 +20,6 @@ deprecated:
   alternative: Use platform-specific "[netos]_banner" module
   why: Updated modules released with more functionality
   removed_at_date: '2022-06-01'
-  removed_in: '2.14'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
