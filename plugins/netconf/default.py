@@ -16,7 +16,6 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 #
-# pylint: skip-file
 
 from __future__ import absolute_import, division, print_function
 
@@ -65,8 +64,8 @@ class Netconf(NetconfBase):
         result["rpc"] = self.get_base_rpc()
         result["network_api"] = "netconf"
         result["device_info"] = self.get_device_info()
-        result["server_capabilities"] = [c for c in self.m.server_capabilities]
-        result["client_capabilities"] = [c for c in self.m.client_capabilities]
+        result["server_capabilities"] = self.m.server_capabilities
+        result["client_capabilities"] = self.m.client_capabilities
         result["session_id"] = self.m.session_id
         result["device_operations"] = self.get_device_operations(
             result["server_capabilities"]

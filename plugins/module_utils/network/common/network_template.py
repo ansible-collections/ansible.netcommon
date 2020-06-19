@@ -1,4 +1,3 @@
-# pylint: skip-file
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
@@ -17,8 +16,8 @@ class NetworkTemplate(object):
         inherit and use to parse and render config lines.
     """
 
-    def __init__(self, lines=[], tmplt=None):
-        self._lines = lines
+    def __init__(self, lines=None, tmplt=None):
+        self._lines = lines or []
         self._tmplt = tmplt
         self._template = Template()
 
