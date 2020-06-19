@@ -17,7 +17,7 @@ Name | Description
 Name | Description
 --- | ---
 [ansible.netcommon.httpapi](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.httpapi.rst)|Use httpapi to run command on network appliances
-[ansible.netcommon.napalm](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.napalm.rst)|Provides persistent connection using NAPALM
+[ansible.netcommon.napalm](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.napalm_connection.rst)|Provides persistent connection using NAPALM
 [ansible.netcommon.netconf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf.rst)|Provides a persistent connection using the netconf protocol
 [ansible.netcommon.network_cli](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.network_cli.rst)|Use network_cli to run command on network appliances
 [ansible.netcommon.persistent](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.persistent.rst)|Use a persistent unix socket for connection
