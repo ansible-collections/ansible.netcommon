@@ -1,13 +1,11 @@
-:orphan:
-
-.. _ansible.netcommon.net_vrf_module:
+.. _ansible.netcommon.net_l2_interface_module:
 
 
-*************************
-ansible.netcommon.net_vrf
-*************************
+**********************************
+ansible.netcommon.net_l2_interface
+**********************************
 
-**(deprecated, removed after 2022-06-01) Manage VRFs on network devices**
+**(deprecated, removed after 2022-06-01) Manage Layer-2 interface on network devices**
 
 
 Version added: 1.0.0
@@ -20,13 +18,13 @@ DEPRECATED
 ----------
 :Removed in collection release after 2022-06-01
 :Why: Updated modules released with more functionality
-:Alternative: Use platform-specific "[netos]_vrf" module
+:Alternative: Use platform-specific "[netos]_l2_interfaces" module
 
 
 
 Synopsis
 --------
-- This module provides declarative management of VRFs on network devices.
+- This module provides declarative management of Layer-2 interface on network devices.
 
 
 
@@ -45,6 +43,21 @@ Parameters
                     <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>access_vlan</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>Configure given VLAN in access port.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aggregate</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -54,22 +67,26 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>List of VRFs definitions</div>
+                                            <div>List of Layer-2 interface definitions.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>interfaces</b>
+                    <b>mode</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                            </td>
+                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                <li><div style="color: blue"><b>access</b>&nbsp;&larr;</div></li>
+                                                                                                                                                                                                <li>trunk</li>
+                                                                                    </ul>
+                                                                            </td>
                                                                 <td>
-                                            <div>List of interfaces the VRF should be configured on.</div>
+                                            <div>Mode in which interface needs to be configured.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -84,23 +101,22 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>Name of the VRF.</div>
+                                            <div>Name of the interface excluding any logical unit number.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>purge</b>
+                    <b>native_vlan</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                                                                <b>Default:</b><br/><div style="color: blue">"no"</div>
-                                    </td>
+                                                                                                                                                            </td>
                                                                 <td>
-                                            <div>Purge VRFs not defined in the <em>aggregate</em> parameter.</div>
+                                            <div>Native VLAN to be configured in trunk port.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -119,7 +135,37 @@ Parameters
                                                                                     </ul>
                                                                             </td>
                                                                 <td>
-                                            <div>State of the VRF configuration.</div>
+                                            <div>State of the Layer-2 Interface configuration.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>trunk_allowed_vlans</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>List of allowed VLAN&#x27;s in a given trunk port.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>trunk_vlans</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>List of VLANs to be configured in trunk port.</div>
                                                         </td>
             </tr>
                         </table>
@@ -140,30 +186,15 @@ Examples
 .. code-block:: yaml+jinja
 
 
-    - name: Create VRF named MANAGEMENT
-      ansible.netcommon.net_vrf:
-        name: MANAGEMENT
+    - name: configure Layer-2 interface
+      ansible.netcommon.net_l2_interface:
+        name: gigabitethernet0/0/1
+        mode: access
+        access_vlan: 30
 
-    - name: remove VRF named MANAGEMENT
-      ansible.netcommon.net_vrf:
-        name: MANAGEMENT
-        state: absent
-
-    - name: Create aggregate of VRFs with purge
-      ansible.netcommon.net_vrf:
-        aggregate:
-        - {name: test4, rd: 1:204}
-        - {name: test5, rd: 1:205}
-        state: present
-        purge: yes
-
-    - name: Delete aggregate of VRFs
-      ansible.netcommon.net_vrf:
-        aggregate:
-        - name: test2
-        - name: test3
-        - name: test4
-        - name: test5
+    - name: remove Layer-2 interface configuration
+      ansible.netcommon.net_l2_interface:
+        name: gigabitethernet0/0/1
         state: absent
 
 
@@ -195,7 +226,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                                                         <div>The list of configuration mode commands to send to the device</div>
                                                                 <br/>
                                             <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;vrf definition MANAGEMENT&#x27;]</div>
+                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;interface gigabitethernet0/0/1&#x27;, &#x27;switchport mode access&#x27;, &#x27;switchport access vlan 30&#x27;]</div>
                                     </td>
             </tr>
                         </table>
@@ -213,8 +244,4 @@ Status
 Authors
 ~~~~~~~
 
-- Ricardo Carrillo Cruz (@rcarrillocruz)
-
-
-.. hint::
-    Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.
+- Ganesh Nalawade (@ganeshrn)

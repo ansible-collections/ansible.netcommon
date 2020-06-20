@@ -1,12 +1,11 @@
+.. _ansible.netcommon.network_cli_connection:
 
-.. _ansible.netcommon.httpapi_connection:
 
+*****************************
+ansible.netcommon.network_cli
+*****************************
 
-*************************
-ansible.netcommon.httpapi
-*************************
-
-**Use httpapi to run command on network appliances**
+**Use network_cli to run command on network appliances**
 
 
 Version added: 1.0.0
@@ -18,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- This connection plugin provides a connection to remote devices over a HTTP(S)-based api.
+- This connection plugin provides a connection to remote devices over the SSH and implements a CLI shell.  This connection plugin is typically used by network devices for sending and receiving CLi commands to network devices.
 
 
 
@@ -98,7 +97,53 @@ Parameters
                                                                                                                                     <div>var: ansible_host</div>
                                                                         </td>
                                                 <td>
-                                            <div>Specifies the remote device FQDN or IP address to establish the HTTP(S) connection to.</div>
+                                            <div>Specifies the remote device FQDN or IP address to establish the SSH connection to.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>host_key_auto_add</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                                                                                <b>Default:</b><br/><div style="color: blue">"no"</div>
+                                    </td>
+                                                    <td>
+                                                    <div> ini entries:
+                                                                    <p>[paramiko_connection]<br>host_key_auto_add = no</p>
+                                                            </div>
+                                                                                                            <div>env:ANSIBLE_HOST_KEY_AUTO_ADD</div>
+                                                                                                </td>
+                                                <td>
+                                            <div>By default, Ansible will prompt the user before adding SSH keys to the known hosts file.  Since persistent connections such as network_cli run in background processes, the user will never be prompted.  By enabling this option, unknown host keys will automatically be added to the known hosts file.</div>
+                                            <div>Be sure to fully understand the security implications of enabling this option on production systems as it could create a security vulnerability.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>network_cli_retries</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">integer</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">3</div>
+                                    </td>
+                                                    <td>
+                                                    <div> ini entries:
+                                                                    <p>[persistent_connection]<br>network_cli_retries = 3</p>
+                                                            </div>
+                                                                                                            <div>env:ANSIBLE_NETWORK_CLI_RETRIES</div>
+                                                                                                                                        <div>var: ansible_network_cli_retries</div>
+                                                                        </td>
+                                                <td>
+                                            <div>Number of attempts to connect to remote host. The delay time between the retires increases after every attempt by power of 2 in seconds till either the maximum attempts are exhausted or any of the <code>persistent_command_timeout</code> or <code>persistent_connect_timeout</code> timers are triggered.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -116,7 +161,7 @@ Parameters
                                                                                                                                     <div>var: ansible_network_os</div>
                                                                         </td>
                                                 <td>
-                                            <div>Configures the device platform network operating system.  This value is used to load the correct httpapi plugin to communicate with the remote device</div>
+                                            <div>Configures the device platform network operating system.  This value is used to load the correct terminal and cliconf plugins to communicate with the remote device.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -132,11 +177,34 @@ Parameters
                                                                                                                                                             </td>
                                                     <td>
                                                                                                                                     <div>var: ansible_password</div>
-                                                            <div>var: ansible_httpapi_pass</div>
-                                                            <div>var: ansible_httpapi_password</div>
+                                                            <div>var: ansible_ssh_pass</div>
+                                                            <div>var: ansible_ssh_password</div>
                                                                         </td>
                                                 <td>
-                                            <div>Configures the user password used to authenticate to the remote device when needed for the device API.</div>
+                                            <div>Configures the user password used to authenticate to the remote device when first establishing the SSH connection.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>persistent_buffer_read_timeout</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">float</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">0.1</div>
+                                    </td>
+                                                    <td>
+                                                    <div> ini entries:
+                                                                    <p>[persistent_connection]<br>buffer_read_timeout = 0.1</p>
+                                                            </div>
+                                                                                                            <div>env:ANSIBLE_PERSISTENT_BUFFER_READ_TIMEOUT</div>
+                                                                                                                                        <div>var: ansible_buffer_read_timeout</div>
+                                                                        </td>
+                                                <td>
+                                            <div>Configures, in seconds, the amount of time to wait for the data to be read from Paramiko channel after the command prompt is matched. This timeout value ensures that command prompt matched is correct and there is no more data left to be received from remote host.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -219,17 +287,39 @@ Parameters
                                                                     </div>
                                     </td>
                                 <td>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">22</div>
+                                    </td>
+                                                    <td>
+                                                    <div> ini entries:
+                                                                    <p>[defaults]<br>remote_port = 22</p>
+                                                            </div>
+                                                                                                            <div>env:ANSIBLE_REMOTE_PORT</div>
+                                                                                                                                        <div>var: ansible_port</div>
+                                                                        </td>
+                                                <td>
+                                            <div>Specifies the port on the remote device that listens for connections when establishing the SSH connection.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>private_key_file</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
                                                                                                                                                             </td>
                                                     <td>
                                                     <div> ini entries:
-                                                                    <p>[defaults]<br>remote_port = VALUE</p>
+                                                                    <p>[defaults]<br>private_key_file = VALUE</p>
                                                             </div>
-                                                                                                            <div>env:ANSIBLE_REMOTE_PORT</div>
-                                                                                                                                        <div>var: ansible_httpapi_port</div>
+                                                                                                            <div>env:ANSIBLE_PRIVATE_KEY_FILE</div>
+                                                                                                                                        <div>var: ansible_private_key_file</div>
                                                                         </td>
                                                 <td>
-                                            <div>Specifies the port on the remote device that listens for connections when establishing the HTTP(S) connection.</div>
-                                            <div>When unspecified, will pick 80 or 443 based on the value of use_ssl.</div>
+                                            <div>The private SSH key or certificate file used to authenticate to the remote device when first establishing the SSH connection.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -251,34 +341,14 @@ Parameters
                                                                                                                                         <div>var: ansible_user</div>
                                                                         </td>
                                                 <td>
-                                            <div>The username used to authenticate to the remote device when the API connection is first established.  If the remote_user is not specified, the connection will use the username of the logged in user.</div>
+                                            <div>The username used to authenticate to the remote device when the SSH connection is first established.  If the remote_user is not specified, the connection will use the username of the logged in user.</div>
                                             <div>Can be configured from the CLI via the <code>--user</code> or <code>-u</code> options.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>session_key</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                    <td>
-                                                                                                                                    <div>var: ansible_httpapi_session_key</div>
-                                                                        </td>
-                                                <td>
-                                            <div>Configures the session key to be used to authenticate to the remote device when needed for the device API.</div>
-                                            <div>This should contain a dictionary representing the key name and value for the token.</div>
-                                            <div>When specified, <em>password</em> is ignored.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>use_proxy</b>
+                    <b>terminal_inital_prompt_newline</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">boolean</span>
@@ -288,16 +358,52 @@ Parameters
                                                                                                                                                                                                                 <b>Default:</b><br/><div style="color: blue">"yes"</div>
                                     </td>
                                                     <td>
-                                                                                                                                    <div>var: ansible_httpapi_use_proxy</div>
+                                                                                                                                    <div>var: ansible_terminal_initial_prompt_newline</div>
                                                                         </td>
                                                 <td>
-                                            <div>Whether to use https_proxy for requests.</div>
+                                            <div>This boolean flag, that when set to <em>True</em> will send newline in the response if any of values in <em>terminal_initial_prompt</em> is matched.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>use_ssl</b>
+                    <b>terminal_initial_answer</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                    <td>
+                                                                                                                                    <div>var: ansible_terminal_initial_answer</div>
+                                                                        </td>
+                                                <td>
+                                            <div>The answer to reply with if the <code>terminal_initial_prompt</code> is matched. The value can be a single answer or a list of answers for multiple terminal_initial_prompt. In case the login menu has multiple prompts the sequence of the prompt and excepted answer should be in same order and the value of <em>terminal_prompt_checkall</em> should be set to <em>True</em> if all the values in <code>terminal_initial_prompt</code> are expected to be matched and set to <em>False</em> if any one login prompt is to be matched.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>terminal_initial_prompt</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                    <td>
+                                                                                                                                    <div>var: ansible_terminal_initial_prompt</div>
+                                                                        </td>
+                                                <td>
+                                            <div>A single regex pattern or a sequence of patterns to evaluate the expected prompt at the time of initial login to the remote host.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>terminal_initial_prompt_checkall</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">boolean</span>
@@ -307,29 +413,46 @@ Parameters
                                                                                                                                                                                                                 <b>Default:</b><br/><div style="color: blue">"no"</div>
                                     </td>
                                                     <td>
-                                                                                                                                    <div>var: ansible_httpapi_use_ssl</div>
+                                                                                                                                    <div>var: ansible_terminal_initial_prompt_checkall</div>
                                                                         </td>
                                                 <td>
-                                            <div>Whether to connect using SSL (HTTPS) or not (HTTP).</div>
+                                            <div>By default the value is set to <em>False</em> and any one of the prompts mentioned in <code>terminal_initial_prompt</code> option is matched it won&#x27;t check for other prompts. When set to <em>True</em> it will check for all the prompts mentioned in <code>terminal_initial_prompt</code> option in the given order and all the prompts should be received from remote host if not it will result in timeout.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>validate_certs</b>
+                    <b>terminal_stderr_re</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                                                                    </div>
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=dictionary</span>                                            </div>
                                     </td>
                                 <td>
-                                                                                                                                                                                                                <b>Default:</b><br/><div style="color: blue">"yes"</div>
-                                    </td>
+                                                                                                                                                            </td>
                                                     <td>
-                                                                                                                                    <div>var: ansible_httpapi_validate_certs</div>
+                                                                                                                                    <div>var: ansible_terminal_stderr_re</div>
                                                                         </td>
                                                 <td>
-                                            <div>Whether to validate SSL certificates</div>
+                                            <div>This option provides the regex pattern and optional flags to match the error string from the received response chunk. This option accepts <code>pattern</code> and <code>flags</code> keys. The value of <code>pattern</code> is a python regex pattern to match the response and the value of <code>flags</code> is the value accepted by <em>flags</em> argument of <em>re.compile</em> python method to control the way regex is matched with the response, for example <em>&#x27;re.I&#x27;</em>.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>terminal_stdout_re</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=dictionary</span>                                            </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                    <td>
+                                                                                                                                    <div>var: ansible_terminal_stdout_re</div>
+                                                                        </td>
+                                                <td>
+                                            <div>A single regex pattern or a sequence of patterns along with optional flags to match the command prompt from the received response chunk. This option accepts <code>pattern</code> and <code>flags</code> keys. The value of <code>pattern</code> is a python regex pattern to match the response and the value of <code>flags</code> is the value accepted by <em>flags</em> argument of <em>re.compile</em> python method to control the way regex is matched with the response, for example <em>&#x27;re.I&#x27;</em>.</div>
                                                         </td>
             </tr>
                         </table>

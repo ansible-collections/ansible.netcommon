@@ -1,4 +1,3 @@
-
 .. _ansible.netcommon.persistent_connection:
 
 

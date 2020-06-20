@@ -1,13 +1,11 @@
-:orphan:
-
-.. _ansible.netcommon.net_banner_module:
+.. _ansible.netcommon.net_vrf_module:
 
 
-****************************
-ansible.netcommon.net_banner
-****************************
+*************************
+ansible.netcommon.net_vrf
+*************************
 
-**(deprecated, removed after 2022-06-01) Manage multiline banners on network devices**
+**(deprecated, removed after 2022-06-01) Manage VRFs on network devices**
 
 
 Version added: 1.0.0
@@ -20,13 +18,13 @@ DEPRECATED
 ----------
 :Removed in collection release after 2022-06-01
 :Why: Updated modules released with more functionality
-:Alternative: Use platform-specific "[netos]_banner" module
+:Alternative: Use platform-specific "[netos]_vrf" module
 
 
 
 Synopsis
 --------
-- This will configure both login and motd banners on network devices. It allows playbooks to add or remove banner text from the active running configuration.
+- This module provides declarative management of VRFs on network devices.
 
 
 
@@ -45,20 +43,62 @@ Parameters
                     <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>banner</b>
+                    <b>aggregate</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
-                                                 / <span style="color: red">required</span>                    </div>
+                                                                    </div>
                                     </td>
                                 <td>
-                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li>login</li>
-                                                                                                                                                                                                <li>motd</li>
-                                                                                    </ul>
-                                                                            </td>
+                                                                                                                                                            </td>
                                                                 <td>
-                                            <div>Specifies which banner that should be configured on the remote device.</div>
+                                            <div>List of VRFs definitions</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>interfaces</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>List of interfaces the VRF should be configured on.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>Name of the VRF.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>purge</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                                                                                <b>Default:</b><br/><div style="color: blue">"no"</div>
+                                    </td>
+                                                                <td>
+                                            <div>Purge VRFs not defined in the <em>aggregate</em> parameter.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -77,22 +117,7 @@ Parameters
                                                                                     </ul>
                                                                             </td>
                                                                 <td>
-                                            <div>Specifies whether or not the configuration is present in the current devices active running configuration.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>text</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>The banner text that should be present in the remote device running configuration.  This argument accepts a multiline string, with no empty lines. Requires <em>state=present</em>.</div>
+                                            <div>State of the VRF configuration.</div>
                                                         </td>
             </tr>
                         </table>
@@ -113,26 +138,31 @@ Examples
 .. code-block:: yaml+jinja
 
 
-    - name: configure the login banner
-      ansible.netcommon.net_banner:
-        banner: login
-        text: |
-          this is my login banner
-          that contains a multiline
-          string
-        state: present
+    - name: Create VRF named MANAGEMENT
+      ansible.netcommon.net_vrf:
+        name: MANAGEMENT
 
-    - name: remove the motd banner
-      ansible.netcommon.net_banner:
-        banner: motd
+    - name: remove VRF named MANAGEMENT
+      ansible.netcommon.net_vrf:
+        name: MANAGEMENT
         state: absent
 
-    - name: Configure banner from file
-      ansible.netcommon.net_banner:
-        banner: motd
-        text: "{{ lookup('file', './config_partial/raw_banner.cfg') }}"
+    - name: Create aggregate of VRFs with purge
+      ansible.netcommon.net_vrf:
+        aggregate:
+        - {name: test4, rd: 1:204}
+        - {name: test5, rd: 1:205}
         state: present
+        purge: yes
 
+    - name: Delete aggregate of VRFs
+      ansible.netcommon.net_vrf:
+        aggregate:
+        - name: test2
+        - name: test3
+        - name: test4
+        - name: test5
+        state: absent
 
 
 
@@ -163,7 +193,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                                                         <div>The list of configuration mode commands to send to the device</div>
                                                                 <br/>
                                             <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;banner login&#x27;, &#x27;this is my login banner&#x27;, &#x27;that contains a multiline&#x27;, &#x27;string&#x27;]</div>
+                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;vrf definition MANAGEMENT&#x27;]</div>
                                     </td>
             </tr>
                         </table>
@@ -182,7 +212,3 @@ Authors
 ~~~~~~~
 
 - Ricardo Carrillo Cruz (@rcarrillocruz)
-
-
-.. hint::
-    Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.

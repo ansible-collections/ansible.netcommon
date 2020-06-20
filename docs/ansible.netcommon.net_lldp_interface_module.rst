@@ -1,13 +1,11 @@
-:orphan:
-
-.. _ansible.netcommon.net_logging_module:
+.. _ansible.netcommon.net_lldp_interface_module:
 
 
-*****************************
-ansible.netcommon.net_logging
-*****************************
+************************************
+ansible.netcommon.net_lldp_interface
+************************************
 
-**(deprecated, removed after 2022-06-01) Manage logging on network devices**
+**(deprecated, removed after 2022-06-01) Manage LLDP interfaces configuration on network devices**
 
 
 Version added: 1.0.0
@@ -20,13 +18,13 @@ DEPRECATED
 ----------
 :Removed in collection release after 2022-06-01
 :Why: Updated modules released with more functionality
-:Alternative: Use platform-specific "[netos]_logging" module
+:Alternative: Use platform-specific "[netos]_lldp_interfaces" module
 
 
 
 Synopsis
 --------
-- This module provides declarative management of logging on network devices.
+- This module provides declarative management of LLDP interfaces configuration on network devices.
 
 
 
@@ -54,56 +52,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>List of logging definitions.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>dest</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li>console</li>
-                                                                                                                                                                                                <li>host</li>
-                                                                                    </ul>
-                                                                            </td>
-                                                                <td>
-                                            <div>Destination of the logs.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>facility</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>Set logging facility.</div>
-                                                        </td>
-            </tr>
-                                <tr>
-                                                                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>level</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>Set logging severity levels.</div>
+                                            <div>List of interfaces LLDP should be configured on.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -118,7 +67,7 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>If value of <code>dest</code> is <em>host</em> it indicates file-name the host name to be notified.</div>
+                                            <div>Name of the interface LLDP should be configured on.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -134,7 +83,7 @@ Parameters
                                                                                                                                                                                                                 <b>Default:</b><br/><div style="color: blue">"no"</div>
                                     </td>
                                                                 <td>
-                                            <div>Purge logging not defined in the <em>aggregate</em> parameter.</div>
+                                            <div>Purge interfaces not defined in the aggregate parameter.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -150,10 +99,12 @@ Parameters
                                                                                                                             <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>absent</li>
+                                                                                                                                                                                                <li>enabled</li>
+                                                                                                                                                                                                <li>disabled</li>
                                                                                     </ul>
                                                                             </td>
                                                                 <td>
-                                            <div>State of the logging configuration.</div>
+                                            <div>State of the LLDP configuration.</div>
                                                         </td>
             </tr>
                         </table>
@@ -174,44 +125,38 @@ Examples
 .. code-block:: yaml+jinja
 
 
-    - name: configure console logging
-      ansible.netcommon.net_logging:
-        dest: console
-        facility: any
-        level: critical
+    - name: Configure LLDP on specific interfaces
+      ansible.netcommon.net_lldp_interface:
+        name: eth1
+        state: present
 
-    - name: remove console logging configuration
-      ansible.netcommon.net_logging:
-        dest: console
+    - name: Disable LLDP on specific interfaces
+      ansible.netcommon.net_lldp_interface:
+        name: eth1
+        state: disabled
+
+    - name: Enable LLDP on specific interfaces
+      ansible.netcommon.net_lldp_interface:
+        name: eth1
+        state: enabled
+
+    - name: Delete LLDP on specific interfaces
+      ansible.netcommon.net_lldp_interface:
+        name: eth1
         state: absent
 
-    - name: configure host logging
-      ansible.netcommon.net_logging:
-        dest: host
-        name: 192.0.2.1
-        facility: kernel
-        level: critical
+    - name: Create aggregate of LLDP interface configurations
+      ansible.netcommon.net_lldp_interface:
+        aggregate:
+        - {name: eth1}
+        - {name: eth2}
+        state: present
 
-    - name: Configure file logging using aggregate
-      ansible.netcommon.net_logging:
-        dest: file
+    - name: Delete aggregate of LLDP interface configurations
+      ansible.netcommon.net_lldp_interface:
         aggregate:
-        - name: test-1
-          facility: pfe
-          level: critical
-        - name: test-2
-          facility: kernel
-          level: emergency
-    - name: Delete file logging using aggregate
-      ansible.netcommon.net_logging:
-        dest: file
-        aggregate:
-        - name: test-1
-          facility: pfe
-          level: critical
-        - name: test-2
-          facility: kernel
-          level: emergency
+        - {name: eth1}
+        - {name: eth2}
         state: absent
 
 
@@ -243,7 +188,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                                                         <div>The list of configuration mode commands to send to the device</div>
                                                                 <br/>
                                             <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;logging console critical&#x27;]</div>
+                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;set service lldp eth1 disable&#x27;]</div>
                                     </td>
             </tr>
                         </table>
@@ -262,7 +207,3 @@ Authors
 ~~~~~~~
 
 - Ganesh Nalawade (@ganeshrn)
-
-
-.. hint::
-    Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.

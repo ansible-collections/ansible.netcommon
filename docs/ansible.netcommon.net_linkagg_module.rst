@@ -1,13 +1,11 @@
-:orphan:
-
-.. _ansible.netcommon.net_l3_interface_module:
+.. _ansible.netcommon.net_linkagg_module:
 
 
-**********************************
-ansible.netcommon.net_l3_interface
-**********************************
+*****************************
+ansible.netcommon.net_linkagg
+*****************************
 
-**(deprecated, removed after 2022-06-01) Manage L3 interfaces on network devices**
+**(deprecated, removed after 2022-06-01) Manage link aggregation groups on network devices**
 
 
 Version added: 1.0.0
@@ -20,13 +18,13 @@ DEPRECATED
 ----------
 :Removed in collection release after 2022-06-01
 :Why: Updated modules released with more functionality
-:Alternative: Use platform-specific "[netos]_l3_interfaces" module
+:Alternative: Use platform-specific "[netos]_lag_interfaces" module
 
 
 
 Synopsis
 --------
-- This module provides declarative management of L3 interfaces on network devices.
+- This module provides declarative management of link aggregation groups on network devices.
 
 
 
@@ -54,13 +52,28 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>List of L3 interfaces definitions</div>
+                                            <div>List of link aggregation definitions.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>ipv4</b>
+                    <b>members</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                 / <span style="color: red">required</span>                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                            </td>
+                                                                <td>
+                                            <div>List of members interfaces of the link aggregation group. The value can be single interface or list of interfaces.</div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>min_links</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
@@ -69,22 +82,28 @@ Parameters
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>IPv4 of the L3 interface.</div>
+                                            <div>Minimum members that should be up before bringing up the link aggregation group.</div>
                                                         </td>
             </tr>
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>ipv6</b>
+                    <b>mode</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                            </td>
+                                                                                                                                                                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                                                                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
+                                                                                                                                                                                                <li>active</li>
+                                                                                                                                                                                                <li>passive</li>
+                                                                                    </ul>
+                                                                                    <b>Default:</b><br/><div style="color: blue">"yes"</div>
+                                    </td>
                                                                 <td>
-                                            <div>IPv6 of the L3 interface.</div>
+                                            <div>Mode of the link aggregation group. A value of <code>on</code> will enable LACP. <code>active</code> configures the link to actively information about the state of the link, or it can be configured in <code>passive</code> mode ie. send link state information only when received them from another link.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -94,12 +113,12 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
-                                                                    </div>
+                                                 / <span style="color: red">required</span>                    </div>
                                     </td>
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>Name of the L3 interface.</div>
+                                            <div>Name of the link aggregation group.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -115,7 +134,7 @@ Parameters
                                                                                                                                                                                                                 <b>Default:</b><br/><div style="color: blue">"no"</div>
                                     </td>
                                                                 <td>
-                                            <div>Purge L3 interfaces not defined in the <em>aggregate</em> parameter.</div>
+                                            <div>Purge link aggregation groups not defined in the <em>aggregate</em> parameter.</div>
                                                         </td>
             </tr>
                                 <tr>
@@ -131,10 +150,12 @@ Parameters
                                                                                                                             <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                                                                                                                                                 <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
                                                                                                                                                                                                 <li>absent</li>
+                                                                                                                                                                                                <li>up</li>
+                                                                                                                                                                                                <li>down</li>
                                                                                     </ul>
                                                                             </td>
                                                                 <td>
-                                            <div>State of the L3 interface configuration.</div>
+                                            <div>State of the link aggregation group.</div>
                                                         </td>
             </tr>
                         </table>
@@ -155,27 +176,29 @@ Examples
 .. code-block:: yaml+jinja
 
 
-    - name: Set eth0 IPv4 address
-      ansible.netcommon.net_l3_interface:
-        name: eth0
-        ipv4: 192.168.0.1/24
+    - name: configure link aggregation group
+      ansible.netcommon.net_linkagg:
+        name: bond0
+        members:
+        - eth0
+        - eth1
 
-    - name: Remove eth0 IPv4 address
-      ansible.netcommon.net_l3_interface:
-        name: eth0
+    - name: remove configuration
+      ansible.netcommon.net_linkagg:
+        name: bond0
         state: absent
 
-    - name: Set IP addresses on aggregate
-      ansible.netcommon.net_l3_interface:
+    - name: Create aggregate of linkagg definitions
+      ansible.netcommon.net_linkagg:
         aggregate:
-        - {name: eth1, ipv4: 192.168.2.10/24}
-        - {name: eth2, ipv4: 192.168.3.10/24, ipv6: fd5d:12c9:2201:1::1/64}
+        - {name: bond0, members: [eth1]}
+        - {name: bond1, members: [eth2]}
 
-    - name: Remove IP addresses on aggregate
-      ansible.netcommon.net_l3_interface:
+    - name: Remove aggregate of linkagg definitions
+      ansible.netcommon.net_linkagg:
         aggregate:
-        - {name: eth1, ipv4: 192.168.2.10/24}
-        - {name: eth2, ipv4: 192.168.3.10/24, ipv6: fd5d:12c9:2201:1::1/64}
+        - name: bond0
+        - name: bond1
         state: absent
 
 
@@ -207,7 +230,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                                                         <div>The list of configuration mode commands to send to the device</div>
                                                                 <br/>
                                             <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&quot;set interfaces ethernet eth0 address &#x27;192.168.0.1/24&#x27;&quot;]</div>
+                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;set interfaces bonding bond0&#x27;, &quot;set interfaces ethernet eth0 bond-group &#x27;bond0&#x27;&quot;, &quot;set interfaces ethernet eth1 bond-group &#x27;bond0&#x27;&quot;]</div>
                                     </td>
             </tr>
                         </table>
@@ -226,7 +249,3 @@ Authors
 ~~~~~~~
 
 - Ricardo Carrillo Cruz (@rcarrillocruz)
-
-
-.. hint::
-    Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.

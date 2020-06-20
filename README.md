@@ -6,22 +6,34 @@
 The Ansible ``ansible.netcommon`` collection includes common content to help automate the management of network, security, and cloud devices.
 This includes  connection plugins, such as ``network_cli``, ``httpapi``, and ``netconf``.
 
+<!--start requires_ansible-->
+## Ansible version compatibility
+
+This collection has been tested against following Ansible versions: **>=2.9.10,<2.11**.
+
+Plugins and modules within a collection may be tested with only specific Ansible versions.
+A collection may contain metadata that identifies these versions.
+PEP440 is the schema used to describe the versions of Ansible.
+<!--end requires_ansible-->
+
 ## Included content
 
 <!--start collection content-->
-## Become plugins
+### Become plugins
 Name | Description
 --- | ---
-[ansible.netcommon.enable](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.enable.rst)|Switch to elevated permissions on a network device
-## Connection plugins
+[ansible.netcommon.enable](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.enable_become.rst)|Switch to elevated permissions on a network device
+
+### Connection plugins
 Name | Description
 --- | ---
-[ansible.netcommon.httpapi](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.httpapi.rst)|Use httpapi to run command on network appliances
+[ansible.netcommon.httpapi](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.httpapi_connection.rst)|Use httpapi to run command on network appliances
 [ansible.netcommon.napalm](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.napalm_connection.rst)|Provides persistent connection using NAPALM
-[ansible.netcommon.netconf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf.rst)|Provides a persistent connection using the netconf protocol
-[ansible.netcommon.network_cli](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.network_cli.rst)|Use network_cli to run command on network appliances
-[ansible.netcommon.persistent](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.persistent.rst)|Use a persistent unix socket for connection
-## Filter plugins
+[ansible.netcommon.netconf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_connection.rst)|Provides a persistent connection using the netconf protocol
+[ansible.netcommon.network_cli](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.network_cli_connection.rst)|Use network_cli to run command on network appliances
+[ansible.netcommon.persistent](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.persistent_connection.rst)|Use a persistent unix socket for connection
+
+### Filter plugins
 Name | Description
 --- | ---
 ansible.netcommon.cidr_merge|ansible.netcommon cidr_merge filter plugin
@@ -48,41 +60,45 @@ ansible.netcommon.reduce_on_network|Reduces a list of addresses to only the addr
 ansible.netcommon.slaac|Get the SLAAC address within given network
 ansible.netcommon.type5_pw|ansible.netcommon type5_pw filter plugin
 ansible.netcommon.vlan_parser|Input: Unsorted list of vlan integers
-## Httpapi plugins
+
+### Httpapi plugins
 Name | Description
 --- | ---
-[ansible.netcommon.restconf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.restconf.rst)|HttpApi Plugin for devices supporting Restconf API
-## Netconf plugins
+[ansible.netcommon.restconf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.restconf_httpapi.rst)|HttpApi Plugin for devices supporting Restconf API
+
+### Netconf plugins
 Name | Description
 --- | ---
-[ansible.netcommon.default](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.default.rst)|Use default netconf plugin to run standard netconf commands as per RFC
-## Modules
+[ansible.netcommon.default](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.default_netconf.rst)|Use default netconf plugin to run standard netconf commands as per RFC
+
+### Modules
 Name | Description
 --- | ---
-[ansible.netcommon.cli_command](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.cli_command.rst)|Run a cli command on cli-based network devices
-[ansible.netcommon.cli_config](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.cli_config.rst)|Push text based configuration to network devices over network_cli
-[ansible.netcommon.net_banner](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_banner.rst)|(deprecated, removed after 2022-06-01) Manage multiline banners on network devices
-[ansible.netcommon.net_get](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_get.rst)|Copy a file from a network device to Ansible Controller
-[ansible.netcommon.net_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_interface.rst)|(deprecated, removed after 2022-06-01) Manage Interface on network devices
-[ansible.netcommon.net_l2_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_l2_interface.rst)|(deprecated, removed after 2022-06-01) Manage Layer-2 interface on network devices
-[ansible.netcommon.net_l3_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_l3_interface.rst)|(deprecated, removed after 2022-06-01) Manage L3 interfaces on network devices
-[ansible.netcommon.net_linkagg](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_linkagg.rst)|(deprecated, removed after 2022-06-01) Manage link aggregation groups on network devices
-[ansible.netcommon.net_lldp](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_lldp.rst)|(deprecated, removed after 2022-06-01) Manage LLDP service configuration on network devices
-[ansible.netcommon.net_lldp_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_lldp_interface.rst)|(deprecated, removed after 2022-06-01) Manage LLDP interfaces configuration on network devices
-[ansible.netcommon.net_logging](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_logging.rst)|(deprecated, removed after 2022-06-01) Manage logging on network devices
-[ansible.netcommon.net_ping](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_ping.rst)|Tests reachability using ping from a network device
-[ansible.netcommon.net_put](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_put.rst)|Copy a file from Ansible Controller to a network device
-[ansible.netcommon.net_static_route](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_static_route.rst)|(deprecated, removed after 2022-06-01) Manage static IP routes on network appliances (routers, switches et. al.)
-[ansible.netcommon.net_system](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_system.rst)|(deprecated, removed after 2022-06-01) Manage the system attributes on network devices
-[ansible.netcommon.net_user](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_user.rst)|(deprecated, removed after 2022-06-01) Manage the aggregate of local users on network device
-[ansible.netcommon.net_vlan](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_vlan.rst)|(deprecated, removed after 2022-06-01) Manage VLANs on network devices
-[ansible.netcommon.net_vrf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_vrf.rst)|(deprecated, removed after 2022-06-01) Manage VRFs on network devices
-[ansible.netcommon.netconf_config](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_config.rst)|netconf device configuration
-[ansible.netcommon.netconf_get](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_get.rst)|Fetch configuration/state data from NETCONF enabled network devices.
-[ansible.netcommon.netconf_rpc](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_rpc.rst)|Execute operations on NETCONF enabled network devices.
-[ansible.netcommon.restconf_config](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.restconf_config.rst)|Handles create, update, read and delete of configuration data on RESTCONF enabled devices.
-[ansible.netcommon.restconf_get](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.restconf_get.rst)|Fetch configuration/state data from RESTCONF enabled devices.
-[ansible.netcommon.telnet](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.telnet.rst)|Executes a low-down and dirty telnet command
+[ansible.netcommon.cli_command](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.cli_command_module.rst)|Run a cli command on cli-based network devices
+[ansible.netcommon.cli_config](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.cli_config_module.rst)|Push text based configuration to network devices over network_cli
+[ansible.netcommon.net_banner](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_banner_module.rst)|(deprecated, removed after 2022-06-01) Manage multiline banners on network devices
+[ansible.netcommon.net_get](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_get_module.rst)|Copy a file from a network device to Ansible Controller
+[ansible.netcommon.net_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_interface_module.rst)|(deprecated, removed after 2022-06-01) Manage Interface on network devices
+[ansible.netcommon.net_l2_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_l2_interface_module.rst)|(deprecated, removed after 2022-06-01) Manage Layer-2 interface on network devices
+[ansible.netcommon.net_l3_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_l3_interface_module.rst)|(deprecated, removed after 2022-06-01) Manage L3 interfaces on network devices
+[ansible.netcommon.net_linkagg](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_linkagg_module.rst)|(deprecated, removed after 2022-06-01) Manage link aggregation groups on network devices
+[ansible.netcommon.net_lldp](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_lldp_module.rst)|(deprecated, removed after 2022-06-01) Manage LLDP service configuration on network devices
+[ansible.netcommon.net_lldp_interface](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_lldp_interface_module.rst)|(deprecated, removed after 2022-06-01) Manage LLDP interfaces configuration on network devices
+[ansible.netcommon.net_logging](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_logging_module.rst)|(deprecated, removed after 2022-06-01) Manage logging on network devices
+[ansible.netcommon.net_ping](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_ping_module.rst)|Tests reachability using ping from a network device
+[ansible.netcommon.net_put](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_put_module.rst)|Copy a file from Ansible Controller to a network device
+[ansible.netcommon.net_static_route](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_static_route_module.rst)|(deprecated, removed after 2022-06-01) Manage static IP routes on network appliances (routers, switches et. al.)
+[ansible.netcommon.net_system](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_system_module.rst)|(deprecated, removed after 2022-06-01) Manage the system attributes on network devices
+[ansible.netcommon.net_user](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_user_module.rst)|(deprecated, removed after 2022-06-01) Manage the aggregate of local users on network device
+[ansible.netcommon.net_vlan](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_vlan_module.rst)|(deprecated, removed after 2022-06-01) Manage VLANs on network devices
+[ansible.netcommon.net_vrf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.net_vrf_module.rst)|(deprecated, removed after 2022-06-01) Manage VRFs on network devices
+[ansible.netcommon.netconf_config](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_config_module.rst)|netconf device configuration
+[ansible.netcommon.netconf_get](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_get_module.rst)|Fetch configuration/state data from NETCONF enabled network devices.
+[ansible.netcommon.netconf_rpc](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_rpc_module.rst)|Execute operations on NETCONF enabled network devices.
+[ansible.netcommon.restconf_config](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.restconf_config_module.rst)|Handles create, update, read and delete of configuration data on RESTCONF enabled devices.
+[ansible.netcommon.restconf_get](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.restconf_get_module.rst)|Fetch configuration/state data from RESTCONF enabled devices.
+[ansible.netcommon.telnet](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.telnet_module.rst)|Executes a low-down and dirty telnet command
+
 <!--end collection content-->
 
 
