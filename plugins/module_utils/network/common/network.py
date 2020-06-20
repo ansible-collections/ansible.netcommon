@@ -235,18 +235,14 @@ def get_resource_connection(module):
 
     capabilities = get_capabilities(module)
     network_api = capabilities.get("network_api")
-    if network_api in ("cliconf", "nxapi", "eapi", "exosapi"):
-        module._connection = Connection(module._socket_path)
-    elif network_api == "netconf":
+    if network_api == "netconf":
         module._connection = NetconfConnection(module._socket_path)
     elif network_api == "local":
         # This isn't supported, but we shouldn't fail here.
         # Set the connection to a fake connection so it fails sensibly.
         module._connection = LocalResourceConnection(module)
     else:
-        module.fail_json(
-            msg="Invalid connection type {0!s}".format(network_api)
-        )
+        module._connection = Connection(module._socket_path)
 
     return module._connection
 
