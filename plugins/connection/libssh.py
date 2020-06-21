@@ -144,7 +144,7 @@ Are you sure you want to continue connecting (yes/no)?
 """
 
 # SSH Options Regex
-SETTINGS_REGEX = re.compile(r'(\w+)(?:\s*=\s*|\s+)(.+)')
+SETTINGS_REGEX = re.compile(r"(\w+)(?:\s*=\s*|\s+)(.+)")
 
 
 class MyAddPolicy(object):
@@ -162,14 +162,26 @@ class MyAddPolicy(object):
         self.connection = connection
         self._options = connection._options
 
-    def missing_host_key(self, session, hostname, username, key_type, fingerprint, message):
+    def missing_host_key(
+        self, session, hostname, username, key_type, fingerprint, message
+    ):
 
-        if all((self._options['host_key_checking'], not self._options['host_key_auto_add'])):
+        if all(
+            (
+                self._options["host_key_checking"],
+                not self._options["host_key_auto_add"],
+            )
+        ):
 
-            if self.connection.get_option('use_persistent_connections') or self.connection.force_persistence:
+            if (
+                self.connection.get_option("use_persistent_connections")
+                or self.connection.force_persistence
+            ):
                 # don't print the prompt string since the user cannot respond
                 # to the question anyway
-                raise AnsibleError(AUTHENTICITY_MSG[1:92] % (hostname, key_type, fingerprint))
+                raise AnsibleError(
+                    AUTHENTICITY_MSG[1:92] % (hostname, key_type, fingerprint)
+                )
 
             self.connection.connection_lock()
             old_stdin = sys.stdin
@@ -178,17 +190,20 @@ class MyAddPolicy(object):
             # clear out any premature input on sys.stdin
             tcflush(sys.stdin, TCIFLUSH)
 
-            inp = input(AUTHENTICITY_MSG % (hostname, message, key_type, fingerprint))
+            inp = input(
+                AUTHENTICITY_MSG % (hostname, message, key_type, fingerprint)
+            )
             sys.stdin = old_stdin
 
             self.connection.connection_unlock()
-            if inp not in ['yes', 'y', '']:
+            if inp not in ["yes", "y", ""]:
                 raise AnsibleError("host connection rejected by user")
 
         session.hostkey_auto_add(username)
 
         # host keys are actually saved in close() function below
         # in order to control ordering.
+
 
 # keep connection objects on a per host basis to avoid repeated attempts to reconnect
 SSH_CONNECTION_CACHE = {}
@@ -290,7 +305,9 @@ class Connection(ConnectionBase):
             if proxy_command:
                 ssh_connect_kwargs["proxycommand"] = proxy_command
 
-            self.ssh.set_missing_host_key_policy(MyAddPolicy(self._new_stdin, self))
+            self.ssh.set_missing_host_key_policy(
+                MyAddPolicy(self._new_stdin, self)
+            )
 
             self.ssh.connect(
                 host=self._play_context.remote_addr.lower(),
@@ -475,10 +492,15 @@ class Connection(ConnectionBase):
         try:
             self.sftp = self._connect_sftp()
         except Exception as e:
-            raise AnsibleError("failed to open a SFTP connection (%s)" % to_native(e))
+            raise AnsibleError(
+                "failed to open a SFTP connection (%s)" % to_native(e)
+            )
 
         try:
-            self.sftp.get(to_bytes(in_path, errors='surrogate_or_strict'), to_bytes(out_path, errors='surrogate_or_strict'))
+            self.sftp.get(
+                to_bytes(in_path, errors="surrogate_or_strict"),
+                to_bytes(out_path, errors="surrogate_or_strict"),
+            )
         except IOError:
             raise AnsibleError("failed to transfer file from %s" % in_path)
 

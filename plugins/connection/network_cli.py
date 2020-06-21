@@ -379,7 +379,9 @@ class Connection(NetworkConnectionBase):
                 "manually configure ansible_network_os value for this host"
             )
         self.queue_message("log", "network_os is set to %s" % self._network_os)
-        self.queue_message("vvvv", "ssh_type is set to: %s" % self.get_option("ssh_type"))
+        self.queue_message(
+            "vvvv", "ssh_type is set to: %s" % self.get_option("ssh_type")
+        )
 
     @property
     def ssh_type_conn(self):
@@ -408,7 +410,7 @@ class Connection(NetworkConnectionBase):
                 }
             )
             self.queue_message(
-            "vvvv", "ssh type is set to %s" % self.get_option("ssh_type")
+                "vvvv", "ssh type is set to %s" % self.get_option("ssh_type")
             )
         return self._ssh_type_conn
 
