@@ -129,7 +129,6 @@ display = Display()
 
 try:
     from pylibsshext.session import Session
-    from pylibsshext.channel import Channel
     from pylibsshext.errors import LibsshSessionException
 
     HAS_PYLIBSSH = True
@@ -397,11 +396,11 @@ class Connection(ConnectionBase):
                     become_output += chunk
                     # need to check every line because we might get lectured
                     # and we might get the middle of a line in a chunk
-                    for l in become_output.splitlines(True):
-                        if self.become.check_success(l):
+                    for line in become_output.splitlines(True):
+                        if self.become.check_success(line):
                             become_sucess = True
                             break
-                        elif self.become.check_password_prompt(l):
+                        elif self.become.check_password_prompt(line):
                             passprompt = True
                             break
                 if passprompt:

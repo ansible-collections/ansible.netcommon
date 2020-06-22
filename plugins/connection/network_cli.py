@@ -529,7 +529,7 @@ class Connection(NetworkConnectionBase):
                 try:
                     ssh = self.ssh_type_conn._connect()
                     break
-                except AnsibleError as e:
+                except AnsibleError:
                     raise
                 except Exception as e:
                     pause = 2 ** (attempt + 1)
@@ -736,6 +736,8 @@ class Connection(NetworkConnectionBase):
     ):
         self._command_response = resp = b""
         command_prompt_matched = False
+        handled = False
+
         while True:
 
             if command_prompt_matched:
