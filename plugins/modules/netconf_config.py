@@ -28,7 +28,8 @@ options:
     description:
     - The configuration data as defined by the device's data models, the value can
       be either in xml string format or text format. The format of the configuration
-      should be supported by remote Netconf server
+      should be supported by remote Netconf server. If the value of C(content) option
+      is in I(xml) format in that case the xml value should have I(config) as root tag.
     aliases:
     - xml
   target:
@@ -297,6 +298,13 @@ def get_filter_type(filter):
             return "xpath"
 
 
+def validate_config(module, config, format='xml'):
+    if format == 'xml':
+        root = fromstring(config)
+        if root.tag != 'config':
+            module.fail_json(msg='content value should have xml string with <config> tag as root')
+
+
 def main():
     """ main entry point for module execution
     """
@@ -413,6 +421,7 @@ def main():
     validate = module.params["validate"]
     save = module.params["save"]
     filter = module.params["get_filter"]
+    format = module.params["format"]
     filter_type = get_filter_type(filter)
 
     conn = Connection(module._socket_path)
@@ -535,12 +544,13 @@ def main():
                     errors="surrogate_then_replace",
                 ).strip()
 
+            validate_config(module, config, format)
             kwargs = {
                 "config": config,
                 "target": target,
                 "default_operation": module.params["default_operation"],
                 "error_option": module.params["error_option"],
-                "format": module.params["format"],
+                "format": format,
             }
 
             conn.edit_config(**kwargs)
