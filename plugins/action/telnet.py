@@ -55,9 +55,11 @@ class ActionModule(ActionBase):
 
             send_newline = self._task.args.get("send_newline", False)
 
-            login_prompt = self._task.args.get("login_prompt", "login: ")
-            password_prompt = self._task.args.get(
-                "password_prompt", "Password: "
+            login_prompt = to_text(
+                self._task.args.get("login_prompt", "login: ")
+            )
+            password_prompt = to_text(
+                self._task.args.get("password_prompt", "Password: ")
             )
             prompts = self._task.args.get("prompts", ["\\$ "])
             commands = self._task.args.get("command") or self._task.args.get(
