@@ -9,7 +9,7 @@ __metaclass__ = type
 import telnetlib
 from time import sleep
 
-from ansible.module_utils._text import to_native, to_bytes
+from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.six import text_type
 from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
@@ -38,22 +38,28 @@ class ActionModule(ActionBase):
             result["changed"] = True
             result["failed"] = False
 
-            host = self._task.args.get("host", self._play_context.remote_addr)
-            user = self._task.args.get("user", self._play_context.remote_user)
-            password = self._task.args.get(
-                "password", self._play_context.password
+            host = to_text(
+                self._task.args.get("host", self._play_context.remote_addr)
+            )
+            user = to_text(
+                self._task.args.get("user", self._play_context.remote_user)
+            )
+            password = to_text(
+                self._task.args.get("password", self._play_context.password)
             )
 
             # FIXME, default to play_context?
-            port = self._task.args.get("port", "23")
-            timeout = self._task.args.get("timeout", 120)
-            pause = self._task.args.get("pause", 1)
+            port = int(self._task.args.get("port", 23))
+            timeout = int(self._task.args.get("timeout", 120))
+            pause = int(self._task.args.get("pause", 1))
 
             send_newline = self._task.args.get("send_newline", False)
 
-            login_prompt = self._task.args.get("login_prompt", "login: ")
-            password_prompt = self._task.args.get(
-                "password_prompt", "Password: "
+            login_prompt = to_text(
+                self._task.args.get("login_prompt", "login: ")
+            )
+            password_prompt = to_text(
+                self._task.args.get("password_prompt", "Password: ")
             )
             prompts = self._task.args.get("prompts", ["\\$ "])
             commands = self._task.args.get("command") or self._task.args.get(
@@ -95,7 +101,7 @@ class ActionModule(ActionBase):
 
                 except EOFError as e:
                     result["failed"] = True
-                    result["msg"] = "Telnet action failed: %s" % to_native(e)
+                    result["msg"] = "Telnet action failed: %s" % to_text(e)
                 finally:
                     if tn:
                         tn.close()

@@ -40,8 +40,8 @@ Parameters
                     <b>command</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                 / <span style="color: red">required</span>                    </div>
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>                         / <span style="color: red">required</span>                    </div>
                                     </td>
                                 <td>
                                                                                                                                                             </td>
@@ -56,7 +56,7 @@ Parameters
                     <b>host</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -72,7 +72,7 @@ Parameters
                     <b>login_prompt</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -88,7 +88,7 @@ Parameters
                     <b>password</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -103,7 +103,7 @@ Parameters
                     <b>password_prompt</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -119,7 +119,7 @@ Parameters
                     <b>pause</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">integer</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -135,7 +135,7 @@ Parameters
                     <b>port</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">integer</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -151,8 +151,8 @@ Parameters
                     <b>prompts</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                                                                    </div>
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>                                            </div>
                                     </td>
                                 <td>
                                                                                                                                                                     <b>Default:</b><br/><div style="color: blue">["$"]</div>
@@ -186,7 +186,7 @@ Parameters
                     <b>timeout</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">integer</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -202,7 +202,7 @@ Parameters
                     <b>user</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
