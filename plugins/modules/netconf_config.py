@@ -298,11 +298,13 @@ def get_filter_type(filter):
             return "xpath"
 
 
-def validate_config(module, config, format='xml'):
-    if format == 'xml':
+def validate_config(module, config, format="xml"):
+    if format == "xml":
         root = fromstring(config)
-        if root.tag != 'config':
-            module.fail_json(msg='content value should have xml string with <config> tag as root')
+        if root.tag != "config":
+            module.fail_json(
+                msg="content value should have xml string with <config> tag as root"
+            )
 
 
 def main():
