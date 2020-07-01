@@ -1,12 +1,37 @@
 ---
-syslog_config: "<config xmlns:xc=\"urn:ietf:params:xml:ns:netconf:base:1.0\">\n  <configuration>\n\
-\    <system>\n      <syslog>\n        <file>\n          <name>test_netconf_config</name>\n\
-\          <contents>\n            <name>any</name>\n            <any/>\n      \
-\    </contents>\n          <contents>\n            <name>kernel</name>\n      \
-\      <critical/>\n          </contents>\n        </file>\n      </syslog>\n  \
-\  </system>\n  </configuration>\n</config>\n"
-syslog_config_replace: "<config xmlns:xc=\"urn:ietf:params:xml:ns:netconf:base:1.0\"\
->\n  <configuration>\n    <system>\n      <syslog operation=\"replace\">\n     \
-\   <file>\n          <name>test_netconf_config</name>\n          <contents>\n \
-\           <name>any</name>\n            <any/>\n          </contents>\n      \
-\  </file>\n      </syslog>\n    </system>\n  </configuration>\n</config>\n"
+syslog_config: >
+  <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <configuration>
+      <system>
+        <syslog>
+          <file>
+            <name>test_netconf_config</name>
+              <contents>
+                <name>any</name>
+                <any/>
+              </contents>
+              <contents>
+                <name>kernel</name>
+                <critical/>
+              </contents>
+          </file>
+        </syslog>
+      </system>
+    </configuration>
+  </config>
+syslog_config_replace: >
+  <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <configuration>
+      <system>
+        <syslog operation="replace">
+          <file>
+            <name>test_netconf_config</name>
+            <contents>
+              <name>any</name>
+                <any/>
+            </contents>
+          </file>
+        </syslog>
+      </system>
+    </configuration>
+  </config>
