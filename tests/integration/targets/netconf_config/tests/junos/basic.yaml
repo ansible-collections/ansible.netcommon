@@ -53,6 +53,7 @@
 
 - name: test content value in xml format rooted in <config> tag
   register: result
+  ignore_errors: true
   ansible.netcommon.netconf_config:
     content: '{{ invalid_syslog_config }}'
 
