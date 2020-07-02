@@ -309,13 +309,6 @@ class EntityCollection(Entity):
         ]
 
 
-# these two are for backwards compatibility and can be removed once all of the
-# modules that use them are updated
-class ComplexDict(Entity):
-    def __init__(self, attrs, module, *args, **kwargs):
-        super(ComplexDict, self).__init__(module, attrs, *args, **kwargs)
-
-
 class ComplexList(EntityCollection):
     def __init__(self, attrs, module, *args, **kwargs):
         super(ComplexList, self).__init__(module, attrs, *args, **kwargs)
