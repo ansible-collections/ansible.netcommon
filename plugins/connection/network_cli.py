@@ -617,7 +617,7 @@ class Connection(NetworkConnectionBase):
                 self.queue_message("debug", "cli session is now closed")
 
                 self.ssh_type_conn.close()
-                self.ssh_type_conn = None
+                self._ssh_type_conn = None
                 self.queue_message(
                     "debug", "ssh connection has been closed successfully"
                 )
