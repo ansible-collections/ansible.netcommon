@@ -4,6 +4,8 @@
 
 - include_vars: '{{playbook_dir }}/targets/netconf_config/tests/junos/fixtures/config.yml'
 
+- include_vars: '{{playbook_dir }}/targets/netconf_config/tests/junos/fixtures/invalid_config.yml'
+
 - name: syslog file config- setup
   junipernetworks.junos.junos_config:
     lines:
@@ -48,6 +50,17 @@
 - assert:
     that:
       - result.changed == true
+
+- name: test content value in xml format rooted in <config> tag
+  register: result
+  ignore_errors: true
+  ansible.netcommon.netconf_config:
+    content: '{{ invalid_syslog_config }}'
+
+- assert:
+    that:
+      - result.failed == true
+      - "'content value should have xml string with <config> tag as root' in result.msg"
 
 - name: test backup
   register: result
