@@ -749,6 +749,8 @@ class Connection(NetworkConnectionBase):
             else:
                 data = self._ssh_shell.read_bulk_response()
 
+            if not data:
+                continue
             self._last_recv_window = self._strip(data)
             resp += self._last_recv_window
             self._window_count += 1
