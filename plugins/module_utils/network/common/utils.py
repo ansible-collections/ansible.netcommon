@@ -150,7 +150,16 @@ def transform_commands(module):
 
 def sort_list(val):
     if isinstance(val, list):
-        return sorted(val)
+        try:
+            return sorted(val)
+        except TypeError:
+            # The contents are unsortable for some reason.
+            # Maybe it's a list of dicts:
+            if isinstance(val[0], dict):
+                sort = sorted(tuple(item.items()) for item in val)
+                return [dict(items) for items in sort]
+            # I've run out of ideas, raise it up
+            raise
     return val
 
 
