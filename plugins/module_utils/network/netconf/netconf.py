@@ -140,7 +140,7 @@ def sanitize_xml(data):
     tree = fromstring(
         to_bytes(deepcopy(data), errors="surrogate_then_replace")
     )
-    for element in tree.getiterator():
+    for element in tree.iter():
         # remove attributes
         attribute = element.attrib
         if attribute:
