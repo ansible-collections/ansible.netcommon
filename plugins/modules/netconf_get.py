@@ -30,6 +30,7 @@ options:
       fetched. Valid values are I(running), I(candidate) and I(startup). If the C(source)
       value is not set both configuration and state information are returned in response
       from running datastore.
+    type: str
     choices:
     - running
     - candidate
@@ -42,6 +43,7 @@ options:
       on the value of C(source) option. The C(filter) value can be either XML string
       or XPath, if the filter is in XPath format the NETCONF server running on remote
       host should support xpath capability else it will result in an error.
+    type: str
   display:
     description:
     - Encoding scheme to use when serializing output from the device. The option I(json)
@@ -50,6 +52,7 @@ options:
       received XML response but is using human readable format (spaces, new lines).
       The option value I(xml) is similar to received XML response but removes all
       XML namespaces.
+    type: str
     choices:
     - json
     - pretty
@@ -63,6 +66,7 @@ options:
       C(source) datastore. The value I(if-supported) allows better interworking with
       NETCONF servers, which do not support the (un)lock operation for all supported
       datastores.
+    type: str
     default: never
     choices:
     - never
@@ -152,6 +156,7 @@ output:
     formatted_output:
       description:
         - Contains formatted response received from remote host as per the value in display format.
+      type: str
 """
 import sys
 

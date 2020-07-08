@@ -1,42 +1,5 @@
 plugins/action/net_base.py action-plugin-docs # base class for other net_* action plugins which have a matching module
 plugins/action/netconf.py action-plugin-docs # base class for deprecated network platform modules using `connection: local`
 plugins/action/network.py action-plugin-docs # base class for network action plugins
-plugins/modules/cli_command.py validate-modules:parameter-type-not-in-doc
-plugins/modules/cli_config.py validate-modules:doc-missing-type
-plugins/modules/cli_config.py validate-modules:parameter-type-not-in-doc
-plugins/modules/net_banner.py validate-modules:deprecation-mismatch
-plugins/modules/net_banner.py validate-modules:invalid-documentation
-plugins/modules/netconf_config.py validate-modules:doc-choices-do-not-match-spec
-plugins/modules/netconf_config.py validate-modules:doc-missing-type
-plugins/modules/netconf_config.py validate-modules:parameter-type-not-in-doc
-plugins/modules/netconf_get.py validate-modules:doc-missing-type
-plugins/modules/netconf_rpc.py validate-modules:doc-missing-type
-plugins/modules/netconf_rpc.py validate-modules:parameter-type-not-in-doc
-plugins/modules/net_interface.py validate-modules:deprecation-mismatch
-plugins/modules/net_interface.py validate-modules:invalid-documentation
-plugins/modules/net_l2_interface.py validate-modules:deprecation-mismatch
-plugins/modules/net_l2_interface.py validate-modules:invalid-documentation
-plugins/modules/net_l3_interface.py validate-modules:deprecation-mismatch
-plugins/modules/net_l3_interface.py validate-modules:invalid-documentation
-plugins/modules/net_linkagg.py validate-modules:deprecation-mismatch
-plugins/modules/net_linkagg.py validate-modules:invalid-documentation
-plugins/modules/net_lldp_interface.py validate-modules:deprecation-mismatch
-plugins/modules/net_lldp_interface.py validate-modules:invalid-documentation
-plugins/modules/net_lldp.py validate-modules:deprecation-mismatch
-plugins/modules/net_lldp.py validate-modules:invalid-documentation
-plugins/modules/net_logging.py validate-modules:deprecation-mismatch
-plugins/modules/net_logging.py validate-modules:invalid-documentation
-plugins/modules/net_static_route.py validate-modules:deprecation-mismatch
-plugins/modules/net_static_route.py validate-modules:invalid-documentation
-plugins/modules/net_system.py validate-modules:deprecation-mismatch
-plugins/modules/net_system.py validate-modules:invalid-documentation
-plugins/modules/net_user.py validate-modules:deprecation-mismatch
-plugins/modules/net_user.py validate-modules:invalid-documentation
-plugins/modules/net_vlan.py validate-modules:deprecation-mismatch
-plugins/modules/net_vlan.py validate-modules:invalid-documentation
-plugins/modules/net_vrf.py validate-modules:deprecation-mismatch
-plugins/modules/net_vrf.py validate-modules:invalid-documentation
-plugins/modules/restconf_config.py validate-modules:doc-missing-type
-plugins/modules/restconf_get.py validate-modules:doc-missing-type
 plugins/module_utils/compat/ipaddress.py no-assert
 plugins/module_utils/compat/ipaddress.py no-unicode-literals

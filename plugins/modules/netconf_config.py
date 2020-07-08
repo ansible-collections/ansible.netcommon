@@ -30,6 +30,7 @@ options:
       be either in xml string format or text format. The format of the configuration
       should be supported by remote Netconf server. If the value of C(content) option
       is in I(xml) format in that case the xml value should have I(config) as root tag.
+    type: str
     aliases:
     - xml
   target:
@@ -37,6 +38,11 @@ options:
       and fallback to running - candidate, edit <candidate/> datastore and then commit
       - running, edit <running/> datastore directly
     default: auto
+    type: str
+    choices:
+    - auto
+    - candidate
+    - running
     aliases:
     - datastore
   source_datastore:
@@ -44,6 +50,7 @@ options:
     - Name of the configuration datastore to use as the source to copy the configuration
       to the datastore mentioned by C(target) option. The values can be either I(running),
       I(candidate), I(startup) or a remote URL
+    type: str
     aliases:
     - source
   format:
@@ -51,6 +58,7 @@ options:
     - The format of the configuration provided as value of C(content). Accepted values
       are I(xml) and I(text) and the given configuration format should be supported
       by remote Netconf server.
+    type: str
     default: xml
     choices:
     - xml
@@ -62,6 +70,7 @@ options:
       mentioned in C(target) option. It the value is I(never) it will not lock the
       C(target) datastore. The value I(if-supported) lock the C(target) datastore
       only if it is supported by the remote Netconf server.
+    type: str
     default: always
     choices:
     - never
@@ -76,6 +85,7 @@ options:
       in the C(target) datastore. If the value is none the C(target) datastore is
       unaffected by the configuration in the config option, unless and until the incoming
       configuration data uses the C(operation) operation to request a different operation.
+    type: str
     choices:
     - merge
     - replace
@@ -87,6 +97,7 @@ options:
       set to False, this argument is silently ignored. If the value of this argument
       is set to 0, the commit is confirmed immediately. The remote host MUST support
       :candidate and :confirmed-commit capability for this option to .
+    type: int
     default: 0
   confirm_commit:
     description:
@@ -106,6 +117,7 @@ options:
       if any error occurs. This requires the remote Netconf server to support the
       I(error_option=rollback-on-error) capability.
     default: stop-on-error
+    type: str
     choices:
     - stop-on-error
     - continue-on-error
@@ -154,6 +166,7 @@ options:
       configuration template to load. The path to the source file can either be the
       full path on the Ansible control host or a relative path from the playbook or
       role root directory. This argument is mutually exclusive with I(xml).
+    type: path
   backup_options:
     description:
     - This is a dict object containing configurable options related to backup file
@@ -165,6 +178,7 @@ options:
         - The filename to be used to store the backup configuration. If the filename
           is not given it will be generated based on the hostname, current time and
           date in format defined by <hostname>_config.<current-date>@<current-time>
+        type: str
       dir_path:
         description:
         - This option provides the path ending with directory name in which the backup
@@ -185,6 +199,7 @@ options:
       on the value of C(source) option. The C(get_filter) value can be either XML
       string or XPath, if the filter is in XPath format the NETCONF server running
       on remote host should support xpath capability else it will result in an error.
+    type: str
 requirements:
 - ncclient
 notes:
@@ -400,10 +415,10 @@ def main():
     argument_spec.update(netconf_top_spec)
 
     mutually_exclusive = [
-        ("content", "src", "source", "delete", "confirm_commit")
+        ("content", "src", "source_datastore", "delete", "confirm_commit")
     ]
     required_one_of = [
-        ("content", "src", "source", "delete", "confirm_commit")
+        ("content", "src", "source_datastore", "delete", "confirm_commit")
     ]
 
     module = AnsibleModule(
