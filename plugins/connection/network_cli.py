@@ -623,9 +623,9 @@ class Connection(NetworkConnectionBase):
                 )
         super(Connection, self).close()
 
-    def _read_post_command_prompt_match(self, size=256):
+    def _read_post_command_prompt_match(self):
         time.sleep(self.get_option("persistent_buffer_read_timeout"))
-        data = self._ssh_shell.read_bulk_response(size=size)
+        data = self._ssh_shell.read_bulk_response()
         return data if data else None
 
     def receive_paramiko(
