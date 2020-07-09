@@ -151,6 +151,12 @@ def test_sort():
     string_data = "123"
     assert string_data == utils.sort_list(string_data)
 
+    list_of_dicts = [
+        {"member": "Ethernet50/1", "mode": "on"},
+        {"member": "Ethernet49/1", "mode": "on"},
+    ]
+    assert utils.sort_list(list_of_dicts) == list_of_dicts[::-1]
+
 
 def test_dict_diff():
     with pytest.raises(AssertionError, match="`base` must be of type <dict>"):
