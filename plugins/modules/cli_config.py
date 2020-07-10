@@ -229,7 +229,7 @@ def validate_args(module, device_operations):
             supports_feature = device_operations.get("supports_%s" % feature)
             if supports_feature is None:
                 module.fail_json(
-                    "This platform does not specify whether %s is supported or not. "
+                    msg="This platform does not specify whether %s is supported or not. "
                     "Please report an issue against this platform's cliconf plugin."
                     % feature
                 )

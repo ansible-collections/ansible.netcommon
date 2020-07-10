@@ -36,13 +36,16 @@ from ansible.module_utils._text import to_text, to_native
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.basic import env_fallback
 from ansible.module_utils.connection import Connection, ConnectionError
+from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     NetconfConnection,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.parsing import (
     Cli,
 )
-from ansible.module_utils.six import iteritems
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    to_list,
+)
 
 
 NET_TRANSPORT_ARGS = dict(
@@ -79,15 +82,6 @@ def _transitional_argument_spec():
         value["required"] = False
         argument_spec[key] = value
     return argument_spec
-
-
-def to_list(val):
-    if isinstance(val, (list, tuple)):
-        return list(val)
-    elif val is not None:
-        return [val]
-    else:
-        return list()
 
 
 class ModuleStub(object):

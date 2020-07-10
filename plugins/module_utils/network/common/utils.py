@@ -289,36 +289,24 @@ class Entity(object):
         return value
 
 
-class EntityCollection(Entity):
+class ComplexList(Entity):
     """Extends ```Entity``` to handle a list of dicts """
+
+    def __init__(self, attrs, module, *args, **kwargs):
+        super(ComplexList, self).__init__(module, attrs, *args, **kwargs)
 
     def __call__(self, iterable, strict=True):
         if iterable is None:
             iterable = [
-                super(EntityCollection, self).__call__(
-                    self._module.params, strict
-                )
+                super(ComplexList, self).__call__(self._module.params, strict)
             ]
 
         if not isinstance(iterable, (list, tuple)):
             self._module.fail_json(msg="value must be an iterable")
 
         return [
-            (super(EntityCollection, self).__call__(i, strict))
-            for i in iterable
+            (super(ComplexList, self).__call__(i, strict)) for i in iterable
         ]
-
-
-# these two are for backwards compatibility and can be removed once all of the
-# modules that use them are updated
-class ComplexDict(Entity):
-    def __init__(self, attrs, module, *args, **kwargs):
-        super(ComplexDict, self).__init__(module, attrs, *args, **kwargs)
-
-
-class ComplexList(EntityCollection):
-    def __init__(self, attrs, module, *args, **kwargs):
-        super(ComplexList, self).__init__(module, attrs, *args, **kwargs)
 
 
 def dict_diff(base, comparable):

@@ -38,15 +38,9 @@ from ansible.module_utils.parsing.convert_bool import (
 )
 from ansible.module_utils.six import string_types, text_type
 from ansible.module_utils.six.moves import zip
-
-
-def to_list(val):
-    if isinstance(val, (list, tuple)):
-        return list(val)
-    elif val is not None:
-        return [val]
-    else:
-        return list()
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    to_list,
+)
 
 
 class FailedConditionsError(Exception):
