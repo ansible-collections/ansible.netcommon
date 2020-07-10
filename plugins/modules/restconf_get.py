@@ -23,6 +23,7 @@ options:
     description:
     - URI being used to execute API calls.
     required: true
+    type: str
   content:
     description:
     - The C(content) is a query parameter that controls how descendant nodes of the
@@ -31,6 +32,7 @@ options:
       If value is I(nonconfig) return only non-configuration descendant data nodes
       of value in C(path). If value is I(all) return all descendant data nodes of
       value in C(path)
+    type: str
     required: false
     choices:
     - config
@@ -40,6 +42,7 @@ options:
     description:
     - The output of response received.
     required: false
+    type: str
     default: json
     choices:
     - json

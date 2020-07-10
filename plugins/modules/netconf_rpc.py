@@ -28,15 +28,19 @@ options:
     description:
     - This argument specifies the request (name of the operation) to be executed on
       the remote NETCONF enabled device.
+    required: true
+    type: str
   xmlns:
     description:
     - NETCONF operations not defined in rfc6241 typically require the appropriate
       XML namespace to be set. In the case the I(request) option is not already provided
       in XML format, the namespace can be defined by the I(xmlns) option.
+    type: str
   content:
     description:
     - This argument specifies the optional request content (all RPC attributes). The
       I(content) value can either be provided as XML formatted string or as dictionary.
+    type: str
   display:
     description:
     - Encoding scheme to use when serializing output from the device. The option I(json)
@@ -45,6 +49,7 @@ options:
       received XML response but is using human readable format (spaces, new lines).
       The option value I(xml) is similar to received XML response but removes all
       XML namespaces.
+    type: str
     choices:
     - json
     - pretty
@@ -141,6 +146,7 @@ output:
     formatted_output:
       description:
         - Contains formatted response received from remote host as per the value in display format.
+      type: str
 """
 
 import ast

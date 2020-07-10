@@ -22,12 +22,14 @@ options:
     - The command to send to the remote network device.  The resulting output from
       the command is returned, unless I(sendonly) is set.
     required: true
+    type: str
   prompt:
     description:
     - A single regex pattern or a sequence of patterns to evaluate the expected prompt
       from I(command).
     required: false
     type: list
+    elements: str
   answer:
     description:
     - The answer to reply with if I(prompt) is matched. The value can be a single
@@ -36,6 +38,7 @@ options:
       be in same order.
     required: false
     type: list
+    elements: str
   sendonly:
     description:
     - The boolean value, that when set to true will send I(command) to the device
@@ -139,8 +142,8 @@ def main():
     """
     argument_spec = dict(
         command=dict(type="str", required=True),
-        prompt=dict(type="list", required=False),
-        answer=dict(type="list", required=False),
+        prompt=dict(type="list", elements="str", required=False),
+        answer=dict(type="list", elements="str", required=False),
         newline=dict(type="bool", default=True, required=False),
         sendonly=dict(type="bool", default=False, required=False),
         check_all=dict(type="bool", default=False, required=False),

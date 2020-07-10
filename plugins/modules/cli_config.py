@@ -62,6 +62,7 @@ options:
       does not exist on the remote device, the module will fail. To rollback to the
       most recent commit, set the C(rollback) argument to 0. This option is mutually
       exclusive with C(config).
+    type: int
   commit_comment:
     description:
     - The C(commit_comment) argument specifies a text string to be used when committing
@@ -91,6 +92,7 @@ options:
       then the entire command block is pushed to the device in configuration mode
       if any line is not correct. Note that this parameter will be ignored if the
       platform has onbox diff support.
+    type: str
     choices:
     - line
     - block
@@ -105,6 +107,7 @@ options:
       module will not attempt to compare the source configuration with the running
       configuration on the remote device. Note that this parameter will be ignored
       if the platform has onbox diff support.
+    type: str
     choices:
     - line
     - strict
@@ -117,6 +120,8 @@ options:
       updated by the system. This argument takes a list of regular expressions or
       exact line matches. Note that this parameter will be ignored if the platform
       has onbox diff support.
+    type: list
+    elements: str
   backup_options:
     description:
     - This is a dict object containing configurable options related to backup file
@@ -128,6 +133,7 @@ options:
         - The filename to be used to store the backup configuration. If the filename
           is not given it will be generated based on the hostname, current time and
           date in format defined by <hostname>_config.<current-date>@<current-time>
+        type: str
       dir_path:
         description:
         - This option provides the path ending with directory name in which the backup
@@ -373,7 +379,7 @@ def main():
         multiline_delimiter=dict(type="str"),
         diff_replace=dict(choices=["line", "block", "config"]),
         diff_match=dict(choices=["line", "strict", "exact", "none"]),
-        diff_ignore_lines=dict(type="list"),
+        diff_ignore_lines=dict(type="list", elements="str"),
     )
 
     mutually_exclusive = [("config", "rollback")]

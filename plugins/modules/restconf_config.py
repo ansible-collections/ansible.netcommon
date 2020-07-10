@@ -22,10 +22,12 @@ options:
     description:
     - URI being used to execute API calls.
     required: true
+    type: str
   content:
     description:
     - The configuration data in format as specififed in C(format) option. Required
       unless C(method) is I(delete).
+    type: str
   method:
     description:
     - The RESTCONF method to manage the configuration change on device. The value
@@ -33,6 +35,7 @@ options:
       is used to replace the target data resource, I(patch) is used to modify the
       target resource, and I(delete) is used to delete the target resource.
     required: false
+    type: str
     default: post
     choices:
     - post
@@ -44,6 +47,7 @@ options:
     - The format of the configuration provided as value of C(content). Accepted values
       are I(xml) and I(json) and the given configuration format should be supported
       by remote RESTCONF server.
+    type: str
     default: json
     choices:
     - json
