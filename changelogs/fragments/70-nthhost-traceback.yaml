@@ -1,0 +1,5 @@
+---
+bugfixes:
+  - nthhost filter no longer tracebacks on large negative numbers
+minor_changes:
+  - nthhost filter now emits useful errors when given data it cannot handle

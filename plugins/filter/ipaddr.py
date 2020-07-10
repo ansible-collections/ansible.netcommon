@@ -846,29 +846,31 @@ def ipsubnet(value, query="", index="x"):
 #      returns the nth host within the given network
 def nthhost(value, query=""):
     """ Get the nth host within a given network """
-    try:
-        vtype = ipaddr(value, "type")
-        if vtype == "address":
-            v = ipaddr(value, "cidr")
-        elif vtype == "network":
-            v = ipaddr(value, "subnet")
+    vtype = ipaddr(value, "type")
+    if vtype == "address":
+        value = ipaddr(value, "cidr")
+    elif vtype == "network":
+        value = ipaddr(value, "subnet")
+    else:
+        raise errors.AnsibleFilterError(
+            "'%s' is not an IP address or network" % value
+        )
 
-        value = netaddr.IPNetwork(v)
-    except Exception:
-        return False
-
-    if not query:
-        return False
+    network = netaddr.IPNetwork(value)
 
     try:
         nth = int(query)
-        if value.size > nth:
-            return str(value[nth])
-
     except ValueError:
-        return False
+        raise errors.AnsibleFilterError("'%s' is not an integer" % query)
 
-    return False
+    try:
+        nth_host = network[nth]
+    except IndexError:
+        raise errors.AnsibleFilterError(
+            "%s is larger than the number of addresses" % abs(nth)
+        )
+
+    return str(nth_host)
 
 
 # Returns the next nth usable ip within a network described by value.

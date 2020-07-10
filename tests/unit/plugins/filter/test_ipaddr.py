@@ -626,14 +626,9 @@ class TestIpFilter(unittest.TestCase):
 
     def test_nthhost(self):
         address = "1.12.1.0/24"
-        self.assertFalse(ipaddr.nthhost(address))
         self.assertEqual(ipaddr.nthhost(address, 5), "1.12.1.5")
-        address = "1.12.1.36/24"
-        self.assertEqual(ipaddr.nthhost(address, 10), "1.12.1.10")
         address = "1.12.1.34"
-        self.assertFalse(
-            ipaddr.nthhost(address, "last_usable"), "Not a network address"
-        )
+        self.assertEqual(ipaddr.nthhost(address, 0), "1.12.1.34")
         address = "1.12.1.36/28"
         self.assertEqual(ipaddr.nthhost(address, 4), "1.12.1.36")
         address = "1.12.1.36/255.255.255.240"
@@ -642,10 +637,35 @@ class TestIpFilter(unittest.TestCase):
         self.assertEqual(ipaddr.nthhost(address, 1), "1.12.1.37")
         address = "1.12.1.37/31"
         self.assertEqual(ipaddr.nthhost(address, 1), "1.12.1.37")
-        address = "1.12.1.36/32"
-        self.assertFalse(ipaddr.nthhost(address, 1))
         address = "1.12.1.254/24"
         self.assertEqual(ipaddr.nthhost(address, 2), "1.12.1.2")
+
+        with pytest.raises(
+            AnsibleFilterError, match="'floop' is not an IP address or network"
+        ):
+            ipaddr.nthhost("floop", 1)
+        with pytest.raises(
+            AnsibleFilterError,
+            match="1 is larger than the number of addresses",
+        ):
+            ipaddr.nthhost("1.12.1.36/32", 1)
+        with pytest.raises(AnsibleFilterError, match="'' is not an integer"):
+            ipaddr.nthhost(address)
+        with pytest.raises(
+            AnsibleFilterError, match="'floop' is not an integer"
+        ):
+            ipaddr.nthhost(address, "floop")
+        with pytest.raises(
+            AnsibleFilterError,
+            match="900 is larger than the number of addresses",
+        ):
+            ipaddr.nthhost(address, 900)
+
+        with pytest.raises(
+            AnsibleFilterError,
+            match="400 is larger than the number of addresses",
+        ):
+            ipaddr.nthhost(address, -400)
 
     def test_next_nth_usable(self):
         address = "1.12.1.0/24"
