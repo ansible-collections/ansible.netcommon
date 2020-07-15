@@ -548,24 +548,20 @@ def ipaddr(value, query="", version=False, alias="ipaddr"):
 
     vtype = None
 
-    if not value:
-        return False
-
-    elif value is True:
-        return False
+    if value is True:
+        raise errors.AnsibleFilterError(
+            "{0!r} is not a valid IP address or network".format(value)
+        )
 
     # Check if value is a list and parse each element
     elif isinstance(value, (list, tuple, types.GeneratorType)):
 
-        _ret = []
-        for element in value:
-            if ipaddr(element, str(query), version):
-                _ret.append(ipaddr(element, str(query), version))
+        _ret = [ipaddr(element, str(query), version) for element in value]
 
-        if _ret:
-            return _ret
-        else:
-            return list()
+        return [item for item in _ret if item]
+
+    elif not value:
+        return False
 
     # Check if value is a number and convert it to an IP address
     elif str(value).isdigit():
