@@ -65,7 +65,9 @@ class TestConnectionClass(unittest.TestCase):
         "ansible_collections.ansible.netcommon.plugins.connection.network_cli.terminal_loader"
     )
     @patch("ansible.plugins.connection.paramiko_ssh.Connection._connect")
-    def test_network_cli__connect_paramiko(self, mocked_super, mocked_terminal_loader):
+    def test_network_cli__connect_paramiko(
+        self, mocked_super, mocked_terminal_loader
+    ):
         pc = PlayContext()
         pc.network_os = "ios"
         conn = connection_loader.get("network_cli", pc, "/dev/null")
@@ -73,7 +75,7 @@ class TestConnectionClass(unittest.TestCase):
         conn.ssh = MagicMock()
         conn.receive = MagicMock()
         conn._terminal = MagicMock()
-        conn.set_options(direct={'ssh_type': 'paramiko'})
+        conn.set_options(direct={"ssh_type": "paramiko"})
         conn._connect()
         self.assertTrue(conn._terminal.on_open_shell.called)
         self.assertFalse(conn._terminal.on_become.called)
@@ -92,7 +94,9 @@ class TestConnectionClass(unittest.TestCase):
     @patch(
         "ansible_collections.ansible.netcommon.plugins.connection.libssh.Connection._connect"
     )
-    def test_network_cli__connect_libssh(self, mocked_super, mocked_terminal_loader):
+    def test_network_cli__connect_libssh(
+        self, mocked_super, mocked_terminal_loader
+    ):
         pc = PlayContext()
         pc.network_os = "ios"
         conn = connection_loader.get("network_cli", pc, "/dev/null")
@@ -100,7 +104,7 @@ class TestConnectionClass(unittest.TestCase):
         conn.ssh = MagicMock()
         conn.receive = MagicMock()
         conn._terminal = MagicMock()
-        conn.set_options(direct={'ssh_type': 'libssh'})
+        conn.set_options(direct={"ssh_type": "libssh"})
         conn._connect()
         self.assertTrue(conn._terminal.on_open_shell.called)
         self.assertFalse(conn._terminal.on_become.called)
@@ -118,7 +122,7 @@ class TestConnectionClass(unittest.TestCase):
         pc = PlayContext()
         pc.network_os = "ios"
         conn = connection_loader.get("network_cli", pc, "/dev/null")
-        conn._ssh_type = 'paramiko'
+        conn._ssh_type = "paramiko"
 
         terminal = MagicMock(supports_multiplexing=False)
         conn._terminal = terminal
@@ -137,7 +141,7 @@ class TestConnectionClass(unittest.TestCase):
         pc = PlayContext()
         pc.network_os = "ios"
         conn = connection_loader.get("network_cli", pc, "/dev/null")
-        conn._ssh_type = 'libssh'
+        conn._ssh_type = "libssh"
 
         terminal = MagicMock(supports_multiplexing=False)
         conn._terminal = terminal

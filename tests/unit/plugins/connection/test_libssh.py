@@ -12,11 +12,15 @@ import json
 from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
 from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
     patch,
-    MagicMock
+    MagicMock,
 )
 
 from ansible.module_utils._text import to_text, to_bytes
-from ansible.errors import AnsibleConnectionFailure, AnsibleError, AnsibleFileNotFound
+from ansible.errors import (
+    AnsibleConnectionFailure,
+    AnsibleError,
+    AnsibleFileNotFound,
+)
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
 
@@ -32,19 +36,29 @@ class TestConnectionClass(unittest.TestCase):
         pc.timeout = 60
         pc.remote_user = "user1"
 
-        conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.libssh", pc, "/dev/null"
+        )
 
         conn.ssh = mock_session
         mock_connect = MagicMock()
         conn.ssh.connect = mock_connect
         conn._connect()
-        conn.ssh.connect.assert_called_with(host="localhost", host_key_checking=False, look_for_keys=True,
-                                            password="test", port=8080, timeout=60, user="user1"
-                                            )
+        conn.ssh.connect.assert_called_with(
+            host="localhost",
+            host_key_checking=False,
+            look_for_keys=True,
+            password="test",
+            port=8080,
+            timeout=60,
+            user="user1",
+        )
 
     def test_libssh_close(self):
         pc = PlayContext()
-        conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.libssh", pc, "/dev/null"
+        )
         conn.ssh = MagicMock()
         conn.sftp = MagicMock()
         conn.chan = MagicMock()
@@ -58,56 +72,70 @@ class TestConnectionClass(unittest.TestCase):
     @patch("ansible.plugins.connection.ConnectionBase.exec_command")
     def test_libssh_exec_command(self, mocked_super):
         pc = PlayContext()
-        conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.libssh", pc, "/dev/null"
+        )
         with self.assertRaises(AnsibleError):
             conn.exec_command(cmd="ls", in_data=True)
 
         mock_chan = MagicMock()
         mock_chan.request_shell = MagicMock()
         mock_chan.exec_command = MagicMock()
-        mock_chan.exec_command.return_value = MagicMock(returncode=0, stdout='echo hello', stderr='')
+        mock_chan.exec_command.return_value = MagicMock(
+            returncode=0, stdout="echo hello", stderr=""
+        )
 
-        attr = {'new_channel.return_value': mock_chan}
+        attr = {"new_channel.return_value": mock_chan}
         mock_ssh = MagicMock(**attr)
         conn.ssh = mock_ssh
 
-        rc, out, err = conn.exec_command(cmd='echo hello')
+        rc, out, err = conn.exec_command(cmd="echo hello")
 
-        self.assertEqual((rc, out, err), (0, 'echo hello', ''))
+        self.assertEqual((rc, out, err), (0, "echo hello", ""))
 
     @patch("ansible.plugins.connection.ConnectionBase.put_file")
     def test_libssh_put_file_not_exist(self, mocked_super):
         pc = PlayContext()
-        conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.libssh", pc, "/dev/null"
+        )
         with self.assertRaises(AnsibleFileNotFound):
             conn.put_file(in_path="", out_path="")
 
-    @patch('os.path.exists')
+    @patch("os.path.exists")
     @patch("ansible.plugins.connection.ConnectionBase.put_file")
     def test_libssh_put_file(self, mocked_super, mock_exists):
         pc = PlayContext()
-        conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.libssh", pc, "/dev/null"
+        )
 
         mock_sftp = MagicMock()
-        attr = {'sftp.return_value': mock_sftp}
+        attr = {"sftp.return_value": mock_sftp}
         mock_ssh = MagicMock(**attr)
         conn.ssh = mock_ssh
 
-        file_path = 'test_libssh.py'
+        file_path = "test_libssh.py"
         conn.put_file(in_path=file_path, out_path=file_path)
-        mock_sftp.put.assert_called_with(to_bytes(file_path), to_bytes(file_path))
+        mock_sftp.put.assert_called_with(
+            to_bytes(file_path), to_bytes(file_path)
+        )
 
     @patch("pylibsshext.session.Session")
     @patch("ansible.plugins.connection.ConnectionBase.fetch_file")
     def test_libssh_fetch_file(self, mocked_super, mock_session):
         pc = PlayContext()
         pc.remote_addr = "localhost"
-        conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.libssh", pc, "/dev/null"
+        )
 
         conn.ssh = mock_session
         mock_connect = MagicMock()
         conn.ssh.connect = mock_connect
 
-        file_path = 'test_libssh.py'
+        file_path = "test_libssh.py"
         conn.fetch_file(in_path=file_path, out_path=file_path)
-        conn.sftp.get.assert_called_with(to_bytes(file_path), to_bytes(file_path))
+        conn.sftp.get.assert_called_with(
+            to_bytes(file_path), to_bytes(file_path)
+        )
