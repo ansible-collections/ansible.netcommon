@@ -304,12 +304,14 @@ def _private_query(v, value):
 
 def _public_query(v, value):
     v_ip = netaddr.IPAddress(str(v.ip))
-    if (
-        v_ip.is_unicast()
-        and not v_ip.is_private()
-        and not v_ip.is_loopback()
-        and not v_ip.is_netmask()
-        and not v_ip.is_hostmask()
+    if all(
+        [
+            v_ip.is_unicast(),
+            not v_ip.is_private(),
+            not v_ip.is_loopback(),
+            not v_ip.is_netmask(),
+            not v_ip.is_hostmask(),
+        ]
     ):
         return value
 
@@ -555,9 +557,7 @@ def ipaddr(value, query="", version=False, alias="ipaddr"):
 
     # Check if value is a list and parse each element
     elif isinstance(value, (list, tuple, types.GeneratorType)):
-
         _ret = [ipaddr(element, str(query), version) for element in value]
-
         return [item for item in _ret if item]
 
     elif not value:

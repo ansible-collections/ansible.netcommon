@@ -214,6 +214,32 @@ class TestIpFilter(unittest.TestCase):
         address = "1.12.1.254/24"
         self.assertEqual(ipaddr.ipaddr(address, "size_usable"), 254)
 
+    def test_ipaddr_public_query(self):
+        self.assertIsNone(ipaddr.ipaddr("192.168.1.12", "public"))
+        self.assertIsNone(ipaddr.ipaddr("127.0.1.25", "public"))
+        self.assertIsNone(ipaddr.ipaddr("255.255.240.0", "public"))
+        self.assertEqual(
+            ipaddr.ipaddr("76.120.99.190", "public"), "76.120.99.190"
+        )
+        self.assertEqual(
+            ipaddr.ipaddr(
+                ["192.168.1.12", "127.0.1.25", "255.255.240.0"], "public"
+            ),
+            [],
+        )
+        self.assertEqual(
+            ipaddr.ipaddr(
+                [
+                    "192.168.1.12",
+                    "127.0.1.25",
+                    "255.255.240.0",
+                    "76.120.99.190",
+                ],
+                "public",
+            ),
+            ["76.120.99.190"],
+        )
+
     def test_range_usable(self):
         address = "1.12.1.0/24"
         self.assertEqual(
