@@ -13,6 +13,9 @@ this contains methods common to all facts subsets
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.network import (
     get_resource_connection,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    remove_unwanted_characters,
+)
 from ansible.module_utils.six import iteritems
 
 
@@ -159,4 +162,4 @@ class FactsBase(object):
 
             for key, value in iteritems(facts):
                 key = "ansible_net_%s" % key
-                self.ansible_facts[key] = value
+                self.ansible_facts[key] = remove_unwanted_characters(value)

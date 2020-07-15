@@ -36,6 +36,7 @@ import ast
 import operator
 import socket
 import json
+import string
 
 from copy import deepcopy
 from itertools import chain
@@ -771,3 +772,18 @@ def convert_doc_to_ansible_module_kwargs(doc):
         if item in VALID_ANSIBLEMODULE_ARGS:
             spec.update({item: doc_obj[item]})
     return spec
+
+
+def remove_unwanted_characters(value):
+    printable = set(string.printable)
+    if isinstance(value, str):
+        value = "".join(filter(lambda x: x in printable, value))
+        value = re.sub(r"\[m", "", value)
+        return value
+    elif isinstance(value, list):
+        val = []
+        for el in value:
+            v = "".join(filter(lambda x: x in printable, el))
+            v = re.sub(r"\[m", "", v)
+            val.append(v)
+        return val
