@@ -91,6 +91,13 @@ class TestIpFilter(unittest.TestCase):
             ipaddr.ipaddr("2002:c000:02e6::1", "6to4"), "2002:c000:02e6::1"
         )
         self.assertEqual(ipaddr.ipaddr(v6_address, "6to4"), v6_address)
+        self.assertEqual(
+            ipaddr.ipaddr(
+                ["192.0.2.230", "192.0.2.0/24", "fd::e", "2002:c000:02e6::1"],
+                "6to4",
+            ),
+            [v6_address, "2002:c000:02e6::1"],
+        )
 
     def test_ipaddr_address_query(self):
         self.assertEqual(

@@ -68,7 +68,7 @@ def _6to4_query(v, vtype, value):
             if v.ip != v.network:
                 ipconv = str(v.ip)
             else:
-                ipconv = False
+                return False
 
         if ipaddr(ipconv, "public") or ipaddr(ipconv, "private"):
             numbers = list(map(int, ipconv.split(".")))
