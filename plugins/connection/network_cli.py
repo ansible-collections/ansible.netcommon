@@ -380,7 +380,6 @@ class Connection(NetworkConnectionBase):
             )
         self.queue_message("log", "network_os is set to %s" % self._network_os)
 
-
     @property
     def ssh_type_conn(self):
         ssh_type = self._ssh_type
