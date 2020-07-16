@@ -2,3 +2,4 @@ ansible
 jxmlease
 ncclient
 paramiko
+ansible-pylibssh

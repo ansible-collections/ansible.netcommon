@@ -65,14 +65,46 @@ class TestConnectionClass(unittest.TestCase):
         "ansible_collections.ansible.netcommon.plugins.connection.network_cli.terminal_loader"
     )
     @patch("ansible.plugins.connection.paramiko_ssh.Connection._connect")
-    def test_network_cli__connect(self, mocked_super, mocked_terminal_loader):
+    def test_network_cli__connect_paramiko(
+        self, mocked_super, mocked_terminal_loader
+    ):
         pc = PlayContext()
         pc.network_os = "ios"
         conn = connection_loader.get("network_cli", pc, "/dev/null")
 
         conn.ssh = MagicMock()
         conn.receive = MagicMock()
+        conn._terminal = MagicMock()
+        conn.set_options(direct={"ssh_type": "paramiko"})
+        conn._connect()
+        self.assertTrue(conn._terminal.on_open_shell.called)
+        self.assertFalse(conn._terminal.on_become.called)
 
+        conn._play_context.become = True
+        conn._play_context.become_method = "enable"
+        conn._play_context.become_pass = "password"
+        conn._connected = False
+
+        conn._connect()
+        conn._terminal.on_become.assert_called_with(passwd="password")
+
+    @patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.network_cli.terminal_loader"
+    )
+    @patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.libssh.Connection._connect"
+    )
+    def test_network_cli__connect_libssh(
+        self, mocked_super, mocked_terminal_loader
+    ):
+        pc = PlayContext()
+        pc.network_os = "ios"
+        conn = connection_loader.get("network_cli", pc, "/dev/null")
+
+        conn.ssh = MagicMock()
+        conn.receive = MagicMock()
+        conn._terminal = MagicMock()
+        conn.set_options(direct={"ssh_type": "libssh"})
         conn._connect()
         self.assertTrue(conn._terminal.on_open_shell.called)
         self.assertFalse(conn._terminal.on_become.called)
@@ -86,21 +118,40 @@ class TestConnectionClass(unittest.TestCase):
         conn._terminal.on_become.assert_called_with(passwd="password")
 
     @patch("ansible.plugins.connection.paramiko_ssh.Connection.close")
-    def test_network_cli_close(self, mocked_super):
+    def test_network_cli_close_paramiko(self, mocked_super):
         pc = PlayContext()
         pc.network_os = "ios"
         conn = connection_loader.get("network_cli", pc, "/dev/null")
+        conn._ssh_type = "paramiko"
 
         terminal = MagicMock(supports_multiplexing=False)
         conn._terminal = terminal
         conn._ssh_shell = MagicMock()
         conn._paramiko_conn = MagicMock()
         conn._connected = True
-
         conn.close()
         self.assertTrue(terminal.on_close_shell.called)
         self.assertIsNone(conn._ssh_shell)
-        self.assertIsNone(conn._paramiko_conn)
+        self.assertIsNone(conn._ssh_type_conn)
+
+    @patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.libssh.Connection.close"
+    )
+    def test_network_cli_close_libssh(self, mocked_super):
+        pc = PlayContext()
+        pc.network_os = "ios"
+        conn = connection_loader.get("network_cli", pc, "/dev/null")
+        conn._ssh_type = "libssh"
+
+        terminal = MagicMock(supports_multiplexing=False)
+        conn._terminal = terminal
+        conn._ssh_shell = MagicMock()
+        conn._paramiko_conn = MagicMock()
+        conn._connected = True
+        conn.close()
+        self.assertTrue(terminal.on_close_shell.called)
+        self.assertIsNone(conn._ssh_shell)
+        self.assertIsNone(conn._ssh_type_conn)
 
     @patch("ansible.plugins.connection.paramiko_ssh.Connection._connect")
     def test_network_cli_exec_command(self, mocked_super):
@@ -132,6 +183,7 @@ class TestConnectionClass(unittest.TestCase):
 
         pc = PlayContext()
         pc.network_os = "ios"
+        pc.remote_addr = "localhost"
         conn = connection_loader.get("network_cli", pc, "/dev/null")
 
         mock__terminal = MagicMock()

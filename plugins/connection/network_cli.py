@@ -257,6 +257,18 @@ options:
       key: network_cli_retries
     vars:
     - name: ansible_network_cli_retries
+  ssh_type:
+    description:
+      - The type of the transport used by C(network_cli) connection plugin to connection to remote host.
+        Valid value is either I(paramiko) or I(libssh)
+    default: paramiko
+    env:
+        - name: ANSIBLE_NETWORK_CLI_SSH_TYPE
+    ini:
+        - section: persistent_connection
+          key: ssh_type
+    vars:
+    - name: ansible_network_cli_ssh_type
 """
 
 from functools import wraps
@@ -271,7 +283,7 @@ import time
 import traceback
 from io import BytesIO
 
-from ansible.errors import AnsibleConnectionFailure
+from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
@@ -324,14 +336,13 @@ class Connection(NetworkConnectionBase):
 
         self._terminal = None
         self.cliconf = None
-        self._paramiko_conn = None
 
         # Managing prompt context
         self._check_prompt = False
-        self._task_uuid = to_text(kwargs.get("task_uuid", ""))
 
-        if self._play_context.verbosity > 3:
-            logging.getLogger("paramiko").setLevel(logging.DEBUG)
+        self._task_uuid = to_text(kwargs.get("task_uuid", ""))
+        self._ssh_type_conn = None
+        self._ssh_type = None
 
         if self._network_os:
             self._terminal = terminal_loader.get(self._network_os, self)
@@ -370,12 +381,24 @@ class Connection(NetworkConnectionBase):
         self.queue_message("log", "network_os is set to %s" % self._network_os)
 
     @property
-    def paramiko_conn(self):
-        if self._paramiko_conn is None:
-            self._paramiko_conn = connection_loader.get(
-                "paramiko", self._play_context, "/dev/null"
+    def ssh_type_conn(self):
+        ssh_type = self._ssh_type
+        if self._ssh_type_conn is None:
+            if ssh_type not in ["paramiko", "libssh"]:
+                raise AnsibleConnectionFailure(
+                    "Invalid value '%s' set for ssh_type option."
+                    " Excpected value is either 'libssh' or 'paramiko'"
+                    % ssh_type
+                )
+
+            # TODO: Remove this check if/when libssh connection plugin is moved to ansible-base
+            if ssh_type == "libssh":
+                ssh_type = "ansible.netcommon.libssh"
+
+            self._ssh_type_conn = connection_loader.get(
+                ssh_type, self._play_context, "/dev/null"
             )
-            self._paramiko_conn.set_options(
+            self._ssh_type_conn.set_options(
                 direct={
                     "look_for_keys": not bool(
                         self._play_context.password
@@ -383,11 +406,19 @@ class Connection(NetworkConnectionBase):
                     )
                 }
             )
-        return self._paramiko_conn
+            self.queue_message(
+                "vvvv", "ssh type is set to %s" % self.get_option("ssh_type")
+            )
+        return self._ssh_type_conn
+
+    # To maintain backward compatibility
+    @property
+    def paramiko_conn(self):
+        return self.ssh_type_conn
 
     def _get_log_channel(self):
         name = "p=%s u=%s | " % (os.getpid(), getpass.getuser())
-        name += "paramiko [%s]" % self._play_context.remote_addr
+        name += "%s [%s]" % (self._ssh_type, self._play_context.remote_addr)
         return name
 
     @ensure_connect
@@ -469,9 +500,17 @@ class Connection(NetworkConnectionBase):
         """
         Connects to the remote device and starts the terminal
         """
+        self._ssh_type = self.get_option("ssh_type")
+        if self._play_context.verbosity > 3:
+            logging.getLogger(self._ssh_type).setLevel(logging.DEBUG)
+
+        self.queue_message(
+            "vvvv", "invoked shell using ssh_type: %s" % self._ssh_type
+        )
+
         if not self.connected:
-            self.paramiko_conn._set_log_channel(self._get_log_channel())
-            self.paramiko_conn.force_persistence = self.force_persistence
+            self.ssh_type_conn._set_log_channel(self._get_log_channel())
+            self.ssh_type_conn.force_persistence = self.force_persistence
 
             command_timeout = self.get_option("persistent_command_timeout")
             max_pause = min(
@@ -485,8 +524,10 @@ class Connection(NetworkConnectionBase):
 
             for attempt in range(retries + 1):
                 try:
-                    ssh = self.paramiko_conn._connect()
+                    ssh = self.ssh_type_conn._connect()
                     break
+                except AnsibleError:
+                    raise
                 except Exception as e:
                     pause = 2 ** (attempt + 1)
                     if attempt == retries or total_pause >= max_pause:
@@ -513,7 +554,8 @@ class Connection(NetworkConnectionBase):
             self._connected = True
 
             self._ssh_shell = ssh.ssh.invoke_shell()
-            self._ssh_shell.settimeout(command_timeout)
+            if self._ssh_type == "paramiko":
+                self._ssh_shell.settimeout(command_timeout)
 
             self.queue_message(
                 "vvvv",
@@ -571,14 +613,19 @@ class Connection(NetworkConnectionBase):
                 self._ssh_shell = None
                 self.queue_message("debug", "cli session is now closed")
 
-                self.paramiko_conn.close()
-                self._paramiko_conn = None
+                self.ssh_type_conn.close()
+                self._ssh_type_conn = None
                 self.queue_message(
                     "debug", "ssh connection has been closed successfully"
                 )
         super(Connection, self).close()
 
-    def receive(
+    def _read_post_command_prompt_match(self):
+        time.sleep(self.get_option("persistent_buffer_read_timeout"))
+        data = self._ssh_shell.read_bulk_response()
+        return data if data else None
+
+    def receive_paramiko(
         self,
         command=None,
         prompts=None,
@@ -587,49 +634,25 @@ class Connection(NetworkConnectionBase):
         prompt_retry_check=False,
         check_all=False,
     ):
-        """
-        Handles receiving of output from command
-        """
-        self._matched_prompt = None
-        self._matched_cmd_prompt = None
+
         recv = BytesIO()
-        handled = False
-        command_prompt_matched = False
-        matched_prompt_window = window_count = 0
-
-        # set terminal regex values for command prompt and errors in response
-        self._terminal_stderr_re = self._get_terminal_std_re(
-            "terminal_stderr_re"
-        )
-        self._terminal_stdout_re = self._get_terminal_std_re(
-            "terminal_stdout_re"
-        )
-
         cache_socket_timeout = self._ssh_shell.gettimeout()
-        command_timeout = self.get_option("persistent_command_timeout")
-        self._validate_timeout_value(
-            command_timeout, "persistent_command_timeout"
-        )
-        if cache_socket_timeout != command_timeout:
-            self._ssh_shell.settimeout(command_timeout)
+        command_prompt_matched = False
+        handled = False
 
-        buffer_read_timeout = self.get_option("persistent_buffer_read_timeout")
-        self._validate_timeout_value(
-            buffer_read_timeout, "persistent_buffer_read_timeout"
-        )
-
-        self._log_messages("command: %s" % command)
         while True:
             if command_prompt_matched:
                 try:
                     signal.signal(
                         signal.SIGALRM, self._handle_buffer_read_timeout
                     )
-                    signal.setitimer(signal.ITIMER_REAL, buffer_read_timeout)
+                    signal.setitimer(
+                        signal.ITIMER_REAL, self._buffer_read_timeout
+                    )
                     data = self._ssh_shell.recv(256)
                     signal.alarm(0)
                     self._log_messages(
-                        "response-%s: %s" % (window_count + 1, data)
+                        "response-%s: %s" % (self._window_count + 1, data)
                     )
                     # if data is still received on channel it indicates the prompt string
                     # is wrongly matched in between response chunks, continue to read
@@ -638,7 +661,7 @@ class Connection(NetworkConnectionBase):
 
                     # restart command_timeout timer
                     signal.signal(signal.SIGALRM, self._handle_command_timeout)
-                    signal.alarm(command_timeout)
+                    signal.alarm(self._command_timeout)
 
                 except AnsibleCmdRespRecv:
                     # reset socket timeout to global timeout
@@ -647,7 +670,7 @@ class Connection(NetworkConnectionBase):
             else:
                 data = self._ssh_shell.recv(256)
                 self._log_messages(
-                    "response-%s: %s" % (window_count + 1, data)
+                    "response-%s: %s" % (self._window_count + 1, data)
                 )
             # when a channel stream is closed, received data will be empty
             if not data:
@@ -659,18 +682,18 @@ class Connection(NetworkConnectionBase):
 
             window = self._strip(recv.read())
             self._last_recv_window = window
-            window_count += 1
+            self._window_count += 1
 
             if prompts and not handled:
                 handled = self._handle_prompt(
                     window, prompts, answer, newline, False, check_all
                 )
-                matched_prompt_window = window_count
+                self._matched_prompt_window = self._window_count
             elif (
                 prompts
                 and handled
                 and prompt_retry_check
-                and matched_prompt_window + 1 == window_count
+                and self._matched_prompt_window + 1 == self._window_count
             ):
                 # check again even when handled, if same prompt repeats in next window
                 # (like in the case of a wrong enable password, etc) indicates
@@ -692,12 +715,135 @@ class Connection(NetworkConnectionBase):
                 self._last_response = recv.getvalue()
                 resp = self._strip(self._last_response)
                 self._command_response = self._sanitize(resp, command)
-                if buffer_read_timeout == 0.0:
+                if self._buffer_read_timeout == 0.0:
                     # reset socket timeout to global timeout
                     self._ssh_shell.settimeout(cache_socket_timeout)
                     return self._command_response
                 else:
                     command_prompt_matched = True
+
+    def receive_libssh(
+        self,
+        command=None,
+        prompts=None,
+        answer=None,
+        newline=True,
+        prompt_retry_check=False,
+        check_all=False,
+    ):
+        self._command_response = resp = b""
+        command_prompt_matched = False
+        handled = False
+
+        while True:
+
+            if command_prompt_matched:
+                data = self._read_post_command_prompt_match()
+                if data:
+                    command_prompt_matched = False
+                else:
+                    return self._command_response
+            else:
+                data = self._ssh_shell.read_bulk_response()
+
+            if not data:
+                continue
+            self._last_recv_window = self._strip(data)
+            resp += self._last_recv_window
+            self._window_count += 1
+
+            self._log_messages("response-%s: %s" % (self._window_count, data))
+
+            if prompts and not handled:
+                handled = self._handle_prompt(
+                    resp, prompts, answer, newline, False, check_all
+                )
+                self._matched_prompt_window = self._window_count
+            elif (
+                prompts
+                and handled
+                and prompt_retry_check
+                and self._matched_prompt_window + 1 == self._window_count
+            ):
+                # check again even when handled, if same prompt repeats in next window
+                # (like in the case of a wrong enable password, etc) indicates
+                # value of answer is wrong, report this as error.
+                if self._handle_prompt(
+                    resp,
+                    prompts,
+                    answer,
+                    newline,
+                    prompt_retry_check,
+                    check_all,
+                ):
+                    raise AnsibleConnectionFailure(
+                        "For matched prompt '%s', answer is not valid"
+                        % self._matched_cmd_prompt
+                    )
+
+            if self._find_prompt(resp):
+                self._last_response = data
+                self._command_response += self._sanitize(resp, command)
+                command_prompt_matched = True
+
+    def receive(
+        self,
+        command=None,
+        prompts=None,
+        answer=None,
+        newline=True,
+        prompt_retry_check=False,
+        check_all=False,
+    ):
+        """
+        Handles receiving of output from command
+        """
+        self._matched_prompt = None
+        self._matched_cmd_prompt = None
+        self._matched_prompt_window = 0
+        self._window_count = 0
+
+        # set terminal regex values for command prompt and errors in response
+        self._terminal_stderr_re = self._get_terminal_std_re(
+            "terminal_stderr_re"
+        )
+        self._terminal_stdout_re = self._get_terminal_std_re(
+            "terminal_stdout_re"
+        )
+
+        self._command_timeout = self.get_option("persistent_command_timeout")
+        self._validate_timeout_value(
+            self._command_timeout, "persistent_command_timeout"
+        )
+
+        self._buffer_read_timeout = self.get_option(
+            "persistent_buffer_read_timeout"
+        )
+        self._validate_timeout_value(
+            self._buffer_read_timeout, "persistent_buffer_read_timeout"
+        )
+
+        self._log_messages("command: %s" % command)
+        if self._ssh_type == "libssh":
+            response = self.receive_libssh(
+                command,
+                prompts,
+                answer,
+                newline,
+                prompt_retry_check,
+                check_all,
+            )
+        else:
+            response = self.receive_paramiko(
+                command,
+                prompts,
+                answer,
+                newline,
+                prompt_retry_check,
+                check_all,
+            )
+
+        return response
 
     @ensure_connect
     def send(
