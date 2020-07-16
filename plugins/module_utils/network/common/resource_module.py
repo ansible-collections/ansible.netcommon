@@ -159,8 +159,7 @@ class ResourceModule(object):  # pylint: disable=R0902
     def run_commands(self):
         """ Send commands to the device
         """
-        if self.commands:
+        if self.commands and self.state in self.ACTION_STATES:
             if not self._module.check_mode:
-                if self.state != "rendered":
-                    self._connection.edit_config(self.commands)
-                    self.changed = True
+                self._connection.edit_config(self.commands)
+            self.changed = True
