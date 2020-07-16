@@ -787,3 +787,5 @@ def remove_unwanted_characters(value):
             v = re.sub(r"\[m", "", v)
             val.append(v)
         return val
+    else:
+        return value
