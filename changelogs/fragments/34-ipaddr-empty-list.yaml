@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - ipaddr filter now returns empty list instead of False on empty list input

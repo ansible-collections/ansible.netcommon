@@ -67,6 +67,16 @@ class TestIpFilter(unittest.TestCase):
     def test_ipaddr_empty_query(self):
         self.assertEqual(ipaddr.ipaddr("192.0.2.230"), "192.0.2.230")
         self.assertEqual(ipaddr.ipaddr("192.0.2.230/30"), "192.0.2.230/30")
+        self.assertEqual(ipaddr.ipaddr([]), [])
+        with pytest.raises(
+            AnsibleFilterError,
+            match="True is not a valid IP address or network",
+        ):
+            ipaddr.ipaddr(True)
+        with pytest.raises(
+            AnsibleFilterError, match="'' is not a valid IP address or network"
+        ):
+            ipaddr.ipaddr("")
 
     def test_ipaddr_6to4_query(self):
         v6_address = "2002:c000:02e6::1/48"
@@ -81,6 +91,13 @@ class TestIpFilter(unittest.TestCase):
             ipaddr.ipaddr("2002:c000:02e6::1", "6to4"), "2002:c000:02e6::1"
         )
         self.assertEqual(ipaddr.ipaddr(v6_address, "6to4"), v6_address)
+        self.assertEqual(
+            ipaddr.ipaddr(
+                ["192.0.2.230", "192.0.2.0/24", "fd::e", "2002:c000:02e6::1"],
+                "6to4",
+            ),
+            [v6_address, "2002:c000:02e6::1"],
+        )
 
     def test_ipaddr_address_query(self):
         self.assertEqual(
@@ -207,6 +224,32 @@ class TestIpFilter(unittest.TestCase):
         self.assertEqual(ipaddr.ipaddr(address, "size_usable"), 0)
         address = "1.12.1.254/24"
         self.assertEqual(ipaddr.ipaddr(address, "size_usable"), 254)
+
+    def test_ipaddr_public_query(self):
+        self.assertIsNone(ipaddr.ipaddr("192.168.1.12", "public"))
+        self.assertIsNone(ipaddr.ipaddr("127.0.1.25", "public"))
+        self.assertIsNone(ipaddr.ipaddr("255.255.240.0", "public"))
+        self.assertEqual(
+            ipaddr.ipaddr("76.120.99.190", "public"), "76.120.99.190"
+        )
+        self.assertEqual(
+            ipaddr.ipaddr(
+                ["192.168.1.12", "127.0.1.25", "255.255.240.0"], "public"
+            ),
+            [],
+        )
+        self.assertEqual(
+            ipaddr.ipaddr(
+                [
+                    "192.168.1.12",
+                    "127.0.1.25",
+                    "255.255.240.0",
+                    "76.120.99.190",
+                ],
+                "public",
+            ),
+            ["76.120.99.190"],
+        )
 
     def test_range_usable(self):
         address = "1.12.1.0/24"

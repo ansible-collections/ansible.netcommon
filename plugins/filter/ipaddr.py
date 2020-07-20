@@ -68,7 +68,7 @@ def _6to4_query(v, vtype, value):
             if v.ip != v.network:
                 ipconv = str(v.ip)
             else:
-                ipconv = False
+                return False
 
         if ipaddr(ipconv, "public") or ipaddr(ipconv, "private"):
             numbers = list(map(int, ipconv.split(".")))
@@ -304,12 +304,14 @@ def _private_query(v, value):
 
 def _public_query(v, value):
     v_ip = netaddr.IPAddress(str(v.ip))
-    if (
-        v_ip.is_unicast()
-        and not v_ip.is_private()
-        and not v_ip.is_loopback()
-        and not v_ip.is_netmask()
-        and not v_ip.is_hostmask()
+    if all(
+        [
+            v_ip.is_unicast(),
+            not v_ip.is_private(),
+            not v_ip.is_loopback(),
+            not v_ip.is_netmask(),
+            not v_ip.is_hostmask(),
+        ]
     ):
         return value
 
@@ -548,24 +550,15 @@ def ipaddr(value, query="", version=False, alias="ipaddr"):
 
     vtype = None
 
-    if not value:
-        return False
-
-    elif value is True:
-        return False
-
     # Check if value is a list and parse each element
-    elif isinstance(value, (list, tuple, types.GeneratorType)):
+    if isinstance(value, (list, tuple, types.GeneratorType)):
+        _ret = [ipaddr(element, str(query), version) for element in value]
+        return [item for item in _ret if item]
 
-        _ret = []
-        for element in value:
-            if ipaddr(element, str(query), version):
-                _ret.append(ipaddr(element, str(query), version))
-
-        if _ret:
-            return _ret
-        else:
-            return list()
+    elif not value or value is True:
+        raise errors.AnsibleFilterError(
+            "{0!r} is not a valid IP address or network".format(value)
+        )
 
     # Check if value is a number and convert it to an IP address
     elif str(value).isdigit():
