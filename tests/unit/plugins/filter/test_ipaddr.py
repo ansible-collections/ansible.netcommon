@@ -110,6 +110,8 @@ class TestIpFilter(unittest.TestCase):
         self.assertEqual(ipaddr.ipaddr("192.0.2.0/31", "address"), "192.0.2.0")
         self.assertEqual(ipaddr.ipaddr("2001::1", "address"), "2001::1")
         self.assertEqual(ipaddr.ipaddr("2001::1/48", "address"), "2001::1")
+        self.assertEqual(ipaddr.ipaddr("2001::", "address"), "2001::")
+        self.assertEqual(ipaddr.ipaddr("2001::/48", "address"), "2001::")
 
     def test_ipaddr_bool_query(self):
         self.assertTrue(ipaddr.ipaddr("192.0.2.20", "bool"))

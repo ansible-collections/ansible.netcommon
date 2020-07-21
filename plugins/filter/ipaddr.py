@@ -97,6 +97,9 @@ def _ip_query(v):
         # /31 networks in netaddr have no broadcast address
         if v.ip != v.network or not v.broadcast:
             return str(v.ip)
+        # For the first IPv6 address in a network, netaddr will return it as a network address, despite it being a valid host address.
+        elif v.version == 6 and v.ip == v.network:
+            return str(v.ip)
 
 
 def _address_prefix_query(v):

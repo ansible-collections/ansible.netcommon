@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - ipaddr filter - Fixed issue where the first IPv6 address in a subnet was not being considered a valid address.
