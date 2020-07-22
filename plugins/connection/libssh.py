@@ -7,7 +7,7 @@ __metaclass__ = type
 DOCUMENTATION = """
     author: Ansible Team
     connection: libssh
-    short_description: Run tasks via libssh (python extension)
+    short_description: [Tech preview] Run tasks via libssh (python extensions)
     description:
         - Use the pylibssh python bindings to connect to targets
         - The python bindings use libssh C library (https://www.libssh.org/) to connect to targets
