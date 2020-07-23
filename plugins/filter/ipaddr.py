@@ -62,6 +62,7 @@ def _first_last(v):
 
 def _6to4_query(v, vtype, value):
     if v.version == 4:
+
         if v.size == 1:
             ipconv = str(v.ip)
         elif v.size > 1:
@@ -76,7 +77,7 @@ def _6to4_query(v, vtype, value):
         try:
             return "2002:{:02x}{:02x}:{:02x}{:02x}::1/48".format(*numbers)
         except Exception:
-            pass
+            return False
 
     elif v.version == 6:
         if vtype == "address":
@@ -86,8 +87,8 @@ def _6to4_query(v, vtype, value):
             if v.ip != v.network:
                 if ipaddr(str(v.ip), "2002::/16"):
                     return value
-
-    return False
+            else:
+                return False
 
 
 def _ip_query(v):
@@ -100,6 +101,12 @@ def _ip_query(v):
         # For the first IPv6 address in a network, netaddr will return it as a network address, despite it being a valid host address.
         elif v.version == 6 and v.ip == v.network:
             return str(v.ip)
+
+
+def _gateway_query(v):
+    if v.size > 1:
+        if v.ip != v.network:
+            return str(v.ip) + "/" + str(v.prefixlen)
 
 
 def _address_prefix_query(v):
@@ -174,6 +181,16 @@ def _ip_netmask_query(v):
     elif v.size > 1:
         if v.ip != v.network:
             return str(v.ip) + " " + str(v.netmask)
+
+
+"""
+def _ip_wildcard_query(v):
+    if v.size == 2:
+        return str(v.ip) + ' ' + str(v.hostmask)
+    elif v.size > 1:
+        if v.ip != v.network:
+            return str(v.ip) + ' ' + str(v.hostmask)
+"""
 
 
 def _ipv4_query(v, value):
@@ -505,12 +522,12 @@ def ipaddr(value, query="", version=False, alias="ipaddr"):
         "cidr": _cidr_query,
         "cidr_lookup": _cidr_lookup_query,
         "first_usable": _first_usable_query,
-        "gateway": _address_prefix_query,  # deprecate
-        "gw": _address_prefix_query,  # deprecate
+        "gateway": _gateway_query,  # deprecate
+        "gw": _gateway_query,  # deprecate
         "host": _host_query,
         "host/prefix": _address_prefix_query,  # deprecate
         "hostmask": _hostmask_query,
-        "hostnet": _address_prefix_query,  # deprecate
+        "hostnet": _gateway_query,  # deprecate
         "int": _int_query,
         "ip": _ip_query,
         "ip/prefix": _ip_prefix_query,
@@ -538,7 +555,7 @@ def ipaddr(value, query="", version=False, alias="ipaddr"):
         "public": _public_query,
         "range_usable": _range_usable_query,
         "revdns": _revdns_query,
-        "router": _address_prefix_query,  # deprecate
+        "router": _gateway_query,  # deprecate
         "size": _size_query,
         "size_usable": _size_usable_query,
         "subnet": _subnet_query,
@@ -859,7 +876,7 @@ def nthhost(value, query=""):
     try:
         nth = int(query)
         if value.size > nth:
-            return str(value[nth])
+            return value[nth]
 
     except ValueError:
         return False
@@ -940,8 +957,6 @@ def _address_normalizer(value):
         vtype = ipaddr(value, "type")
         if vtype == "address" or vtype == "network":
             v = ipaddr(value, "subnet")
-        else:
-            return False
     except Exception:
         return False
 
@@ -1067,7 +1082,7 @@ def slaac(value, query=""):
     except Exception:
         return False
 
-    return str(eui.ipv6(value.network))
+    return eui.ipv6(value.network)
 
 
 # ---- HWaddr / MAC address filters ----
@@ -1094,7 +1109,6 @@ def hwaddr(value, query="", alias="hwaddr"):
     try:
         v = netaddr.EUI(value)
     except Exception:
-        v = None
         if query and query != "bool":
             raise errors.AnsibleFilterError(
                 alias + ": not a hardware address: %s" % value
@@ -1109,6 +1123,8 @@ def hwaddr(value, query="", alias="hwaddr"):
         raise errors.AnsibleFilterError(
             alias + ": unknown filter type: %s" % query
         )
+
+    return False
 
 
 def macaddr(value, query=""):
