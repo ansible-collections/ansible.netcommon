@@ -132,7 +132,8 @@ def to_lines(stdout):
 
 
 def transform_commands(module):
-    transform = ComplexList(
+    transform = EntityCollection(
+        module,
         dict(
             command=dict(key=True),
             output=dict(),
@@ -142,7 +143,6 @@ def transform_commands(module):
             sendonly=dict(type="bool", default=False),
             check_all=dict(type="bool", default=False),
         ),
-        module,
     )
 
     return transform(module.params["commands"])
