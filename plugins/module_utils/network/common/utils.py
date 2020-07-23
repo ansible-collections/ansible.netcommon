@@ -313,7 +313,7 @@ class ComplexList(EntityCollection):
     """Alternate name for EntityCollection for backwards compatibility"""
 
     def __init__(self, attrs, module, *args, **kwargs):
-        super(EntityCollection, self).__init__(module, attrs, *args, **kwargs)
+        super(ComplexList, self).__init__(module, attrs, *args, **kwargs)
 
 
 def dict_diff(base, comparable):
