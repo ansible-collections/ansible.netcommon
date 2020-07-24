@@ -244,14 +244,16 @@ class ActionModule(ActionBase):
         if src is None:
             raise AnsibleActionFail("src is required")
         try:
-            source = self._find_needle('templates', src)
+            source = self._find_needle("templates", src)
         except AnsibleError as e:
             raise AnsibleActionFail(to_text(e))
 
         try:
             tmp_source = self._loader.get_real_file(source)
         except AnsibleFileNotFound as e:
-            raise AnsibleActionFail("could not find src=%s, %s" % (source, to_text(e)))
+            raise AnsibleActionFail(
+                "could not find src=%s, %s" % (source, to_text(e))
+            )
 
         try:
             with open(tmp_source, "r") as f:
@@ -264,14 +266,14 @@ class ActionModule(ActionBase):
             )
 
         # set jinja2 internal search path for includes
-        searchpath = task_vars.get('ansible_search_path', [])
+        searchpath = task_vars.get("ansible_search_path", [])
         searchpath.extend([self._loader._basedir, os.path.dirname(source)])
 
         # We want to search into the 'templates' subdir of each search path in
         # addition to our original search paths.
         newsearchpath = []
         for p in searchpath:
-            newsearchpath.append(os.path.join(p, 'templates'))
+            newsearchpath.append(os.path.join(p, "templates"))
             newsearchpath.append(p)
         searchpath = newsearchpath
         self._templar.environment.loader.searchpath = searchpath
