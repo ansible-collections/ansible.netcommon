@@ -3,5 +3,4 @@ bugfixes:
   - nthhost filter now returns str instead of IPAddress object
   - slaac filter now returns str instead of IPAddress object
 removed_features:
-  - module_utils.network.common.utils.EntityCollection has been removed as identical to ComplexList
   - module_utils.network.common.utils.ComplexDict has been removed

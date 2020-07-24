@@ -132,7 +132,8 @@ def to_lines(stdout):
 
 
 def transform_commands(module):
-    transform = ComplexList(
+    transform = EntityCollection(
+        module,
         dict(
             command=dict(key=True),
             output=dict(),
@@ -142,7 +143,6 @@ def transform_commands(module):
             sendonly=dict(type="bool", default=False),
             check_all=dict(type="bool", default=False),
         ),
-        module,
     )
 
     return transform(module.params["commands"])
@@ -289,24 +289,31 @@ class Entity(object):
         return value
 
 
-class ComplexList(Entity):
+class EntityCollection(Entity):
     """Extends ```Entity``` to handle a list of dicts """
-
-    def __init__(self, attrs, module, *args, **kwargs):
-        super(ComplexList, self).__init__(module, attrs, *args, **kwargs)
 
     def __call__(self, iterable, strict=True):
         if iterable is None:
             iterable = [
-                super(ComplexList, self).__call__(self._module.params, strict)
+                super(EntityCollection, self).__call__(
+                    self._module.params, strict
+                )
             ]
 
         if not isinstance(iterable, (list, tuple)):
             self._module.fail_json(msg="value must be an iterable")
 
         return [
-            (super(ComplexList, self).__call__(i, strict)) for i in iterable
+            (super(EntityCollection, self).__call__(i, strict))
+            for i in iterable
         ]
+
+
+class ComplexList(EntityCollection):
+    """Alternate name for EntityCollection for backwards compatibility"""
+
+    def __init__(self, attrs, module, *args, **kwargs):
+        super(ComplexList, self).__init__(module, attrs, *args, **kwargs)
 
 
 def dict_diff(base, comparable):
