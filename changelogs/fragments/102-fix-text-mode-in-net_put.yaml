@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fix text mode not working in net_put
