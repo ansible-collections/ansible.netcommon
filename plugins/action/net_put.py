@@ -23,7 +23,7 @@ import os
 import uuid
 import hashlib
 
-from ansible.errors import AnsibleError
+from ansible.errors import AnsibleError, AnsibleActionFail, AnsibleFileNotFound
 from ansible.module_utils._text import to_text, to_bytes
 from ansible.module_utils.connection import Connection, ConnectionError
 from ansible.plugins.action import ActionBase
@@ -39,6 +39,9 @@ class ActionModule(ActionBase):
         socket_path = None
         network_os = self._get_network_os(task_vars).split(".")[-1]
         persistent_connection = self._play_context.connection.split(".")[-1]
+
+        if task_vars is None:
+            task_vars = dict()
 
         result = super(ActionModule, self).run(task_vars=task_vars)
 
@@ -77,7 +80,7 @@ class ActionModule(ActionBase):
 
         if mode == "text":
             try:
-                self._handle_template(convert_data=False)
+                self._handle_template(task_vars)
             except ValueError as exc:
                 return dict(failed=True, msg=to_text(exc))
 
@@ -235,3 +238,41 @@ class ActionModule(ActionBase):
             )
 
         return network_os
+
+    def _handle_template(self, task_vars):
+        src = self._task.args.get("src")
+        if src is None:
+            raise AnsibleActionFail("src is required")
+        try:
+            source = self._find_needle('templates', src)
+        except AnsibleError as e:
+            raise AnsibleActionFail(to_text(e))
+
+        try:
+            tmp_source = self._loader.get_real_file(source)
+        except AnsibleFileNotFound as e:
+            raise AnsibleActionFail("could not find src=%s, %s" % (source, to_text(e)))
+
+        try:
+            with open(tmp_source, "r") as f:
+                template_data = to_text(f.read())
+        except IOError as e:
+            raise AnsibleError(
+                "unable to load src file {0}, I/O error({1}): {2}".format(
+                    tmp_source, e.errno, e.strerror
+                )
+            )
+
+        # set jinja2 internal search path for includes
+        searchpath = task_vars.get('ansible_search_path', [])
+        searchpath.extend([self._loader._basedir, os.path.dirname(source)])
+
+        # We want to search into the 'templates' subdir of each search path in
+        # addition to our original search paths.
+        newsearchpath = []
+        for p in searchpath:
+            newsearchpath.append(os.path.join(p, 'templates'))
+            newsearchpath.append(p)
+        searchpath = newsearchpath
+        self._templar.environment.loader.searchpath = searchpath
+        self._task.args["src"] = self._templar.template(template_data)
