@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - net_put - Restore missing function removed when action plugin stopped inheriting NetworkActionBase
