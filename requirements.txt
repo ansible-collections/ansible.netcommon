@@ -1,5 +1,6 @@
 ansible
 jxmlease
 ncclient
+netaddr
 paramiko
 ansible-pylibssh

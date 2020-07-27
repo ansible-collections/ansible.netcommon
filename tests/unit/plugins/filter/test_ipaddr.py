@@ -168,6 +168,14 @@ class TestIpFilter(unittest.TestCase):
         address = "1.12.1.36/32"
         self.assertEqual(ipaddr.ipaddr(address, "first_usable"), None)
 
+    def test_host_query(self):
+        self.assertEqual(ipaddr.ipaddr("192.0.2.1", "host"), "192.0.2.1/32")
+        address = "192.0.2.12/20"
+        self.assertEqual(ipaddr.ipaddr(address, "host"), address)
+        address = "192.0.2.0/31"
+        self.assertEqual(ipaddr.ipaddr(address, "host"), address)
+        self.assertIsNone(ipaddr.ipaddr("192.0.2.0/24", "host"))
+
     def test_last_usable(self):
         with pytest.raises(AnsibleFilterError, match="Not a network address"):
             ipaddr.ipaddr("1.12.1.34", "last_usable")

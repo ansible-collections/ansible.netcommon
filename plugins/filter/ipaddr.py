@@ -132,7 +132,7 @@ def _cidr_lookup_query(v, iplist, value):
 
 def _first_usable_query(v, vtype):
     if vtype == "address":
-        "Does it make sense to raise an error"
+        # Does it make sense to raise an error
         raise errors.AnsibleFilterError("Not a network address")
     elif vtype == "network":
         if v.size == 2:
@@ -145,7 +145,7 @@ def _host_query(v):
     if v.size == 1:
         return str(v)
     elif v.size > 1:
-        if v.ip != v.network:
+        if v.ip != v.network or not v.broadcast:
             return str(v.ip) + "/" + str(v.prefixlen)
 
 
@@ -195,7 +195,7 @@ def _ipv6_query(v, value):
 
 def _last_usable_query(v, vtype):
     if vtype == "address":
-        "Does it make sense to raise an error"
+        # Does it make sense to raise an error
         raise errors.AnsibleFilterError("Not a network address")
     elif vtype == "network":
         if v.size > 1:
@@ -240,11 +240,6 @@ def _network_query(v):
     return str(v.network)
 
 
-def _network_id_query(v):
-    """Return the network of a given IP or subnet"""
-    return str(v.network)
-
-
 def _network_netmask_query(v):
     return str(v.network) + " " + str(v.netmask)
 
@@ -255,7 +250,7 @@ def _network_wildcard_query(v):
 
 def _next_usable_query(v, vtype):
     if vtype == "address":
-        "Does it make sense to raise an error"
+        # Does it make sense to raise an error
         raise errors.AnsibleFilterError("Not a network address")
     elif vtype == "network":
         if v.size > 1:
@@ -290,7 +285,7 @@ def _prefix_query(v):
 
 def _previous_usable_query(v, vtype):
     if vtype == "address":
-        "Does it make sense to raise an error"
+        # Does it make sense to raise an error
         raise errors.AnsibleFilterError("Not a network address")
     elif vtype == "network":
         if v.size > 1:
@@ -321,7 +316,7 @@ def _public_query(v, value):
 
 def _range_usable_query(v, vtype):
     if vtype == "address":
-        "Does it make sense to raise an error"
+        # Does it make sense to raise an error
         raise errors.AnsibleFilterError("Not a network address")
     elif vtype == "network":
         if v.size > 1:
@@ -527,7 +522,7 @@ def ipaddr(value, query="", version=False, alias="ipaddr"):
         "next_usable": _next_usable_query,
         "netmask": _netmask_query,
         "network": _network_query,
-        "network_id": _network_id_query,
+        "network_id": _network_query,
         "network/prefix": _subnet_query,
         "network_netmask": _network_netmask_query,
         "network_wildcard": _network_wildcard_query,
