@@ -7,9 +7,9 @@ __metaclass__ = type
 DOCUMENTATION = """
     author: Ansible Team
     connection: libssh
-    short_description: [Tech preview] Run tasks via libssh (python extensions)
+    short_description: (Tech preview) Run tasks using libssh for ssh connection
     description:
-        - Use the pylibssh python bindings to connect to targets
+        - Use the ansible-pylibssh python bindings to connect to targets
         - The python bindings use libssh C library (https://www.libssh.org/) to connect to targets
         - This plugin borrows a lot of settings from the ssh plugin as they both cover the same protocol.
     version_added: "2.10"
