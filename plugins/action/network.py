@@ -41,8 +41,8 @@ class ActionModule(_ActionModule):
         if config_module and self._task.args.get("src"):
             try:
                 self._handle_src_option()
-            except AnsibleError as e:
-                return {"failed": True, "msg": e.message, "changed": False}
+            except AnsibleError as exc:
+                return dict(failed=True, msg=to_text(exc))
 
         result = super(ActionModule, self).run(task_vars=task_vars)
 
