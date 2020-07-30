@@ -193,7 +193,6 @@ class Connection(NetworkConnectionBase):
             play_context, new_stdin, *args, **kwargs
         )
 
-        self._url = None
         self._auth = None
 
         if self._network_os:
@@ -227,6 +226,13 @@ class Connection(NetworkConnectionBase):
             )
         self.queue_message("log", "network_os is set to %s" % self._network_os)
 
+    @property
+    def _url(self):
+        protocol = "https" if self.get_option("use_ssl") else "http"
+        host = self.get_option("host")
+        port = self.get_option("port") or (443 if protocol == "https" else 80)
+        return "%s://%s:%s" % (protocol, host, port)
+
     def update_play_context(self, pc_data):
         """Updates the play context information for the connection"""
         pc_data = to_bytes(pc_data)
@@ -249,13 +255,6 @@ class Connection(NetworkConnectionBase):
 
     def _connect(self):
         if not self.connected:
-            protocol = "https" if self.get_option("use_ssl") else "http"
-            host = self.get_option("host")
-            port = self.get_option("port") or (
-                443 if protocol == "https" else 80
-            )
-            self._url = "%s://%s:%s" % (protocol, host, port)
-
             self.queue_message(
                 "vvv",
                 "ESTABLISH HTTP(S) CONNECTFOR USER: %s TO %s"
@@ -337,3 +336,18 @@ class Connection(NetworkConnectionBase):
         response_buffer.seek(0)
 
         return response, response_buffer
+
+    def transport_test(self, connect_timeout):
+        """This method enables wait_for_connection to work.
+
+        As it is used by wait_for_connection, it is called by that module's action plugin,
+        which is on the controller process, which means that nothing done on this instance
+        should impact the actual persistent connection... this check is for informational
+        purposes only and should be properly cleaned up.
+        """
+
+        try:
+            response = open_url(self._url)
+        except URLError as exc:
+            # fail
+            pass
