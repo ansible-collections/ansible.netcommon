@@ -348,6 +348,29 @@ Parameters
                                 <tr>
                                                                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>ssh_type</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                                                                    </div>
+                                    </td>
+                                <td>
+                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"paramiko"</div>
+                                    </td>
+                                                    <td>
+                                                    <div> ini entries:
+                                                                    <p>[persistent_connection]<br>ssh_type = paramiko</p>
+                                                            </div>
+                                                                                                            <div>env:ANSIBLE_NETWORK_CLI_SSH_TYPE</div>
+                                                                                                                                        <div>var: ansible_network_cli_ssh_type</div>
+                                                                        </td>
+                                                <td>
+                                            <div>The type of the transport used by <code>network_cli</code> connection plugin to connection to remote host. Valid value is either <em>paramiko</em> or <em>libssh</em></div>
+                                                        </td>
+            </tr>
+                                <tr>
+                                                                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>terminal_inital_prompt_newline</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">

@@ -97,7 +97,7 @@ Parameters
                     <b>filename</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -132,7 +132,7 @@ Parameters
                     <b>confirm</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">integer</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -167,13 +167,13 @@ Parameters
                     <b>content</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
                                                                                                                                                             </td>
                                                                 <td>
-                                            <div>The configuration data as defined by the device&#x27;s data models, the value can be either in xml string format or text format. The format of the configuration should be supported by remote Netconf server</div>
+                                            <div>The configuration data as defined by the device&#x27;s data models, the value can be either in xml string format or text format. The format of the configuration should be supported by remote Netconf server. If the value of <code>content</code> option is in <em>xml</em> format in that case the xml value should have <em>config</em> as root tag.</div>
                                                                 <div style="font-size: small; color: darkgreen"><br/>aliases: xml</div>
                                     </td>
             </tr>
@@ -183,7 +183,7 @@ Parameters
                     <b>default_operation</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -222,7 +222,7 @@ Parameters
                     <b>error_option</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -245,7 +245,7 @@ Parameters
                     <b>format</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -264,7 +264,7 @@ Parameters
                     <b>get_filter</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -280,7 +280,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                                                 / <span style="color: red">required</span>                    </div>
+                                                                    </div>
                                     </td>
                                 <td>
                                                                                                                                                             </td>
@@ -313,7 +313,7 @@ Parameters
                     <b>lock</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -402,7 +402,7 @@ Parameters
                     <b>source_datastore</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -418,7 +418,7 @@ Parameters
                     <b>src</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">path</span>
                                                                     </div>
                                     </td>
                                 <td>
@@ -448,12 +448,16 @@ Parameters
                     <b>target</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                                                                     </div>
                                     </td>
                                 <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"auto"</div>
-                                    </td>
+                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                                                                                                                                                <li><div style="color: blue"><b>auto</b>&nbsp;&larr;</div></li>
+                                                                                                                                                                                                <li>candidate</li>
+                                                                                                                                                                                                <li>running</li>
+                                                                                    </ul>
+                                                                            </td>
                                                                 <td>
                                             <div>Name of the configuration datastore to be edited. - auto, uses candidate and fallback to running - candidate, edit &lt;candidate/&gt; datastore and then commit - running, edit &lt;running/&gt; datastore directly</div>
                                                                 <div style="font-size: small; color: darkgreen"><br/>aliases: datastore</div>
