@@ -28,6 +28,7 @@ Name | Description
 Name | Description
 --- | ---
 [ansible.netcommon.httpapi](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.httpapi_connection.rst)|Use httpapi to run command on network appliances
+[ansible.netcommon.libssh](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.libssh_connection.rst)|(Tech preview) Run tasks using libssh for ssh connection
 [ansible.netcommon.napalm](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.napalm_connection.rst)|Provides persistent connection using NAPALM
 [ansible.netcommon.netconf](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.netconf_connection.rst)|Provides a persistent connection using the netconf protocol
 [ansible.netcommon.network_cli](https://github.com/ansible-collections/ansible.netcommon/blob/master/docs/ansible.netcommon.network_cli_connection.rst)|Use network_cli to run command on network appliances
