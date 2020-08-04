@@ -16,17 +16,17 @@
   when: pyver_found == '3'
   block:
   - name: "{{ parser }} Run command and parse with pyats"
-    cidrblock.netpdk.cli_parse:
+    ansible.netcommon.cli_parse:
       command: "show interface"
       parser:
-        name: cidrblock.netpdk.pyats
+        name: ansible.netcommon.pyats
     register: nxos_pyats_command
 
   - name: "{{ parser }} Pass text and command"
-    cidrblock.netpdk.cli_parse:
+    ansible.netcommon.cli_parse:
       text: "{{ nxos_pyats_command['stdout'] }}"
       parser:
-        name: cidrblock.netpdk.pyats
+        name: ansible.netcommon.pyats
         command: show interface
     register: nxos_pyats_text
 
@@ -40,10 +40,10 @@
     - "{{ nxos_pyats_command['parsed']['mgmt0'] is defined }}"
 
   - name: "Pass text, command, and os"
-    cidrblock.netpdk.cli_parse:
+    ansible.netcommon.cli_parse:
       text: "{{ nxos_pyats_command['stdout'] }}"
       parser:
-        name: cidrblock.netpdk.pyats
+        name: ansible.netcommon.pyats
         command: show interface
         os: nxos
     register: nxos_pyats_text

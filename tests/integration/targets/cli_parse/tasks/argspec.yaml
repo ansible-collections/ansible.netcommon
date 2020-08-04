@@ -1,8 +1,8 @@
 - name: "{{ parser }} Violate argspec"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     text: ""
     parser:
-      name: cidrblock.netpdk.native
+      name: ansible.netcommon.native
       template_path: ""
       command: show interface
   register: argfail
@@ -13,11 +13,11 @@
     that: "argfail['msg'] == 'parameters are mutually exclusive: command|template_path found in parser'"
 
 - name: "{{ parser }} Violate argspec"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     text: ""
     command: show interface
     parser:
-      name: cidrblock.netpdk.native
+      name: ansible.netcommon.native
       command: ""
   register: argfail
   ignore_errors: True
@@ -27,9 +27,9 @@
     that: "argfail['msg'] == 'parameters are mutually exclusive: command|text'"
 
 - name: "{{ parser }} Violate argspec"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     parser:
-      name: cidrblock.netpdk.native
+      name: ansible.netcommon.native
       command: ""
   register: argfail
   ignore_errors: True
@@ -40,7 +40,7 @@
 
 
 - name: "{{ parser }} Violate argspec"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     text: ""
     parser:
       name: not_fqdn

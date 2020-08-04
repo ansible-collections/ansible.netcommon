@@ -1,15 +1,15 @@
 - name: "{{ parser }} Run command and parse with ntc_templates"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     command: "show interface"
     parser:
-      name: cidrblock.netpdk.ntc_templates
+      name: ansible.netcommon.ntc_templates
   register: nxos_ntc_templates_command
 
 - name: "{{ parser }} Pass text and command"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     text: "{{ nxos_ntc_templates_command['stdout'] }}"
     parser:
-      name: cidrblock.netpdk.ntc_templates
+      name: ansible.netcommon.ntc_templates
       command: show interface
   register: nxos_ntc_templates_text
 

@@ -1,15 +1,15 @@
 - name: "{{ parser }} Run command and parse with xml"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     command: "show interface | xml"
     parser:
-      name: cidrblock.netpdk.xml
+      name: ansible.netcommon.xml
   register: nxos_xml_command
 
 - name: "{{ parser }} Pass text and parse with xml"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     text: "{{ nxos_xml_command['stdout'] }}"
     parser:
-      name: cidrblock.netpdk.xml
+      name: ansible.netcommon.xml
   register: nxos_xml_text
 
 - name: "{{ parser }} Confirm response"

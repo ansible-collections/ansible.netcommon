@@ -1,16 +1,16 @@
 - name: "{{ parser }} Run command and parse with native"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     command: "show interface"
     parser:
-      name: cidrblock.netpdk.native
+      name: ansible.netcommon.native
     set_fact: POpqMQoJWTiDpEW
   register: nxos_native_command
 
 - name: "{{ parser }} Pass text and template_path"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     text: "{{ nxos_native_command['stdout'] }}"
     parser:
-      name: cidrblock.netpdk.native
+      name: ansible.netcommon.native
       template_path: "{{ role_path }}/templates/nxos_show_interface.yaml"
   register: nxos_native_text
 
@@ -25,10 +25,10 @@
   - "{{ nxos_native_command['parsed'] == nxos_native_text['parsed'] }}"
 
 - name: "{{ parser }} Pass text and command"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     text: "{{ nxos_native_command['stdout'] }}"
     parser:
-      name: cidrblock.netpdk.native
+      name: ansible.netcommon.native
       command: show interface
   register: output
 
@@ -39,10 +39,10 @@
   - "{{ output['parsed']['mgmt0'] is defined }}"
 
 - name: "{{ parser }} Run command and parse with native"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     command: "sho int"
     parser:
-      name: cidrblock.netpdk.native
+      name: ansible.netcommon.native
       command: show interface
   register: output
 

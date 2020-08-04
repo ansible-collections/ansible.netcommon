@@ -1,8 +1,8 @@
 - name: "{{ parser }} Run command and parse with native"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     command: "ps -ef"
     parser:
-      name: cidrblock.netpdk.native
+      name: ansible.netcommon.native
   register: ps_out
 
 - name: "{{ parser }} Check parser output"
@@ -14,10 +14,10 @@
   - "{{ ps_out['parsed'] is defined }}"
 
 - name: "{{ parser }} Run command and parse with native"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     command: "iptables --list"
     parser:
-      name: cidrblock.netpdk.native
+      name: ansible.netcommon.native
   become: true
   register: ipt_out
 

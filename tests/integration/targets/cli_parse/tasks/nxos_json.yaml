@@ -1,16 +1,16 @@
 - name: "{{ parser }} Run command and parse with json"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     command: "show version | json"
     parser:
-      name: cidrblock.netpdk.json
+      name: ansible.netcommon.json
   register: nxos_json_command
 
 - name: "{{ parser }} Run command and parse with json"
-  cidrblock.netpdk.cli_parse:
+  ansible.netcommon.cli_parse:
     # the leading space here is critical so it's not converted on the way in
     text: " {{ nxos_json_command['stdout'] }}"
     parser:
-      name: cidrblock.netpdk.json
+      name: ansible.netcommon.json
   register: nxos_json_text
 
 - name: "{{ parser }} Confirm response"
