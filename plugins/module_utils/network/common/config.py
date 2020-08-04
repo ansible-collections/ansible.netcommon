@@ -167,10 +167,13 @@ def dumps(objects, output="block", comments=False):
 
 
 class NetworkConfig(object):
-    def __init__(self, indent=1, contents=None, ignore_lines=None):
+    def __init__(
+        self, indent=1, contents=None, comment_tokens=None, ignore_lines=None
+    ):
         self._indent = indent
         self._items = list()
         self._config_text = None
+        self.comment_tokens = comment_tokens
 
         if ignore_lines:
             for item in ignore_lines:
@@ -218,7 +221,7 @@ class NetworkConfig(object):
         with open(fp) as f:
             return self.load(f.read())
 
-    def parse(self, lines, comment_tokens=None):
+    def parse(self, lines):
         toplevel = re.compile(r"\S")
         childline = re.compile(r"^\s*(.+)$")
         entry_reg = re.compile(r"([{};])")
@@ -235,7 +238,7 @@ class NetworkConfig(object):
 
             cfg = ConfigLine(line)
 
-            if not text or ignore_line(text, comment_tokens):
+            if not text or ignore_line(text, self.comment_tokens):
                 continue
 
             # handle top level commands
