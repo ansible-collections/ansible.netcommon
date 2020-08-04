@@ -1,0 +1,2 @@
+{{ interface }} is {{ state }}
+admin state is {{ admin_state }}{{ ignore(".*") }}

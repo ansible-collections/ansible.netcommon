@@ -1,0 +1,58 @@
+- name: Determine the python version of the control node
+  command: 'python --version'
+  delegate_to: localhost
+  register: pyver
+  changed_when: False
+
+- name: Python 2 reports to stderr, Python 3 to stdout
+  set_fact:
+    pyver_found: "{{ ((pyver['stderr'] or pyver['stdout']).split())[1][0] }}"
+
+- name: Ensure a valid python major version was found
+  assert:
+    that: "{{ pyver_found in ['2','3'] }}"
+
+- name: Only run pyats tests when control node is Python3
+  when: pyver_found == '3'
+  block:
+  - name: "{{ parser }} Run command and parse with pyats"
+    cidrblock.netpdk.cli_parse:
+      command: "show interface"
+      parser:
+        name: cidrblock.netpdk.pyats
+    register: nxos_pyats_command
+
+  - name: "{{ parser }} Pass text and command"
+    cidrblock.netpdk.cli_parse:
+      text: "{{ nxos_pyats_command['stdout'] }}"
+      parser:
+        name: cidrblock.netpdk.pyats
+        command: show interface
+    register: nxos_pyats_text
+
+  - name: "{{ parser }} Check results"
+    assert:
+      that: "{{ item }}"
+    with_items:
+    - "{{ nxos_pyats_command['stdout'] is defined }}"
+    - "{{ nxos_pyats_command['stdout_lines'] is defined }}"
+    - "{{ nxos_pyats_command['parsed'] == nxos_pyats_text['parsed'] }}"
+    - "{{ nxos_pyats_command['parsed']['mgmt0'] is defined }}"
+
+  - name: "Pass text, command, and os"
+    cidrblock.netpdk.cli_parse:
+      text: "{{ nxos_pyats_command['stdout'] }}"
+      parser:
+        name: cidrblock.netpdk.pyats
+        command: show interface
+        os: nxos
+    register: nxos_pyats_text
+
+  - name: "{{ parser }} Check results"
+    assert:
+      that: "{{ item }}"
+    with_items:
+    - "{{ nxos_pyats_command['stdout'] is defined }}"
+    - "{{ nxos_pyats_command['stdout_lines'] is defined }}"
+    - "{{ nxos_pyats_command['parsed'] == nxos_pyats_text['parsed'] }}"
+    - "{{ nxos_pyats_command['parsed']['mgmt0'] is defined }}"

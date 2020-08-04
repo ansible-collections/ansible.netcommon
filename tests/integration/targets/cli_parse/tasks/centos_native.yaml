@@ -1,0 +1,6 @@
+- name: "{{ parser }} Run command and parse with native"
+  cidrblock.netpdk.cli_parse:
+    command: "ps -ef"
+    parser:
+      name: cidrblock.netpdk.native
+    set_fact: myfact

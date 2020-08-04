@@ -1,0 +1,53 @@
+- name: "{{ parser }} Violate argspec"
+  cidrblock.netpdk.cli_parse:
+    text: ""
+    parser:
+      name: cidrblock.netpdk.native
+      template_path: ""
+      command: show interface
+  register: argfail
+  ignore_errors: True
+
+- name: "{{ parser }} Check argspec fail"
+  assert:
+    that: "argfail['msg'] == 'parameters are mutually exclusive: command|template_path found in parser'"
+
+- name: "{{ parser }} Violate argspec"
+  cidrblock.netpdk.cli_parse:
+    text: ""
+    command: show interface
+    parser:
+      name: cidrblock.netpdk.native
+      command: ""
+  register: argfail
+  ignore_errors: True
+
+- name: "{{ parser }} Check argspec fail"
+  assert:
+    that: "argfail['msg'] == 'parameters are mutually exclusive: command|text'"
+
+- name: "{{ parser }} Violate argspec"
+  cidrblock.netpdk.cli_parse:
+    parser:
+      name: cidrblock.netpdk.native
+      command: ""
+  register: argfail
+  ignore_errors: True
+
+- name: "{{ parser }} Check argspec fail"
+  assert:
+    that: "argfail['msg'] == 'one of the following is required: command, text'"
+
+
+- name: "{{ parser }} Violate argspec"
+  cidrblock.netpdk.cli_parse:
+    text: ""
+    parser:
+      name: not_fqdn
+      command: ""
+  register: argfail
+  ignore_errors: True
+
+- name: "{{ parser }} Check arspec fail"
+  assert:
+    that: "argfail['msg'] == 'Parser name should be provided as a full name including collection'"

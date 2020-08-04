@@ -1,0 +1,23 @@
+- name: "{{ parser }} Run command and parse with textfsm"
+  cidrblock.netpdk.cli_parse:
+    command: "show version"
+    parser:
+      name: cidrblock.netpdk.textfsm
+  register: nxos_textfsm_command
+
+- name: "{{ parser }} Pass text and command"
+  cidrblock.netpdk.cli_parse:
+    text: "{{ nxos_textfsm_command['stdout'] }}"
+    parser:
+      name: cidrblock.netpdk.textfsm
+      command: show version
+  register: nxos_textfsm_text
+
+- name: "{{ parser }} Confirm response"
+  assert:
+    that: "{{ item }}"
+  with_items:
+  - "{{ nxos_textfsm_command['stdout'] is defined }}"
+  - "{{ nxos_textfsm_command['stdout_lines'] is defined }}"
+  - "{{ nxos_textfsm_command['parsed'] == nxos_textfsm_text['parsed'] }}"
+  - "{{ nxos_textfsm_command['parsed'][0]['BOOT_IMAGE'] is defined }}"

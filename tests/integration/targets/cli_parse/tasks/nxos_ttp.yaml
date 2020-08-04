@@ -1,0 +1,25 @@
+- name: "{{ parser }} Run command and parse with ttp"
+  cidrblock.netpdk.cli_parse:
+    command: "show interface"
+    parser:
+      name: cidrblock.netpdk.ttp
+    set_fact: POpqMQoJWTiDpEW
+  register: nxos_ttp_command
+
+- name: "{{ parser }} Pass text and template_path"
+  cidrblock.netpdk.cli_parse:
+    text: "{{ nxos_ttp_command['stdout'] }}"
+    parser:
+      name: cidrblock.netpdk.ttp
+      template_path: "{{ role_path }}/templates/nxos_show_interface.ttp"
+  register: nxos_ttp_text
+
+- name: "{{ parser }} Confirm response"
+  assert:
+    that: "{{ item }}"
+  with_items:
+  - "{{ POpqMQoJWTiDpEW is defined }}"
+  - "{{ nxos_ttp_command['parsed'][0] | selectattr('interface', 'search', 'mgmt0') | list | length }}"
+  - "{{ nxos_ttp_command['stdout'] is defined }}"
+  - "{{ nxos_ttp_command['stdout_lines'] is defined }}"
+  - "{{ nxos_ttp_command['parsed'] == nxos_ttp_text['parsed'] }}"
