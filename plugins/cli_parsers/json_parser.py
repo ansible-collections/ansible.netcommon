@@ -10,7 +10,9 @@ __metaclass__ = type
 import json
 
 from ansible.module_utils._text import to_native
-from ..module_utils.cli_parser.cli_parserbase import CliParserBase
+from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
+    CliParserBase,
+)
 
 
 class CliParser(CliParserBase):
