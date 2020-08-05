@@ -1,3 +1,4 @@
+---
 - name: "{{ parser }} Run command and parse with native"
   ansible.netcommon.cli_parse:
     command: "show interface"
@@ -18,11 +19,11 @@
   assert:
     that: "{{ item }}"
   with_items:
-  - "{{ POpqMQoJWTiDpEW is defined }}"
-  - "{{ nxos_native_command['parsed']['mgmt0'] is defined }}"
-  - "{{ nxos_native_command['stdout'] is defined }}"
-  - "{{ nxos_native_command['stdout_lines'] is defined }}"
-  - "{{ nxos_native_command['parsed'] == nxos_native_text['parsed'] }}"
+    - "{{ POpqMQoJWTiDpEW is defined }}"
+    - "{{ nxos_native_command['parsed']['mgmt0'] is defined }}"
+    - "{{ nxos_native_command['stdout'] is defined }}"
+    - "{{ nxos_native_command['stdout_lines'] is defined }}"
+    - "{{ nxos_native_command['parsed'] == nxos_native_text['parsed'] }}"
 
 - name: "{{ parser }} Pass text and command"
   ansible.netcommon.cli_parse:
@@ -36,7 +37,7 @@
   assert:
     that: "{{ item }}"
   with_items:
-  - "{{ output['parsed']['mgmt0'] is defined }}"
+    - "{{ output['parsed']['mgmt0'] is defined }}"
 
 - name: "{{ parser }} Run command and parse with native"
   ansible.netcommon.cli_parse:
@@ -50,6 +51,6 @@
   assert:
     that: "{{ item }}"
   with_items:
-  - "{{ output['parsed']['mgmt0'] is defined }}"
-  - "{{ output['stdout'] is defined }}"
-  - "{{ output['stdout_lines'] is defined }}"
+    - "{{ output['parsed']['mgmt0'] is defined }}"
+    - "{{ output['stdout'] is defined }}"
+    - "{{ output['stdout_lines'] is defined }}"

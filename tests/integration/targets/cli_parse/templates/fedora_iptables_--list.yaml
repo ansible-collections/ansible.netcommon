@@ -1,3 +1,4 @@
+---
 - example: "Chain FORWARD (policy ACCEPT)"
   getval: 'Chain\s(?P<chain_name>\S+)\s+\((policy\s(?P<policy>\S+))?((?P<references>\d+)\sreferences)?\)$'
   result:
@@ -5,7 +6,7 @@
       name: "{{ chain_name }}"
       policy: "{{ policy }}"
       references: "{{ references }}"
-  shared: True
+  shared: true
 
 - example: "target     prot opt source               destination"
   getval: '^target.*'

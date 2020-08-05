@@ -1,3 +1,4 @@
+---
 - name: Gather facts for non-network to get ansible_distribution
   gather_facts:
   when: ansible_network_os is not defined
@@ -15,42 +16,42 @@
   vars:
     parser: "({{ os }}/native)"
   tags:
-  - native
+    - native
 
 - include_tasks: "{{ os|lower }}_json.yaml"
   vars:
     parser: "({{ os }}/json)"
   when: "os in ['nxos']"
   tags:
-  - json
+    - json
 
 - include_tasks: "{{ os|lower }}_ntc_templates.yaml"
   vars:
     parser: "({{ os }}/ntc_templates)"
   when: "os in ['nxos']"
   tags:
-  - ntc_templates
+    - ntc_templates
 
 - include_tasks: "{{ os|lower }}_pyats.yaml"
   vars:
     parser: "({{ os }}/pyats)"
   when: "os in ['nxos']"
   tags:
-  - pyats
+    - pyats
 
 - include_tasks: "{{ os|lower }}_textfsm.yaml"
   vars:
     parser: "({{ os }}/textfsm)"
   when: "os in ['nxos']"
   tags:
-  - textfsm
+    - textfsm
 
 - include_tasks: "{{ os|lower }}_ttp.yaml"
   vars:
     parser: "({{ os }}/ttp)"
   when: "os in ['nxos']"
   tags:
-  - ttp
+    - ttp
 
 
 - include_tasks: "{{ os|lower }}_xml.yaml"
@@ -58,4 +59,4 @@
     parser: "({{ os }}/textfsm)"
   when: "os in ['nxos']"
   tags:
-  - xml
+    - xml

@@ -1,3 +1,4 @@
+---
 - example: 'UID          PID    PPID  C STIME TTY          TIME CMD'
   getval: '^UID.*'
   result: {}
@@ -6,11 +7,11 @@
   getval: '(?P<uid>\S+)\s+(?P<pid>\S+)\s+(?P<ppid>\S+)\s+(?P<c>\S+)\s+(?P<stime>\S+)\s+(?P<tty>\S+)\s+(?P<time>\S+)\s+(?P<cmd>\S+)'
   result:
     proccesses:
-    - uid: "{{ uid }}"
-      pid: "{{ pid }}"
-      ppid: "{{ ppid }}"
-      c: "{{ c }}"
-      stime: "{{ stime }}"
-      tty: "{{ tty }}"
-      time: "{{ time }}"
-      cmd: "{{ cmd }}"
+      - uid: "{{ uid }}"
+        pid: "{{ pid }}"
+        ppid: "{{ ppid }}"
+        c: "{{ c }}"
+        stime: "{{ stime }}"
+        tty: "{{ tty }}"
+        time: "{{ time }}"
+        cmd: "{{ cmd }}"

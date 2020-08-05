@@ -1,3 +1,4 @@
+---
 - name: "{{ parser }} Run command and parse with native"
   ansible.netcommon.cli_parse:
     command: "ps -ef"
@@ -9,9 +10,9 @@
   assert:
     that: "{{ item }}"
   with_items:
-  - "{{ ps_out['stdout'] is defined }}"
-  - "{{ ps_out['stdout_lines'] is defined }}"
-  - "{{ ps_out['parsed'] is defined }}"
+    - "{{ ps_out['stdout'] is defined }}"
+    - "{{ ps_out['stdout_lines'] is defined }}"
+    - "{{ ps_out['parsed'] is defined }}"
 
 - name: "{{ parser }} Run command and parse with native"
   ansible.netcommon.cli_parse:
@@ -25,6 +26,6 @@
   assert:
     that: "{{ item }}"
   with_items:
-  - "{{ ipt_out['stdout'] is defined }}"
-  - "{{ ipt_out['stdout_lines'] is defined }}"
-  - "{{ ipt_out['parsed'] is defined }}"
+    - "{{ ipt_out['stdout'] is defined }}"
+    - "{{ ipt_out['stdout_lines'] is defined }}"
+    - "{{ ipt_out['parsed'] is defined }}"

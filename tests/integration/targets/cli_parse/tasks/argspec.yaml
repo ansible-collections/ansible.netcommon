@@ -1,3 +1,4 @@
+---
 - name: "{{ parser }} Violate argspec"
   ansible.netcommon.cli_parse:
     text: ""
@@ -6,7 +7,7 @@
       template_path: ""
       command: show interface
   register: argfail
-  ignore_errors: True
+  ignore_errors: true
 
 - name: "{{ parser }} Check argspec fail"
   assert:
@@ -20,7 +21,7 @@
       name: ansible.netcommon.native
       command: ""
   register: argfail
-  ignore_errors: True
+  ignore_errors: true
 
 - name: "{{ parser }} Check argspec fail"
   assert:
@@ -32,7 +33,7 @@
       name: ansible.netcommon.native
       command: ""
   register: argfail
-  ignore_errors: True
+  ignore_errors: true
 
 - name: "{{ parser }} Check argspec fail"
   assert:
@@ -46,7 +47,7 @@
       name: not_fqdn
       command: ""
   register: argfail
-  ignore_errors: True
+  ignore_errors: true
 
 - name: "{{ parser }} Check arspec fail"
   assert:

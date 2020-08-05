@@ -1,3 +1,4 @@
+---
 - name: "{{ parser }} Run command and parse with ntc_templates"
   ansible.netcommon.cli_parse:
     command: "show interface"
@@ -17,7 +18,7 @@
   assert:
     that: "{{ item }}"
   with_items:
-  - "{{ nxos_ntc_templates_command['stdout'] is defined }}"
-  - "{{ nxos_ntc_templates_command['stdout_lines'] is defined }}"
-  - "{{ nxos_ntc_templates_command['parsed'] == nxos_ntc_templates_text['parsed'] }}"
-  - "{{ nxos_ntc_templates_command['parsed'] | selectattr('interface', 'search', 'mgmt0') | list | length }}"
+    - "{{ nxos_ntc_templates_command['stdout'] is defined }}"
+    - "{{ nxos_ntc_templates_command['stdout_lines'] is defined }}"
+    - "{{ nxos_ntc_templates_command['parsed'] == nxos_ntc_templates_text['parsed'] }}"
+    - "{{ nxos_ntc_templates_command['parsed'] | selectattr('interface', 'search', 'mgmt0') | list | length }}"

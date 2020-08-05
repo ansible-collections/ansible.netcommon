@@ -1,3 +1,4 @@
+---
 - name: "{{ parser }} Run command and parse with json"
   ansible.netcommon.cli_parse:
     command: "show version | json"
@@ -17,8 +18,8 @@
   assert:
     that: "{{ item }}"
   with_items:
-  - "{{ nxos_json_command['stdout'] is defined }}"
-  - "{{ nxos_json_command['stdout_lines'] is defined }}"
-  - "{{ nxos_json_command['parsed'] is defined }}"
-  - "{{ nxos_json_command['parsed']['header_str'] is defined }}"
-  - "{{ nxos_json_command['parsed'] == nxos_json_text['parsed'] }}"
+    - "{{ nxos_json_command['stdout'] is defined }}"
+    - "{{ nxos_json_command['stdout_lines'] is defined }}"
+    - "{{ nxos_json_command['parsed'] is defined }}"
+    - "{{ nxos_json_command['parsed']['header_str'] is defined }}"
+    - "{{ nxos_json_command['parsed'] == nxos_json_text['parsed'] }}"
