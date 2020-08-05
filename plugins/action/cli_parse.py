@@ -3,9 +3,7 @@ The action plugin file for cli_parse
 """
 from __future__ import absolute_import, division, print_function
 
-# pylint: disable=invalid-name
 __metaclass__ = type
-# pylint: enable=invalid-name
 
 from importlib import import_module
 from ansible.module_utils._text import to_native, to_text
@@ -60,7 +58,7 @@ class ActionModule(_ActionModule):
                 debug=self._debug,
             )
             return parser
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             self._result["failed"] = True
             self._result["msg"] = "Error loading parser: {err}".format(
                 err=to_native(exc)

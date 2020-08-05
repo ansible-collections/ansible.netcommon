@@ -6,17 +6,13 @@ https://github.com/google/textfsm
 """
 from __future__ import absolute_import, division, print_function
 
-# pylint: disable=invalid-name
 __metaclass__ = type
-# pylint: enable=invalid-name
 
 from ansible.module_utils._text import to_native
 
-# pylint: disable=relative-beyond-top-level
 
 from ..module_utils.cli_parser.cli_parserbase import CliParserBase
 
-# pylint: enable=relative-beyond-top-level
 
 try:
     import textfsm
@@ -26,7 +22,7 @@ except ImportError:
     HAS_TEXTFSM = False
 
 
-class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
+class CliParser(CliParserBase):
     """ The textfsm parser class
     Convert raw text to structured data using textfsm
     """

@@ -7,17 +7,13 @@ The parser functionality used by the network resource modules is leveraged here.
 """
 from __future__ import absolute_import, division, print_function
 
-# pylint: disable=invalid-name
 __metaclass__ = type
-# pylint: enable=invalid-name
 
 from ansible.module_utils._text import to_native
 
-# pylint: disable=relative-beyond-top-level
 from ..module_utils.cli_parser.cli_parserbase import CliParserBase
 from ..module_utils.cli_parser.cli_parsertemplate import CliParserTemplate
 
-# pylint: enable=relative-beyond-top-level
 
 try:
     import yaml
@@ -31,7 +27,7 @@ except ImportError:
     HAS_YAML = False
 
 
-class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
+class CliParser(CliParserBase):
     """ The natvie parser class
     Convert raw text to structured data using the resource module parser
     """
@@ -62,13 +58,13 @@ class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
         )
         try:
             template_obj = yaml.load(template_contents, SafeLoader)
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             print("here")
             return {"errors": [to_native(exc)]}
 
         try:
             parser.PARSERS = template_obj
             return {"parsed": parser.parse()}
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             msg = "Native parser returned an error while parsing. Error: {err}"
             return {"errors": [msg.format(err=to_native(exc))]}

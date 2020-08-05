@@ -10,9 +10,7 @@ The cli_parse module
 
 from __future__ import absolute_import, division, print_function
 
-# pylint: disable=invalid-name
 __metaclass__ = type
-# pylint: enable=invalid-name
 
 
 DOCUMENTATION = """
@@ -53,6 +51,7 @@ options:
                 description:
                 - Path of the parser template on the Ansible controller.
                 - This can be a relative or an absolute path.
+        required: True
     set_fact:
         description:
         - Set the resulting parsed data as a fact
@@ -270,7 +269,6 @@ stdout_lines:
   sample:
 """
 
-# pylint: disable=wrong-import-position
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import (
@@ -278,7 +276,6 @@ from ansible.module_utils.connection import (
     ConnectionError as AnsibleConnectionError,
 )
 
-# pylint: enable=wrong-import-position
 
 SPEC = {
     "argument_spec": {

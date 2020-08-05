@@ -6,18 +6,14 @@ https://github.com/dmulyalin/ttp
 """
 from __future__ import absolute_import, division, print_function
 
-# pylint: disable=invalid-name
 __metaclass__ = type
-# pylint: enable=invalid-name
 
 import json
 from ansible.module_utils._text import to_native
 
-# pylint: disable=relative-beyond-top-level
 
 from ..module_utils.cli_parser.cli_parserbase import CliParserBase
 
-# pylint: enable=relative-beyond-top-level
 
 try:
     from ttp import ttp
@@ -27,7 +23,7 @@ except ImportError:
     HAS_TTP = False
 
 
-class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
+class CliParser(CliParserBase):
     """ The ttp parser class
     Convert raw text to structured data using ttp
     """
@@ -77,7 +73,7 @@ class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
             )
             parser.parse()
             results = json.loads(parser.result(format="json")[0])
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             msg = "Template Text Parser returned an error while parsing. Error: {err}"
             return {"errors": [msg.format(err=to_native(exc))]}
         return {"parsed": results}

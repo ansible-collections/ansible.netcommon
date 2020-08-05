@@ -7,16 +7,12 @@ https://github.com/networktocode/ntc-templates
 """
 from __future__ import absolute_import, division, print_function
 
-# pylint: disable=invalid-name
 __metaclass__ = type
-# pylint: enable=invalid-name
 
 from ansible.module_utils._text import to_native
 
-# pylint: disable=relative-beyond-top-level
 from ..module_utils.cli_parser.cli_parserbase import CliParserBase
 
-# pylint: enable=relative-beyond-top-level
 try:
     import textfsm  # pylint: disable=unused-import
 
@@ -32,7 +28,7 @@ except ImportError:
     HAS_NTC = False
 
 
-class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
+class CliParser(CliParserBase):
     """ The ntc_templates parser class
     Convert raw text to structured data using textfsm and predefined templates in
     the ntc-templates python package
@@ -111,5 +107,5 @@ class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
                 platform=platform, command=command, data=cli_output
             )
             return {"parsed": parsed}
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             return {"errors": [to_native(exc)]}

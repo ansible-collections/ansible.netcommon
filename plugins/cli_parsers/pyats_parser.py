@@ -7,18 +7,14 @@ https://developer.cisco.com/docs/pyats/#!parsing-device-output
 """
 from __future__ import absolute_import, division, print_function
 
-# pylint: disable=invalid-name
 __metaclass__ = type
-# pylint: enable=invalid-name
 
 from ansible.module_utils.six import PY3
 from ansible.module_utils._text import to_native
 
-# pylint: disable=relative-beyond-top-level
 
 from ..module_utils.cli_parser.cli_parserbase import CliParserBase
 
-# pylint: enable=relative-beyond-top-level
 
 try:
     from genie.conf.base import Device
@@ -36,7 +32,7 @@ except ImportError:
     HAS_PYATS = False
 
 
-class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
+class CliParser(CliParserBase):
     """ The pyats parser class
     Convert raw text to structured data using pyats/genie
     """
@@ -127,7 +123,7 @@ class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
 
         try:
             get_parser(command, device)
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             msg = "Unable to find parser for command '{cmd}' for os '{os}'. Error: {err}."
             return {
                 "errors": [
@@ -141,7 +137,7 @@ class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
 
         try:
             parsed = device.parse(command, output=cli_output)
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             msg = (
                 "Parser for '{cmd}' for {os} was found, "
                 "but failed to parse the provided output. Error {err}."

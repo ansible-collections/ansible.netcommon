@@ -3,12 +3,10 @@ The base class for cli_parsers
 """
 from __future__ import absolute_import, division, print_function
 
-# pylint: disable=invalid-name
 __metaclass__ = type
-# pylint: enable=invalid-name
 
 
-class CliParserBase:  # pylint: disable=too-few-public-methods
+class CliParserBase:
     """ The base class for cli parsers
     Provides a  _debug function to normalize parser debug output
     """

@@ -5,20 +5,15 @@ This is the json parser for use with the cli_parse module and action plugin
 """
 from __future__ import absolute_import, division, print_function
 
-# pylint: disable=invalid-name
 __metaclass__ = type
-# pylint: enable=invalid-name
 
 import json
-from ansible.module_utils._text import to_native
 
-# pylint: disable=relative-beyond-top-level
+from ansible.module_utils._text import to_native
 from ..module_utils.cli_parser.cli_parserbase import CliParserBase
 
-# pylint: enable=relative-beyond-top-level
 
-
-class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
+class CliParser(CliParserBase):
     """ The json parser class
     Convert a string containing valid json into an object
     """
@@ -43,5 +38,5 @@ class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
         try:
             parsed = json.loads(text)
             return {"parsed": parsed}
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             return {"errors": [to_native(exc)]}

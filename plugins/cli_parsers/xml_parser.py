@@ -6,17 +6,12 @@ https://github.com/martinblech/xmltodict
 """
 from __future__ import absolute_import, division, print_function
 
-# pylint: disable=invalid-name
 __metaclass__ = type
-# pylint: enable=invalid-name
 
 from ansible.module_utils._text import to_native
 
-# pylint: disable=relative-beyond-top-level
 
 from ..module_utils.cli_parser.cli_parserbase import CliParserBase
-
-# pylint: enable=relative-beyond-top-level
 
 
 try:
@@ -27,7 +22,7 @@ except ImportError:
     HAS_XMLTODICT = False
 
 
-class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
+class CliParser(CliParserBase):
     """ The textfsm parser class
     Convert an xml string to structured data using xmltodict
     """
@@ -79,6 +74,6 @@ class CliParser(CliParserBase):  # pylint: disable=too-few-public-methods
         try:
             parsed = xmltodict.parse(cli_output)
             return {"parsed": parsed}
-        except Exception as exc:  # pylint: disable=broad-except
+        except Exception as exc:
             msg = "XML parser returned an error while parsing. Error: {err}"
             return {"errors": [msg.format(err=to_native(exc))]}
