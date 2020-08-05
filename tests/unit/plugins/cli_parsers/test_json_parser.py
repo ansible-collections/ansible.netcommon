@@ -38,6 +38,7 @@ class TestJsonParser(unittest.TestCase):
         parser = CliParser(task_args=task_args, task_vars=[], debug=False)
 
         result = parser.parse()
-        self.assertEqual(
-            result, {"errors": ["Expecting value: line 1 column 1 (char 0)"]}
-        )
+        # Errors are different between Python 2 and 3, so we have to be a bit roundabout.
+        self.assertEqual(len(result), 1)
+        assert "errors" in result
+        self.assertEqual(len(result["errors"]), 1)

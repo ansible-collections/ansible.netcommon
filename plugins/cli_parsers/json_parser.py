@@ -39,6 +39,7 @@ class CliParser(CliParserBase):
         text = self._task_args.get("text")
         try:
             parsed = json.loads(text)
-            return {"parsed": parsed}
         except Exception as exc:
             return {"errors": [to_native(exc)]}
+
+        return {"parsed": parsed}
