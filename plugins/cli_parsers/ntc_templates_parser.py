@@ -11,14 +11,8 @@ __metaclass__ = type
 
 from ansible.module_utils._text import to_native
 
+from ansible.module_utils.basic import missing_required_lib
 from ..module_utils.cli_parser.cli_parserbase import CliParserBase
-
-try:
-    import textfsm  # pylint: disable=unused-import
-
-    HAS_TEXTFSM = True
-except ImportError:
-    HAS_TEXTFSM = False
 
 try:
     from ntc_templates.parse import parse_output
@@ -45,18 +39,9 @@ class CliParser(CliParserBase):
         """
         errors = []
 
-        if not HAS_TEXTFSM:
-            msg = (
-                "The ntc_templates parser requires TextFSM be "
-                "installed on the control node. (e.g. 'pip install textfsm')"
-            )
-            errors.append(msg)
         if not HAS_NTC:
-            msg = (
-                "The ntc_templates parser requires ntc_templates be "
-                "installed on the control node. (e.g. 'pip install ntc_templates')"
-            )
-            errors.append(msg)
+            errors.append(missing_required_lib("ntc-templates"))
+
         network_os = self._task_args.get("parser").get("network_os")
         if network_os:
             self._debug("OS set to {os} using task args".format(os=network_os))
