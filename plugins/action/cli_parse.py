@@ -21,10 +21,30 @@ from ansible.module_utils.connection import (
     ConnectionError as AnsibleConnectionError,
 )
 from ansible.plugins.action import ActionBase
-
 from ansible_collections.ansible.netcommon.plugins.modules.cli_parse import (
-    generate_argspec,
+    DOCUMENTATION,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    convert_doc_to_ansible_module_kwargs,
+    dict_merge,
+)
+
+
+ARGSPEC_CONDITIONALS = {
+    "argument_spec": {
+        "parser": {"mutually_exclusive": [["command", "template_path"]]}
+    },
+    "required_one_of": [["command", "text"]],
+    "mutually_exclusive": [["command", "text"]],
+}
+
+
+def generate_argspec():
+    """ Generate an argspec
+    """
+    argspec = convert_doc_to_ansible_module_kwargs(DOCUMENTATION)
+    argspec = dict_merge(argspec, ARGSPEC_CONDITIONALS)
+    return argspec
 
 
 class ActionModule(ActionBase):
