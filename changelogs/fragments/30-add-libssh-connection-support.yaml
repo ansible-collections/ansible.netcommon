@@ -1,3 +1,0 @@
----
-major_changes:
-  - Add libssh connection plugin and refactor network_cli (https://github.com/ansible-collections/ansible.netcommon/pull/30)

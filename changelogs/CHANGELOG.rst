@@ -5,6 +5,54 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v1.1.2
+======
+
+Release Summary
+---------------
+
+Rereleased 1.1.1 with updated changelog.
+
+v1.1.1
+======
+
+Release Summary
+---------------
+
+Rereleased 1.1.0 with regenerated documentation.
+
+v1.1.0
+======
+
+Major Changes
+-------------
+
+- Add libssh connection plugin and refactor network_cli (https://github.com/ansible-collections/ansible.netcommon/pull/30)
+
+Minor Changes
+-------------
+
+- Add changelogs for 1.0.0 release (https://github.com/ansible-collections/ansible.netcommon/pull/67)
+- Add content option validation for netconf_config module (https://github.com/ansible-collections/ansible.netcommon/pull/66)
+- Documentation of module arguments updated to match expected types where missing.
+- Resource Modules: changed flag is set to true in check_mode for all ACTION_STATES (https://github.com/ansible-collections/ansible.netcommon/pull/82)
+
+Removed Features (previously deprecated)
+----------------------------------------
+
+- module_utils.network.common.utils.ComplexDict has been removed
+
+Bugfixes
+--------
+
+- Replace deprecated `getiterator` call with `iter`
+- ipaddr - "host" query supports /31 subnets properly
+- ipaddr filter - Fixed issue where the first IPv6 address in a subnet was not being considered a valid address.
+- ipaddr filter now returns empty list instead of False on empty list input
+- net_put - Restore missing function removed when action plugin stopped inheriting NetworkActionBase
+- nthhost filter now returns str instead of IPAddress object
+- slaac filter now returns str instead of IPAddress object
+
 v1.0.0
 ======
 

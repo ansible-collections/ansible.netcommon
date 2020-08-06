@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Add content option validation for netconf_config module (https://github.com/ansible-collections/ansible.netcommon/pull/66)

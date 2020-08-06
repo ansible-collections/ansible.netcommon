@@ -118,3 +118,50 @@ releases:
         name: default
         namespace: null
     release_date: '2020-06-23'
+  1.1.0:
+    changes:
+      bugfixes:
+      - Replace deprecated `getiterator` call with `iter`
+      - ipaddr - "host" query supports /31 subnets properly
+      - ipaddr filter - Fixed issue where the first IPv6 address in a subnet was not
+        being considered a valid address.
+      - ipaddr filter now returns empty list instead of False on empty list input
+      - net_put - Restore missing function removed when action plugin stopped inheriting
+        NetworkActionBase
+      - nthhost filter now returns str instead of IPAddress object
+      - slaac filter now returns str instead of IPAddress object
+      major_changes:
+      - Add libssh connection plugin and refactor network_cli (https://github.com/ansible-collections/ansible.netcommon/pull/30)
+      minor_changes:
+      - Add changelogs for 1.0.0 release (https://github.com/ansible-collections/ansible.netcommon/pull/67)
+      - Add content option validation for netconf_config module (https://github.com/ansible-collections/ansible.netcommon/pull/66)
+      - Documentation of module arguments updated to match expected types where missing.
+      - 'Resource Modules: changed flag is set to true in check_mode for all ACTION_STATES
+        (https://github.com/ansible-collections/ansible.netcommon/pull/82)'
+      removed_features:
+      - module_utils.network.common.utils.ComplexDict has been removed
+    fragments:
+    - 103-net-put-handle-src.yaml
+    - 30-add-libssh-connection-support.yaml
+    - 34-ipaddr-empty-list.yaml
+    - 66-netconf-config-vaildation.yml
+    - 67-add-change-log-1.0.0.yaml
+    - 72-ipv6-first-address-fix.yaml
+    - 74-remove-getiterator.yaml
+    - 75-unit-tests.yaml
+    - 78-sanity-cleanup.yaml
+    - 82-changed_true_action_states_check_mode_yes.yml
+    - 95-ipaddr.yaml
+    release_date: '2020-07-30'
+  1.1.1:
+    changes:
+      release_summary: Rereleased 1.1.0 with regenerated documentation.
+    fragments:
+    - 1.1.1.yaml
+    release_date: '2020-07-31'
+  1.1.2:
+    changes:
+      release_summary: Rereleased 1.1.1 with updated changelog.
+    fragments:
+    - 1.1.2.yaml
+    release_date: '2020-08-06'

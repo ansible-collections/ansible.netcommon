@@ -1,3 +1,0 @@
----
-bugfixes:
-  - ipaddr - "host" query supports /31 subnets properly
