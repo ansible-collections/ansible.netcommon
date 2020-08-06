@@ -42,7 +42,7 @@ class CliParser(CliParserBase):
         if not HAS_NTC:
             errors.append(missing_required_lib("ntc-templates"))
 
-        network_os = self._task_args.get("parser").get("network_os")
+        network_os = self._task_args.get("parser").get("os")
         if network_os:
             self._debug("OS set to {os} using task args".format(os=network_os))
         if not network_os:

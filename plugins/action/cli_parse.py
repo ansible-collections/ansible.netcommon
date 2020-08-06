@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# Copyright 2020 Red Hat
+# GNU General Public License v3.0+
+# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 """
 The action plugin file for cli_parse
 """
@@ -5,13 +10,24 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import json
 from importlib import import_module
-from ansible.module_utils._text import to_native, to_text
-from ansible.plugins.action.normal import ActionModule as _ActionModule
+
 from ansible.errors import AnsibleActionFail
+from ansible.module_utils._text import to_native, to_text, to_bytes
+from ansible.module_utils import basic
+from ansible.module_utils.connection import (
+    Connection,
+    ConnectionError as AnsibleConnectionError,
+)
+from ansible.plugins.action import ActionBase
+
+from ansible_collections.ansible.netcommon.plugins.modules.cli_parse import (
+    generate_argspec,
+)
 
 
-class ActionModule(_ActionModule):
+class ActionModule(ActionBase):
     """ action module
     """
 
@@ -21,7 +37,7 @@ class ActionModule(_ActionModule):
         super(ActionModule, self).__init__(*args, **kwargs)
         self._playhost = None
         self._parser_name = None
-        self._result = None
+        self._result = {}
         self._task_vars = None
 
     def _debug(self, msg):
@@ -34,6 +50,38 @@ class ActionModule(_ActionModule):
             phost=self._playhost, msg=msg
         )
         self._display.vvvv(msg)
+
+    def _fail_json(self, msg):
+        """ Replace the AnsibleModule fai_json here
+
+        :param msg: The message for the failure
+        :type msg: str
+        """
+        msg = msg.replace("(basic.py)", self._task.action)
+        raise AnsibleActionFail(msg)
+
+    def _check_argspec(self):
+        """ Load the doc and convert
+        Add the root conditionals to what was returned form the convertion
+        and instnatiate an AnsibleModule to validate
+        """
+        argspec = generate_argspec()
+        # pylint:disable=protected-access
+        basic._ANSIBLE_ARGS = to_bytes(
+            json.dumps({"ANSIBLE_MODULE_ARGS": self._task.args})
+        )
+        # pylint:enable=protected-access
+        basic.AnsibleModule.fail_json = self._fail_json
+        basic.AnsibleModule(**argspec)
+
+    def _extended_check_argspec(self):
+        """ Check additional requirements for the argspec
+        that cannot be covered using stnd techniques
+        """
+        if len(self._task.args.get("parser").get("name").split(".")) != 3:
+            msg = "Parser name should be provided as a full name including collection"
+            self._result["failed"] = True
+            self._result["msg"] = msg
 
     def _load_parser(self, task_vars):
         """ Load a parser from the fs
@@ -165,6 +213,31 @@ class ActionModule(_ActionModule):
         self._result.pop("stdout", None)
         self._result.pop("stdout_lines", None)
 
+    def _run_command(self):
+        """ Run a command on the host
+        If socket_path exists, assume it's a network device
+        else, run a low level command
+        """
+        command = self._task.args.get("command")
+        if command:
+            socket_path = self._connection.socket_path
+            if socket_path:
+                connection = Connection(socket_path)
+                try:
+                    response = connection.get(command=command)
+                    self._result["stdout"] = response
+                    self._result["stdout_lines"] = response.splitlines()
+                except AnsibleConnectionError as exc:
+                    self._result["failed"] = True
+                    self._result["msg"] = [to_text(exc)]
+            else:
+                result = self._low_level_execute_command(cmd=command)
+                if result["rc"]:
+                    self._result["failed"] = True
+                    self._result["msg"] = result["stderr"]
+                self._result["stdout"] = result["stdout"]
+                self._result["stdout_lines"] = result["stdout_lines"]
+
     def run(self, tmp=None, task_vars=None):
         """ The std execution entry pt for an action plugin
 
@@ -175,11 +248,16 @@ class ActionModule(_ActionModule):
         :return: The results from the parser
         :rtype: dict
         """
-        self._result = super(ActionModule, self).run(task_vars=task_vars)
+        self._check_argspec()
+        self._extended_check_argspec()
+        if self._result.get("failed"):
+            return self._result
+
         self._task_vars = task_vars
         self._playhost = task_vars.get("inventory_hostname")
         self._parser_name = self._task.args.get("parser").get("name")
 
+        self._run_command()
         if self._result.get("failed"):
             return self._result
 
@@ -191,20 +269,17 @@ class ActionModule(_ActionModule):
             self._prune_result()
             return self._result
 
-        # Not all parsers use a template
-        try:
-            if parser.DEFAULT_TEMPLATE_EXTENSION:
-                self._update_template_path(parser.DEFAULT_TEMPLATE_EXTENSION)
-        except AttributeError:
-            pass
+        # Not all parsers use a template, in the case a parser provides
+        # an extension, provide it the template path
+        if getattr(parser, "DEFAULT_TEMPLATE_EXTENSION", False):
+            self._update_template_path(parser.DEFAULT_TEMPLATE_EXTENSION)
 
         # Not all parsers require the template contents
-        template_contents = None
-        try:
-            if parser.PROVIDE_TEMPLATE_CONTENTS:
-                template_contents = self._get_template_contents()
-        except AttributeError:
-            pass
+        # when true, provide the template contents
+        if getattr(parser, "PROVIDE_TEMPLATE_CONTENTS", False) is True:
+            template_contents = self._get_template_contents()
+        else:
+            template_contents = None
 
         try:
             result = parser.parse(template_contents=template_contents)

@@ -59,7 +59,6 @@ class CliParser(CliParserBase):
         try:
             template_obj = yaml.load(template_contents, SafeLoader)
         except Exception as exc:
-            print("here")
             return {"errors": [to_native(exc)]}
 
         try:
