@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Replace deprecated `getiterator` call with `iter`
