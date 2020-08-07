@@ -10,8 +10,9 @@ __metaclass__ = type
 
 from ansible.module_utils._text import to_native
 
-
-from ..module_utils.cli_parser.cli_parserbase import CliParserBase
+from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
+    CliParserBase,
+)
 
 
 try:
@@ -23,7 +24,7 @@ except ImportError:
 
 
 class CliParser(CliParserBase):
-    """ The textfsm parser class
+    """ The xml parser class
     Convert an xml string to structured data using xmltodict
     """
 

@@ -86,11 +86,9 @@ class ActionModule(ActionBase):
         and instnatiate an AnsibleModule to validate
         """
         argspec = generate_argspec()
-        # pylint:disable=protected-access
         basic._ANSIBLE_ARGS = to_bytes(
             json.dumps({"ANSIBLE_MODULE_ARGS": self._task.args})
         )
-        # pylint:enable=protected-access
         basic.AnsibleModule.fail_json = self._fail_json
         basic.AnsibleModule(**argspec)
 
