@@ -150,6 +150,11 @@ def transform_commands(module):
 
 def sort_list(val):
     if isinstance(val, list):
+        if isinstance(val[0], dict):
+            # Assuming the dictionaries have the same keys and
+            # they have to be sorted based on the first key
+            k = list(val[0].keys())[0]
+            return sorted(val, key = lambda i: i[k])
         return sorted(val)
     return val
 
