@@ -144,12 +144,36 @@ def test_transform_commands():
     ]
 
 
-def test_sort():
+def test_sort_list():
     data = [3, 1, 2]
     assert [1, 2, 3] == utils.sort_list(data)
 
-    string_data = "123"
+    string_data = "312"
     assert string_data == utils.sort_list(string_data)
+
+    data = [{"a": 1, "b": 2}, {"a": 1, "c": 1}, {"a": 1, "b": 0}]
+    with pytest.raises(ValueError, match="dictionaries do not match"):
+        utils.sort_list(data)
+
+    data = [{"a": 1, "b": 2}, {"a": 1, "b": 1}, {"a": 0, "b": 3}]
+    assert utils.sort_list(data) == [
+        {"a": 0, "b": 3},
+        {"a": 1, "b": 1},
+        {"a": 1, "b": 2},
+    ]
+
+    data = [
+        {"a": 1, "c": [1, 2, 3], "b": 1},
+        {"a": 1, "c": [3, 4, 5], "b": 0},
+        {"a": 1, "c": [1, 1], "b": 0},
+        {"a": 0, "c": [99, 98, 97, 96, 95], "b": 27},
+    ]
+    assert utils.sort_list(data) == [
+        {"a": 0, "b": 27, "c": [99, 98, 97, 96, 95]},
+        {"a": 1, "b": 0, "c": [1, 1]},
+        {"a": 1, "b": 0, "c": [3, 4, 5]},
+        {"a": 1, "b": 1, "c": [1, 2, 3]},
+    ]
 
 
 def test_dict_diff():

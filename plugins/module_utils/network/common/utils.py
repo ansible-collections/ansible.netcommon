@@ -150,6 +150,15 @@ def transform_commands(module):
 
 def sort_list(val):
     if isinstance(val, list):
+        if isinstance(val[0], dict):
+            sorted_keys = [tuple(sorted(dict_.keys())) for dict_ in val]
+            # All keys should be identical
+            if len(set(sorted_keys)) != 1:
+                raise ValueError("dictionaries do not match")
+
+            return sorted(
+                val, key=lambda d: tuple(d[k] for k in sorted_keys[0])
+            )
         return sorted(val)
     return val
 

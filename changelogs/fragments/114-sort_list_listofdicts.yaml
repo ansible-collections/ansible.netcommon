@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - sort_list will sort a list of dicts using the sorted method with key as an argument.
