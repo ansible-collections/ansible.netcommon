@@ -32,7 +32,6 @@ Major Changes
 Minor Changes
 -------------
 
-- Add changelogs for 1.0.0 release (https://github.com/ansible-collections/ansible.netcommon/pull/67)
 - Add content option validation for netconf_config module (https://github.com/ansible-collections/ansible.netcommon/pull/66)
 - Documentation of module arguments updated to match expected types where missing.
 - Resource Modules: changed flag is set to true in check_mode for all ACTION_STATES (https://github.com/ansible-collections/ansible.netcommon/pull/82)

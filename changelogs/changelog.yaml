@@ -133,7 +133,6 @@ releases:
       major_changes:
       - Add libssh connection plugin and refactor network_cli (https://github.com/ansible-collections/ansible.netcommon/pull/30)
       minor_changes:
-      - Add changelogs for 1.0.0 release (https://github.com/ansible-collections/ansible.netcommon/pull/67)
       - Add content option validation for netconf_config module (https://github.com/ansible-collections/ansible.netcommon/pull/66)
       - Documentation of module arguments updated to match expected types where missing.
       - 'Resource Modules: changed flag is set to true in check_mode for all ACTION_STATES
@@ -145,7 +144,6 @@ releases:
     - 30-add-libssh-connection-support.yaml
     - 34-ipaddr-empty-list.yaml
     - 66-netconf-config-vaildation.yml
-    - 67-add-change-log-1.0.0.yaml
     - 72-ipv6-first-address-fix.yaml
     - 74-remove-getiterator.yaml
     - 75-unit-tests.yaml
