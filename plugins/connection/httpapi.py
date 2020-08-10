@@ -340,10 +340,9 @@ class Connection(NetworkConnectionBase):
     def transport_test(self, connect_timeout):
         """This method enables wait_for_connection to work.
 
-        As it is used by wait_for_connection, it is called by that module's action plugin,
-        which is on the controller process, which means that nothing done on this instance
-        should impact the actual persistent connection... this check is for informational
-        purposes only and should be properly cleaned up.
+        The sole purpose of this method is to raise an exception if the API's URL
+        cannot be reached. As such, it does not do anything except attempt to
+        request the root URL with no error handling.
         """
 
         open_url(self._url)
