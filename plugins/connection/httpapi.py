@@ -345,4 +345,4 @@ class Connection(NetworkConnectionBase):
         request the root URL with no error handling.
         """
 
-        open_url(self._url)
+        open_url(self._url, timeout=connect_timeout)
