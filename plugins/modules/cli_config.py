@@ -423,7 +423,7 @@ def main():
     if module.params["backup"]:
         result["__backup__"] = running
 
-    if candidate or rollback_id or module.params["replace"]:
+    if candidate or rollback_id is not None or module.params["replace"]:
         try:
             result.update(
                 run(
