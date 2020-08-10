@@ -346,8 +346,4 @@ class Connection(NetworkConnectionBase):
         purposes only and should be properly cleaned up.
         """
 
-        try:
-            response = open_url(self._url)
-        except URLError as exc:
-            # fail
-            pass
+        open_url(self._url)
