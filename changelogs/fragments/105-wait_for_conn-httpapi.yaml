@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - The httpapi connection plugin now works with `wait_for_connection`. This will periodically request
+    the root page of the server described by the plugin's options until the request succeeds.
+    This can only test that the server is reachable, the correctness or usability of the API is not guaranteed.
