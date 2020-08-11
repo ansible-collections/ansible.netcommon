@@ -269,6 +269,17 @@ options:
           key: ssh_type
     vars:
     - name: ansible_network_cli_ssh_type
+  enable_cache:
+    type: boolean
+    default: false
+    description:
+    - This option enables caching of data fetched from the target for re-use.
+      The cache is invalidated when configuration changes are made to the target by Ansible.
+    - Applicable only for platforms where this has been implemented.
+    env:
+    - name: ANSIBLE_NETWORK_ENABLE_CACHE
+    vars:
+    - name: ansible_network_enable_cache
 """
 
 from functools import wraps
