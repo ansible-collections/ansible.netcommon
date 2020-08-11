@@ -6,16 +6,19 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import pytest
+
+from ansible.module_utils._text import to_bytes
+from ansible.errors import AnsibleError, AnsibleFileNotFound
+from ansible.playbook.play_context import PlayContext
+from ansible.plugins.loader import connection_loader
 from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
 from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
     patch,
     MagicMock,
 )
 
-from ansible.module_utils._text import to_bytes
-from ansible.errors import AnsibleError, AnsibleFileNotFound
-from ansible.playbook.play_context import PlayContext
-from ansible.plugins.loader import connection_loader
+pylibsshext = pytest.importorskip("pylibsshext")
 
 
 class TestConnectionClass(unittest.TestCase):
