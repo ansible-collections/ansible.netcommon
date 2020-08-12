@@ -401,7 +401,7 @@ class NetworkConfig(object):
         if not parents:
             for line in lines:
                 # handle ignore lines
-                if ignore_line(line):
+                if ignore_line(line, self.comment_tokens):
                     continue
 
                 item = ConfigLine(line)
@@ -430,7 +430,7 @@ class NetworkConfig(object):
             # add child objects
             for line in lines:
                 # handle ignore lines
-                if ignore_line(line):
+                if ignore_line(line, self.comment_tokens):
                     continue
 
                 # check if child already exists
