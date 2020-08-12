@@ -114,26 +114,9 @@ class CliParser(CliParserBase):
         device.cli = AttrDict({"execute": None})
 
         try:
-            get_parser(command, device)
-        except Exception as exc:
-            msg = "Unable to find parser for command '{cmd}' for os '{os}'. Error: {err}."
-            return {
-                "errors": [
-                    (
-                        msg.format(
-                            cmd=command, os=network_os, err=to_native(exc)
-                        )
-                    )
-                ]
-            }
-
-        try:
             parsed = device.parse(command, output=cli_output)
         except Exception as exc:
-            msg = (
-                "Parser for '{cmd}' for {os} was found, "
-                "but failed to parse the provided output. Error {err}."
-            )
+            msg = "The pyats library return an error for '{cmd}' for '{os}'. Error: {err}."
             return {
                 "errors": [
                     (
