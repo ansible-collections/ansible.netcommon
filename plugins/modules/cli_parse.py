@@ -41,12 +41,34 @@ options:
                 - The command used to locate the parser's template
             os:
                 type: str
-                description: Provide an os to the parser
+                description: 
+                - Provide an operating system value to the parser
             template_path:
                 type: str
                 description:
-                - Path of the parser template on the Ansible controller.
-                - This can be a relative or an absolute path.
+                - Path of the parser template on the Ansible controller
+                - This can be a relative or an absolute path
+            vars:
+                type: dict
+                description: 
+                - Additional parser specific parameters
+                suboptions:
+                  ttp_init:
+                    type: dict
+                    description:
+                    - Additional parameters passed directly to the ttp parser
+                    - See https://ttp.readthedocs.io/en/latest/API%20reference.html#ttp.ttp
+                  ttp_results:
+                    type: dict
+                    description:
+                    - Additional parameters passed directly to the ttp parser to modify the results
+                    - See https://ttp.readthedocs.io/en/latest/API%20reference.html#ttp.ttp.result
+                  ttp_vars:
+                    type: dict
+                    description:
+                    - Additional variables made available to the ttp parser
+                    - See https://ttp.readthedocs.io/en/latest/Template%20Variables/Template%20Variables.html
+
 
     set_fact:
         description:
@@ -61,6 +83,7 @@ notes:
 - => extension is specific to the parser used (native=yaml, textfsm=textfsm, ttp=ttp)
 - The default Ansible search path for the templates directory is used for parser templates as well
 - Some parsers require third-party python libraries be installed on the Ansible control node
+- Some parsers may have addiotnal configuration options availble. See the parsers/vars key and the parser's documentation
 - e.g. Pyats requires pyats and genie
 - e.g. ntc_templates requires ntc_templates
 - e.g. textfsm requires textfsm

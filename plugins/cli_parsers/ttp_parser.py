@@ -66,9 +66,19 @@ class CliParser(CliParserBase):
             parser = ttp(
                 data=cli_output,
                 template=self._task_args.get("parser").get("template_path"),
+                vars=self._task_args.get("parser")
+                .get("vars", {})
+                .get("ttp_vars", {}),
+                **self._task_args.get("parser")
+                .get("vars", {})
+                .get("ttp_init", {})
             )
-            parser.parse()
-            results = json.loads(parser.result(format="json")[0])
+            parser.parse(one=True)
+            results = parser.result(
+                **self._task_args.get("parser")
+                .get("vars", {})
+                .get("ttp_results", {})
+            )
         except Exception as exc:
             msg = "Template Text Parser returned an error while parsing. Error: {err}"
             return {"errors": [msg.format(err=to_native(exc))]}
