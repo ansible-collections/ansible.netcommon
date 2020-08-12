@@ -11,10 +11,10 @@ __metaclass__ = type
 
 from ansible.module_utils.six import PY3
 from ansible.module_utils._text import to_native
-
-
-from ..module_utils.cli_parser.cli_parserbase import CliParserBase
-
+from ansible.module_utils.basic import missing_required_lib
+from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
+    CliParserBase,
+)
 
 try:
     from genie.conf.base import Device
@@ -48,19 +48,11 @@ class CliParser(CliParserBase):
         """
         errors = []
         if not PY3:
-            errors.append("Genie requires Python 3")
+            errors.append("Pyats and Genie require Python 3")
         if not HAS_GENIE:
-            msg = (
-                "The pyats parser requires Genie be installed "
-                "on the control node. (e.g. 'pip install genie')"
-            )
-            errors.append(msg)
+            errors.append(missing_required_lib("genie"))
         if not HAS_PYATS:
-            msg = (
-                "The pyats parser requires pyATS be installed "
-                "on the control node. (e.g. 'pip install pyats')"
-            )
-            errors.append(msg)
+            errors.append(missing_required_lib("pyats"))
         return errors
 
     def _check_vars(self):

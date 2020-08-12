@@ -10,10 +10,10 @@ __metaclass__ = type
 
 import json
 from ansible.module_utils._text import to_native
-
-
-from ..module_utils.cli_parser.cli_parserbase import CliParserBase
-
+from ansible.module_utils.basic import missing_required_lib
+from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
+    CliParserBase,
+)
 
 try:
     from ttp import ttp
@@ -40,11 +40,7 @@ class CliParser(CliParserBase):
         errors = []
 
         if not HAS_TTP:
-            msg = (
-                "The Template Text Parser parser requires ttp be installed "
-                "on the control node. (e.g. 'pip install ttp')"
-            )
-            errors.append(msg)
+            errors.append(missing_required_lib("ttp"))
 
         return {"errors": errors}
 

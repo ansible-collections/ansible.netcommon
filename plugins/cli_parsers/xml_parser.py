@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible.module_utils._text import to_native
-
+from ansible.module_utils.basic import missing_required_lib
 from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
     CliParserBase,
 )
@@ -37,11 +37,8 @@ class CliParser(CliParserBase):
         """
         errors = []
         if not HAS_XMLTODICT:
-            msg = (
-                "The XML parser requires xmltodict be installed "
-                "on the control node. (e.g. 'pip install xmltodict')"
-            )
-            errors.append(msg)
+            errors.append(missing_required_lib("xmltodict"))
+
         return errors
 
     def parse(self, *_args, **_kwargs):

@@ -9,10 +9,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible.module_utils._text import to_native
-
-
-from ..module_utils.cli_parser.cli_parserbase import CliParserBase
-
+from ansible.module_utils.basic import missing_required_lib
+from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
+    CliParserBase,
+)
 
 try:
     import textfsm
@@ -39,11 +39,7 @@ class CliParser(CliParserBase):
         errors = []
 
         if not HAS_TEXTFSM:
-            msg = (
-                "The TextFSM parser requires TextFSM be installed "
-                "on the control node. (e.g. 'pip install textfsm')"
-            )
-            errors.append(msg)
+            errors.append(missing_required_lib("textfsm"))
 
         return {"errors": errors}
 
