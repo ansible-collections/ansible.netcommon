@@ -66,6 +66,7 @@ notes:
 - e.g. textfsm requires textfsm
 - e.g. ttp requires ttp
 - e.g. xml requires xml_to_dict
+- Support of 3rd party python libraries is limited to the use of their public APIs as documented
 """
 
 EXAMPLES = r"""
