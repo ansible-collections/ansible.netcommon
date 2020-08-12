@@ -400,7 +400,7 @@ class Connection(ConnectionBase):
                         if self.become.check_success(line):
                             become_sucess = True
                             break
-                        elif self.become.check_password_prompt(line):
+                        if self.become.check_password_prompt(line):
                             passprompt = True
                             break
                 if passprompt:
