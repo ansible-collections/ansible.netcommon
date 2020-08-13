@@ -160,14 +160,14 @@ class ActionModule(ActionBase):
                     oper_sys = self._task_vars.get(hvar, "").split(".")[-1]
                     self._debug(
                         "OS set to {os}, derived from ansible_network_os".format(
-                            os=oper_sys
+                            os=oper_sys.lower()
                         )
                     )
                 else:
                     oper_sys = self._task_vars.get(hvar)
                     self._debug(
-                        "OS set to {os}, using ansible_distribution".format(
-                            os=oper_sys
+                        "OS set to {os}, using {key}".format(
+                            os=oper_sys.lower(), key=hvar
                         )
                     )
         return oper_sys.lower()
