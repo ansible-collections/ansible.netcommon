@@ -52,24 +52,9 @@ options:
                 type: dict
                 description: 
                 - Additional parser specific parameters
-                suboptions:
-                  ttp_init:
-                    type: dict
-                    description:
-                    - Additional parameters passed directly to the ttp parser
-                    - See https://ttp.readthedocs.io/en/latest/API%20reference.html#ttp.ttp
-                  ttp_results:
-                    type: dict
-                    description:
-                    - Additional parameters passed directly to the ttp parser to modify the results
-                    - See https://ttp.readthedocs.io/en/latest/API%20reference.html#ttp.ttp.result
-                  ttp_vars:
-                    type: dict
-                    description:
-                    - Additional variables made available to the ttp parser
-                    - See https://ttp.readthedocs.io/en/latest/Template%20Variables/Template%20Variables.html
-
-
+                - See the network parser user guid for examples of parser specific variables
+                - http://link.to.parser.guide 
+ 
     set_fact:
         description:
         - Set the resulting parsed data as a fact
