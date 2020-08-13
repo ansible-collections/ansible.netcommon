@@ -52,7 +52,7 @@ options:
                 type: dict
                 description: 
                 - Additional parser specific parameters
-                - See the network parser user guid for examples of parser specific variables
+                - See the cli_parse user guide for examples of parser specific variables
                 - http://link.to.parser.guide 
  
     set_fact:
