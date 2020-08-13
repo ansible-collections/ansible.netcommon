@@ -23,26 +23,22 @@ __metaclass__ = type
 
 from ansible.plugins.loader import cache_loader
 
-CACHE_CONFIG = {
-    "memory": {},
-    "jsonfile": {'_uri': '/tmp/'},
-}
+CACHE_CONFIG = {"memory": {}, "jsonfile": {"_uri": "/tmp/"}}
 
-class NetworkCache():
-    def __init__(self, mode="memory", is_enabled=False):
-        self._is_enabled = is_enabled
+
+class NetworkCache:
+    def __init__(self, mode="memory"):
         self._cache = cache_loader.get(mode, **CACHE_CONFIG[mode])
 
     def lookup(self, key):
-        out = None
-        if self._is_enabled:
-            out = self._cache.get(key)
+        out = self._cache.get(key)
         return out
 
     def populate(self, key, value):
-        if self._is_enabled:
-            self._cache.set(key, value)
+        self._cache.set(key, value)
 
     def invalidate(self):
-        if self._is_enabled:
-            self._cache.flush()
+        self._cache.flush()
+
+    def keys(self):
+        return self._cache.keys()

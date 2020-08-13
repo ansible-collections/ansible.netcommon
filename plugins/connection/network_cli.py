@@ -308,6 +308,9 @@ from ansible.plugins.loader import (
     terminal_loader,
     connection_loader,
 )
+from ansible_collections.ansible.netcommon.plugins.cache.network import (
+    NetworkCache,
+)
 
 try:
     from scp import SCPClient
@@ -351,6 +354,7 @@ class Connection(NetworkConnectionBase):
         self._history = list()
         self._command_response = None
         self._last_recv_window = None
+        self._cache = None
 
         self._terminal = None
         self.cliconf = None
@@ -877,10 +881,17 @@ class Connection(NetworkConnectionBase):
         sendonly=False,
         prompt_retry_check=False,
         check_all=False,
+        use_cache=False,
     ):
         """
         Sends the command to the device in the opened shell
         """
+        # try cache first
+        if use_cache and self.get_option("enable_cache"):
+            out = self.get_cache().lookup(command)
+            if out:
+                return out
+
         if check_all:
             prompt_len = len(to_list(prompt))
             answer_len = len(to_list(answer))
@@ -899,7 +910,12 @@ class Connection(NetworkConnectionBase):
             response = self.receive(
                 command, prompt, answer, newline, prompt_retry_check, check_all
             )
-            return to_text(response, errors="surrogate_then_replace")
+            response = to_text(response, errors="surrogate_then_replace")
+            # populate cache
+            if use_cache and self.get_option("enable_cache"):
+                self.get_cache().populate(command, response)
+
+            return response
         except (socket.timeout, AttributeError):
             self.queue_message("error", traceback.format_exc())
             raise AnsibleConnectionFailure(
@@ -1156,3 +1172,8 @@ class Connection(NetworkConnectionBase):
         elif proto == "sftp":
             with ssh.open_sftp() as sftp:
                 sftp.get(source, destination)
+
+    def get_cache(self):
+        if not self._cache:
+            self._cache = NetworkCache()
+        return self._cache
