@@ -28,7 +28,7 @@ except ImportError:
 
 
 class CliParser(CliParserBase):
-    """ The natvie parser class
+    """ The native parser class
     Convert raw text to structured data using the resource module parser
     """
 
