@@ -67,7 +67,7 @@ notes:
 - => command is the command passed to the module with spaces replaced with _
 - => extension is specific to the parser used (native=yaml, textfsm=textfsm, ttp=ttp)
 - The default Ansible search path for the templates directory is used for parser templates as well
-- Some parsers may have additional configuration options availble. See the parsers/vars key and the parser's documentation
+- Some parsers may have additional configuration options available. See the parsers/vars key and the parser's documentation
 - Some parsers require third-party python libraries be installed on the Ansible control node and a specific python version
 - e.g. Pyats requires pyats and genie and requires Python 3
 - e.g. ntc_templates requires ntc_templates
