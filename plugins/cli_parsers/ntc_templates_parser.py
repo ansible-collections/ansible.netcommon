@@ -1,7 +1,7 @@
 """
 ntc_templates parser
 
-This is the ntc_teamples parser for use with the cli_parse module and action plugin.
+This is the ntc_templates parser for use with the cli_parse module and action plugin.
 https://github.com/networktocode/ntc-templates
 
 """
