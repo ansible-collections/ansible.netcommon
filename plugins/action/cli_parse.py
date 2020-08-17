@@ -82,7 +82,7 @@ class ActionModule(ActionBase):
 
     def _check_argspec(self):
         """ Load the doc and convert
-        Add the root conditionals to what was returned form the convertion
+        Add the root conditionals to what was returned from the conversion
         and instnatiate an AnsibleModule to validate
         """
         argspec = generate_argspec()
