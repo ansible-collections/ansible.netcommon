@@ -28,7 +28,7 @@ options:
     parser:
         type: dict
         description:
-        - Parser specfic parameters
+        - Parser specific parameters
         suboptions:
             name:
                 type: str
