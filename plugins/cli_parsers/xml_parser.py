@@ -33,7 +33,7 @@ class CliParser(CliParserBase):
 
     @staticmethod
     def _check_reqs():
-        """ Check the prequisites for the xml parser
+        """ Check the prerequisites for the xml parser
         """
         errors = []
         if not HAS_XMLTODICT:
