@@ -100,7 +100,7 @@ EXAMPLES = r"""
 #         state:
 #         admin: "{{ admin_state }}"
 #
-# - example: "  Hardware: Ethernet, address: 5254.005a.f8b5 (bia 5254.005a.f8b5)"
+# - example: "  Hardware: Ethernet, address: 0000.5E00.5301 (bia 0000.5E00.5301)"
 #   getval: '\s+Hardware: (?P<hardware>.*), address: (?P<mac>\S+)'
 #   result:
 #     "{{ name }}":
