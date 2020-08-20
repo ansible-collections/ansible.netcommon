@@ -1,7 +1,7 @@
 """
 pyats parser
 
-This is the payats parser for use with the cli_parse module and action plugin.
+This is the pyats parser for use with the cli_parse module and action plugin.
 https://developer.cisco.com/docs/pyats/#!parsing-device-output
 
 """
