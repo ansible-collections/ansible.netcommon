@@ -73,7 +73,7 @@ class CliParser(CliParserBase):
         The last part of the fully qualified name is used
         org.name.platform => platform
 
-        In the case of ios, the os is assumed to be iosxs
+        In the case of ios, the os is assumed to be iosxe
         """
         ane = self._task_vars.get("ansible_network_os", "").split(".")[-1]
         if ane == "ios":
