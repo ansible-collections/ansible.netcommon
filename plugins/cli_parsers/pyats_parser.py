@@ -69,7 +69,7 @@ class CliParser(CliParserBase):
         return errors
 
     def _transform_ansible_network_os(self):
-        """ Transform the anssible_network_os to a pyats OS
+        """ Transform the ansible_network_os to a pyats OS
         The last part of the fully qualified name is used
         org.name.platform => platform
 
