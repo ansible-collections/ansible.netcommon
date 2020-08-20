@@ -96,10 +96,20 @@ class ActionModule(ActionBase):
         """ Check additional requirements for the argspec
         that cannot be covered using stnd techniques
         """
+        errors = []
         if len(self._task.args.get("parser").get("name").split(".")) != 3:
             msg = "Parser name should be provided as a full name including collection"
+            errors.append(msg)
+        if self._task.args.get("text"):
+            if not (
+                self._task.args.get("parser").get("command")
+                or self._task.args.get("parser").get("template_path")
+            ):
+                msg = "Either parser/command or parser/template_path needs to be provided when parsing text."
+                errors.append(msg)
+        if errors:
             self._result["failed"] = True
-            self._result["msg"] = msg
+            self._result["msg"] = " ".join(errors)
 
     def _load_parser(self, task_vars):
         """ Load a parser from the fs
