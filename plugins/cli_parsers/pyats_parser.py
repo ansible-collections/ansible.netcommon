@@ -42,7 +42,7 @@ class CliParser(CliParserBase):
 
     @staticmethod
     def _check_reqs():
-        """ Check the prerequistes are installed for pyats/genie
+        """ Check the prerequisites are installed for pyats/genie
 
         :return dict: A dict with a list of errors
         """
