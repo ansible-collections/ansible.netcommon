@@ -1,6 +1,5 @@
 ---
-- debug: msg="START netconf_config iosxr/basic.yaml on connection={{ ansible_connection
-    }}"
+- debug: msg="START netconf_config iosxr/basic.yaml on connection={{ ansible_connection }}"
 
 - name: save config test
   register: result
@@ -16,7 +15,7 @@
   ansible.netcommon.netconf_config:
     target: "candidate"
     error_option: "rollback-on-error"
-    commit: yes
+    commit: true
     confirm: 10
     default_operation: "merge"
     content: |
@@ -26,7 +25,7 @@
       </cdp>
       </nc:config>
   register: result
-  ignore_errors: True
+  ignore_errors: true
   connection: ansible.netcommon.netconf
 
 - assert:
