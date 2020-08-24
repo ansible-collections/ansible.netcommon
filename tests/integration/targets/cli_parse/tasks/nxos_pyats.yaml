@@ -71,4 +71,3 @@
     - name: "{{ parser }} Check results"
       assert:
         that: "{{ 'Could not find parser' in nxos_pyats_invalid_parser_name['msg'] }}"
-
