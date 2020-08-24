@@ -80,4 +80,3 @@
     that: "{{ item }}"
   with_items:
     - "{{ (nxos_ttp_results['parsed'][0]|from_yaml)[0] | selectattr('interface', 'search', 'mgmt0') | list | length }}"
- 
