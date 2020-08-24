@@ -57,7 +57,7 @@
         - "{{ nxos_pyats_command['stdout_lines'] is defined }}"
         - "{{ nxos_pyats_command['parsed'] == nxos_pyats_text['parsed'] }}"
         - "{{ nxos_pyats_command['parsed']['mgmt0'] is defined }}"
-    
+  
     - name: "{{ parser }} Confirm parser found message"
       ansible.netcommon.cli_parse:
         text: "{{ nxos_pyats_command['stdout'] }}"
@@ -66,8 +66,8 @@
           command: invalid_parser_name
           os: nxos
       register: nxos_pyats_invalid_parser_name
-      ignore_errors: True
-    
+      ignore_errors: true
+
     - name: "{{ parser }} Check results"
       assert:
         that: "{{ 'Could not find parser' in nxos_pyats_invalid_parser_name['msg'] }}"
