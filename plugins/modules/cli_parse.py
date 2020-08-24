@@ -42,7 +42,7 @@ options:
                 - The command used to locate the parser's template
             os:
                 type: str
-                description: 
+                description:
                 - Provide an operating system value to the parser
             template_path:
                 type: str
@@ -51,11 +51,11 @@ options:
                 - This can be a relative or an absolute path
             vars:
                 type: dict
-                description: 
+                description:
                 - Additional parser specific parameters
                 - See the cli_parse user guide for examples of parser specific variables
-                - http://link.to.parser.guide 
- 
+                - http://link.to.parser.guide
+
     set_fact:
         description:
         - Set the resulting parsed data as a fact
