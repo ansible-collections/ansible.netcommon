@@ -18,7 +18,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_p
 
 try:
     from genie.conf.base import Device
-    from genie.libs.parser.utils import get_parser
 
     HAS_GENIE = True
 except ImportError:
