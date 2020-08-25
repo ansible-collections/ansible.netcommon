@@ -7,7 +7,7 @@ yamllint
 # The follow are 3rd party libs for cli_parse
 textfsm
 ntc_templates
-pyats
+pyats ; python_version > '3.5'
 ttp
 xmltodict
 # /cli_parse
