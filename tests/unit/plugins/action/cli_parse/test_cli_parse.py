@@ -88,7 +88,7 @@ class TestCli_Parse(unittest.TestCase):
         """
         self._plugin._task.args = {
             "text": "anything",
-            "parser": {"command": "show version",},
+            "parser": {"command": "show version"}
         }
         with self.assertRaises(Exception) as error:
             self._plugin._check_argspec()
