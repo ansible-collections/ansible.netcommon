@@ -7,10 +7,14 @@ __metaclass__ = type
 
 import os
 
+import pytest
+
 from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
 from ansible_collections.ansible.netcommon.plugins.cli_parsers.textfsm_parser import (
     CliParser,
 )
+
+textfsm = pytest.importorskip("textfsm")
 
 
 class TestTextfsmParser(unittest.TestCase):
