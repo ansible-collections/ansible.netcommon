@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - New cli_parse module for parsing structured text using a variety of parsers. 
+    The initial implemetation of cli_parse can be used with json, native, 
+    ntc_templates, pyats, textfsm, ttp, and xml. 
