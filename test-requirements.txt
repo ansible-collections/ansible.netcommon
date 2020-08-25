@@ -8,6 +8,7 @@ yamllint
 textfsm
 ntc_templates
 pyats ; python_version > '3.5'
+genie ; python_version > '3.5'
 ttp
 xmltodict
 # /cli_parse
