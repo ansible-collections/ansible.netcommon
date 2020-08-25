@@ -5,6 +5,28 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v1.2.0
+======
+
+Minor Changes
+-------------
+
+- Added description to collection galaxy.yml file.
+- NetworkConfig objects now have an optional `comment_tokens` parameter which takes a list of strings which will override the DEFAULT_COMMENT_TOKENS list.
+- New cli_parse module for parsing structured text using a variety of parsers. The initial implemetation of cli_parse can be used with json, native, ntc_templates, pyats, textfsm, ttp, and xml.
+- The httpapi connection plugin now works with `wait_for_connection`. This will periodically request the root page of the server described by the plugin's options until the request succeeds. This can only test that the server is reachable, the correctness or usability of the API is not guaranteed.
+
+Bugfixes
+--------
+
+- cli_config fixes issue when rollback_id = 0 evalutes to False
+- sort_list will sort a list of dicts using the sorted method with key as an argument.
+
+New Modules
+-----------
+
+- cli_parse - Parse cli output or text using a variety of parsers
+
 v1.1.2
 ======
 
