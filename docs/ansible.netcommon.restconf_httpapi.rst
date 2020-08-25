@@ -31,29 +31,29 @@ Parameters
         <tr>
             <th colspan="1">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
-                            <th>Configuration</th>
-                        <th width="100%">Comments</th>
+                <th>Configuration</th>
+            <th width="100%">Comments</th>
         </tr>
-                    <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>root_path</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"/restconf"</div>
-                                    </td>
-                                                    <td>
-                                                                                                                                    <div>var: ansible_httpapi_restconf_root</div>
-                                                                        </td>
-                                                <td>
-                                            <div>Specifies the location of the Restconf root.</div>
-                                                        </td>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"/restconf"</div>
+                </td>
+                    <td>
+                                <div>var: ansible_httpapi_restconf_root</div>
+                    </td>
+                <td>
+                        <div>Specifies the location of the Restconf root.</div>
+                </td>
             </tr>
-                        </table>
+    </table>
     <br/>
 
 

@@ -31,28 +31,28 @@ Parameters
         <tr>
             <th colspan="1">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
-                            <th>Configuration</th>
-                        <th width="100%">Comments</th>
+                <th>Configuration</th>
+            <th width="100%">Comments</th>
         </tr>
-                    <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ncclient_device_handler</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">"default"</div>
-                                    </td>
-                                                    <td>
-                                                                                            </td>
-                                                <td>
-                                            <div>Specifies the ncclient device handler name for network os that support default netconf implementation as per Netconf RFC specification. To identify the ncclient device handler name refer ncclient library documentation.</div>
-                                                        </td>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"default"</div>
+                </td>
+                    <td>
+                    </td>
+                <td>
+                        <div>Specifies the ncclient device handler name for network os that support default netconf implementation as per Netconf RFC specification. To identify the ncclient device handler name refer ncclient library documentation.</div>
+                </td>
             </tr>
-                        </table>
+    </table>
     <br/>
 
 
