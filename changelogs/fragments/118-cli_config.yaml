@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - cli_config fixes issue when rollback_id = 0 evalutes to False
