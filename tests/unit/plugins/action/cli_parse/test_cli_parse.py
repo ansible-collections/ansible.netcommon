@@ -73,7 +73,7 @@ class TestCli_Parse(unittest.TestCase):
             "parser": {
                 "name": "ansible.netcommon.pyats",
                 "command": "show version",
-            },
+            }
         }
         self._plugin.task_vars = {"ansible_network_os": "cisco.nxos.nxos"}
         with self.assertRaises(Exception) as error:
@@ -200,7 +200,7 @@ class TestCli_Parse(unittest.TestCase):
 
     def test_fn_update_template_path_not_exist(self):
         self._plugin._task.args = {
-            "parser": {"command": "a command", "name": "a.b.c"},
+            "parser": {"command": "a command", "name": "a.b.c"}
         }
         self._plugin._task_vars = {"ansible_network_os": "cisco.nxos.nxos"}
         with self.assertRaises(Exception) as error:
