@@ -5,6 +5,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import os
 import tempfile
 from ansible.playbook.task import Task
 from ansible.template import Templar
@@ -39,6 +40,21 @@ class TestCli_Parse(unittest.TestCase):
             shared_loader_obj=None,
         )
         self._plugin._task.action = "cli_parse"
+
+    @staticmethod
+    def _load_fixture(filename):
+        """ Load a fixture from the filesystem
+
+        :param filename: The name of the file to load
+        :type filename: str
+        :return: The file contents
+        :rtype: str
+        """
+        fixture_name = os.path.join(
+            os.path.dirname(__file__), "fixtures", filename
+        )
+        with open(fixture_name) as fhand:
+            return fhand.read()
 
     def test_fn_debug(self):
         """ Confirm debug doesn't fail and return None
@@ -282,3 +298,32 @@ class TestCli_Parse(unittest.TestCase):
         self._plugin._run_command()
         self.assertEqual(self._plugin._result["stdout"], expected)
         self.assertEqual(self._plugin._result["stdout_lines"], [expected])
+
+    @patch("ansible.module_utils.connection.Connection.__rpc__")
+    def test_fn_run(self, mock_rpc):
+        """ Check full module run with valid params
+        """
+        mock_out = self._load_fixture("nxos_show_version.txt")
+        mock_rpc.return_value = mock_out
+        self._plugin._connection.socket_path = (
+            tempfile.NamedTemporaryFile().name
+        )
+        template_path = os.path.join(
+            os.path.dirname(__file__), "fixtures", "nxos_show_version.yaml"
+        )
+        self._plugin._task.args = {
+            "command": "show version",
+            "parser": {
+                "name": "ansible.netcommon.native",
+                "template_path": template_path,
+            },
+            "set_fact": "new_fact",
+        }
+        task_vars = {"inventory_hostname": "mockdevice"}
+        result = self._plugin.run(task_vars=task_vars)
+        self.assertEqual(result["stdout"], mock_out)
+        self.assertEqual(result["stdout_lines"], mock_out.splitlines())
+        self.assertEqual(result["parsed"]["version"], "9.2(2)")
+        self.assertEqual(
+            result["ansible_facts"]["new_fact"]["version"], "9.2(2)"
+        )

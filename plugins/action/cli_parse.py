@@ -29,6 +29,12 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     dict_merge,
 )
 
+# python 2.7 compat for FileNotFoundError
+try:
+    FileNotFoundError
+except NameError:
+    FileNotFoundError = IOError
+
 
 ARGSPEC_CONDITIONALS = {
     "argument_spec": {
