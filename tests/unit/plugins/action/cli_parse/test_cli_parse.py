@@ -24,6 +24,9 @@ from ansible_collections.ansible.netcommon.plugins.action.cli_parse import (
 from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
     CliParserBase,
 )
+from ansible.module_utils.connection import (
+    ConnectionError as AnsibleConnectionError,
+)
 
 
 class TestCli_Parse(unittest.TestCase):
@@ -256,6 +259,39 @@ class TestCli_Parse(unittest.TestCase):
         self.assertIn(
             "Could not find or access 'nxos_a_command.yaml'",
             str(error.exception),
+        )
+
+    def test_fn_update_template_path_not_exist_os(self):
+        """ Check the creation of the template_path if
+        it doesn't exist in the user provided data
+        name based on os provided in task
+        """
+        self._plugin._task.args = {
+            "parser": {"command": "a command", "name": "a.b.c", "os": "myos"}
+        }
+        with self.assertRaises(Exception) as error:
+            self._plugin._update_template_path("yaml")
+        self.assertIn(
+            "Could not find or access 'myos_a_command.yaml'",
+            str(error.exception),
+        )
+
+    def test_fn_update_template_path_mock_find_needle(self):
+        """ Check the creation of the template_path
+        mock the find needle fn so the template doesn't
+        need to be in the default template folder
+        """
+        template_path = os.path.join(
+            os.path.dirname(__file__), "fixtures", "nxos_show_version.yaml"
+        )
+        self._plugin._find_needle = MagicMock()
+        self._plugin._find_needle.return_value = template_path
+        self._plugin._task.args = {
+            "parser": {"command": "show version", "os": "nxos"}
+        }
+        self._plugin._update_template_path("yaml")
+        self.assertEqual(
+            self._plugin._task.args["parser"]["template_path"], template_path
         )
 
     def test_fn_get_template_contents_pass(self):
@@ -555,3 +591,21 @@ class TestCli_Parse(unittest.TestCase):
         with self.assertRaises(Exception) as error:
             self._plugin.run(task_vars=task_vars)
         self.assertIn("Unhandled", str(error.exception))
+
+    @patch("ansible.module_utils.connection.Connection.__rpc__")
+    def test_fn_run_net_device_error(self, mock_rpc):
+        """ Check full module run mock error from network device
+        """
+        msg = "I was mocked"
+        mock_rpc.side_effect = AnsibleConnectionError(msg)
+        self._plugin._connection.socket_path = (
+            tempfile.NamedTemporaryFile().name
+        )
+        self._plugin._task.args = {
+            "command": "show version",
+            "parser": {"name": "ansible.netcommon.native"},
+        }
+        task_vars = {"inventory_hostname": "mockdevice"}
+        result = self._plugin.run(task_vars=task_vars)
+        self.assertEqual(result["failed"], True)
+        self.assertEqual([msg], result["msg"])
