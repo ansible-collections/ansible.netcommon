@@ -22,7 +22,7 @@ class TestXmlParser(unittest.TestCase):
         xml = "<tag1><tag2 arg='foo'>text</tag2></tag1>"
         xml_dict = OrderedDict(
             tag1=OrderedDict(
-                tag2=OrderedDict({"@arg": "foo", "#text": "text"})
+                tag2=OrderedDict([("@arg", "foo"), ("#text", "text")])
             )
         )
         task_args = {"text": xml, "parser": {"os": "none"}}
