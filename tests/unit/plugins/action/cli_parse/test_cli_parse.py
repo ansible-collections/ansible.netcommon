@@ -265,7 +265,7 @@ class TestCli_Parse(unittest.TestCase):
             "stdout_lines": response,
         }
         self._plugin._task.args = {"command": "ls"}
-        res = self._plugin._run_command()
+        self._plugin._run_command()
         self.assertEqual(self._plugin._result["stdout"], response)
         self.assertEqual(self._plugin._result["stdout_lines"], response)
 
