@@ -52,7 +52,7 @@ class TestTextfsmParser(unittest.TestCase):
         self.assertEqual(result, {"parsed": parsed_output})
 
     def test_textfsm_parser_invalid_parser(self):
-        fake_path = "/☃/I hope this doesn't exist"
+        fake_path = "/ /I hope this doesn't exist"
         task_args = {
             "text": "",
             "parser": {
