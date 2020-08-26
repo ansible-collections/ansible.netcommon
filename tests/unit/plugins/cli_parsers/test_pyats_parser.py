@@ -98,6 +98,23 @@ class TestPyatsParser(unittest.TestCase):
         result = parser.parse()
         self.assertEqual(result, {"parsed": self._nxos_parsed_output})
 
+    def test_pyats_parser_invalid_args(self):
+        self._debug_msgs = []
+        task_args = {
+            "text": self._load_fixture("nxos_show_version.cfg"),
+            "parser": {},
+        }
+        parser = CliParser(
+            task_args=task_args,
+            task_vars={"ansible_network_os": "cisco.nxos.nxos"},
+            debug=self._debug,
+        )
+        result = parser.parse()
+        error = {
+            "errors": ["The pyats parser requires parser/command be provided."]
+        }
+        self.assertEqual(result, error)
+
     def test_pyats_parser_ano_shortname(self):
         self._debug_msgs = []
         task_args = {
