@@ -50,3 +50,22 @@ class TestTextfsmParser(unittest.TestCase):
             }
         ]
         self.assertEqual(result, {"parsed": parsed_output})
+
+    def test_textfsm_parser_invalid_parser(self):
+        fake_path = "/☃/I hope this doesn't exist"
+        task_args = {
+            "text": "",
+            "parser": {
+                "name": "ansible.netcommon.textfsm",
+                "command": "show version",
+                "template_path": fake_path,
+            },
+        }
+        parser = CliParser(task_args=task_args, task_vars=[], debug=False)
+        result = parser.parse()
+        error = {
+            "error": '[Errno 2] No such file or directory: "{0}"'.format(
+                fake_path
+            )
+        }
+        self.assertEqual(result, error)
