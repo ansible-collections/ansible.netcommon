@@ -23,6 +23,15 @@ try:
 except ImportError:
     HAS_NTC = False
 
+ANSIBLE_NETWORK_OS = {
+    "ios": "cisco_ios",
+    "iosxr": "cisco_xr",
+    "nxos": "cisco_nxos",
+    "asa": "cisco_asa",
+    "eos": "arista_eos",
+    "junos": "juniper_junos",
+}
+
 
 class CliParser(CliParserBase):
     """ The ntc_templates parser class
@@ -48,13 +57,8 @@ class CliParser(CliParserBase):
         if network_os:
             self._debug("OS set to {os} using task args".format(os=network_os))
         if not network_os:
-            ano = dict(
-                zip(
-                    ["vendor", "platform", "os"],
-                    self._task_vars.get("ansible_network_os", "").split("."),
-                )
-            )
-            network_os = "{vendor}_{os}".format(**ano)
+            ano = self._task_vars.get("ansible_network_os", "").split(".")[-1]
+            network_os = ANSIBLE_NETWORK_OS[ano]
             self._debug(
                 "OS set to {os} using ansible_network_os".format(os=network_os)
             )

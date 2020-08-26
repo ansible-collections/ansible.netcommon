@@ -44,6 +44,8 @@ options:
                 type: str
                 description:
                 - Provide an operating system value to the parser
+                - For `ntc_templates` parser, this should be in the supported
+                  `<vendor>_<os>` format.
             template_path:
                 type: str
                 description:
