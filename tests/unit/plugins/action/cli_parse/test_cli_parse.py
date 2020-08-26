@@ -279,6 +279,6 @@ class TestCli_Parse(unittest.TestCase):
             tempfile.NamedTemporaryFile().name
         )
         self._plugin._task.args = {"command": "command"}
-        res = self._plugin._run_command()
+        self._plugin._run_command()
         self.assertEqual(self._plugin._result["stdout"], expected)
         self.assertEqual(self._plugin._result["stdout_lines"], [expected])
