@@ -21,6 +21,9 @@ from ansible_collections.ansible.netcommon.tests.unit.mock.loader import (
 from ansible_collections.ansible.netcommon.plugins.action.cli_parse import (
     ActionModule,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
+    CliParserBase,
+)
 
 
 class TestCli_Parse(unittest.TestCase):
@@ -480,3 +483,75 @@ class TestCli_Parse(unittest.TestCase):
         result = self._plugin.run(task_vars=task_vars)
         self.assertEqual(result["failed"], True)
         self.assertIn("Native parser returned an error", result["msg"])
+
+    @patch("ansible.module_utils.connection.Connection.__rpc__")
+    def test_fn_run_pass_missing_parser_constants(self, mock_rpc):
+        """ Check full module run using parser w/o
+        DEFAULT_TEMPLATE_EXTENSION or PROVIDE_TEMPLATE_CONTENTS
+        defined in the parser
+        """
+        mock_out = self._load_fixture("nxos_show_version.txt")
+
+        class CliParser(CliParserBase):
+            def parse(self, *_args, **kwargs):
+                return {"parsed": mock_out}
+
+        self._plugin._load_parser = MagicMock()
+        self._plugin._load_parser.return_value = CliParser(None, None, None)
+
+        mock_out = self._load_fixture("nxos_show_version.txt")
+        mock_rpc.return_value = mock_out
+
+        self._plugin._connection.socket_path = (
+            tempfile.NamedTemporaryFile().name
+        )
+        template_path = os.path.join(
+            os.path.dirname(__file__), "fixtures", "nxos_empty_parser.yaml"
+        )
+        self._plugin._task.args = {
+            "command": "show version",
+            "parser": {
+                "name": "ansible.netcommon.native",
+                "template_path": template_path,
+            },
+        }
+        task_vars = {"inventory_hostname": "mockdevice"}
+        result = self._plugin.run(task_vars=task_vars)
+        self.assertEqual(result["stdout"], mock_out)
+        self.assertEqual(result["stdout_lines"], mock_out.splitlines())
+        self.assertEqual(result["parsed"], mock_out)
+
+    @patch("ansible.module_utils.connection.Connection.__rpc__")
+    def test_fn_run_pass_missing_parser_in_parser(self, mock_rpc):
+        """ Check full module run using parser w/o
+        a parser function defined in the parser
+        defined in the parser
+        """
+        mock_out = self._load_fixture("nxos_show_version.txt")
+
+        class CliParser(CliParserBase):
+            pass
+
+        self._plugin._load_parser = MagicMock()
+        self._plugin._load_parser.return_value = CliParser(None, None, None)
+
+        mock_out = self._load_fixture("nxos_show_version.txt")
+        mock_rpc.return_value = mock_out
+
+        self._plugin._connection.socket_path = (
+            tempfile.NamedTemporaryFile().name
+        )
+        template_path = os.path.join(
+            os.path.dirname(__file__), "fixtures", "nxos_empty_parser.yaml"
+        )
+        self._plugin._task.args = {
+            "command": "show version",
+            "parser": {
+                "name": "ansible.netcommon.native",
+                "template_path": template_path,
+            },
+        }
+        task_vars = {"inventory_hostname": "mockdevice"}
+        with self.assertRaises(Exception) as error:
+            self._plugin.run(task_vars=task_vars)
+        self.assertIn("Unhandled", str(error.exception))

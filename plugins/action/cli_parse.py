@@ -196,7 +196,10 @@ class ActionModule(ActionBase):
         :type template extension: str
         """
         if not self._task.args.get("parser").get("template_path"):
-            oper_sys = self._os_from_task_vars()
+            if self._task.args.get("parser").get("os"):
+                oper_sys = self._task.args.get("parser").get("os")
+            else:
+                oper_sys = self._os_from_task_vars()
             cmd_as_fname = (
                 self._task.args.get("parser").get("command").replace(" ", "_")
             )

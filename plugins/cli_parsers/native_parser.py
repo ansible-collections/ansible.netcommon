@@ -11,8 +11,12 @@ __metaclass__ = type
 
 from ansible.module_utils._text import to_native
 
-from ..module_utils.cli_parser.cli_parserbase import CliParserBase
-from ..module_utils.cli_parser.cli_parsertemplate import CliParserTemplate
+from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
+    CliParserBase,
+)
+from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parsertemplate import (
+    CliParserTemplate,
+)
 
 
 try:
