@@ -79,7 +79,7 @@ notes:
 - e.g. xml requires xml_to_dict
 - Support of 3rd party python libraries is limited to the use of their public APIs as documented
 - "Additional information and examples can be found in the parsing user guide:"
-- https://docs.ansible.com/ansible/latest/network/user_guide/parsing.html
+- https://docs.ansible.com/ansible/latest/network/user_guide/cli_parsing.html
 
 
 EXAMPLES = r"""
