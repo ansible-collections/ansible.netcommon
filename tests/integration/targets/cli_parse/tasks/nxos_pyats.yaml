@@ -1,0 +1,73 @@
+---
+- name: Determine the python version of the control node
+  command: 'python --version'
+  delegate_to: localhost
+  register: pyver
+  changed_when: false
+
+- name: Python 2 reports to stderr, Python 3 to stdout
+  set_fact:
+    pyver_found: "{{ ((pyver['stderr'] or pyver['stdout']).split())[1][0] }}"
+
+- name: Ensure a valid python major version was found
+  assert:
+    that: "{{ pyver_found in ['2','3'] }}"
+
+- name: Only run pyats tests when control node is Python3
+  when: pyver_found == '3'
+  block:
+    - name: "{{ parser }} Run command and parse with pyats"
+      ansible.netcommon.cli_parse:
+        command: "show interface"
+        parser:
+          name: ansible.netcommon.pyats
+      register: nxos_pyats_command
+
+    - name: "{{ parser }} Pass text and command"
+      ansible.netcommon.cli_parse:
+        text: "{{ nxos_pyats_command['stdout'] }}"
+        parser:
+          name: ansible.netcommon.pyats
+          command: show interface
+      register: nxos_pyats_text
+
+    - name: "{{ parser }} Check results"
+      assert:
+        that: "{{ item }}"
+      with_items:
+        - "{{ nxos_pyats_command['stdout'] is defined }}"
+        - "{{ nxos_pyats_command['stdout_lines'] is defined }}"
+        - "{{ nxos_pyats_command['parsed'] == nxos_pyats_text['parsed'] }}"
+        - "{{ nxos_pyats_command['parsed']['mgmt0'] is defined }}"
+
+    - name: "Pass text, command, and os"
+      ansible.netcommon.cli_parse:
+        text: "{{ nxos_pyats_command['stdout'] }}"
+        parser:
+          name: ansible.netcommon.pyats
+          command: show interface
+          os: nxos
+      register: nxos_pyats_text
+
+    - name: "{{ parser }} Check results"
+      assert:
+        that: "{{ item }}"
+      with_items:
+        - "{{ nxos_pyats_command['stdout'] is defined }}"
+        - "{{ nxos_pyats_command['stdout_lines'] is defined }}"
+        - "{{ nxos_pyats_command['parsed'] == nxos_pyats_text['parsed'] }}"
+        - "{{ nxos_pyats_command['parsed']['mgmt0'] is defined }}"
+
+    - name: "{{ parser }} Confirm parser found message"
+      ansible.netcommon.cli_parse:
+        text: "{{ nxos_pyats_command['stdout'] }}"
+        parser:
+          name: ansible.netcommon.pyats
+          command: invalid_parser_name
+          os: nxos
+      register: nxos_pyats_invalid_parser_name
+      ignore_errors: true
+
+    - name: "{{ parser }} Check results"
+      assert:
+        that: "{{ 'Could not find parser' in nxos_pyats_invalid_parser_name['msg'] }}"

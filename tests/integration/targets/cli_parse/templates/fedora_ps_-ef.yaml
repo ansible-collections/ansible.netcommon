@@ -1,0 +1,17 @@
+---
+- example: 'UID          PID    PPID  C STIME TTY          TIME CMD'
+  getval: '^UID.*'
+  result: {}
+
+- example: 'root           2       0  0 Jul28 ?        00:00:00 [kthreadd]'
+  getval: '(?P<uid>\S+)\s+(?P<pid>\S+)\s+(?P<ppid>\S+)\s+(?P<c>\S+)\s+(?P<stime>\S+)\s+(?P<tty>\S+)\s+(?P<time>\S+)\s+(?P<cmd>\S+)'
+  result:
+    proccesses:
+      - uid: "{{ uid }}"
+        pid: "{{ pid }}"
+        ppid: "{{ ppid }}"
+        c: "{{ c }}"
+        stime: "{{ stime }}"
+        tty: "{{ tty }}"
+        time: "{{ time }}"
+        cmd: "{{ cmd }}"

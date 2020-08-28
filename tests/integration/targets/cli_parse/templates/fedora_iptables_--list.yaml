@@ -1,0 +1,41 @@
+---
+- example: "Chain FORWARD (policy ACCEPT)"
+  getval: 'Chain\s(?P<chain_name>\S+)\s+\((policy\s(?P<policy>\S+))?((?P<references>\d+)\sreferences)?\)$'
+  result:
+    "{{ chain_name }}":
+      name: "{{ chain_name }}"
+      policy: "{{ policy }}"
+      references: "{{ references }}"
+  shared: true
+
+- example: "target     prot opt source               destination"
+  getval: '^target.*'
+  result: {}
+
+- example: "ACCEPT     all  --  anywhere             192.168.122.0/24     ctstate RELATED,ESTABLISHED"
+  getval: |
+    (?x)
+    (?P<target>\S+)
+    \s+(?P<protocol>\S+)
+    \s+(?P<opt>\S+)
+    \s+(?P<source>\S+)
+    \s+(?P<destination>\S+)
+    (\s+ctstate\s(?P<ctstates>\S+))?
+    (\s+reject-with\s(?P<reject_with>\S+))?
+    (\s+udp\sdpt:(?P<udp_dpt>\S+))?
+    (\s+tcp\sdpt:(?P<tcp_dpt>\S+))?
+
+  result:
+    "{{ chain_name }}":
+      rules:
+        target: "{{ target }}"
+        protocol: "{{ protocol }}"
+        opt: "{% if opt == '--' %}None{% else %}{{ opt }}{% endif %}"
+        source: "{{ source }}"
+        destination: "{{ destination }}"
+        connection_tracking:
+          states: "{{ ctstates.split(',') }}"
+        reject_with: "{{ reject_with }}"
+        destination_port:
+          udp: "{{ udp_dpt }}"
+          tcp: "{{ tcp_dpt }}"

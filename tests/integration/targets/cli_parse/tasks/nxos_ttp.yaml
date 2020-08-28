@@ -1,0 +1,82 @@
+---
+- name: "{{ parser }} Run command and parse with ttp"
+  ansible.netcommon.cli_parse:
+    command: "show interface"
+    parser:
+      name: ansible.netcommon.ttp
+    set_fact: POpqMQoJWTiDpEW
+  register: nxos_ttp_command
+
+- name: "{{ parser }} Pass text and template_path"
+  ansible.netcommon.cli_parse:
+    text: "{{ nxos_ttp_command['stdout'] }}"
+    parser:
+      name: ansible.netcommon.ttp
+      template_path: "{{ role_path }}/templates/nxos_show_interface.ttp"
+  register: nxos_ttp_text
+
+- name: "{{ parser }} Confirm response"
+  assert:
+    that: "{{ item }}"
+  with_items:
+    - "{{ POpqMQoJWTiDpEW is defined }}"
+    - "{{ nxos_ttp_command['parsed'][0][0] | selectattr('interface', 'search', 'mgmt0') | list | length }}"
+    - "{{ nxos_ttp_command['stdout'] is defined }}"
+    - "{{ nxos_ttp_command['stdout_lines'] is defined }}"
+    - "{{ nxos_ttp_command['parsed'] == nxos_ttp_text['parsed'] }}"
+
+- name: "{{ parser }} Pass text and ttp_init"
+  ansible.netcommon.cli_parse:
+    text: "{{ nxos_ttp_command['stdout'] }}"
+    parser:
+      name: ansible.netcommon.ttp
+      command: show interface
+      vars:
+        ttp_init:
+          log_level: DEBUG
+          log_file: /tmp/ttp_parser.log
+
+- name: Remove ttp_parser log file
+  file:
+    path: /tmp/ttp_parser.log
+    state: absent
+  register: file_deleted
+
+- name: Confirm ttp log file was created and deleted
+  assert:
+    that: "{{ file_deleted['changed'] }}"
+
+- name: "{{ parser }} Pass text and custom variable"
+  ansible.netcommon.cli_parse:
+    text: "{{ nxos_ttp_command['stdout'] }}"
+    parser:
+      name: ansible.netcommon.ttp
+      template_path: "{{ role_path }}/templates/nxos_show_interface.ttp"
+      vars:
+        ttp_vars:
+          extra_var: some_text
+  register: nxos_ttp_vars
+
+- name: "{{ parser }} Confirm modified results"
+  assert:
+    that: "{{ item }}"
+  with_items:
+    - "{{ nxos_ttp_vars['parsed'][0][0][0]['var'] == 'some_text' }}"
+
+
+- name: "{{ parser }} Pass text and ttp_results modified"
+  ansible.netcommon.cli_parse:
+    text: "{{ nxos_ttp_command['stdout'] }}"
+    parser:
+      name: ansible.netcommon.ttp
+      template_path: "{{ role_path }}/templates/nxos_show_interface.ttp"
+      vars:
+        ttp_results:
+          format: yaml
+  register: nxos_ttp_results
+
+- name: "{{ parser }} Confirm modified results"
+  assert:
+    that: "{{ item }}"
+  with_items:
+    - "{{ (nxos_ttp_results['parsed'][0]|from_yaml)[0] | selectattr('interface', 'search', 'mgmt0') | list | length }}"
