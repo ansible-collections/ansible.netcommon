@@ -31,35 +31,35 @@ Parameters
         <tr>
             <th colspan="1">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
-                            <th>Configuration</th>
-                        <th width="100%">Comments</th>
+                <th>Configuration</th>
+            <th width="100%">Comments</th>
         </tr>
-                    <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>become_pass</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                    <td>
-                                                    <div> ini entries:
-                                                                    <p>[enable_become_plugin]<br>password = VALUE</p>
-                                                            </div>
-                                                                                                            <div>env:ANSIBLE_BECOME_PASS</div>
-                                                            <div>env:ANSIBLE_ENABLE_PASS</div>
-                                                                                                                                        <div>var: ansible_become_password</div>
-                                                            <div>var: ansible_become_pass</div>
-                                                            <div>var: ansible_enable_pass</div>
-                                                                        </td>
-                                                <td>
-                                            <div>password</div>
-                                                        </td>
+                    </div>
+                </td>
+                <td>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[enable_become_plugin]<br>password = VALUE</p>
+                            </div>
+                                <div>env:ANSIBLE_BECOME_PASS</div>
+                                <div>env:ANSIBLE_ENABLE_PASS</div>
+                                <div>var: ansible_become_password</div>
+                                <div>var: ansible_become_pass</div>
+                                <div>var: ansible_enable_pass</div>
+                    </td>
+                <td>
+                        <div>password</div>
+                </td>
             </tr>
-                        </table>
+    </table>
     <br/>
 
 

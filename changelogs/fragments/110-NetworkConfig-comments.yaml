@@ -1,4 +1,0 @@
----
-minor_changes:
-  - NetworkConfig objects now have an optional `comment_tokens` parameter which
-    takes a list of strings which will override the DEFAULT_COMMENT_TOKENS list.

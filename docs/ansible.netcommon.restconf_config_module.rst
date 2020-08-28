@@ -32,79 +32,80 @@ Parameters
         <tr>
             <th colspan="1">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
-                        <th width="100%">Comments</th>
+            <th width="100%">Comments</th>
         </tr>
-                    <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>content</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>The configuration data in format as specififed in <code>format</code> option. Required unless <code>method</code> is <em>delete</em>.</div>
-                                                        </td>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The configuration data in format as specififed in <code>format</code> option. Required unless <code>method</code> is <em>delete</em>.</div>
+                </td>
             </tr>
-                                <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>format</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li><div style="color: blue"><b>json</b>&nbsp;&larr;</div></li>
-                                                                                                                                                                                                <li>xml</li>
-                                                                                    </ul>
-                                                                            </td>
-                                                                <td>
-                                            <div>The format of the configuration provided as value of <code>content</code>. Accepted values are <em>xml</em> and <em>json</em> and the given configuration format should be supported by remote RESTCONF server.</div>
-                                                        </td>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>json</b>&nbsp;&larr;</div></li>
+                                    <li>xml</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>The format of the configuration provided as value of <code>content</code>. Accepted values are <em>xml</em> and <em>json</em> and the given configuration format should be supported by remote RESTCONF server.</div>
+                </td>
             </tr>
-                                <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>method</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li><div style="color: blue"><b>post</b>&nbsp;&larr;</div></li>
-                                                                                                                                                                                                <li>put</li>
-                                                                                                                                                                                                <li>patch</li>
-                                                                                                                                                                                                <li>delete</li>
-                                                                                    </ul>
-                                                                            </td>
-                                                                <td>
-                                            <div>The RESTCONF method to manage the configuration change on device. The value <em>post</em> is used to create a data resource or invoke an operation resource, <em>put</em> is used to replace the target data resource, <em>patch</em> is used to modify the target resource, and <em>delete</em> is used to delete the target resource.</div>
-                                                        </td>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>post</b>&nbsp;&larr;</div></li>
+                                    <li>put</li>
+                                    <li>patch</li>
+                                    <li>delete</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>The RESTCONF method to manage the configuration change on device. The value <em>post</em> is used to create a data resource or invoke an operation resource, <em>put</em> is used to replace the target data resource, <em>patch</em> is used to modify the target resource, and <em>delete</em> is used to delete the target resource.</div>
+                </td>
             </tr>
-                                <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>path</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                                                 / <span style="color: red">required</span>                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>URI being used to execute API calls.</div>
-                                                        </td>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>URI being used to execute API calls.</div>
+                </td>
             </tr>
-                        </table>
+    </table>
     <br/>
 
 
@@ -114,7 +115,6 @@ Examples
 --------
 
 .. code-block:: yaml+jinja
-
 
     - name: create l3vpn services
       ansible.netcommon.restconf_config:
@@ -137,7 +137,6 @@ Examples
 
 
 
-
 Return Values
 -------------
 Common return values are documented `here <https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html#common-return-values>`_, the following are the fields unique to this module:
@@ -150,21 +149,21 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
-                    <tr>
-                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>candidate</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">dictionary</span>
-                                          </div>
-                                    </td>
+                    </div>
+                </td>
                 <td>When the method is not delete</td>
                 <td>
-                                                                        <div>The configuration sent to the device.</div>
-                                                                <br/>
-                                            <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{
+                            <div>The configuration sent to the device.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{
         &quot;vpn-service&quot;: [
             {
                 &quot;customer-name&quot;: &quot;red&quot;,
@@ -173,23 +172,23 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             }
         ]
     }</div>
-                                    </td>
+                </td>
             </tr>
-                                <tr>
-                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>running</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">dictionary</span>
-                                          </div>
-                                    </td>
+                    </div>
+                </td>
                 <td>When the method is not delete</td>
                 <td>
-                                                                        <div>The current running configuration on the device.</div>
-                                                                <br/>
-                                            <div style="font-size: smaller"><b>Sample:</b></div>
-                                                <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{
+                            <div>The current running configuration on the device.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{
         &quot;vpn-service&quot;: [
             {
               &quot;vpn-id&quot;: &quot;red_vpn2&quot;,
@@ -203,9 +202,9 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             }
         ]
     }</div>
-                                    </td>
+                </td>
             </tr>
-                        </table>
+    </table>
     <br/><br/>
 
 

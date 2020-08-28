@@ -37,78 +37,79 @@ Parameters
         <tr>
             <th colspan="1">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
-                        <th width="100%">Comments</th>
+            <th width="100%">Comments</th>
         </tr>
-                    <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>dest</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                                    <b>Default:</b><br/><div style="color: blue">["Filename from src and at default directory of user shell on network_os."]</div>
-                                    </td>
-                                                                <td>
-                                            <div>Specifies the destination file. The path to destination file can either be the full path or relative path as supported by network_os.</div>
-                                                        </td>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">["Filename from src and at default directory of user shell on network_os."]</div>
+                </td>
+                <td>
+                        <div>Specifies the destination file. The path to destination file can either be the full path or relative path as supported by network_os.</div>
+                </td>
             </tr>
-                                <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>mode</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li><div style="color: blue"><b>binary</b>&nbsp;&larr;</div></li>
-                                                                                                                                                                                                <li>text</li>
-                                                                                    </ul>
-                                                                            </td>
-                                                                <td>
-                                            <div>Set the file transfer mode. If mode is set to <em>text</em> then <em>src</em> file will go through Jinja2 template engine to replace any vars if present in the src file. If mode is set to <em>binary</em> then file will be copied as it is to destination device.</div>
-                                                        </td>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>binary</b>&nbsp;&larr;</div></li>
+                                    <li>text</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Set the file transfer mode. If mode is set to <em>text</em> then <em>src</em> file will go through Jinja2 template engine to replace any vars if present in the src file. If mode is set to <em>binary</em> then file will be copied as it is to destination device.</div>
+                </td>
             </tr>
-                                <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>protocol</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
-                                                                    </div>
-                                    </td>
-                                <td>
-                                                                                                                            <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                                                                                                                                                <li><div style="color: blue"><b>scp</b>&nbsp;&larr;</div></li>
-                                                                                                                                                                                                <li>sftp</li>
-                                                                                    </ul>
-                                                                            </td>
-                                                                <td>
-                                            <div>Protocol used to transfer file.</div>
-                                                        </td>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>scp</b>&nbsp;&larr;</div></li>
+                                    <li>sftp</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Protocol used to transfer file.</div>
+                </td>
             </tr>
-                                <tr>
-                                                                <td colspan="1">
+            <tr>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>src</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">-</span>
-                                                 / <span style="color: red">required</span>                    </div>
-                                    </td>
-                                <td>
-                                                                                                                                                            </td>
-                                                                <td>
-                                            <div>Specifies the source file. The path to the source file can either be the full path on the Ansible control host or a relative path from the playbook or role root directory.</div>
-                                                        </td>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Specifies the source file. The path to the source file can either be the full path on the Ansible control host or a relative path from the playbook or role root directory.</div>
+                </td>
             </tr>
-                        </table>
+    </table>
     <br/>
 
 
@@ -128,7 +129,6 @@ Examples
 
 .. code-block:: yaml+jinja
 
-
     - name: copy file from ansible controller to a network device
       ansible.netcommon.net_put:
         src: running_cfg_ios1.txt
@@ -138,7 +138,6 @@ Examples
         src: running_cfg_sw1.txt
         protocol: sftp
         dest: flash3:/running_cfg_sw1.txt
-
 
 
 
