@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fixed "Object of type Capabilities is not JSON serializable" when using default netconf plugin.
