@@ -64,8 +64,8 @@ class Netconf(NetconfBase):
         result["rpc"] = self.get_base_rpc()
         result["network_api"] = "netconf"
         result["device_info"] = self.get_device_info()
-        result["server_capabilities"] = self.m.server_capabilities
-        result["client_capabilities"] = self.m.client_capabilities
+        result["server_capabilities"] = list(self.m.server_capabilities)
+        result["client_capabilities"] = list(self.m.client_capabilities)
         result["session_id"] = self.m.session_id
         result["device_operations"] = self.get_device_operations(
             result["server_capabilities"]
