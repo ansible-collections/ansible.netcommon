@@ -5,6 +5,14 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v1.2.1
+======
+
+Bugfixes
+--------
+
+- Fixed "Object of type Capabilities is not JSON serializable" when using default netconf plugin.
+
 v1.2.0
 ======
 
