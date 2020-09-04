@@ -192,3 +192,11 @@ releases:
       name: cli_parse
       namespace: ''
     release_date: '2020-08-25'
+  1.2.1:
+    changes:
+      bugfixes:
+      - Fixed "Object of type Capabilities is not JSON serializable" when using default
+        netconf plugin.
+    fragments:
+    - netconf-capabilites-fix.yaml
+    release_date: '2020-09-04'
