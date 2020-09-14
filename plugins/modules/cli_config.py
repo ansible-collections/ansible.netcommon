@@ -193,7 +193,7 @@ EXAMPLES = """
 RETURN = """
 diff:
   description: The diff generated on the device when the commands were applied
-  returned: When "supports_onbox_diff" is True in the platform's cliconf plugin
+  returned: When I(supports_onbox_diff=True) in the platform's cliconf plugin
   type: str
   sample: |-
     --- system:/running-config
@@ -208,7 +208,7 @@ diff:
      spanning-tree mode mstp
 commands:
   description: The set of commands that will be pushed to the remote device
-  returned: When "supports_generated_diff" is True in the platform's cliconf plugin, and "supports_onbox_diff" is False
+  returned: When I(supports_generated_diff=True) and I(supports_onbox_diff=False) in the platform's cliconf plugin
   type: list
   sample: ['interface Loopback999', 'no shutdown']
 backup_path:
