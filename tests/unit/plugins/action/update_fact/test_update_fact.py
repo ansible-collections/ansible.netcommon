@@ -25,7 +25,7 @@ VALID_DATA = {
     "a": {
         "b": {"4.4": [{"1": {5: {"foo": 123}}}], 5.5: "float5.5"},
         "127.0.0.1": "localhost",
-    },
+    }
 }
 
 VALID_TESTS = [
