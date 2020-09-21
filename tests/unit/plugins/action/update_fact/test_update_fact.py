@@ -6,13 +6,12 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import copy
-from jinja2 import Template, UndefinedError, TemplateSyntaxError
+from jinja2 import Template, TemplateSyntaxError
 from ansible.playbook.task import Task
 from ansible.template import Templar
 from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
 from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
     MagicMock,
-    patch,
 )
 from ansible_collections.ansible.netcommon.tests.unit.mock.loader import (
     DictDataLoader,
