@@ -296,29 +296,42 @@ class TestIpFilter(unittest.TestCase):
         )
 
     def test_address_prefix(self):
+        # Regular address
+        address = "1.12.1.12/24"
+        self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), address)
+
+        # Network address - invalid
         address = "1.12.1.0/24"
-        self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), None)
-        address = "1.12.1.0/25"
-        self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), None)
-        # address = '1.12.1.34'
-        # self.assertFalse(ipaddr.ipaddr(address, 'last_usable'), 'Not a network address')
-        address = "1.12.1.36/28"
+        self.assertIsNone(ipaddr.ipaddr(address, "address/prefix"))
+        # But valid in a /31
+        address = "1.12.1.0/31"
+        self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), address)
+
+        # Broadcast address - invalid
+        address = "1.12.1.255/24"
+        self.assertIsNone(ipaddr.ipaddr(address, "address/prefix"))
+        # But valid in a /31
+        address = "1.12.1.255/31"
+        self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), address)
+
+        # /32 - always valid?
+        address = "1.12.1.0/32"
+        self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), address)
+        address = "1.12.1.12/32"
+        self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), address)
+        address = "1.12.1.255/32"
+        self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), address)
+
+        # No prefix means /32
+        address = "1.12.1.34"
         self.assertEqual(
-            ipaddr.ipaddr(address, "address/prefix"), "1.12.1.36/28"
+            ipaddr.ipaddr(address, "address/prefix"), "1.12.1.34/32"
         )
+
+        # Hostmask also works
         address = "1.12.1.36/255.255.255.240"
         self.assertEqual(
             ipaddr.ipaddr(address, "address/prefix"), "1.12.1.36/28"
-        )
-        # address = '1.12.1.36/31'
-        # self.assertEqual(ipaddr.ipaddr(address, 'address/prefix'), '1.12.1.36/31') - unfixable?
-        # address = '1.12.1.37/31'
-        # self.assertEqual(ipaddr.ipaddr(address, 'address/prefix'), '1.12.1.37/31') - unfixable?
-        address = "1.12.1.36/32"
-        self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), None)
-        address = "1.12.1.254/24"
-        self.assertEqual(
-            ipaddr.ipaddr(address, "address/prefix"), "1.12.1.254/24"
         )
 
     def test_ip_prefix(self):
