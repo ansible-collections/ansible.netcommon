@@ -320,12 +320,16 @@ class ActionModule(ActionBase):
 
         try:
             result = parser.parse(template_contents=template_contents)
+            # ensure the response returned to the controller
+            # contains only native types, nothing unique to the parser
+            result = json.loads(json.dumps(result))
         except Exception as exc:
             raise AnsibleActionFail(
                 "Unhandled exception from parser '{parser}'. Error: {err}".format(
                     parser=self._parser_name, err=to_native(exc)
                 )
             )
+        
 
         if result.get("errors"):
             self._prune_result()
