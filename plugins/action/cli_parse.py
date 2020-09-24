@@ -330,7 +330,6 @@ class ActionModule(ActionBase):
                 )
             )
         
-
         if result.get("errors"):
             self._prune_result()
             self._result.update(
