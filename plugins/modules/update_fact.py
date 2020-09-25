@@ -59,9 +59,18 @@ author:
 - Bradley Thornton (@cidrblock)
 """
 
+RETURN = """
+object:
+    description: Each modified object is returned
+diff:
+  description: If --diff option in enabled while running, the changes are
+               returned as part of before and after key.
+  returned: when diff is enabled
+  type: dict
+"""
 EXAMPLES = r"""
 
-# Update an exisitng fact, dot or bracket notation
+# Update an exisitng fact, dot or bracket notation, run with --diff
 - name: Set a fact
   set_fact:
     a:

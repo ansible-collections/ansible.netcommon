@@ -21,8 +21,10 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 import ast
+import copy
 import json
 import re
+import yaml
 from ansible.plugins.action import ActionBase
 from ansible.errors import AnsibleActionFail
 
@@ -31,7 +33,7 @@ from ansible.module_utils.common._collections_compat import (
     MutableSequence,
 )
 from ansible.module_utils import basic
-from ansible.module_utils._text import to_bytes, to_native
+from ansible.module_utils._text import to_bytes, to_native, to_text
 from jinja2 import Template, TemplateSyntaxError
 from ansible_collections.ansible.netcommon.plugins.modules.update_fact import (
     DOCUMENTATION,
@@ -51,6 +53,7 @@ class ActionModule(ActionBase):
         self._supports_async = True
         self._updates = None
         self._result = None
+        self._diff_dict = {"before": {}, "after": {}}
 
     @staticmethod
     def _generate_argspec():
@@ -99,6 +102,34 @@ class ActionModule(ActionBase):
                 errors.append(error)
         if errors:
             raise AnsibleActionFail(" ".join(errors))
+
+    @staticmethod
+    def _to_dotted(obj):
+        """ Flatten an object into a dot, bracket path
+
+        :param obj: The obj to flatten
+        :type obj: A list or dict
+        :return: A dict of path, value
+        :rtype: dict
+        """
+        out = {}
+
+        def flatten(data, name=""):
+            if isinstance(data, (MutableMapping)):
+                for key, val in data.items():
+                    if name:
+                        nname = "{}.{}".format(name, key)
+                    else:
+                        nname = key
+                    flatten(val, nname)
+            elif isinstance(data, MutableSequence):
+                for idx, val in enumerate(data):
+                    flatten(val, "{}[{}]".format(name, idx))
+            else:
+                out[name] = data
+
+        flatten(obj)
+        return out
 
     @staticmethod
     def _field_split(path):
@@ -196,22 +227,28 @@ class ActionModule(ActionBase):
     def run(self, tmp=None, task_vars=None):
         """ action entry point
         """
-        self._task.diff = False
+        self._task.diff = True
         self._result = super(ActionModule, self).run(tmp, task_vars)
         self._result["changed"] = False
         self._check_argspec()
+        self._diff = task_vars["ansible_diff_mode"]
         results = set()
         self._ensure_valid_jinja()
         for entry in self._task.args["updates"]:
             parts = self._field_split(entry["path"])
             obj, path = parts[0], parts[1:]
-            results.add(obj)
             if obj not in task_vars["vars"]:
                 msg = "'{obj}' was not found in the current facts.".format(
                     obj=obj
                 )
                 raise AnsibleActionFail(msg)
+
             retrieved = task_vars["vars"].get(obj)
+            if self._diff and obj not in results:
+                self._diff_dict["before"].update(
+                    self._to_dotted({obj: retrieved})
+                )
+            results.add(obj)
             if path:
                 self.set_value(retrieved, path, entry["value"])
             else:
@@ -222,4 +259,16 @@ class ActionModule(ActionBase):
         for key in results:
             value = task_vars["vars"].get(key)
             self._result[key] = value
+            if self._diff:
+                self._diff_dict["after"].update(self._to_dotted({key: value}))
+
+        if self._diff:
+            self._result["diff"] = {
+                "before": yaml.dump(
+                    json.loads(json.dumps(self._diff_dict["before"]))
+                ),
+                "after": yaml.dump(
+                    json.loads(json.dumps(self._diff_dict["after"]))
+                ),
+            }
         return self._result
