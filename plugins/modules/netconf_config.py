@@ -316,9 +316,9 @@ def get_filter_type(filter):
 def validate_config(module, config, format="xml"):
     if format == "xml":
         root = fromstring(config)
-        if root.tag != "config":
+        if not root.tag.endswith("config"):
             module.fail_json(
-                msg="content value should have xml string with <config> tag as root"
+                msg="content value should have XML string with config tag as the root node"
             )
 
 
