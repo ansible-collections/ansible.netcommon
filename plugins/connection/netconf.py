@@ -243,7 +243,7 @@ class Connection(NetworkConnectionBase):
                 "obj": self.netconf,
             }
             self.queue_message(
-                "display",
+                "vvvv",
                 "unable to load netconf plugin for network_os %s, falling back to default plugin"
                 % self._network_os,
             )
