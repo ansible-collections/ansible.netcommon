@@ -60,7 +60,7 @@
 - assert:
     that:
       - result.failed == true
-      - "'content value should have xml string with <config> tag as root' in result.msg"
+      - "'content value should have XML string with config tag as the root node' in result.msg"
 
 - name: test backup
   register: result
