@@ -191,9 +191,24 @@ EXAMPLES = """
 """
 
 RETURN = """
+diff:
+  description: The diff generated on the device when the commands were applied
+  returned: When I(supports_onbox_diff=True) in the platform's cliconf plugin
+  type: str
+  sample: |-
+    --- system:/running-config
+    +++ session:/ansible_1599745461-session-config
+    @@ -4,7 +4,7 @@
+     !
+     transceiver qsfp default-mode 4x10G
+     !
+    -hostname veos
+    +hostname veos3
+     !
+     spanning-tree mode mstp
 commands:
   description: The set of commands that will be pushed to the remote device
-  returned: always
+  returned: When I(supports_generated_diff=True) and I(supports_onbox_diff=False) in the platform's cliconf plugin
   type: list
   sample: ['interface Loopback999', 'no shutdown']
 backup_path:
@@ -284,7 +299,7 @@ def run(
             )
         if diff_match:
             module.warn(
-                "diff_mattch is ignored as the device supports onbox diff"
+                "diff_match is ignored as the device supports onbox diff"
             )
         if diff_ignore_lines:
             module.warn(
@@ -304,6 +319,7 @@ def run(
 
         if "diff" in resp:
             result["changed"] = True
+            result["diff"] = resp["diff"]
 
     elif device_operations.get("supports_generate_diff"):
         kwargs = {"candidate": candidate, "running": running}
