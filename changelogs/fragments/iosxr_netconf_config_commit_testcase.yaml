@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - Confirmed commit fails with TypeError in IOS XR netconf plugin
+    (https://github.com/ansible-collections/cisco.iosxr/issues/74)
