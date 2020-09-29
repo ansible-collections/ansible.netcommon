@@ -201,7 +201,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.n
 from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
     validate_and_normailize_data,
     xml_to_dict,
-    dict_to_xml
+    dict_to_xml,
 )
 from ansible.module_utils._text import to_text
 
@@ -246,7 +246,10 @@ def main():
     elif filter_type is None:
         filter_type = "subtree"
     else:
-        module.fail_json(msg="Invalid filter type detected %s for filter value %s" % (filter_type, filter))
+        module.fail_json(
+            msg="Invalid filter type detected %s for filter value %s"
+            % (filter_type, filter)
+        )
 
     lock = module.params["lock"]
     display = module.params["display"]

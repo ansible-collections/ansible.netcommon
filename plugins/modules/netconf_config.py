@@ -294,7 +294,7 @@ from ansible.module_utils.connection import Connection, ConnectionError
 from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
     validate_and_normailize_data,
     xml_to_dict,
-    dict_to_xml
+    dict_to_xml,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
     get_capabilities,
@@ -453,7 +453,10 @@ def main():
     elif filter_type is None:
         filter_type = "subtree"
     else:
-        module.fail_json(msg="Invalid filter type detected %s for get_filter value %s" % (filter_type, filter))
+        module.fail_json(
+            msg="Invalid filter type detected %s for get_filter value %s"
+            % (filter_type, filter)
+        )
 
     conn = Connection(module._socket_path)
     capabilities = get_capabilities(module)
@@ -577,7 +580,9 @@ def main():
 
             if format != "text":
                 # check for format of type json/xml/xpath
-                config_obj, config_format = validate_and_normailize_data(config, format)
+                config_obj, config_format = validate_and_normailize_data(
+                    config, format
+                )
                 if config_format == "json":
                     config = dict_to_xml(config_obj)
                     format = "xml"
