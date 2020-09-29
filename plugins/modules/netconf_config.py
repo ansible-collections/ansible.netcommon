@@ -27,9 +27,12 @@ options:
   content:
     description:
     - The configuration data as defined by the device's data models, the value can
-      be either in xml string format or text format. The format of the configuration
-      should be supported by remote Netconf server. If the value of C(content) option
-      is in I(xml) format in that case the xml value should have I(config) as root tag.
+      be either in xml string format or text format or json string format.
+    - In case of json string format it will be converted to the corresponding xml string using
+      xmltodict library before pushing onto the remote host.
+    - In case of I(text) format of the configuration should be supported by remote Netconf server.
+    - If the value of C(content) option is in I(xml) format in that case the xml value should
+      have I(config) as root tag.
     type: str
     aliases:
     - xml
@@ -56,13 +59,18 @@ options:
   format:
     description:
     - The format of the configuration provided as value of C(content). Accepted values
-      are I(xml) and I(text) and the given configuration format should be supported
-      by remote Netconf server.
+      are I(xml), I(text) and I(json).
+    - In case of json string format it will be converted to the corresponding xml string using
+      xmltodict library before pushing onto the remote host.
+    - In case of I(text) format of the configuration should be supported by remote Netconf server.
+    - If the value of C(format) options is not given it tries to guess the data format of
+      C(content) option as one of I(xml) or I(json) or I(xpath).
+    - If the data format is not identified it is set to I(xml) by default.
     type: str
-    default: xml
     choices:
     - xml
     - text
+    - json
   lock:
     description:
     - Instructs the module to explicitly lock the datastore specified as C(target).
@@ -283,6 +291,11 @@ diff:
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule, env_fallback
 from ansible.module_utils.connection import Connection, ConnectionError
+from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
+    validate_and_normailize_data,
+    xml_to_dict,
+    dict_to_xml
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
     get_capabilities,
     get_config,
@@ -300,17 +313,6 @@ except ImportError:
         from xml.parsers.expat import ExpatError as XMLSyntaxError
     else:
         from xml.etree.ElementTree import ParseError as XMLSyntaxError
-
-
-def get_filter_type(filter):
-    if not filter:
-        return None
-    else:
-        try:
-            fromstring(filter)
-            return "subtree"
-        except XMLSyntaxError:
-            return "xpath"
 
 
 def validate_config(module, config, format="xml"):
@@ -334,7 +336,7 @@ def main():
             aliases=["datastore"],
         ),
         source_datastore=dict(aliases=["source"]),
-        format=dict(choices=["xml", "text"], default="xml"),
+        format=dict(choices=["xml", "text", "json"]),
         lock=dict(
             choices=["never", "always", "if-supported"], default="always"
         ),
@@ -439,7 +441,19 @@ def main():
     save = module.params["save"]
     filter = module.params["get_filter"]
     format = module.params["format"]
-    filter_type = get_filter_type(filter)
+
+    filter_data, filter_type = validate_and_normailize_data(filter)
+    if filter_type == "xml":
+        filter_type = "subtree"
+    elif filter_type == "json":
+        filter = dict_to_xml(filter_data)
+        filter_type = "subtree"
+    elif filter_type == "xpath":
+        pass
+    elif filter_type is None:
+        filter_type = "subtree"
+    else:
+        module.fail_json(msg="Invalid filter type detected %s for get_filter value %s" % (filter_type, filter))
 
     conn = Connection(module._socket_path)
     capabilities = get_capabilities(module)
@@ -561,7 +575,17 @@ def main():
                     errors="surrogate_then_replace",
                 ).strip()
 
+            if format != "text":
+                # check for format of type json/xml/xpath
+                config_obj, config_format = validate_and_normailize_data(config, format)
+                if config_format == "json":
+                    config = dict_to_xml(config_obj)
+                    format = "xml"
+                elif config_format is None:
+                    format = "xml"
+
             validate_config(module, config, format)
+
             kwargs = {
                 "config": config,
                 "target": target,

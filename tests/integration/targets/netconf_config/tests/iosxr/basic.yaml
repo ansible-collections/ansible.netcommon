@@ -1,6 +1,16 @@
 ---
 - debug: msg="START netconf_config iosxr/basic.yaml on connection={{ ansible_connection }}"
 
+- name: setup
+  connection: ansible.netcommon.network_cli
+  cisco.iosxr.iosxr_config:
+    commands:
+      - no description
+      - shutdown
+    parents:
+      - interface Loopback999
+    match: none
+
 - name: save config test
   register: result
   connection: ansible.netcommon.netconf
@@ -31,6 +41,46 @@
 - assert:
     that:
       - "'failed' not in result"
+
+- name: "configure using JSON format configuration"
+  ansible.netcommon.netconf_config:
+    content: |
+            {
+                "config": {
+                    "interface-configurations": {
+                        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                        "interface-configuration": {
+                            "active": "act",
+                            "description": "test for ansible Loopback999",
+                            "interface-name": "Loopback999",
+                        }
+                    }
+                }
+            }
+    get_filter: |
+              {
+                  "interface-configurations": {
+                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                      "interface-configuration": null
+                  }
+              }
+  register: result
+  diff: true
+
+- assert:
+    that:
+    - result.changed == true
+    - "'<description>test for ansible Loopback999</description>' in result.diff.after"
+
+- name: setup - teardown
+  connection: ansible.netcommon.network_cli
+  cisco.iosxr.iosxr_config:
+    commands:
+      - no description
+      - shutdown
+    parents:
+      - interface Loopback999
+    match: none
 
 - debug: msg="END netconf_config iosxr/basic.yaml on connection={{ ansible_connection
     }}"
