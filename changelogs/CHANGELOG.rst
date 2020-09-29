@@ -5,6 +5,23 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v1.3.0
+======
+
+Minor Changes
+-------------
+
+- Confirmed commit fails with TypeError in IOS XR netconf plugin (https://github.com/ansible-collections/cisco.iosxr/issues/74)
+- The netconf_config module now allows root tag with namespace prefix.
+- cli_config: Add new return value diff which is returned when the cliconf plugin supports onbox diff
+- cli_config: Clarify when commands is returned when the module is run
+
+Bugfixes
+--------
+
+- cli_parse - Ensure only native types are returned to the control node from the parser.
+- netconf - Changed log level for message of using default netconf plugin to match the level used when a platform-specific netconf plugin is found
+
 v1.2.1
 ======
 

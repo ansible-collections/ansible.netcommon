@@ -1,3 +1,0 @@
----
-bugfixes:
-  - cli_parse - Ensure only native types are returned to the control node from the parser.

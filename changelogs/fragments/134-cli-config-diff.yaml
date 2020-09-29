@@ -1,4 +1,0 @@
----
-minor_changes:
-  - "cli_config: Clarify when commands is returned when the module is run"
-  - "cli_config: Add new return value diff which is returned when the cliconf plugin supports onbox diff"
