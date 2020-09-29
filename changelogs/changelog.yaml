@@ -200,3 +200,23 @@ releases:
     fragments:
     - netconf-capabilites-fix.yaml
     release_date: '2020-09-04'
+  1.2.2:
+    changes:
+      bugfixes:
+      - cli_parse - Ensure only native types are returned to the control node from
+        the parser.
+      - netconf - Changed log level for message of using default netconf plugin to
+        match the level used when a platform-specific netconf plugin is found
+      minor_changes:
+      - Confirmed commit fails with TypeError in IOS XR netconf plugin (https://github.com/ansible-collections/cisco.iosxr/issues/74)
+      - The netconf_config module now allows root tag with namespace prefix.
+      - 'cli_config: Add new return value diff which is returned when the cliconf
+        plugin supports onbox diff'
+      - 'cli_config: Clarify when commands is returned when the module is run'
+    fragments:
+    - 134-cli-config-diff.yaml
+    - allow_root_tag_with_prefix.yaml
+    - cli_parse_fix.yaml
+    - iosxr_netconf_config_commit_testcase.yaml
+    - netconf-default.yaml
+    release_date: '2020-09-29'

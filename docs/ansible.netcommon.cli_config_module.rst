@@ -369,12 +369,38 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                       <span style="color: purple">list</span>
                     </div>
                 </td>
-                <td>always</td>
+                <td>When <em>supports_generated_diff=True</em> and <em>supports_onbox_diff=False</em> in the platform&#x27;s cliconf plugin</td>
                 <td>
                             <div>The set of commands that will be pushed to the remote device</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;interface Loopback999&#x27;, &#x27;no shutdown&#x27;]</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>diff</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>When <em>supports_onbox_diff=True</em> in the platform&#x27;s cliconf plugin</td>
+                <td>
+                            <div>The diff generated on the device when the commands were applied</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">--- system:/running-config
+    +++ session:/ansible_1599745461-session-config
+    @@ -4,7 +4,7 @@
+     !
+     transceiver qsfp default-mode 4x10G
+     !
+    -hostname veos
+    +hostname veos3
+     !
+     spanning-tree mode mstp</div>
                 </td>
             </tr>
     </table>

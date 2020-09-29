@@ -1,3 +1,0 @@
----
-bugfixes:
-  - netconf - Changed log level for message of using default netconf plugin to match the level used when a platform-specific netconf plugin is found
