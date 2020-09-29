@@ -293,7 +293,6 @@ from ansible.module_utils.basic import AnsibleModule, env_fallback
 from ansible.module_utils.connection import Connection, ConnectionError
 from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
     validate_and_normailize_data,
-    xml_to_dict,
     dict_to_xml,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
@@ -302,17 +301,10 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.
     sanitize_xml,
 )
 
-import sys
-
 try:
-    from lxml.etree import tostring, fromstring, XMLSyntaxError
+    from lxml.etree import tostring, fromstring
 except ImportError:
     from xml.etree.ElementTree import tostring, fromstring
-
-    if sys.version_info < (2, 7):
-        from xml.parsers.expat import ExpatError as XMLSyntaxError
-    else:
-        from xml.etree.ElementTree import ParseError as XMLSyntaxError
 
 
 def validate_config(module, config, format="xml"):

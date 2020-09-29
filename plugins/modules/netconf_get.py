@@ -177,17 +177,10 @@ output:
         - Contains formatted response received from remote host as per the value in display format.
       type: str
 """
-import sys
-
 try:
-    from lxml.etree import tostring, fromstring, XMLSyntaxError
+    from lxml.etree import tostring
 except ImportError:
-    from xml.etree.ElementTree import tostring, fromstring
-
-    if sys.version_info < (2, 7):
-        from xml.parsers.expat import ExpatError as XMLSyntaxError
-    else:
-        from xml.etree.ElementTree import ParseError as XMLSyntaxError
+    from xml.etree.ElementTree import tostring
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (

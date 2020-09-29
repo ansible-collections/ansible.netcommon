@@ -69,8 +69,8 @@
 
 - assert:
     that:
-    - result.changed == true
-    - "'<description>test for ansible Loopback999</description>' in result.diff.after"
+      - result.changed == true
+      - "'<description>test for ansible Loopback999</description>' in result.diff.after"
 
 - name: setup - teardown
   connection: ansible.netcommon.network_cli

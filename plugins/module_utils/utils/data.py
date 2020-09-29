@@ -19,12 +19,12 @@ from ansible.module_utils._text import to_native
 
 try:
     HAS_LXML = True
-    from lxml.etree import tostring, fromstring, XMLSyntaxError
+    from lxml.etree import fromstring, XMLSyntaxError
     from lxml import etree
 
 except ImportError:
     HAS_LXML = False
-    from xml.etree.ElementTree import tostring, fromstring
+    from xml.etree.ElementTree import fromstring
 
     if sys.version_info < (2, 7):
         from xml.parsers.expat import ExpatError as XMLSyntaxError
