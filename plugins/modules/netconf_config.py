@@ -205,9 +205,10 @@ options:
       and after state of the device following calls to edit_config. When not specified,
       the entire configuration or state data is returned for comparison depending
       on the value of C(source) option. The C(get_filter) value can be either XML
-      string or XPath, if the filter is in XPath format the NETCONF server running
-      on remote host should support xpath capability else it will result in an error.
-    type: str
+      string or XPath or JSON string or native python dictionary, if the filter is
+      in XPath format the NETCONF server running on remote host should support xpath
+      capability else it will result in an error.
+    type: raw
 requirements:
 - ncclient
 notes:
@@ -265,6 +266,50 @@ EXAMPLES = """
     backup_options:
       filename: backup.cfg
       dir_path: /home/user
+
+- name: "configure using direct native format configuration (cisco iosxr)"
+  ansible.netcommon.netconf_config:
+    content: {
+                "config": {
+                    "interface-configurations": {
+                        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                        "interface-configuration": {
+                            "active": "act",
+                            "description": "test for ansible Loopback999",
+                            "interface-name": "Loopback999"
+                        }
+                    }
+                }
+            }
+    get_filter: {
+                  "interface-configurations": {
+                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                      "interface-configuration": null
+                  }
+              }
+
+- name: "configure using json string format configuration (cisco iosxr)"
+  ansible.netcommon.netconf_config:
+    content: |
+            {
+                "config": {
+                    "interface-configurations": {
+                        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                        "interface-configuration": {
+                            "active": "act",
+                            "description": "test for ansible Loopback999",
+                            "interface-name": "Loopback999"
+                        }
+                    }
+                }
+            }
+    get_filter: |
+            {
+                  "interface-configurations": {
+                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                      "interface-configuration": null
+                  }
+              }
 """
 
 RETURN = """
@@ -321,7 +366,7 @@ def main():
     """
     backup_spec = dict(filename=dict(), dir_path=dict(type="path"))
     argument_spec = dict(
-        content=dict(aliases=["xml"]),
+        content=dict(aliases=["xml"], type="raw"),
         target=dict(
             choices=["auto", "candidate", "running"],
             default="auto",
@@ -349,7 +394,7 @@ def main():
         delete=dict(type="bool", default=False),
         commit=dict(type="bool", default=True),
         validate=dict(type="bool", default=False),
-        get_filter=dict(),
+        get_filter=dict(type="raw"),
     )
 
     # deprecated options

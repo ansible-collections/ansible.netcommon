@@ -173,6 +173,44 @@
       - "{{ result['output']['data']['@xmlns:nc'] == 'urn:ietf:params:xml:ns:netconf:base:1.0' }}"
       - "{{ result['output']['data']['interface-configurations']['interface-configuration'] is defined }}"
 
+- name: Define the interface filter
+  set_fact:
+    filter:
+      interface-configurations:
+        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"
+        interface-configuration: null
+
+- name: "get configuration with native filter type using set_facts"
+  ansible.netcommon.netconf_get:
+    filter: "{{ filter }}"
+    display: native
+  register: result
+
+- assert:
+    that:
+      - "{{ result['output']['data'] is defined}}"
+      - "{{ result['output']['data']['@xmlns'] == 'urn:ietf:params:xml:ns:netconf:base:1.0' }}"
+      - "{{ result['output']['data']['@xmlns:nc'] == 'urn:ietf:params:xml:ns:netconf:base:1.0' }}"
+      - "{{ result['output']['data']['interface-configurations']['interface-configuration'] is defined }}"
+
+- name: "get configuration with direct native filter type"
+  ansible.netcommon.netconf_get:
+    filter: {
+      "interface-configurations": {
+        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+        "interface-configuration": null
+      }
+    }
+    display: native
+  register: result
+
+- assert:
+    that:
+      - "{{ result['output']['data'] is defined}}"
+      - "{{ result['output']['data']['@xmlns'] == 'urn:ietf:params:xml:ns:netconf:base:1.0' }}"
+      - "{{ result['output']['data']['@xmlns:nc'] == 'urn:ietf:params:xml:ns:netconf:base:1.0' }}"
+      - "{{ result['output']['data']['interface-configurations']['interface-configuration'] is defined }}"
+
 - name: setup - teardown
   connection: ansible.netcommon.network_cli
   cisco.iosxr.iosxr_config:

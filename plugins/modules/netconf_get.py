@@ -41,11 +41,11 @@ options:
       portions of the data to be are retrieved from the remote device. If this option
       is not specified entire configuration or state data is returned in result depending
       on the value of C(source) option. The C(filter) value can be either XML string
-      or XPath or JSON string, if the filter is in XPath format the NETCONF server running
-     on remote host should support xpath capability else it will result in an error.
-     If the filter is in JSON format the xmltodict library should be installed on the
-     control node for JSON to XML conversion.
-    type: str
+      or XPath or JSON string or native python dictionary, if the filter is in XPath
+      format the NETCONF server running on remote host should support xpath capability
+      else it will result in an error. If the filter is in JSON format the xmltodict library
+      should be installed on the control node for JSON to XML conversion.
+    type: raw
   display:
     description:
     - Encoding scheme to use when serializing output from the device. The option I(json)
@@ -134,7 +134,7 @@ EXAMPLES = """
   ansible.netcommon.netconf_get:
     filter: <state xmlns="urn:nokia.com:sros:ns:yang:sr:state"/>
 
-- name: "get configuration with json filter and native output (using xmltodict)"
+- name: "get configuration with json filter string and native output (using xmltodict)"
   netconf_get:
     filter: |
               {
@@ -144,6 +144,30 @@ EXAMPLES = """
                   }
               }
     display: native
+
+- name: Define the Cisco IOSXR interface filter
+  set_fact:
+    filter:
+      interface-configurations:
+        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"
+        interface-configuration: null
+
+- name: "get configuration with native filter type using set_facts"
+  ansible.netcommon.netconf_get:
+    filter: "{{ filter }}"
+    display: native
+  register: result
+
+- name: "get configuration with direct native filter type"
+  ansible.netcommon.netconf_get:
+    filter: {
+            "interface-configurations": {
+            "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+            "interface-configuration": null
+      }
+    }
+    display: native
+  register: result
 """
 
 RETURN = """
@@ -211,7 +235,7 @@ def main():
     """
     argument_spec = dict(
         source=dict(choices=["running", "candidate", "startup"]),
-        filter=dict(),
+        filter=dict(type="raw"),
         display=dict(choices=["json", "pretty", "xml", "native"]),
         lock=dict(
             default="never", choices=["never", "always", "if-supported"]

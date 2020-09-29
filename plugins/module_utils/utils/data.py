@@ -154,7 +154,7 @@ def validate_and_normailize_data(data, fmt=None):
             )
 
         try:
-            result = json.loads(data)
+            result = json.loads(json.dumps(data))
             return result, "json"
         except (TypeError, json.decoder.JSONDecodeError) as exc:
             raise AnsibleModuleError(
