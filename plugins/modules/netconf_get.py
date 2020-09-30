@@ -187,13 +187,11 @@ output:
                transformed XML to JSON format from the RPC response with type dict
                or pretty XML string response (human-readable) or response with
                namespace removed from XML string.
-  returned:
-  - If the display format is selected as I(json) it is returned as dict type and the conversion
-    is done using jxmlease python library.
-  - If the display format is selected as I(native) it is returned as dict type and the conversion
-    is done using xmltodict python library.
-  - If the display format is xml or pretty it is returned as a string apart from low-level
-    errors (such as action plugin).
+  returned: If the display format is selected as I(json) it is returned as dict type
+            and the conversion is done using jxmlease python library. If the display
+            format is selected as I(native) it is returned as dict type and the conversion
+            is done using xmltodict python library. If the display format is xml or pretty
+            it is returned as a string apart from low-level errors (such as action plugin).
   type: complex
   contains:
     formatted_output:

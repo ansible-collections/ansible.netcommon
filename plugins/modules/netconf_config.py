@@ -33,7 +33,7 @@ options:
     - In case of I(text) format of the configuration should be supported by remote Netconf server.
     - If the value of C(content) option is in I(xml) format in that case the xml value should
       have I(config) as root tag.
-    type: str
+    type: raw
     aliases:
     - xml
   target:
