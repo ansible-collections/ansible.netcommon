@@ -59,6 +59,7 @@ author:
 - Bradley Thornton (@cidrblock)
 """
 
+<<<<<<< HEAD
 RETURN = """
 object:
     description: Each modified object is returned
@@ -71,6 +72,26 @@ diff:
 EXAMPLES = r"""
 
 # Update an exisitng fact, dot or bracket notation, run with --diff
+=======
+<<<<<<< HEAD
+EXAMPLES = r"""
+
+# Update an exisitng fact, dot or bracket notation
+=======
+RETURN = """
+object:
+    description: Each modified object is returned
+diff:
+  description: If --diff option in enabled while running, the changes are
+               returned as part of before and after key.
+  returned: when diff is enabled
+  type: dict
+"""
+EXAMPLES = r"""
+
+# Update an exisitng fact, dot or bracket notation, run with --diff
+>>>>>>> 2f130c3d3342f29e8d38d99797688918f7ca819f
+>>>>>>> 4478041569944853703feee981ea02c4c166bad5
 - name: Set a fact
   set_fact:
     a:
