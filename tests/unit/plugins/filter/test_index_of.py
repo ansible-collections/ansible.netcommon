@@ -31,7 +31,7 @@ class TestIndexOfFilter(unittest.TestCase):
         with self.assertRaises(Exception) as exc:
             index_of(obj, test, value)
         self.assertIn("no test named '@@'", str(exc.exception))
-        obj, test, value, key, _answer = [{"a": 1}], "@@", 1, "a", 0
+        obj, test, value, key = [{"a": 1}], "@@", 1, "a"
         with self.assertRaises(Exception) as exc:
             index_of(obj, test, value, key)
         self.assertIn("no test named '@@'", str(exc.exception))
@@ -45,7 +45,7 @@ class TestIndexOfFilter(unittest.TestCase):
         )
 
     def test_fail_wantlist_not_a_bool(self):
-        obj, test, value, _answer = [1, 2], "==", 1, 0
+        obj, test, value = [1, 2], "==", 1
         with self.assertRaises(Exception) as exc:
             index_of(obj, test, value, wantlist=42)
         self.assertIn(
