@@ -16,9 +16,9 @@ DOCUMENTATION = """
     lookup: index_of
     author: Bradley Thornton (@cidrblock)
     version_added: "1.4"
-    short_description: Find the indicies of items in a list of items
+    short_description: Find the indicies of items in a list matching some criteria
     description:
-        - This lookup returns a list of indicies of items matching some criteria in a list of items.
+        - This lookup returns a list of indicies of items matching some criteria in a list.
         - C(index_of) is also available as a C(filter_plugin) for convenience
     options:
       _terms:
@@ -61,6 +61,9 @@ DOCUMENTATION = """
 """
 
 EXAMPLES = r"""
+
+#### Simple examples using a list of values
+
 - set_fact:
     data:
     - 1
@@ -93,6 +96,58 @@ EXAMPLES = r"""
 #     - 1
 #     as_query:
 #     - 1
+
+- name: Find the index of 3 using the long format
+  set_fact:
+    as_query: "{{ query('ansible.netcommon.index_of', data=data, test='eq', value=value) }}"
+    as_lookup: "{{ lookup('ansible.netcommon.index_of', data=data, test='eq',value =value, wantlist=True) }}"
+    as_filter: "{{ data|ansible.netcommon.index_of(test='eq', value=value, wantlist=True) }}"
+  vars:
+    value: 3
+
+# TASK [Find the index of 3 using the long format] ***************************
+# ok: [sw01] => changed=false
+#   ansible_facts:
+#     as_filter:
+#     - 2
+#     as_lookup:
+#     - 2
+#     as_query:
+#     - 2
+
+- name: Find numbers greater than 1, using loop
+  debug:
+    msg: "{{ data[item] }} is {{ test }} than {{ value }}"
+  loop: "{{ data|ansible.netcommon.index_of(test, value) }}"
+  vars:
+    test: '>'
+    value: 1
+
+# TASK [Find numbers great than 1, using loop] *******************************
+# ok: [sw01] => (item=1) =>
+#   msg: 2 is > than 1
+# ok: [sw01] => (item=2) =>
+#   msg: 3 is > than 1
+
+- name: Find numbers greater than 1, using with
+  debug:
+    msg: "{{ data[item] }} is {{ params.test }} than {{ params.value }}"
+  with_ansible.netcommon.index_of: "{{ params }}"
+  vars:
+    params:
+      data: "{{ data }}"
+      test: '>'
+      value: 1
+
+# TASK [Find numbers greater than 1, using with] *****************************
+# ok: [sw01] => (item=1) =>
+#   msg: 2 is > than 1
+# ok: [sw01] => (item=2) =>
+#   msg: 3 is > than 1
+
+
+
+#### Working with lists of dictionaries
 
 - set_fact:
     data:
@@ -150,6 +205,10 @@ EXAMPLES = r"""
 # ok: [sw01] => (item=3) =>
 #   msg: The device named fw02.example.corp is a firewall
 
+
+
+#### Working with data from resource modules
+
 - name: Retrieve the current L3 interface configuration
   cisco.nxos.nxos_l3_interfaces:
     state: gathered
@@ -197,6 +256,10 @@ EXAMPLES = r"""
 # TASK [debug] ***************************************************************
 # ok: [sw01] => (item=[{'interface_idx': '128', 'address_idx': [0]}, 0]) =>
 #   msg: mgmt0 has ip 192.168.101.14/24
+
+
+
+#### Working with complex structures
 
 - set_fact:
     data:

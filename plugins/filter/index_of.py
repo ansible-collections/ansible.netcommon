@@ -16,10 +16,16 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.i
 )
 
 
+def _index_of(*args, **kwargs):
+    """ Find items in a list. L(See examples, https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.httpapi_connection.rst)
+    """
+    return index_of(*args, **kwargs)
+
+
 class FilterModule(object):
     """ index_of  """
 
     def filters(self):
         """ a mapping of filter names to functions
         """
-        return {"index_of": index_of}
+        return {"index_of": _index_of}
