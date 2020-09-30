@@ -1,3 +1,0 @@
----
-minor_changes:
-  - New update_fact action, module for updating previously defined variables.
