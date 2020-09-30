@@ -27,7 +27,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.i
 
 class TestIndexOfFilter(unittest.TestCase):
     def test_fail_no_qualfier(self):
-        obj, test, value, _answer = [1, 2], "@@", 1, 0
+        obj, test, value = [1, 2], "@@", 1
         with self.assertRaises(Exception) as exc:
             index_of(obj, test, value)
         self.assertIn("no test named '@@'", str(exc.exception))
