@@ -37,7 +37,7 @@ class TestIndexOfFilter(unittest.TestCase):
         self.assertIn("no test named '@@'", str(exc.exception))
 
     def test_fail_not_a_list(self):
-        obj, test, value, _answer = True, "==", 1, 0
+        obj, test, value = True, "==", 1
         with self.assertRaises(Exception) as exc:
             index_of(obj, test, value)
         self.assertIn(
