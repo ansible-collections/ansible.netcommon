@@ -6,12 +6,20 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import copy
+<<<<<<< HEAD
 from jinja2 import Template, TemplateSyntaxError
+=======
+from jinja2 import Template, UndefinedError, TemplateSyntaxError
+>>>>>>> 11868aa... Add update_fact
 from ansible.playbook.task import Task
 from ansible.template import Templar
 from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
 from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
     MagicMock,
+<<<<<<< HEAD
+=======
+    patch,
+>>>>>>> 11868aa... Add update_fact
 )
 from ansible_collections.ansible.netcommon.tests.unit.mock.loader import (
     DictDataLoader,
@@ -24,7 +32,11 @@ VALID_DATA = {
     "a": {
         "b": {"4.4": [{"1": {5: {"foo": 123}}}], 5.5: "float5.5"},
         "127.0.0.1": "localhost",
+<<<<<<< HEAD
     }
+=======
+    },
+>>>>>>> 11868aa... Add update_fact
 }
 
 VALID_TESTS = [
