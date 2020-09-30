@@ -53,12 +53,6 @@ class TestIndexOfFilter(unittest.TestCase):
             str(exc.exception),
         )
 
-    # def test_fail_too_many_args(self):
-    #     obj, test, value, _answer = [1, 2], "==", 1, 0
-    #     with self.assertRaises(Exception) as exc:
-    #         index_of(obj, test, value, 42, 42, 42)
-    #     self.assertIn("only 1-3 parameters", str(exc.exception))
-
     def test_fail_mixed_list(self):
         obj, test, value, key = [{"a": "b"}, True, 1, "a"], "==", "b", "a"
         with self.assertRaises(Exception) as exc:
