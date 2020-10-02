@@ -100,7 +100,7 @@ def _run_test(entry, test, right):
             test = test[1:]
             if test == "=":
                 test = "=="
-        elif test.startswith('not '):
+        elif test.startswith("not "):
             kind = "reject"
             test = test[4:]
         else:
