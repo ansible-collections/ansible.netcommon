@@ -41,7 +41,7 @@ ansible.netcommon.cidr_merge|ansible.netcommon cidr_merge filter plugin
 ansible.netcommon.comp_type5|ansible.netcommon comp_type5 filter plugin
 ansible.netcommon.hash_salt|ansible.netcommon hash_salt filter plugin
 ansible.netcommon.hwaddr|Check if string is a HW/MAC address and filter it
-ansible.netcommon.index_of|Find items in a list. L(See examples, https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.httpapi_connection.rst)
+ansible.netcommon.index_of|Find items in a list. [See examples](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.index_of_lookup.rst)
 ansible.netcommon.ip4_hex|Convert an IPv4 address to Hexadecimal notation
 ansible.netcommon.ipaddr|Check if string is an IP address or network and filter it
 ansible.netcommon.ipmath|ansible.netcommon ipmath filter plugin

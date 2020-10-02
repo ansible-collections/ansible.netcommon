@@ -17,7 +17,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.i
 
 
 def _index_of(*args, **kwargs):
-    """ Find items in a list. L(See examples, https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.httpapi_connection.rst)
+    """ Find items in a list. [See examples](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.index_of_lookup.rst)
     """
     return index_of(*args, **kwargs)
 
