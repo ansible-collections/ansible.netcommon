@@ -68,7 +68,7 @@ Parameters
                     <td>
                     </td>
                 <td>
-                        <div>The list of items to enumerate and test against</div>
+                        <div>A list of items to enumerate and test against</div>
                 </td>
             </tr>
             <tr>
@@ -106,7 +106,7 @@ Parameters
                     <td>
                     </td>
                 <td>
-                        <div>When the data provided is a list of dictionaries, run the test againt this dictionary key When using a <code>key</code>, the list must only contain dictionaries See <code>fail_on_missing</code> below to determine the behaviour when a key is missing from a dictionary in the list</div>
+                        <div>When the data provided is a list of dictionaries, run the test againt this dictionary key When using a <code>key</code>, the <code>data</code> must only contain dictionaries See <code>fail_on_missing</code> below to determine the behaviour when the <code>key</code> is missing from a dictionary in the <code>data</code></div>
                 </td>
             </tr>
             <tr>
@@ -162,7 +162,7 @@ Parameters
                     <td>
                     </td>
                 <td>
-                        <div>When only a single entry in the list is matched, that entries index is returned as an integer If set to True, the return value will always be a list, even if only a single entry is matched This can also be accomplised using query or q instead of lookup <a href='https://docs.ansible.com/ansible/latest/plugins/lookup.html'>https://docs.ansible.com/ansible/latest/plugins/lookup.html</a></div>
+                        <div>When only a single entry in the <code>data</code> is matched, that entries index is returned as an integer If set to <code>True</code>, the return value will always be a list, even if only a single entry is matched This can also be accomplised using <code>query</code> or <code>q</code> instead of <code>lookup</code> <a href='https://docs.ansible.com/ansible/latest/plugins/lookup.html'>https://docs.ansible.com/ansible/latest/plugins/lookup.html</a></div>
                 </td>
             </tr>
     </table>

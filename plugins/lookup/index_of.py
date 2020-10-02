@@ -25,7 +25,7 @@ DOCUMENTATION = """
         description: The values below provided in the order C(test), C(value), C(key).
         required: True
       data:
-        description: The list of items to enumerate and test against
+        description: A list of items to enumerate and test against
         type: list
         required: True
       test:
@@ -44,17 +44,17 @@ DOCUMENTATION = """
       key:
         description: >
             When the data provided is a list of dictionaries, run the test againt this dictionary key
-            When using a C(key), the list must only contain dictionaries
-            See C(fail_on_missing) below to determine the behaviour when a key is missing from a dictionary in the list
+            When using a C(key), the C(data) must only contain dictionaries
+            See C(fail_on_missing) below to determine the behaviour when the C(key) is missing from a dictionary in the C(data)
         type: str
       fail_on_missing:
         description: When provided a list of dictionaries, fail if the key is missing from one or more of the dictionaries
         type: bool
       wantlist:
         description: >
-            When only a single entry in the list is matched, that entries index is returned as an integer
-            If set to True, the return value will always be a list, even if only a single entry is matched
-            This can also be accomplised using query or q instead of lookup
+            When only a single entry in the C(data) is matched, that entries index is returned as an integer
+            If set to C(True), the return value will always be a list, even if only a single entry is matched
+            This can also be accomplised using C(query) or C(q) instead of C(lookup)
             U(https://docs.ansible.com/ansible/latest/plugins/lookup.html)
         type: bool
 
