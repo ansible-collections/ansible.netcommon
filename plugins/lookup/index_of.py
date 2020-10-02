@@ -81,6 +81,17 @@ EXAMPLES = r"""
 #     as_filter: '1'
 #     as_lookup: '1'
 
+- name: Any test can be negated using not or !
+  set_fact:
+    as_lookup: "{{ lookup('ansible.netcommon.index_of', data, 'not in', [1,2]) }}"
+    as_filter: "{{ data|ansible.netcommon.index_of('!in', [1,2]) }}"
+
+# TASK [Any test can be negated using not or !] ******************************
+# ok: [localhost] => changed=false
+#   ansible_facts:
+#     as_filter: '2'
+#     as_lookup: '2'
+
 - name: Find the index of 2, lookup or filter, ensure list is returned
   set_fact:
     as_query: "{{ query('ansible.netcommon.index_of', data, 'eq', 2) }}"
