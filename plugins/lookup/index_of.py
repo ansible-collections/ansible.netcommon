@@ -22,29 +22,30 @@ DOCUMENTATION = """
         - C(index_of) is also available as a C(filter_plugin) for convenience
     options:
       _terms:
-        description: The values below provided left to right, in the order documented
+        description: The values below provided in the order C(test), C(value), C(key).
         required: True
       data:
         description: The list of items to enumerate and test against
+        type: list
         required: True
       test:
         description: >
             The name of the test to run against the list, a valid jinja2 test or ansible test plugin.
             Jinja2 includes the following tests U(http://jinja.palletsprojects.com/templates/#builtin-tests).
-            An overview of test included in ansible U(https://docs.ansible.com/ansible/latest/user_guide/playbooks_tests.html)
+            An overview of tests included in ansible U(https://docs.ansible.com/ansible/latest/user_guide/playbooks_tests.html)
         type: str
         required: True
       value:
         description: >
             The value used to test each list item against
             Not required for simple tests (eg: C(true), C(false), C(even), C(odd))
-            May be a C(string), C(boolean), C(number), C(regular expesion) C(dict) etc, depending on the test used
+            May be a C(string), C(boolean), C(number), C(regular expesion) C(dict) etc, depending on the C(test) used
         type: raw
       key:
         description: >
             When the data provided is a list of dictionaries, run the test againt this dictionary key
-            When using a key, the list must only contain dictionaries
-            See fail_on_missing below to determine the behaviour when a key is missing from a dictionary in the list
+            When using a C(key), the list must only contain dictionaries
+            See C(fail_on_missing) below to determine the behaviour when a key is missing from a dictionary in the list
         type: str
       fail_on_missing:
         description: When provided a list of dictionaries, fail if the key is missing from one or more of the dictionaries

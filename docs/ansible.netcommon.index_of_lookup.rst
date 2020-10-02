@@ -50,7 +50,7 @@ Parameters
                     <td>
                     </td>
                 <td>
-                        <div>The values below provided left to right, in the order documented</div>
+                        <div>The values below provided in the order <code>test</code>, <code>value</code>, <code>key</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -59,7 +59,7 @@ Parameters
                     <b>data</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">list</span>
                          / <span style="color: red">required</span>
                     </div>
                 </td>
@@ -106,7 +106,7 @@ Parameters
                     <td>
                     </td>
                 <td>
-                        <div>When the data provided is a list of dictionaries, run the test againt this dictionary key When using a key, the list must only contain dictionaries See fail_on_missing below to determine the behaviour when a key is missing from a dictionary in the list</div>
+                        <div>When the data provided is a list of dictionaries, run the test againt this dictionary key When using a <code>key</code>, the list must only contain dictionaries See <code>fail_on_missing</code> below to determine the behaviour when a key is missing from a dictionary in the list</div>
                 </td>
             </tr>
             <tr>
@@ -124,7 +124,7 @@ Parameters
                     <td>
                     </td>
                 <td>
-                        <div>The name of the test to run against the list, a valid jinja2 test or ansible test plugin. Jinja2 includes the following tests <a href='http://jinja.palletsprojects.com/templates/#builtin-tests'>http://jinja.palletsprojects.com/templates/#builtin-tests</a>. An overview of test included in ansible <a href='https://docs.ansible.com/ansible/latest/user_guide/playbooks_tests.html'>https://docs.ansible.com/ansible/latest/user_guide/playbooks_tests.html</a></div>
+                        <div>The name of the test to run against the list, a valid jinja2 test or ansible test plugin. Jinja2 includes the following tests <a href='http://jinja.palletsprojects.com/templates/#builtin-tests'>http://jinja.palletsprojects.com/templates/#builtin-tests</a>. An overview of tests included in ansible <a href='https://docs.ansible.com/ansible/latest/user_guide/playbooks_tests.html'>https://docs.ansible.com/ansible/latest/user_guide/playbooks_tests.html</a></div>
                 </td>
             </tr>
             <tr>
@@ -141,7 +141,7 @@ Parameters
                     <td>
                     </td>
                 <td>
-                        <div>The value used to test each list item against Not required for simple tests (eg: <code>true</code>, <code>false</code>, <code>even</code>, <code>odd</code>) May be a <code>string</code>, <code>boolean</code>, <code>number</code>, <code>regular expesion</code> <code>dict</code> etc, depending on the test used</div>
+                        <div>The value used to test each list item against Not required for simple tests (eg: <code>true</code>, <code>false</code>, <code>even</code>, <code>odd</code>) May be a <code>string</code>, <code>boolean</code>, <code>number</code>, <code>regular expesion</code> <code>dict</code> etc, depending on the <code>test</code> used</div>
                 </td>
             </tr>
             <tr>
