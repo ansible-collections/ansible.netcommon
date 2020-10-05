@@ -101,6 +101,29 @@ Name | Description
 [ansible.netcommon.restconf_get](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.restconf_get_module.rst)|Fetch configuration/state data from RESTCONF enabled devices.
 [ansible.netcommon.telnet](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.telnet_module.rst)|Executes a low-down and dirty telnet command
 
+### Test plugins
+Name | Description
+--- | ---
+ansible.netcommon.hostmask|Test if an address is a hostmask<br/>`'0.0.0.255' is ansible.netcommon.hostmask`
+ansible.netcommon.in_any_network|Test if an IP or network is in any network<br/>`'10.1.1.1' is ansible.netcommon.in_any_network ['10.0.0.0/8', '192.168.1.0/24']`
+ansible.netcommon.in_network|Test if an address or network is in a network<br/>`'10.1.1.1' is ansible.netcommon.in_network '10.0.0.0/8'`
+ansible.netcommon.in_one_network|Test if an IP or network is in one network<br/>`'10.1.1.1' is ansible.netcommon.in_one_network ['10.0.0.0/8', '192.168.1.0/24']`
+ansible.netcommon.ip|Test if something in an IP address or network<br/>`'10.1.1.1' is ansible.netcommon.ip`
+ansible.netcommon.ip_address|Test if something in an IP address<br/>`'10.1.1.1' is ansible.netcommon.ip_address`
+ansible.netcommon.ipv4|Test if something in an IPv4 address or network<br/>`'10.0.0.0/8' is ansible.netcommon.ipv4`
+ansible.netcommon.ipv4_address|Test if something in an IPv4 address<br/>`'10.1.1.1' is ansible.netcommon.ipv4_address`
+ansible.netcommon.ipv6|Test if something is an IPv6 address or network<br/>`'2001:db8:a::123/64' is ansible.netcommon.ipv6`
+ansible.netcommon.ipv6_address|Test if something is an IPv6 address or network<br/>`'fe80::216:3eff:fee4:16f3' is ansible.netcommon.ipv6_address`
+ansible.netcommon.loopback|Test if an IP address is a loopback<br/>`'127.10.10.10' is ansible.netcommon.loopback`
+ansible.netcommon.mac|Test if something is a mac address<br/>`'02:16:3e:e4:16:f3' is ansible.netcommon.mac`
+ansible.netcommon.mac_org|Test a mac OUI against a regular expression<br/>`'00:02:b3:e4:16:f3' is ansible.netcommon.mac_org('^Intel')`
+ansible.netcommon.multicast|Test for a multicast IP address<br/>`'224.0.0.1' is ansible.netcommon.multicast`
+ansible.netcommon.netmask|Test for a valid netmask<br/>`'255.255.255.0' is ansible.netcommon.netmask`
+ansible.netcommon.private|Test if an IP address is private<br/>`'10.1.1.1' is ansible.netcommon.private`
+ansible.netcommon.public|Test if an IP address is public<br/>`'8.8.8.8' is ansible.netcommon.public`
+ansible.netcommon.reserved|Test for a reserved IP address<br/>`'253.0.0.1' is ansible.netcommon.reserved`
+ansible.netcommon.unicast|Test for a unicast IP address<br/>`'10.0.0.1' is ansible.netcommon.unicast`
+
 <!--end collection content-->
 
 
