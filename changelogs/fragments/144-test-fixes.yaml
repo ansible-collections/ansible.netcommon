@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fixed unit tests under python3.5
