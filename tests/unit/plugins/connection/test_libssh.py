@@ -61,9 +61,9 @@ class TestConnectionClass(unittest.TestCase):
 
         conn.close()
 
-        conn.sftp.close.assert_called()
-        conn.chan.close.assert_called()
-        conn.sftp.close.assert_called()
+        conn.sftp.close.assert_called_with()
+        conn.chan.close.assert_called_with()
+        conn.sftp.close.assert_called_with()
 
     @patch("ansible.plugins.connection.ConnectionBase.exec_command")
     def test_libssh_exec_command(self, mocked_super):
