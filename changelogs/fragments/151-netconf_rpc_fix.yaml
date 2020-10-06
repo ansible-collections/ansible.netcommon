@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - Fixed netconf_rpc task fails due to encoding issue in the response
+    (https://github.com/ansible-collections/ansible.netcommon/issues/151)
