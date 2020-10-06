@@ -116,7 +116,7 @@ ansible.netcommon.ip_address|Test if something in an IP address<br/>`'10.1.1.1' 
 ansible.netcommon.ipv4|Test if something in an IPv4 address or network<br/>`'10.0.0.0/8' is ansible.netcommon.ipv4`
 ansible.netcommon.ipv4_address|Test if something in an IPv4 address<br/>`'10.1.1.1' is ansible.netcommon.ipv4_address`
 ansible.netcommon.ipv6|Test if something is an IPv6 address or network<br/>`'2001:db8:a::123/64' is ansible.netcommon.ipv6`
-ansible.netcommon.ipv6_address|Test if something is an IPv6 address or network<br/>`'fe80::216:3eff:fee4:16f3' is ansible.netcommon.ipv6_address`
+ansible.netcommon.ipv6_address|Test if something is an IPv6 address<br/>`'fe80::216:3eff:fee4:16f3' is ansible.netcommon.ipv6_address`
 ansible.netcommon.loopback|Test if an IP address is a loopback<br/>`'127.10.10.10' is ansible.netcommon.loopback`
 ansible.netcommon.mac|Test if something is a mac address<br/>`'02:16:3e:e4:16:f3' is ansible.netcommon.mac`
 ansible.netcommon.mac_org|Test a mac OUI against a regular expression<br/>`'00:02:b3:e4:16:f3' is ansible.netcommon.mac_org('^Intel')`

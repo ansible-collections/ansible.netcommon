@@ -157,7 +157,7 @@ def ipv6(ip):
 
 @_need_netaddr
 def ipv6_address(ip):
-    """ Test if something is an IPv6 address or network<br/>`'fe80::216:3eff:fee4:16f3' is ansible.netcommon.ipv6_address`
+    """ Test if something is an IPv6 address<br/>`'fe80::216:3eff:fee4:16f3' is ansible.netcommon.ipv6_address`
     """
     try:
         return IPAddress(ip).version == 6
