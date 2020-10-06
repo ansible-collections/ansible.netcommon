@@ -158,7 +158,10 @@ def remove_namespaces(data):
             "ncclient is required but does not appear to be installed.  "
             "It can be installed using `pip install ncclient`"
         )
-    return NCElement(to_text(data.strip(), errors="surrogate_then_replace"), transform_reply()).data_xml
+    return NCElement(
+        to_text(data.strip(), errors="surrogate_then_replace"),
+        transform_reply(),
+    ).data_xml
 
 
 def build_root_xml_node(tag):
