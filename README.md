@@ -104,6 +104,9 @@ Name | Description
 ### Test plugins
 Name | Description
 --- | ---
+ansible.netcommon.disabled|Case insensitive test for `disabled`<br/>`interface.ip_redirects is ansible.netcommon.disabled`
+ansible.netcommon.down|Case insensitive test for `down`<br/>`interface.oper_state is ansible.netcommon.down`
+ansible.netcommon.enabled|Case insensitive test for `enabled`<br/>`interface.bpdu_guard is ansible.netcommon.enabled`
 ansible.netcommon.hostmask|Test if an address is a hostmask<br/>`'0.0.0.255' is ansible.netcommon.hostmask`
 ansible.netcommon.in_any_network|Test if an IP or network is in any network<br/>`'10.1.1.1' is ansible.netcommon.in_any_network ['10.0.0.0/8', '192.168.1.0/24']`
 ansible.netcommon.in_network|Test if an address or network is in a network<br/>`'10.1.1.1' is ansible.netcommon.in_network '10.0.0.0/8'`
@@ -122,7 +125,9 @@ ansible.netcommon.netmask|Test for a valid netmask<br/>`'255.255.255.0' is ansib
 ansible.netcommon.private|Test if an IP address is private<br/>`'10.1.1.1' is ansible.netcommon.private`
 ansible.netcommon.public|Test if an IP address is public<br/>`'8.8.8.8' is ansible.netcommon.public`
 ansible.netcommon.reserved|Test for a reserved IP address<br/>`'253.0.0.1' is ansible.netcommon.reserved`
+ansible.netcommon.resolvable|Test if an IP or name can be resolved via /etc/hosts or DNS<br/>`'docs.ansible.com' is ansible.netcommon.resolvable`
 ansible.netcommon.unicast|Test for a unicast IP address<br/>`'10.0.0.1' is ansible.netcommon.unicast`
+ansible.netcommon.up|Case insensitve test for `up`<br/>`interface.admin_state is ansible.netcommon.up`
 
 <!--end collection content-->
 
