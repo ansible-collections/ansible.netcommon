@@ -292,7 +292,7 @@ def _reserved(ip):
 
 @_need_ipaddress
 def _subnet_of(network_a, network_b):
-    """Test if a network is a subnet of another network<br/>`'10.1.1.0/24' is ansible.netcommon.subnet '10.0.0.0/8'`
+    """Test if a network is a subnet of another network<br/>`'10.1.1.0/24' is ansible.netcommon.subnet_of '10.0.0.0/8'`
     """
     try:
         return _is_subnet_of(ip_network(network_a), ip_network(network_b))
@@ -302,7 +302,7 @@ def _subnet_of(network_a, network_b):
 
 @_need_ipaddress
 def _supernet_of(network_a, network_b):
-    """Test if an network is a supernet of another network<br/>`'10.0.0.0/8' is ansible.netcommon.supernet '10.1.1.0/24'`
+    """Test if an network is a supernet of another network<br/>`'10.0.0.0/8' is ansible.netcommon.supernet_of '10.1.1.0/24'`
     """
     try:
         return _is_subnet_of(ip_network(network_b), ip_network(network_a))
