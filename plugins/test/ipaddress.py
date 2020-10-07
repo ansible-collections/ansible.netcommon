@@ -291,7 +291,7 @@ def _reserved(ip):
 
 
 @_need_ipaddress
-def _subnet(network_a, network_b):
+def _subnet_of(network_a, network_b):
     """Test if a network is a subnet of another network<br/>`'10.1.1.0/24' is ansible.netcommon.subnet '10.0.0.0/8'`
     """
     try:
@@ -301,7 +301,7 @@ def _subnet(network_a, network_b):
 
 
 @_need_ipaddress
-def _supernet(network_a, network_b):
+def _supernet_of(network_a, network_b):
     """Test if an network is a supernet of another network<br/>`'10.0.0.0/8' is ansible.netcommon.supernet '10.1.1.0/24'`
     """
     try:
@@ -345,8 +345,8 @@ class TestModule(object):
         "private": _private,
         "public": _public,
         "reserved": _reserved,
-        "subnet": _subnet,
-        "supernet": _supernet,
+        "subnet_of": _subnet_of,
+        "supernet_of": _supernet_of,
         "unspecified": _unspecified
     }
 

@@ -128,8 +128,9 @@ ansible.netcommon.private|Test if an IP address is private<br/>`'10.1.1.1' is an
 ansible.netcommon.public|Test if an IP address is public<br/>`'8.8.8.8' is ansible.netcommon.public`
 ansible.netcommon.reserved|Test for a reserved IP address<br/>`'253.0.0.1' is ansible.netcommon.reserved`
 ansible.netcommon.resolvable|Test if an IP or name can be resolved via /etc/hosts or DNS<br/>`'docs.ansible.com' is ansible.netcommon.resolvable`
-ansible.netcommon.subnet|Test if a network is a subnet of another network<br/>`'10.1.1.0/24' is ansible.netcommon.subnet '10.0.0.0/8'`
-ansible.netcommon.supernet|Test if an network is a supernet of another network<br/>`'10.0.0.0/8' is ansible.netcommon.supernet '10.1.1.0/24'`
+ansible.netcommon.subnet_of|Test if a network is a subnet of another network<br/>`'10.1.1.0/24' is ansible.netcommon.subnet '10.0.0.0/8'`
+ansible.netcommon.supernet_of|Test if an network is a supernet of another network<br/>`'10.0.0.0/8' is ansible.netcommon.supernet '10.1.1.0/24'`
+ansible.netcommon.unspecified|Test for a unicast IP address<br/>`'0.0.0.0' is ansible.netcommon.unspecifed`
 ansible.netcommon.up|Case insensitve test for `up`<br/>`interface.admin_state is ansible.netcommon.up`
 
 <!--end collection content-->
