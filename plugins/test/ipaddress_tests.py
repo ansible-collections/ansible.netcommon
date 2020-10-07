@@ -17,22 +17,32 @@ import re
 
 from ansible.errors import AnsibleError
 from ansible.module_utils.basic import missing_required_lib
+from six import u as unicode
 from functools import wraps
 
 
 try:
-    from ipaddress import ip_address, ip_network
+    import ipaddress
 
     HAS_IPADDRESS = True
 except ImportError:
     HAS_IPADDRESS = False
 
+def ip_network(ip):
+    """ PY2 compat shim, PY2 requires unicode
+    """
+    return ipaddress.ip_network(unicode(ip))
+
+def ip_address(ip):
+    """ PY2 compat shim, PY2 requires unicode
+    """
+    return ipaddress.ip_address(unicode(ip))
 
 def _need_ipaddress(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         if not HAS_IPADDRESS:
-            test = func.__name__.lstrip('_')
+            test = func.__name__.lstrip("_")
             msg = "'{test}' requires 'ipaddress' {stnd}".format(
                 test=test,
                 stnd=missing_required_lib("ipaddress").replace(
@@ -74,6 +84,10 @@ def _error_not_list(test, obj):
             test=test, obj=obj, type=type(tipe).__name__
         )
         raise AnsibleError(msg)
+
+def to_network(ip):
+    if PY2:
+        return ipnetwork(unicode(ip))
 
 
 @_need_ipaddress
@@ -347,7 +361,7 @@ class TestModule(object):
         "reserved": _reserved,
         "subnet_of": _subnet_of,
         "supernet_of": _supernet_of,
-        "unspecified": _unspecified
+        "unspecified": _unspecified,
     }
 
     def tests(self):

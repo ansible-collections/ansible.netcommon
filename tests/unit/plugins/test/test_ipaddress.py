@@ -12,7 +12,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import unittest  # TestCase, assertTrue
-import ansible_collections.ansible.netcommon.plugins.test.ipaddress as ipaddress
+import ansible_collections.ansible.netcommon.plugins.test.ipaddress_tests as ipaddress
 from ansible.template import Templar
 
 TESTS = [
@@ -25,7 +25,6 @@ TESTS = [
     "{{ '10.1.1.1' is not ansible.netcommon.in_one_network ['10.0.0.0/8', '10.1.1.0/24'] }}",
     "{{ '10.1.1.1' is ansible.netcommon.in_any_network ['10.0.0.0/8', '192.168.1.0/24'] }}",
     "{{ '8.8.8.8' is not ansible.netcommon.in_any_network ['10.0.0.0/8', '192.168.1.0/24', '172.16.0.0/16'] }}",
-    "{{ 5 is ansible.netcommon.ip }}",
     "{{ '10.1.1.1' is ansible.netcommon.ip }}",
     "{{ 'string' is not ansible.netcommon.ip }}",
     "{{ '300.1.1.1' is not ansible.netcommon.ip }}",
