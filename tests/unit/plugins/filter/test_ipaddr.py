@@ -302,14 +302,14 @@ class TestIpFilter(unittest.TestCase):
 
         # Network address - invalid
         address = "1.12.1.0/24"
-        self.assertIsNone(ipaddr.ipaddr(address, "address/prefix"))
+        self.assertFalse(ipaddr.ipaddr(address, "address/prefix"))
         # But valid in a /31
         address = "1.12.1.0/31"
         self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), address)
 
         # Broadcast address - invalid
         address = "1.12.1.255/24"
-        self.assertIsNone(ipaddr.ipaddr(address, "address/prefix"))
+        self.assertFalse(ipaddr.ipaddr(address, "address/prefix"))
         # But valid in a /31
         address = "1.12.1.255/31"
         self.assertEqual(ipaddr.ipaddr(address, "address/prefix"), address)
@@ -333,6 +333,9 @@ class TestIpFilter(unittest.TestCase):
         self.assertEqual(
             ipaddr.ipaddr(address, "address/prefix"), "1.12.1.36/28"
         )
+        # But not hostmasks that don't make a valid CIDR prefix
+        address = "1.12.1.36/255.255.255.88"
+        self.assertFalse(ipaddr.ipaddr(address, "address/prefix"))
 
     def test_ip_prefix(self):
         address = "1.12.1.0/24"
