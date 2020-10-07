@@ -28,15 +28,18 @@ try:
 except ImportError:
     HAS_IPADDRESS = False
 
+
 def ip_network(ip):
     """ PY2 compat shim, PY2 requires unicode
     """
     return ipaddress.ip_network(unicode(ip))
 
+
 def ip_address(ip):
     """ PY2 compat shim, PY2 requires unicode
     """
     return ipaddress.ip_address(unicode(ip))
+
 
 def _need_ipaddress(func):
     @wraps(func)
@@ -84,10 +87,6 @@ def _error_not_list(test, obj):
             test=test, obj=obj, type=type(tipe).__name__
         )
         raise AnsibleError(msg)
-
-def to_network(ip):
-    if PY2:
-        return ipnetwork(unicode(ip))
 
 
 @_need_ipaddress
