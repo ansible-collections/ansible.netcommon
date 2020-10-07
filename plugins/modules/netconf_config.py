@@ -27,7 +27,7 @@ options:
   content:
     description:
     - The configuration data as defined by the device's data models, the value can
-      be either in xml string format or text format or json string format.
+      be either in xml string format or text format or python dictionary representation of JSON format.
     - In case of json string format it will be converted to the corresponding xml string using
       xmltodict library before pushing onto the remote host.
     - In case of I(text) format of the configuration should be supported by remote Netconf server.
@@ -64,7 +64,7 @@ options:
       xmltodict library before pushing onto the remote host.
     - In case of I(text) format of the configuration should be supported by remote Netconf server.
     - If the value of C(format) options is not given it tries to guess the data format of
-      C(content) option as one of I(xml) or I(json) or I(xpath).
+      C(content) option as one of I(xml) or I(json) or I(text).
     - If the data format is not identified it is set to I(xml) by default.
     type: str
     choices:
