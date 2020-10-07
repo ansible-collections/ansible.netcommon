@@ -17,7 +17,7 @@ import re
 
 from ansible.errors import AnsibleError
 from ansible.module_utils.basic import missing_required_lib
-from six import u as unicode
+from ansible.module_utils.six import ensure_text
 from functools import wraps
 
 
@@ -32,13 +32,13 @@ except ImportError:
 def ip_network(ip):
     """ PY2 compat shim, PY2 requires unicode
     """
-    return ipaddress.ip_network(unicode(ip))
+    return ipaddress.ip_network(ensure_text(ip))
 
 
 def ip_address(ip):
     """ PY2 compat shim, PY2 requires unicode
     """
-    return ipaddress.ip_address(unicode(ip))
+    return ipaddress.ip_address(ensure_text(ip))
 
 
 def _need_ipaddress(func):
