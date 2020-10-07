@@ -32,8 +32,9 @@ def _need_ipaddress(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         if not HAS_IPADDRESS:
+            test = func.__name__.lstrip('_')
             msg = "'{test}' requires 'ipaddress' {stnd}".format(
-                test=func.__name__,
+                test=test,
                 stnd=missing_required_lib("ipaddress").replace(
                     "module", "plugin"
                 ),
@@ -231,7 +232,7 @@ def _loopback(ip):
     """ Test if an IP address is a loopback<br/>`'127.10.10.10' is ansible.netcommon.loopback`
     """
     try:
-        return ip_address(ip).is_loopback()
+        return ip_address(ip).is_loopback
     except Exception:
         return False
 
@@ -311,7 +312,7 @@ def _supernet(network_a, network_b):
 
 @_need_ipaddress
 def _unspecified(ip):
-    """ Test for a unicast IP address<br/>`'10.0.0.1' is ansible.netcommon.unspecifed`
+    """ Test for a unicast IP address<br/>`'0.0.0.0' is ansible.netcommon.unspecifed`
     """
     try:
         return ip_address(ip).is_unspecified
@@ -346,6 +347,7 @@ class TestModule(object):
         "reserved": _reserved,
         "subnet": _subnet,
         "supernet": _supernet,
+        "unspecified": _unspecified
     }
 
     def tests(self):
