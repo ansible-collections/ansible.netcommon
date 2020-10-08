@@ -81,7 +81,7 @@ def _check_reqs(obj, wantlist):
         _raise_error(" ".join(errors))
 
 
-def _run_test(entry, test, right):
+def _run_test(entry, test, right, tests):
     """ Run a test
 
     :param test: The test to run
@@ -93,58 +93,64 @@ def _run_test(entry, test, right):
     :return: If the test passed
     :rtype: book
     """
+    msg = (
+        "Error encountered when testing value "
+        "'{entry}' (type={entry_type}) against "
+        "'{right}' (type={right_type}) with '{test}'. "
+    ).format(
+        entry=entry,
+        entry_type=type(_to_well_known_type(entry)).__name__,
+        right=right,
+        right_type=type(_to_well_known_type(entry)).__name__,
+        test=test,
+    )
 
-    try:
-        if test.startswith("!"):
-            kind = "reject"
-            test = test[1:]
-            if test == "=":
-                test = "=="
-        elif test.startswith("not "):
-            kind = "reject"
-            test = test[4:]
-        else:
-            kind = "select"
+    if test.startswith("!"):
+        invert = True
+        test = test.lstrip("!")
+        if test == "=":
+            test = "=="
+    elif test.startswith("not "):
+        invert = True
+        test = test.lstrip("not ")
+    else:
+        invert = False
 
-        if not isinstance(right, list) and test == "in":
-            right = [right]
+    if not isinstance(right, list) and test == "in":
+        right = [right]
 
-        if right is None:
-            template_data = "{{{{ [entry]|{kind}(test)|list }}}}".format(
-                kind=kind
-            )
-        else:
-            template_data = "{{{{ [entry]|{kind}(test, right)|list }}}}".format(
-                kind=kind
-            )
-
-        vars = {"entry": entry, "test": test, "right": right}
-        templar = Templar(loader=None, variables=vars)
-        ret = templar.template(template_data)
-        if ret:
-            return True
-        return False
-
-    except Exception as exc:
-        msg = (
-            "Error encountered when testing value "
-            "'{entry}' (type={entry_type}) against "
-            "'{right}' (type={right_type}) with '{test}'. "
-            "Error was: {error}."
-        ).format(
-            entry=entry,
-            entry_type=type(_to_well_known_type(entry)).__name__,
-            right=right,
-            right_type=type(_to_well_known_type(entry)).__name__,
-            test=test,
-            error=to_native(exc),
+    j2_test = tests.get(test)
+    if not j2_test:
+        msg = "{msg} Error was: the test '{test}' was not found.".format(
+            msg=msg, test=test
         )
         _raise_error(msg)
+    else:
+        try:
+            if right is None:
+                result = j2_test(entry)
+            else:
+                result = j2_test(entry, right)
+        except Exception as exc:
+            msg = "{msg} Error was: {error}".format(
+                msg=msg, error=to_native(exc)
+            )
+            _raise_error(msg)
+
+    if invert:
+        result = not result
+    return result
 
 
 def index_of(
-    data, test, value=None, key=None, wantlist=False, fail_on_missing=False
-):  # *args, **kwargs):
+    data,
+    test,
+    value=None,
+    key=None,
+    wantlist=False,
+    fail_on_missing=False,
+    tests=None,
+):
     """ Find the index or indices of entries in list of objects"
 
     :param data: The data passed in (data|index_of(...))
@@ -159,12 +165,14 @@ def index_of(
     :type want_list: bool
     :param fail_on_missing: Should we fail if key not found?
     :type fail_on_missing: bool
+    :param tests: The jinja tests from the current environment
+    :type tests: ansible.template.JinjaPluginIntercept
     """
     _check_reqs(data, wantlist)
     res = list()
     if key is None:
         for idx, entry in enumerate(data):
-            result = _run_test(entry, test, value)
+            result = _run_test(entry, test, value, tests)
             if result:
                 res.append(idx)
 
@@ -183,7 +191,7 @@ def index_of(
         for idx, dyct in enumerate(data):
             if key in dyct:
                 entry = dyct.get(key)
-                result = _run_test(entry, test, value)
+                result = _run_test(entry, test, value, tests)
                 if result:
                     res.append(idx)
             elif fail_on_missing:

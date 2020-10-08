@@ -14,11 +14,15 @@ __metaclass__ = type
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.index_of import (
     index_of,
 )
+from jinja2.filters import environmentfilter
 
 
+@environmentfilter
 def _index_of(*args, **kwargs):
     """ Find items in a list. [See examples](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.index_of_lookup.rst)
     """
+    kwargs["tests"] = args[0].tests
+    args = args[1:]
     return index_of(*args, **kwargs)
 
 

@@ -361,6 +361,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.i
 
 class LookupModule(LookupBase):
     def run(self, terms, variables, **kwargs):
+        kwargs["tests"] = self._templar.environment.tests
         if isinstance(terms, dict):
             terms.update(kwargs)
             res = index_of(**terms)

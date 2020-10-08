@@ -13,23 +13,27 @@ from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.index_of import (
     index_of,
 )
+from ansible.template import Templar
 
 
 class TestIndexOfFilter(unittest.TestCase):
+    def setUp(self):
+        self._tests = Templar(loader=None).environment.tests
+
     def test_fail_no_qualfier(self):
         obj, test, value = [1, 2], "@@", 1
         with self.assertRaises(Exception) as exc:
-            index_of(obj, test, value)
-        self.assertIn("no test named '@@'", str(exc.exception))
+            index_of(obj, test, value, tests=self._tests)
+        self.assertIn("the test '@@' was not found", str(exc.exception))
         obj, test, value, key = [{"a": 1}], "@@", 1, "a"
         with self.assertRaises(Exception) as exc:
-            index_of(obj, test, value, key)
-        self.assertIn("no test named '@@'", str(exc.exception))
+            index_of(obj, test, value, key, tests=self._tests)
+        self.assertIn("the test '@@' was not found", str(exc.exception))
 
     def test_fail_not_a_list(self):
         obj, test, value = True, "==", 1
         with self.assertRaises(Exception) as exc:
-            index_of(obj, test, value)
+            index_of(obj, test, value, tests=self._tests)
         self.assertIn(
             "a list is required, was passed a 'bool'", str(exc.exception)
         )
@@ -37,7 +41,7 @@ class TestIndexOfFilter(unittest.TestCase):
     def test_fail_wantlist_not_a_bool(self):
         obj, test, value = [1, 2], "==", 1
         with self.assertRaises(Exception) as exc:
-            index_of(obj, test, value, wantlist=42)
+            index_of(obj, test, value, wantlist=42, tests=self._tests)
         self.assertIn(
             "'wantlist' is required to be a bool, was passed a 'int'",
             str(exc.exception),
@@ -46,19 +50,21 @@ class TestIndexOfFilter(unittest.TestCase):
     def test_fail_mixed_list(self):
         obj, test, value, key = [{"a": "b"}, True, 1, "a"], "==", "b", "a"
         with self.assertRaises(Exception) as exc:
-            index_of(obj, test, value, key)
+            index_of(obj, test, value, key, tests=self._tests)
         self.assertIn("required to be dictionaries", str(exc.exception))
 
     def test_fail_key_not_valid(self):
         obj, test, value, key = [{"a": "b"}], "==", "b", [1, 2]
         with self.assertRaises(Exception) as exc:
-            index_of(obj, test, value, key)
+            index_of(obj, test, value, key, tests=self._tests)
         self.assertIn("Unknown key type", str(exc.exception))
 
     def test_fail_on_missing(self):
         obj, test, value, key = [{"a": True}, {"c": False}], "==", True, "a"
         with self.assertRaises(Exception) as exc:
-            index_of(obj, test, value, key, fail_on_missing=True)
+            index_of(
+                obj, test, value, key, fail_on_missing=True, tests=self._tests
+            )
         self.assertIn("'a' was not found", str(exc.exception))
 
     def test_just_test(self):
@@ -74,7 +80,7 @@ class TestIndexOfFilter(unittest.TestCase):
         ]
         for entry in objs:
             obj, test, answer = entry
-            result = index_of(obj, test)
+            result = index_of(obj, test, tests=self._tests)
             expected = answer
             self.assertEqual(result, expected)
 
@@ -92,7 +98,7 @@ class TestIndexOfFilter(unittest.TestCase):
         ]
         for entry in objs:
             obj, test, value, answer = entry
-            result = index_of(obj, test, value)
+            result = index_of(obj, test, value, tests=self._tests)
             expected = answer
             self.assertEqual(result, expected)
 
@@ -125,5 +131,5 @@ class TestIndexOfFilter(unittest.TestCase):
         ]
         for entry in objs:
             obj, test, value, key, answer = entry
-            result = index_of(obj, test, value, key)
+            result = index_of(obj, test, value, key, tests=self._tests)
             self.assertEqual(result, answer)
