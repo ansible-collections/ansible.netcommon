@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - 'ipaddr filter - query "address/prefix" (also: "gateway", "gw", "host/prefix", "hostnet", and "router") now handles addresses with /32 prefix or /255.255.255.255 netmask'

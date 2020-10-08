@@ -103,9 +103,9 @@ def _ip_query(v):
 
 
 def _address_prefix_query(v):
-    if v.size > 1:
-        if v.ip != v.network:
-            return str(v.ip) + "/" + str(v.prefixlen)
+    if v.size > 2 and v.ip in (v.network, v.broadcast):
+        return False
+    return str(v.ip) + "/" + str(v.prefixlen)
 
 
 def _bool_ipaddr_query(v):
