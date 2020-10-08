@@ -116,14 +116,14 @@ class TestIndexOfFilter(unittest.TestCase):
             ),
             (
                 [{"a": "abc"}, {"a": "def"}, {"a": "ghi"}, {"a": "jkl"}],
-                "match",
+                "ansible.builtin.match",
                 "^a",
                 "a",
                 0,
             ),
             (
                 [{"a": "abc"}, {"a": "def"}, {"a": "ghi"}, {"a": "jkl"}],
-                "search",
+                "ansible.builtin.search",
                 "e",
                 "a",
                 1,
