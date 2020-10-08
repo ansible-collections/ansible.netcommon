@@ -20,7 +20,6 @@ from ansible.module_utils._text import to_native
 # where ansible is installed
 # limit imports to filter and lookup plugins
 try:
-    from ansible.template import Templar
     from ansible.errors import AnsibleError
 except ImportError:
     pass
