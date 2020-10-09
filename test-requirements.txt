@@ -4,11 +4,3 @@ flake8
 mock ; python_version < '3.5'
 pytest-xdist
 yamllint
-# The follow are 3rd party libs for cli_parse
-textfsm
-ntc_templates
-pyats==20.7 ; python_version >= '3.6'
-genie==20.7 ; python_version >= '3.6'
-ttp
-xmltodict
-# /cli_parse
