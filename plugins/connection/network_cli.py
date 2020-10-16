@@ -298,6 +298,13 @@ from ansible.plugins.loader import (
     connection_loader,
 )
 
+try:
+    from scp import SCPClient
+
+    HAS_SCP = True
+except ImportError:
+    HAS_SCP = False
+
 
 def ensure_connect(func):
     @wraps(func)
@@ -382,21 +389,21 @@ class Connection(NetworkConnectionBase):
 
     @property
     def ssh_type_conn(self):
-        ssh_type = self._ssh_type
+        self._ssh_type = self.get_option("ssh_type")
         if self._ssh_type_conn is None:
-            if ssh_type not in ["paramiko", "libssh"]:
+            if self._ssh_type not in ["paramiko", "libssh"]:
                 raise AnsibleConnectionFailure(
                     "Invalid value '%s' set for ssh_type option."
                     " Excpected value is either 'libssh' or 'paramiko'"
-                    % ssh_type
+                    % self._ssh_type
                 )
 
             # TODO: Remove this check if/when libssh connection plugin is moved to ansible-base
-            if ssh_type == "libssh":
-                ssh_type = "ansible.netcommon.libssh"
+            if self._ssh_type == "libssh":
+                self._ssh_type = "ansible.netcommon.libssh"
 
             self._ssh_type_conn = connection_loader.get(
-                ssh_type, self._play_context, "/dev/null"
+                self._ssh_type, self._play_context, "/dev/null"
             )
             self._ssh_type_conn.set_options(
                 direct={
@@ -505,7 +512,6 @@ class Connection(NetworkConnectionBase):
         """
         Connects to the remote device and starts the terminal
         """
-        self._ssh_type = self.get_option("ssh_type")
         if self._play_context.verbosity > 3:
             logging.getLogger(self._ssh_type).setLevel(logging.DEBUG)
 
@@ -1085,3 +1091,57 @@ class Connection(NetworkConnectionBase):
             terminal_std_re = getattr(self._terminal, option)
 
         return terminal_std_re
+
+    def copy_file(
+        self, source=None, destination=None, proto="scp", timeout=30
+    ):
+        """Copies file over scp/sftp to remote device
+
+        :param source: Source file path
+        :param destination: Destination file path on remote device
+        :param proto: Protocol to be used for file transfer,
+                      supported protocol: scp and sftp
+        :param timeout: Specifies the wait time to receive response from
+                        remote host before triggering timeout exception
+        :return: None
+        """
+        ssh = self.ssh_type_conn._connect_uncached()
+        if proto == "scp":
+            if not HAS_SCP:
+                raise AnsibleError(
+                    "Required library scp is not installed.  Please install it using `pip install scp`"
+                )
+            with SCPClient(ssh.get_transport(), socket_timeout=timeout) as scp:
+                scp.put(source, destination)
+        elif proto == "sftp":
+            with ssh.open_sftp() as sftp:
+                sftp.put(source, destination)
+
+    def get_file(self, source=None, destination=None, proto="scp", timeout=30):
+        """Fetch file over scp/sftp from remote device
+        :param source: Source file path
+        :param destination: Destination file path
+        :param proto: Protocol to be used for file transfer,
+                      supported protocol: scp and sftp
+        :param timeout: Specifies the wait time to receive response from
+                        remote host before triggering timeout exception
+        :return: None
+        """
+        """Fetch file over scp/sftp from remote device"""
+        ssh = self.ssh_type_conn._connect_uncached()
+        if proto == "scp":
+            if not HAS_SCP:
+                raise AnsibleError(
+                    "Required library scp is not installed.  Please install it using `pip install scp`"
+                )
+            try:
+                with SCPClient(
+                    ssh.get_transport(), socket_timeout=timeout
+                ) as scp:
+                    scp.get(source, destination)
+            except EOFError:
+                # This appears to be benign.
+                pass
+        elif proto == "sftp":
+            with ssh.open_sftp() as sftp:
+                sftp.get(source, destination)
