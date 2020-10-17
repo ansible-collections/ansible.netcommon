@@ -523,7 +523,7 @@ def vlan_unparser(s):
 
         for n in re.findall(r"\D*([0-9]+)\D*", s):
             if not(int(n) in range(VLAN_MIN, VLAN_MAX+1)):
-                raise AnsibleFilterError(f"Invalid VLAN value found: {n}")
+                raise AnsibleFilterError("Invalid VLAN value found: {}".format(n))
 
         pairs = re.split(r"\s*,\s*", s)
         for pair in pairs:
@@ -533,11 +533,11 @@ def vlan_unparser(s):
                     (start, end) = (int(m.groups(0)[0]), int(m.groups(0)[1]))
                     result.extend(list(range(start, end+1)))
                 else:
-                    raise AnsibleFilterError(f"Invalid VLAN range: {pair}")
+                    raise AnsibleFilterError("Invalid VLAN range: {}".format(pair))
             else:
                 result.append(int(pair))
     else:
-        raise AnsibleFilterError(f"Invalid VLAN range string: {s}")
+        raise AnsibleFilterError("Invalid VLAN range string: {}".format(s))
 
     return(result)
 
