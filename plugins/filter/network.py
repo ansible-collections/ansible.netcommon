@@ -443,13 +443,13 @@ def comp_type5(
 def vlan_parser(vlan_list, first_line_len=48, other_line_len=44):
 
     """
-        Input: Unsorted list of vlan integers
-        Output: Sorted string list of integers according to IOS-like vlan list rules
+    Input: Unsorted list of vlan integers
+    Output: Sorted string list of integers according to IOS-like vlan list rules
 
-        1. Vlans are listed in ascending order
-        2. Runs of 3 or more consecutive vlans are listed with a dash
-        3. The first line of the list can be first_line_len characters long
-        4. Subsequent list lines can be other_line_len characters
+    1. Vlans are listed in ascending order
+    2. Runs of 3 or more consecutive vlans are listed with a dash
+    3. The first line of the list can be first_line_len characters long
+    4. Subsequent list lines can be other_line_len characters
     """
 
     # Sort and remove duplicates
@@ -528,9 +528,10 @@ def vlan_unparser(vlan_list_string):
     if re.match(r"^\d[\d\-,\s]+\d$", vlan_list_string):
 
         for num in re.findall(r"\D*(\d+)\D*", vlan_list_string):
-            if int(num) not in range(vlan_min, vlan_max+1):
+            if int(num) not in range(vlan_min, vlan_max + 1):
                 raise AnsibleFilterError(
-                    "Invalid VLAN value found: {}".format(num))
+                    "Invalid VLAN value found: {}".format(num)
+                )
 
         elems = re.split(r"\s*,\s*", vlan_list_string)
         for elem in elems:
@@ -539,15 +540,17 @@ def vlan_unparser(vlan_list_string):
                 if match is not None:
                     start = int(match.groups(0)[0])
                     end = int(match.groups(0)[1])
-                    result.extend(list(range(start, end+1)))
+                    result.extend(list(range(start, end + 1)))
                 else:
                     raise AnsibleFilterError(
-                        "Invalid VLAN range: {}".format(elem))
+                        "Invalid VLAN range: {}".format(elem)
+                    )
             else:
                 result.append(int(elem))
     else:
         raise AnsibleFilterError(
-            "Invalid VLAN range string: {}".format(vlan_list_string))
+            "Invalid VLAN range string: {}".format(vlan_list_string)
+        )
 
     return sorted(result)
 
