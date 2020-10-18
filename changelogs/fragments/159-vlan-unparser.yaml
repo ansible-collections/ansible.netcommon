@@ -1,0 +1,2 @@
+minor_changes:
+  - add filter to unparse (expand) IOS-style vlan list strings

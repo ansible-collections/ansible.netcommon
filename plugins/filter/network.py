@@ -515,31 +515,41 @@ def vlan_parser(vlan_list, first_line_len=48, other_line_len=44):
     return result
 
 
-def vlan_unparser(s):
-    VLAN_MIN = 1
-    VLAN_MAX = 4094
+def vlan_unparser(vlan_list_string):
+
+    """
+    Input: string in IOS-compressed VLAN syntax
+    Output: list with ranges expanded
+    """
+
+    vlan_min = 1
+    vlan_max = 4094
     result = []
-    if re.match(r"^[0-9\-,\s]+$", s):
+    if re.match(r"^[0-9\-,\s]+$", vlan_list_string):
 
-        for n in re.findall(r"\D*([0-9]+)\D*", s):
-            if not(int(n) in range(VLAN_MIN, VLAN_MAX+1)):
-                raise AnsibleFilterError("Invalid VLAN value found: {}".format(n))
+        for num in re.findall(r"\D*([0-9]+)\D*", vlan_list_string):
+            if int(num) not in range(vlan_min, vlan_max+1):
+                raise AnsibleFilterError(
+                    "Invalid VLAN value found: {}".format(num))
 
-        pairs = re.split(r"\s*,\s*", s)
-        for pair in pairs:
-            if "-" in pair:
-                m = re.match(r"^\s*([0-9]+)\s*-\s*([0-9]+)\s*$", pair)
-                if m is not None:
-                    (start, end) = (int(m.groups(0)[0]), int(m.groups(0)[1]))
+        elems = re.split(r"\s*,\s*", vlan_list_string)
+        for elem in elems:
+            if "-" in elem:
+                match = re.match(r"^\s*([0-9]+)\s*-\s*([0-9]+)\s*$", elem)
+                if match is not None:
+                    start = int(match.groups(0)[0])
+                    end = int(match.groups(0)[1])
                     result.extend(list(range(start, end+1)))
                 else:
-                    raise AnsibleFilterError("Invalid VLAN range: {}".format(pair))
+                    raise AnsibleFilterError(
+                        "Invalid VLAN range: {}".format(elem))
             else:
-                result.append(int(pair))
+                result.append(int(elem))
     else:
-        raise AnsibleFilterError("Invalid VLAN range string: {}".format(s))
+        raise AnsibleFilterError(
+            "Invalid VLAN range string: {}".format(vlan_list_string))
 
-    return(result)
+    return sorted(result)
 
 
 class FilterModule(object):
