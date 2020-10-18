@@ -525,9 +525,9 @@ def vlan_unparser(vlan_list_string):
     vlan_min = 1
     vlan_max = 4094
     result = []
-    if re.match(r"^[0-9\-,\s]+$", vlan_list_string):
+    if re.match(r"^\d[\d\-,\s]+\d$", vlan_list_string):
 
-        for num in re.findall(r"\D*([0-9]+)\D*", vlan_list_string):
+        for num in re.findall(r"\D*(\d+)\D*", vlan_list_string):
             if int(num) not in range(vlan_min, vlan_max+1):
                 raise AnsibleFilterError(
                     "Invalid VLAN value found: {}".format(num))
@@ -535,7 +535,7 @@ def vlan_unparser(vlan_list_string):
         elems = re.split(r"\s*,\s*", vlan_list_string)
         for elem in elems:
             if "-" in elem:
-                match = re.match(r"^\s*([0-9]+)\s*-\s*([0-9]+)\s*$", elem)
+                match = re.match(r"^\s*(\d+)\s*-\s*(\d+)\s*$", elem)
                 if match is not None:
                     start = int(match.groups(0)[0])
                     end = int(match.groups(0)[1])
