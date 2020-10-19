@@ -23,7 +23,6 @@ __metaclass__ = type
 
 import re
 import os
-import sys
 import traceback
 import string
 
@@ -444,13 +443,13 @@ def comp_type5(
 def vlan_parser(vlan_list, first_line_len=48, other_line_len=44):
 
     """
-        Input: Unsorted list of vlan integers
-        Output: Sorted string list of integers according to IOS-like vlan list rules
+    Input: Unsorted list of vlan integers
+    Output: Sorted string list of integers according to IOS-like vlan list rules
 
-        1. Vlans are listed in ascending order
-        2. Runs of 3 or more consecutive vlans are listed with a dash
-        3. The first line of the list can be first_line_len characters long
-        4. Subsequent list lines can be other_line_len characters
+    1. Vlans are listed in ascending order
+    2. Runs of 3 or more consecutive vlans are listed with a dash
+    3. The first line of the list can be first_line_len characters long
+    4. Subsequent list lines can be other_line_len characters
     """
 
     # Sort and remove duplicates
@@ -516,6 +515,48 @@ def vlan_parser(vlan_list, first_line_len=48, other_line_len=44):
     return result
 
 
+def vlan_unparser(vlan_list_string):
+
+    """
+    Input: string in IOS-compressed VLAN syntax
+    Output: list with ranges expanded
+    """
+
+    vlan_min = 1
+    vlan_max = 4094
+
+    result = []
+
+    if re.match(r"^\d[\d\-,\s]+\d$", vlan_list_string):
+
+        for num in re.findall(r"\D*(\d+)\D*", vlan_list_string):
+            if int(num) not in range(vlan_min, vlan_max + 1):
+                raise AnsibleFilterError(
+                    "Invalid VLAN value found: {}".format(num)
+                )
+
+        elems = re.split(r"\s*,\s*", vlan_list_string)
+        for elem in elems:
+            if "-" in elem:
+                pair = re.match(r"^\s*(\d+)\s*-\s*(\d+)\s*$", elem)
+                if pair is not None:
+                    start = int(pair.groups(0)[0])
+                    end = int(pair.groups(0)[1])
+                    result.extend(list(range(start, end + 1)))
+                else:
+                    raise AnsibleFilterError(
+                        "Invalid VLAN range: {}".format(elem)
+                    )
+            else:
+                result.append(int(elem))
+    else:
+        raise AnsibleFilterError(
+            "Invalid VLAN range string: {}".format(vlan_list_string)
+        )
+
+    return sorted(result)
+
+
 class FilterModule(object):
     """Filters for working with output from network devices"""
 
@@ -527,6 +568,7 @@ class FilterModule(object):
         "hash_salt": hash_salt,
         "comp_type5": comp_type5,
         "vlan_parser": vlan_parser,
+        "vlan_unparser": vlan_unparser,
     }
 
     def filters(self):
