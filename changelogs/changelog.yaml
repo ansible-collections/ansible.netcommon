@@ -220,3 +220,21 @@ releases:
     - iosxr_netconf_config_commit_testcase.yaml
     - netconf-default.yaml
     release_date: '2020-09-29'
+  1.3.1:
+    changes:
+      bugfixes:
+      - Fixed netconf_rpc task fails due to encoding issue in the response (https://github.com/ansible-collections/ansible.netcommon/issues/151)
+      - Fixed ssh_type none issue while using net_put and net_get module (https://github.com/ansible-collections/ansible.netcommon/issues/153)
+      - Fixed unit tests under python3.5
+      - 'ipaddr filter - query "address/prefix" (also: "gateway", "gw", "host/prefix",
+        "hostnet", and "router") now handles addresses with /32 prefix or /255.255.255.255
+        netmask'
+      - network_cli - Update underlying ssh connection's play_context in update_play_context,
+        so that the username or password can be updated
+    fragments:
+    - 135-network-cli-change-password.yaml
+    - 144-test-fixes.yaml
+    - 151-netconf_rpc_fix.yaml
+    - 153-part1-fix_ssh_type_none_issue.yaml
+    - ipaddr-host-prefix-32.yaml
+    release_date: '2020-10-19'

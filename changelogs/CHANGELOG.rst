@@ -5,6 +5,18 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v1.3.1
+======
+
+Bugfixes
+--------
+
+- Fixed netconf_rpc task fails due to encoding issue in the response (https://github.com/ansible-collections/ansible.netcommon/issues/151)
+- Fixed ssh_type none issue while using net_put and net_get module (https://github.com/ansible-collections/ansible.netcommon/issues/153)
+- Fixed unit tests under python3.5
+- ipaddr filter - query "address/prefix" (also: "gateway", "gw", "host/prefix", "hostnet", and "router") now handles addresses with /32 prefix or /255.255.255.255 netmask
+- network_cli - Update underlying ssh connection's play_context in update_play_context, so that the username or password can be updated
+
 v1.3.0
 ======
 
