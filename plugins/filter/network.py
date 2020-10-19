@@ -23,6 +23,7 @@ __metaclass__ = type
 
 import re
 import os
+import sys
 import traceback
 import string
 
