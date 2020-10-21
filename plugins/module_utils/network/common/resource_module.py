@@ -83,10 +83,10 @@ class ResourceModule(object):  # pylint: disable=R0902
         result["changed"] = self.changed
         return result
 
-    def addcmd(self, data, tmplt, negate=False):
+    def addcmd(self, data, tmplt, negate=False, delete=False):
         """ addcmd
         """
-        command = self._tmplt.render(data, tmplt, negate)
+        command = self._tmplt.render(data, tmplt, negate, delete)
         if command:
             self.commands.extend(to_list(command))
 
@@ -125,7 +125,7 @@ class ResourceModule(object):  # pylint: disable=R0902
             return self._connection
         return None
 
-    def compare(self, parsers, want=None, have=None):
+    def compare(self, parsers, want=None, have=None, delete=False):
         """ Run through all the parsers and compare
             the want and have dicts
         """
@@ -152,9 +152,9 @@ class ResourceModule(object):  # pylint: disable=R0902
                     self.addcmd(want, parser, False)
             elif inw is None and inh is not None:
                 if isinstance(inh, bool):
-                    self.addcmd(have, parser, inh)
+                    self.addcmd(have, parser, inh, delete)
                 else:
-                    self.addcmd(have, parser, True)
+                    self.addcmd(have, parser, True, delete)
 
     def run_commands(self):
         """ Send commands to the device

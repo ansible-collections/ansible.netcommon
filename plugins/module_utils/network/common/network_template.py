@@ -70,7 +70,7 @@ class NetworkTemplate(object):
         res = [p for p in self._tmplt.PARSERS if p["name"] == name]
         return res[0]
 
-    def _render(self, tmplt, data, negate):
+    def _render(self, tmplt, data, negate, delete=False):
         try:
             if callable(tmplt):
                 res = tmplt(data)
@@ -80,14 +80,19 @@ class NetworkTemplate(object):
                 )
         except KeyError:
             return None
-        if res and negate:
+        if res and delete and negate:
+            if isinstance(res, list):
+                cmd = [re.sub('set ', 'delete ', each) for each in res]
+                return cmd
+            return re.sub('set ', 'delete ', res)
+        elif res and negate:
             if isinstance(res, list):
                 cmd = [("no " + each) for each in res]
                 return cmd
             return "no " + res
         return res
 
-    def render(self, data, parser_name, negate=False):
+    def render(self, data, parser_name, negate=False, delete=False):
         """ render
         """
         if negate:
@@ -97,5 +102,5 @@ class NetworkTemplate(object):
             )
         else:
             tmplt = self.get_parser(parser_name)["setval"]
-        command = self._render(tmplt, data, negate)
+        command = self._render(tmplt, data, negate, delete)
         return command
