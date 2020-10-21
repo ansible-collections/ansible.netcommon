@@ -82,9 +82,9 @@ class NetworkTemplate(object):
             return None
         if res and delete and negate:
             if isinstance(res, list):
-                cmd = [re.sub('set ', 'delete ', each) for each in res]
+                cmd = [re.sub("set ", "delete ", each) for each in res]
                 return cmd
-            return re.sub('set ', 'delete ', res)
+            return re.sub("set ", "delete ", res)
         elif res and negate:
             if isinstance(res, list):
                 cmd = [("no " + each) for each in res]
