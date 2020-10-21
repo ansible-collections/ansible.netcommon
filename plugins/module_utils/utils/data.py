@@ -17,11 +17,6 @@ from ansible.module_utils.six import string_types
 from ansible.module_utils._text import to_native
 
 try:
-    from ansible.errors import AnsibleError
-except ImportError:
-    pass
-
-try:
     HAS_LXML = True
     from lxml.etree import fromstring, XMLSyntaxError
     from lxml import etree
@@ -44,7 +39,7 @@ except ImportError:
     HAS_XMLTODICT = False
 
 
-def validate_and_normailize_data(data, fmt=None):
+def validate_and_normalize_data(data, fmt=None):
     """
     This function validates the data for given format (fmt).
     If the fmt is None it tires to guess the data format.
@@ -79,14 +74,14 @@ def validate_and_normailize_data(data, fmt=None):
             try:
                 result = fromstring(data)
                 if fmt and fmt != "xml":
-                    raise AnsibleError(
+                    raise Exception(
                         "Invalid format '%s'. Expected format is 'xml' for data '%s'"
                         % (fmt, data)
                     )
                 return result, "xml"
             except XMLSyntaxError as exc:
                 if fmt == "xml":
-                    raise AnsibleError(
+                    raise Exception(
                         "'%s' XML validation failed with error '%s'"
                         % (
                             data,
@@ -96,21 +91,21 @@ def validate_and_normailize_data(data, fmt=None):
                 pass
             except Exception as exc:
                 error = "'%s' recognized as XML but was not valid." % data
-                raise AnsibleError(
+                raise Exception(
                     error + to_native(exc, errors="surrogate_then_replace")
                 )
         else:
             try:
                 result = json.loads(data)
                 if fmt and fmt != "json":
-                    raise AnsibleError(
+                    raise Exception(
                         "Invalid format '%s'. Expected format is 'json' for data '%s'"
                         % (fmt, data)
                     )
                 return result, "json"
             except (TypeError, json.decoder.JSONDecodeError) as exc:
                 if fmt == "json":
-                    raise AnsibleError(
+                    raise Exception(
                         "'%s' JSON validation failed with error '%s'"
                         % (
                             data,
@@ -120,24 +115,24 @@ def validate_and_normailize_data(data, fmt=None):
                 pass
             except Exception as exc:
                 error = "'%s' recognized as JSON but was not valid." % data
-                raise AnsibleError(
+                raise Exception(
                     error + to_native(exc, errors="surrogate_then_replace")
                 )
 
             try:
                 if not HAS_LXML:
-                    raise AnsibleError(missing_required_lib("lxml"))
+                    raise Exception(missing_required_lib("lxml"))
 
                 result = etree.XPath(data)
                 if fmt and fmt != "xpath":
-                    raise AnsibleError(
+                    raise Exception(
                         "Invalid format '%s'. Expected format is 'xpath' for data '%s'"
                         % (fmt, data)
                     )
                 return result, "xpath"
             except etree.XPathSyntaxError as exc:
                 if fmt == "xpath":
-                    raise AnsibleError(
+                    raise Exception(
                         "'%s' XPath validation failed with error '%s'"
                         % (
                             data,
@@ -147,13 +142,13 @@ def validate_and_normailize_data(data, fmt=None):
                 pass
             except Exception as exc:
                 error = "'%s' recognized as Xpath but was not valid." % data
-                raise AnsibleError(
+                raise Exception(
                     error + to_native(exc, errors="surrogate_then_replace")
                 )
 
     elif isinstance(data, dict):
         if fmt and fmt != "json":
-            raise AnsibleError(
+            raise Exception(
                 "Invalid format '%s'. Expected format is 'json' for data '%s'"
                 % (fmt, data)
             )
@@ -162,13 +157,13 @@ def validate_and_normailize_data(data, fmt=None):
             result = json.loads(json.dumps(data))
             return result, "json"
         except (TypeError, json.decoder.JSONDecodeError) as exc:
-            raise AnsibleError(
+            raise Exception(
                 "'%s' JSON validation failed with error '%s'"
                 % (data, to_native(exc, errors="surrogate_then_replace"))
             )
         except Exception as exc:
             error = "'%s' recognized as JSON but was not valid." % data
-            raise AnsibleError(
+            raise Exception(
                 error + to_native(exc, errors="surrogate_then_replace")
             )
 
@@ -181,7 +176,7 @@ def xml_to_dict(data):
             "xml to dict conversion requires 'xmltodict' for given data %s ."
             % data
         )
-        raise AnsibleError(msg + missing_required_lib("xmltodict"))
+        raise Exception(msg + missing_required_lib("xmltodict"))
 
     try:
         return xmltodict.parse(data, dict_constructor=dict)
@@ -190,7 +185,7 @@ def xml_to_dict(data):
             "'xmltodict' returned the following error when converting %s to dict. "
             % data
         )
-        raise AnsibleError(
+        raise Exception(
             error + to_native(exc, errors="surrogate_then_replace")
         )
 
@@ -207,7 +202,7 @@ def dict_to_xml(data, full_document=False):
             "dict to xml conversion requires 'xmltodict' for given data %s ."
             % data
         )
-        raise AnsibleError(msg + missing_required_lib("xmltodict"))
+        raise Exception(msg + missing_required_lib("xmltodict"))
 
     try:
         return xmltodict.unparse(data, full_document=full_document)
@@ -216,6 +211,6 @@ def dict_to_xml(data, full_document=False):
             "'xmltodict' returned the following error when converting %s to xml. "
             % data
         )
-        raise AnsibleError(
+        raise Exception(
             error + to_native(exc, errors="surrogate_then_replace")
         )

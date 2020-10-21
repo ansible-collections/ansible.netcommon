@@ -214,7 +214,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.n
     remove_namespaces,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
-    validate_and_normailize_data,
+    validate_and_normalize_data,
     xml_to_dict,
     dict_to_xml,
 )
@@ -250,11 +250,18 @@ def main():
     source = module.params["source"]
     filter = module.params["filter"]
 
-    filter_data, filter_type = validate_and_normailize_data(filter)
+    try:
+        filter_data, filter_type = validate_and_normalize_data(filter)
+    except Exception as exc:
+        module.fail_json(msg=to_text(exc))
+
     if filter_type == "xml":
         filter_type = "subtree"
     elif filter_type == "json":
-        filter = dict_to_xml(filter_data)
+        try:
+            filter = dict_to_xml(filter_data)
+        except Exception as exc:
+            module.fail_json(msg=to_text(exc))
         filter_type = "subtree"
     elif filter_type == "xpath":
         pass
@@ -327,7 +334,10 @@ def main():
     elif display == "pretty":
         output = to_text(tostring(response, pretty_print=True))
     elif display == "native":
-        output = xml_to_dict(xml_resp)
+        try:
+            output = xml_to_dict(xml_resp)
+        except Exception as exc:
+            module.fail_json(msg=to_text(exc))
 
     result = {"stdout": xml_resp, "output": output}
 

@@ -336,7 +336,7 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule, env_fallback
 from ansible.module_utils.connection import Connection, ConnectionError
 from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
-    validate_and_normailize_data,
+    validate_and_normalize_data,
     dict_to_xml,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
@@ -478,12 +478,19 @@ def main():
     filter = module.params["get_filter"]
     format = module.params["format"]
 
-    filter_data, filter_type = validate_and_normailize_data(filter)
+    try:
+        filter_data, filter_type = validate_and_normalize_data(filter)
+    except Exception as exc:
+        module.fail_json(msg=to_text(exc))
+
     if filter_type:
         if filter_type == "xml":
             filter_type = "subtree"
         elif filter_type == "json":
-            filter = dict_to_xml(filter_data)
+            try:
+                filter = dict_to_xml(filter_data)
+            except Exception as exc:
+                module.fail_json(msg=to_text(exc))
             filter_type = "subtree"
         elif filter_type == "xpath":
             pass
@@ -615,11 +622,18 @@ def main():
 
             if format != "text":
                 # check for format of type json/xml/xpath
-                config_obj, config_format = validate_and_normailize_data(
-                    config, format
-                )
+                try:
+                    config_obj, config_format = validate_and_normalize_data(
+                        config, format
+                    )
+                except Exception as exc:
+                    module.fail_json(msg=to_text(exc))
+
                 if config_format == "json":
-                    config = dict_to_xml(config_obj)
+                    try:
+                        config = dict_to_xml(config_obj)
+                    except Exception as exc:
+                        module.fail_json(msg=to_text(exc))
                     format = "xml"
                 elif config_format is None:
                     format = "xml"
