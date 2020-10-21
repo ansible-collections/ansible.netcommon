@@ -30,7 +30,7 @@ options:
       be either in xml string format or text format or python dictionary representation of JSON format.
     - In case of json string format it will be converted to the corresponding xml string using
       xmltodict library before pushing onto the remote host.
-    - In case of I(text) format of the configuration should be supported by remote Netconf server.
+    - In case the value of this option isn I(text) format the format should be supported by remote Netconf server.
     - If the value of C(content) option is in I(xml) format in that case the xml value should
       have I(config) as root tag.
     type: raw
@@ -58,8 +58,7 @@ options:
     - source
   format:
     description:
-    - The format of the configuration provided as value of C(content). Accepted values
-      are I(xml), I(text) and I(json).
+    - The format of the configuration provided as value of C(content).
     - In case of json string format it will be converted to the corresponding xml string using
       xmltodict library before pushing onto the remote host.
     - In case of I(text) format of the configuration should be supported by remote Netconf server.
@@ -480,20 +479,19 @@ def main():
     format = module.params["format"]
 
     filter_data, filter_type = validate_and_normailize_data(filter)
-    if filter_type == "xml":
-        filter_type = "subtree"
-    elif filter_type == "json":
-        filter = dict_to_xml(filter_data)
-        filter_type = "subtree"
-    elif filter_type == "xpath":
-        pass
-    elif filter_type is None:
-        filter_type = "subtree"
-    else:
-        module.fail_json(
-            msg="Invalid filter type detected %s for get_filter value %s"
-            % (filter_type, filter)
-        )
+    if filter_type:
+        if filter_type == "xml":
+            filter_type = "subtree"
+        elif filter_type == "json":
+            filter = dict_to_xml(filter_data)
+            filter_type = "subtree"
+        elif filter_type == "xpath":
+            pass
+        else:
+            module.fail_json(
+                msg="Invalid filter type detected %s for get_filter value %s"
+                % (filter_type, filter)
+            )
 
     conn = Connection(module._socket_path)
     capabilities = get_capabilities(module)
@@ -625,6 +623,8 @@ def main():
                     format = "xml"
                 elif config_format is None:
                     format = "xml"
+                else:
+                    format = config_format
 
             validate_config(module, config, format)
 

@@ -9,11 +9,11 @@ __metaclass__ = type
 """
 Utils functions for handle data formatting
 """
-import re
 import sys
 import json
 
 from ansible.module_utils.basic import missing_required_lib
+from ansible.module_utils.six import string_types
 from ansible.module_utils._text import to_native
 
 try:
@@ -73,8 +73,9 @@ def validate_and_normailize_data(data, fmt=None):
     if data is None:
         return None, None
 
-    if isinstance(data, str):
-        if re.match(r"^<.+>$", data) or fmt == "xml":
+    if isinstance(data, string_types):
+        data = data.strip()
+        if (data.startswith("<") and data.endswith(">")) or fmt == "xml":
             try:
                 result = fromstring(data)
                 if fmt and fmt != "xml":
