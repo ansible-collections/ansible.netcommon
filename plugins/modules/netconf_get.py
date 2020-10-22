@@ -265,9 +265,11 @@ def main():
         filter_type = "subtree"
     elif filter_type == "xpath":
         pass
-    elif filter_type is None:
+    elif (filter_type is None) and (filter_data is not None):
+        # to maintain backward compatibility for ansible 2.9 which
+        # defaults to "subtree" filter type
         filter_type = "subtree"
-    else:
+    elif filter_type:
         module.fail_json(
             msg="Invalid filter type detected %s for filter value %s"
             % (filter_type, filter)
