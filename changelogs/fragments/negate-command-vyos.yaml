@@ -1,3 +1,3 @@
 ---
 minor_changes:
-  - For negate operation in vyos, comapre func will pass delete=True, so that negation of the config is done by /set/delete/ .
+  - 'prefix' added to NetworkTemplate class, inorder to handle the negate operation for vyos config commands.

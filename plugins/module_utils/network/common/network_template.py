@@ -16,10 +16,11 @@ class NetworkTemplate(object):
         inherit and use to parse and render config lines.
     """
 
-    def __init__(self, lines=None, tmplt=None):
+    def __init__(self, lines=None, tmplt=None, prefix=None):
         self._lines = lines or []
         self._tmplt = tmplt
         self._template = Template()
+        self._prefix = prefix or {}
 
     def _deepformat(self, tmplt, data):
         wtmplt = deepcopy(tmplt)
@@ -70,7 +71,7 @@ class NetworkTemplate(object):
         res = [p for p in self._tmplt.PARSERS if p["name"] == name]
         return res[0]
 
-    def _render(self, tmplt, data, negate, delete=False):
+    def _render(self, tmplt, data, negate):
         try:
             if callable(tmplt):
                 res = tmplt(data)
@@ -80,11 +81,21 @@ class NetworkTemplate(object):
                 )
         except KeyError:
             return None
-        if res and delete and negate:
-            if isinstance(res, list):
-                cmd = [re.sub("set ", "delete ", each) for each in res]
+        if self._prefix:
+            if negate and res and self._prefix.get("remove"):
+                if isinstance(res, list):
+                    cmd = [
+                        (self._prefix["remove"] + " " + each) for each in res
+                    ]
+                else:
+                    cmd = self._prefix["remove"] + " " + res
                 return cmd
-            return re.sub("set ", "delete ", res)
+            elif self._prefix.get("set") and res:
+                if isinstance(res, list):
+                    cmd = [(self._prefix["set"] + " " + each) for each in res]
+                else:
+                    cmd = self._prefix["set"] + " " + res
+                return cmd
         elif res and negate:
             if isinstance(res, list):
                 cmd = [("no " + each) for each in res]
@@ -92,7 +103,7 @@ class NetworkTemplate(object):
             return "no " + res
         return res
 
-    def render(self, data, parser_name, negate=False, delete=False):
+    def render(self, data, parser_name, negate=False):
         """ render
         """
         if negate:
@@ -102,5 +113,5 @@ class NetworkTemplate(object):
             )
         else:
             tmplt = self.get_parser(parser_name)["setval"]
-        command = self._render(tmplt, data, negate, delete)
+        command = self._render(tmplt, data, negate)
         return command
