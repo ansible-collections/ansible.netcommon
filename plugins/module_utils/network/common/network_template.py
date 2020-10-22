@@ -81,26 +81,20 @@ class NetworkTemplate(object):
                 )
         except KeyError:
             return None
-        if self._prefix:
-            if negate and res and self._prefix.get("remove"):
+
+        if res:
+            if negate:
+                rem = "{0} ".format(self._prefix.get("remove", "no"))
                 if isinstance(res, list):
-                    cmd = [
-                        (self._prefix["remove"] + " " + each) for each in res
-                    ]
-                else:
-                    cmd = self._prefix["remove"] + " " + res
-                return cmd
-            elif self._prefix.get("set") and res:
+                    cmd = [(rem + each) for each in res]
+                    return cmd
+                return rem + res
+            elif self._prefix.get("set"):
+                set_cmd = "{0} ".format(self._prefix.get("set", ""))
                 if isinstance(res, list):
-                    cmd = [(self._prefix["set"] + " " + each) for each in res]
-                else:
-                    cmd = self._prefix["set"] + " " + res
-                return cmd
-        elif res and negate:
-            if isinstance(res, list):
-                cmd = [("no " + each) for each in res]
-                return cmd
-            return "no " + res
+                    cmd = [(set_cmd + each) for each in res]
+                    return cmd
+                return set_cmd + res
         return res
 
     def render(self, data, parser_name, negate=False):
