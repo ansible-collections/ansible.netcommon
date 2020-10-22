@@ -1,4 +1,4 @@
 ---
 bugfixes:
-  - Fixed filter plugins in ansible.netcommon collections is not working with latest Ansible
+  - Fixed ipaddr filter plugins in ansible.netcommon collections is not working with latest Ansible
     (https://github.com/ansible-collections/ansible.netcommon/issues/157)
