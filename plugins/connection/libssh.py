@@ -301,6 +301,16 @@ class Connection(ConnectionBase):
         proxy_command = self._get_proxy_command(port)
 
         try:
+            private_key = None
+            if self._play_context.private_key_file:
+                with open(
+                    os.path.expanduser(self._play_context.private_key_file)
+                ) as fp:
+                    b_content = fp.read()
+                    private_key = to_bytes(
+                        b_content, errors="surrogate_or_strict"
+                    )
+
             if proxy_command:
                 ssh_connect_kwargs["proxycommand"] = proxy_command
 
@@ -314,6 +324,7 @@ class Connection(ConnectionBase):
                 look_for_keys=self.get_option("look_for_keys"),
                 host_key_checking=self.get_option("host_key_checking"),
                 password=self._play_context.password,
+                private_key=private_key,
                 timeout=self._play_context.timeout,
                 port=port,
                 **ssh_connect_kwargs
