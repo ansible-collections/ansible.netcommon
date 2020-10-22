@@ -27,10 +27,13 @@ options:
   content:
     description:
     - The configuration data as defined by the device's data models, the value can
-      be either in xml string format or text format. The format of the configuration
-      should be supported by remote Netconf server. If the value of C(content) option
-      is in I(xml) format in that case the xml value should have I(config) as root tag.
-    type: str
+      be either in xml string format or text format or python dictionary representation of JSON format.
+    - In case of json string format it will be converted to the corresponding xml string using
+      xmltodict library before pushing onto the remote host.
+    - In case the value of this option isn I(text) format the format should be supported by remote Netconf server.
+    - If the value of C(content) option is in I(xml) format in that case the xml value should
+      have I(config) as root tag.
+    type: raw
     aliases:
     - xml
   target:
@@ -55,14 +58,18 @@ options:
     - source
   format:
     description:
-    - The format of the configuration provided as value of C(content). Accepted values
-      are I(xml) and I(text) and the given configuration format should be supported
-      by remote Netconf server.
+    - The format of the configuration provided as value of C(content).
+    - In case of json string format it will be converted to the corresponding xml string using
+      xmltodict library before pushing onto the remote host.
+    - In case of I(text) format of the configuration should be supported by remote Netconf server.
+    - If the value of C(format) options is not given it tries to guess the data format of
+      C(content) option as one of I(xml) or I(json) or I(text).
+    - If the data format is not identified it is set to I(xml) by default.
     type: str
-    default: xml
     choices:
     - xml
     - text
+    - json
   lock:
     description:
     - Instructs the module to explicitly lock the datastore specified as C(target).
@@ -197,9 +204,10 @@ options:
       and after state of the device following calls to edit_config. When not specified,
       the entire configuration or state data is returned for comparison depending
       on the value of C(source) option. The C(get_filter) value can be either XML
-      string or XPath, if the filter is in XPath format the NETCONF server running
-      on remote host should support xpath capability else it will result in an error.
-    type: str
+      string or XPath or JSON string or native python dictionary, if the filter is
+      in XPath format the NETCONF server running on remote host should support xpath
+      capability else it will result in an error.
+    type: raw
 requirements:
 - ncclient
 notes:
@@ -257,6 +265,50 @@ EXAMPLES = """
     backup_options:
       filename: backup.cfg
       dir_path: /home/user
+
+- name: "configure using direct native format configuration (cisco iosxr)"
+  ansible.netcommon.netconf_config:
+    content: {
+                "config": {
+                    "interface-configurations": {
+                        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                        "interface-configuration": {
+                            "active": "act",
+                            "description": "test for ansible Loopback999",
+                            "interface-name": "Loopback999"
+                        }
+                    }
+                }
+            }
+    get_filter: {
+                  "interface-configurations": {
+                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                      "interface-configuration": null
+                  }
+              }
+
+- name: "configure using json string format configuration (cisco iosxr)"
+  ansible.netcommon.netconf_config:
+    content: |
+            {
+                "config": {
+                    "interface-configurations": {
+                        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                        "interface-configuration": {
+                            "active": "act",
+                            "description": "test for ansible Loopback999",
+                            "interface-name": "Loopback999"
+                        }
+                    }
+                }
+            }
+    get_filter: |
+            {
+                  "interface-configurations": {
+                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                      "interface-configuration": null
+                  }
+              }
 """
 
 RETURN = """
@@ -283,34 +335,20 @@ diff:
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule, env_fallback
 from ansible.module_utils.connection import Connection, ConnectionError
+from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
+    validate_and_normalize_data,
+    dict_to_xml,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
     get_capabilities,
     get_config,
     sanitize_xml,
 )
 
-import sys
-
 try:
-    from lxml.etree import tostring, fromstring, XMLSyntaxError
+    from lxml.etree import tostring, fromstring
 except ImportError:
     from xml.etree.ElementTree import tostring, fromstring
-
-    if sys.version_info < (2, 7):
-        from xml.parsers.expat import ExpatError as XMLSyntaxError
-    else:
-        from xml.etree.ElementTree import ParseError as XMLSyntaxError
-
-
-def get_filter_type(filter):
-    if not filter:
-        return None
-    else:
-        try:
-            fromstring(filter)
-            return "subtree"
-        except XMLSyntaxError:
-            return "xpath"
 
 
 def validate_config(module, config, format="xml"):
@@ -327,14 +365,14 @@ def main():
     """
     backup_spec = dict(filename=dict(), dir_path=dict(type="path"))
     argument_spec = dict(
-        content=dict(aliases=["xml"]),
+        content=dict(aliases=["xml"], type="raw"),
         target=dict(
             choices=["auto", "candidate", "running"],
             default="auto",
             aliases=["datastore"],
         ),
         source_datastore=dict(aliases=["source"]),
-        format=dict(choices=["xml", "text"], default="xml"),
+        format=dict(choices=["xml", "text", "json"]),
         lock=dict(
             choices=["never", "always", "if-supported"], default="always"
         ),
@@ -355,7 +393,7 @@ def main():
         delete=dict(type="bool", default=False),
         commit=dict(type="bool", default=True),
         validate=dict(type="bool", default=False),
-        get_filter=dict(),
+        get_filter=dict(type="raw"),
     )
 
     # deprecated options
@@ -439,7 +477,28 @@ def main():
     save = module.params["save"]
     filter = module.params["get_filter"]
     format = module.params["format"]
-    filter_type = get_filter_type(filter)
+
+    try:
+        filter_data, filter_type = validate_and_normalize_data(filter)
+    except Exception as exc:
+        module.fail_json(msg=to_text(exc))
+
+    if filter_type:
+        if filter_type == "xml":
+            filter_type = "subtree"
+        elif filter_type == "json":
+            try:
+                filter = dict_to_xml(filter_data)
+            except Exception as exc:
+                module.fail_json(msg=to_text(exc))
+            filter_type = "subtree"
+        elif filter_type == "xpath":
+            pass
+        else:
+            module.fail_json(
+                msg="Invalid filter type detected %s for get_filter value %s"
+                % (filter_type, filter)
+            )
 
     conn = Connection(module._socket_path)
     capabilities = get_capabilities(module)
@@ -561,7 +620,28 @@ def main():
                     errors="surrogate_then_replace",
                 ).strip()
 
+            if format != "text":
+                # check for format of type json/xml/xpath
+                try:
+                    config_obj, config_format = validate_and_normalize_data(
+                        config, format
+                    )
+                except Exception as exc:
+                    module.fail_json(msg=to_text(exc))
+
+                if config_format == "json":
+                    try:
+                        config = dict_to_xml(config_obj)
+                    except Exception as exc:
+                        module.fail_json(msg=to_text(exc))
+                    format = "xml"
+                elif config_format is None:
+                    format = "xml"
+                else:
+                    format = config_format
+
             validate_config(module, config, format)
+
             kwargs = {
                 "config": config,
                 "target": target,
