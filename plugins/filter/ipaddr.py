@@ -548,6 +548,11 @@ def ipaddr(value, query="", version=False, alias="ipaddr"):
 
     vtype = None
 
+    if not value:
+        return False
+    elif value is True:
+        return False
+
     # Check if value is a list and parse each element
     if isinstance(value, (list, tuple, types.GeneratorType)):
         _ret = [ipaddr(element, str(query), version) for element in value]
