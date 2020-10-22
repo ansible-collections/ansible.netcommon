@@ -67,13 +67,13 @@ class TestIpFilter(unittest.TestCase):
     def test_ipaddr_empty_query(self):
         self.assertEqual(ipaddr.ipaddr("192.0.2.230"), "192.0.2.230")
         self.assertEqual(ipaddr.ipaddr("192.0.2.230/30"), "192.0.2.230/30")
-        self.assertEqual(ipaddr.ipaddr([]), False)
+        self.assertEqual(ipaddr.ipaddr([]), [])
+
         self.assertEqual(ipaddr.ipaddr(True), False)
+        self.assertEqual(ipaddr.ipaddr(""), False)
 
         # #TODO: Add these test after the check value check for None and True is removed
         # #TODO: from ipaddr filter
-
-        # self.assertEqual(ipaddr.ipaddr([]), [])
         # with pytest.raises(
         #     AnsibleFilterError,
         #     match="True is not a valid IP address or network",

@@ -552,23 +552,22 @@ def ipaddr(value, query="", version=False, alias="ipaddr"):
 
     vtype = None
 
-    # TODO: Remove this check in a major version release of collection with porting guide
-    if not value or value is True:
-        display.warning(
-            "The value '%s' is not a valid IP address or network, passing this value to ipaddr filter"
-            " might result in breaking change in future." % value
-        )
-        return False
-
     # Check if value is a list and parse each element
     if isinstance(value, (list, tuple, types.GeneratorType)):
         _ret = [ipaddr(element, str(query), version) for element in value]
         return [item for item in _ret if item]
 
     elif not value or value is True:
-        raise errors.AnsibleFilterError(
-            "{0!r} is not a valid IP address or network".format(value)
+        # TODO: Remove this check in a major version release of collection with porting guide
+        # TODO: and raise exception commented out below
+        display.warning(
+            "The value '%s' is not a valid IP address or network, passing this value to ipaddr filter"
+            " might result in breaking change in future." % value
         )
+        return False
+        # raise errors.AnsibleFilterError(
+        #     "{0!r} is not a valid IP address or network".format(value)
+        # )
 
     # Check if value is a number and convert it to an IP address
     elif str(value).isdigit():
