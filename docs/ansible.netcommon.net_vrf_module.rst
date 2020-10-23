@@ -135,7 +135,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: Create VRF named MANAGEMENT
       ansible.netcommon.net_vrf:

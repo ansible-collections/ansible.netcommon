@@ -108,7 +108,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: copy file from the network device to Ansible controller
       ansible.netcommon.net_get:

@@ -175,7 +175,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: configure link aggregation group
       ansible.netcommon.net_linkagg:

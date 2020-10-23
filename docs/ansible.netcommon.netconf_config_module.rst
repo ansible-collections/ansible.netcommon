@@ -167,13 +167,16 @@ Parameters
                     <b>content</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">raw</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The configuration data as defined by the device&#x27;s data models, the value can be either in xml string format or text format. The format of the configuration should be supported by remote Netconf server. If the value of <code>content</code> option is in <em>xml</em> format in that case the xml value should have <em>config</em> as root tag.</div>
+                        <div>The configuration data as defined by the device&#x27;s data models, the value can be either in xml string format or text format or python dictionary representation of JSON format.</div>
+                        <div>In case of json string format it will be converted to the corresponding xml string using xmltodict library before pushing onto the remote host.</div>
+                        <div>In case the value of this option isn <em>text</em> format the format should be supported by remote Netconf server.</div>
+                        <div>If the value of <code>content</code> option is in <em>xml</em> format in that case the xml value should have <em>config</em> as root tag.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: xml</div>
                 </td>
             </tr>
@@ -250,12 +253,17 @@ Parameters
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>xml</b>&nbsp;&larr;</div></li>
+                                    <li>xml</li>
                                     <li>text</li>
+                                    <li>json</li>
                         </ul>
                 </td>
                 <td>
-                        <div>The format of the configuration provided as value of <code>content</code>. Accepted values are <em>xml</em> and <em>text</em> and the given configuration format should be supported by remote Netconf server.</div>
+                        <div>The format of the configuration provided as value of <code>content</code>.</div>
+                        <div>In case of json string format it will be converted to the corresponding xml string using xmltodict library before pushing onto the remote host.</div>
+                        <div>In case of <em>text</em> format of the configuration should be supported by remote Netconf server.</div>
+                        <div>If the value of <code>format</code> options is not given it tries to guess the data format of <code>content</code> option as one of <em>xml</em> or <em>json</em> or <em>text</em>.</div>
+                        <div>If the data format is not identified it is set to <em>xml</em> by default.</div>
                 </td>
             </tr>
             <tr>
@@ -264,13 +272,13 @@ Parameters
                     <b>get_filter</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">raw</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>This argument specifies the XML string which acts as a filter to restrict the portions of the data retrieved from the remote device when comparing the before and after state of the device following calls to edit_config. When not specified, the entire configuration or state data is returned for comparison depending on the value of <code>source</code> option. The <code>get_filter</code> value can be either XML string or XPath, if the filter is in XPath format the NETCONF server running on remote host should support xpath capability else it will result in an error.</div>
+                        <div>This argument specifies the XML string which acts as a filter to restrict the portions of the data retrieved from the remote device when comparing the before and after state of the device following calls to edit_config. When not specified, the entire configuration or state data is returned for comparison depending on the value of <code>source</code> option. The <code>get_filter</code> value can be either XML string or XPath or JSON string or native python dictionary, if the filter is in XPath format the NETCONF server running on remote host should support xpath capability else it will result in an error.</div>
                 </td>
             </tr>
             <tr>
@@ -533,7 +541,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: use lookup filter to provide xml configuration
       ansible.netcommon.netconf_config:
@@ -581,6 +589,113 @@ Examples
         backup_options:
           filename: backup.cfg
           dir_path: /home/user
+
+    - name: "configure using direct native format configuration (cisco iosxr)"
+      ansible.netcommon.netconf_config:
+        content: {
+                    "config": {
+                        "interface-configurations": {
+                            "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                            "interface-configuration": {
+                                "active": "act",
+                                "description": "test for ansible Loopback999",
+                                "interface-name": "Loopback999"
+                            }
+                        }
+                    }
+                }
+        get_filter: {
+                      "interface-configurations": {
+                          "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                          "interface-configuration": null
+                      }
+                  }
+
+    - name: "configure using json string format configuration (cisco iosxr)"
+      ansible.netcommon.netconf_config:
+        content: |
+                {
+                    "config": {
+                        "interface-configurations": {
+                            "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                            "interface-configuration": {
+                                "active": "act",
+                                "description": "test for ansible Loopback999",
+                                "interface-name": "Loopback999"
+                            }
+                        }
+                    }
+                }
+        get_filter: |
+                {
+                      "interface-configurations": {
+                          "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                          "interface-configuration": null
+                      }
+                  }
+
+
+    # Make a round-trip interface description change, diff the before and after
+    # this demonstrates the use of the native display format and several utilities
+    # from the ansible.utils collection
+
+    - name: Define the openconfig interface filter
+      set_fact:
+        filter:
+          interfaces:
+            "@xmlns": "http://openconfig.net/yang/interfaces"
+            interface:
+              name: Ethernet2
+
+    - name: Get the pre-change config using the filter
+      ansible.netcommon.netconf_get:
+        source: running
+        filter: "{{ filter }}"
+        display: native
+      register: pre
+
+    - name: Update the description
+      ansible.utils.update_fact:
+        updates:
+        - path: pre.output.data.interfaces.interface.config.description
+          value: "Configured by ansible {{ 100 | random }}"
+      register: updated
+
+    - name: Apply the new configuration
+      ansible.netcommon.netconf_config:
+        content:
+          config:
+            interfaces: "{{ updated.pre.output.data.interfaces }}"
+
+    - name: Get the post-change config using the filter
+      ansible.netcommon.netconf_get:
+        source: running
+        filter: "{{ filter }}"
+        display: native
+      register: post
+
+    - name: Show the differences between the pre and post configurations
+      ansible.utils.fact_diff:
+        before: "{{ pre.output.data|ansible.utils.to_paths }}"
+        after: "{{ post.output.data|ansible.utils.to_paths }}"
+
+    # TASK [Show the differences between the pre and post configurations] ********
+    # --- before
+    # +++ after
+    # @@ -1,11 +1,11 @@
+    #  {
+    # -    "@time-modified": "2020-10-23T12:27:17.462332477Z",
+    # +    "@time-modified": "2020-10-23T12:27:21.744541708Z",
+    #      "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
+    #      "interfaces.interface.aggregation.config['fallback-timeout']['#text']": "90",
+    #      "interfaces.interface.aggregation.config['fallback-timeout']['@xmlns']": "http://arista.com/yang/openconfig/interfaces/augments",
+    #      "interfaces.interface.aggregation.config['min-links']": "0",
+    #      "interfaces.interface.aggregation['@xmlns']": "http://openconfig.net/yang/interfaces/aggregate",
+    # -    "interfaces.interface.config.description": "Configured by ansible 56",
+    # +    "interfaces.interface.config.description": "Configured by ansible 67",
+    #      "interfaces.interface.config.enabled": "true",
+    #      "interfaces.interface.config.mtu": "0",
+    #      "interfaces.interface.config.name": "Ethernet2",
 
 
 

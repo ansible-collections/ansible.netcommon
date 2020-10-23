@@ -114,7 +114,7 @@ Parameters
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: create l3vpn services
       ansible.netcommon.restconf_config:

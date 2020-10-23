@@ -183,7 +183,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: configure Layer-2 interface
       ansible.netcommon.net_l2_interface:
