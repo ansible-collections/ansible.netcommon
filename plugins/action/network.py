@@ -29,6 +29,8 @@ from ansible.module_utils._text import to_text, to_bytes
 from ansible.module_utils.six.moves.urllib.parse import urlsplit
 from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
+from ansible.module_utils.six import PY3
+
 
 display = Display()
 
@@ -45,16 +47,17 @@ class ActionModule(_ActionModule):
                 return dict(failed=True, msg=to_text(exc))
 
         make_fast = task_vars.get("ansible_network_make_fast")
-        if make_fast or True:  # FIXME
+        if make_fast or True and PY3:  # FIXME
             import importlib, io, json, sys
             from ansible.module_utils.basic import (
                 AnsibleModule as _AnsibleModule,
             )
 
-            # get the loader, module file name and import
             mloadr = self._shared_loader_obj.module_loader
             filename = mloadr.find_plugin(self._task.action)
-            spec = importlib.util.spec_from_file_location("module", filename)
+            spec = importlib.util.spec_from_file_location(
+                self._task.action, filename
+            )
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
 
