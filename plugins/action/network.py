@@ -46,7 +46,6 @@ class ActionModule(_ActionModule):
             except AnsibleError as exc:
                 return dict(failed=True, msg=to_text(exc))
 
-    
         if PY3:  # FIXME
             display.vvvv("1220 Platform performance enhancements enabled")
 
@@ -86,17 +85,15 @@ class ActionModule(_ActionModule):
 
             # redirect stdout to a buffer, because the module "prints"
             display.vvvv(
-                "1220 capturing stdout & stderr, running main from {fname}".format(
+                "1220 capturing stdout, running main from {fname}".format(
                     fname=filename
                 )
             )
             display.vvvv("1220 please remain quiet")
 
-            # preserve previous stdout & stderr, replace with buffers
+            # preserve previous stdout, replace with buffers
             stdout = sys.stdout
-            stderr = sys.stderr
             sys.stdout = io.StringIO()
-            sys.stderr = io.StringIO()
 
             # redefine sys.exit, otherwise the module exits & dead worker
             sys.exit = lambda x: None
@@ -105,19 +102,37 @@ class ActionModule(_ActionModule):
             module.main()
 
             # capture the module's output
-            output = {'stdout': sys.stdout.getvalue(), 'stderr': sys.stderr.getvalue()}
+            output = sys.stdout.getvalue()
 
             # restore stdout & stderr
             sys.stdout = stdout
-            sys.stderr = stderr
             display.vvvv(
-                "1220 stdout & stderr restored, ran main from {fname}".format(
+                "1220 stdout restored, ran main from {fname}".format(
                     fname=filename
                 )
             )
 
+            display.vvvv("1220 module ran got:")
+            display.vvvv(output)
             # load the response
-            result = self._parse_returned_data(output)
+            try:
+                result = json.loads(output)
+            except json.decoder.JSONDecodeError as exc:
+                display.vvvv(
+                    "1220 json decode error: {err}".format(err=str(exc))
+                )
+                display.vvvv("1220 sometime we get 2 json dicts")
+                try:
+                    display.vvvv("1220 using the first json dict")
+                    result = json.loads(output.split("\n\n")[0])
+                except json.decoder.JSONDecodeError as exc:
+                    display.vvvv("1220 using the first json dict")
+                    display.vvvv(
+                        "1220 final json decode error: {err}".format(
+                            err=str(exc)
+                        )
+                    )
+                    result = {"stdout": output}
         else:
             result = super(ActionModule, self).run(task_vars=task_vars)
 
@@ -128,8 +143,8 @@ class ActionModule(_ActionModule):
         ):
             self._handle_backup_option(result, task_vars)
 
-        if 'stdout' in result and 'stdout_lines' not in result:
-            result['stdout_lines'] = result['stdout'].splitlines()
+        if "stdout" in result and "stdout_lines" not in result:
+            result["stdout_lines"] = result["stdout"].splitlines()
 
         return result
 
