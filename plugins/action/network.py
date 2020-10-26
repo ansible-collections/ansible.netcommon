@@ -50,7 +50,10 @@ class ActionModule(_ActionModule):
         if make_fast or True and PY3:  # FIXME
             display.vvvv("1220 Platform performance enhancements enabled")
 
-            import importlib, io, json, sys
+            import importlib
+            import io
+            import json
+            import sys
             from ansible.module_utils.basic import (
                 AnsibleModule as _AnsibleModule,
             )
@@ -75,7 +78,7 @@ class ActionModule(_ActionModule):
                 self._task.action, self._task.args, task_vars
             )
 
-            # set the params of the ansible module cause we're using stdin
+            # set the params of the ansible module cause we're not using stdin
             AnsibleModule.params = self._task.args
 
             # give the module our revised AnsibleModule
