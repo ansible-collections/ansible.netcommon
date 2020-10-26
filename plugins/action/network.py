@@ -86,14 +86,17 @@ class ActionModule(_ActionModule):
 
             # redirect stdout to a buffer, because the module "prints"
             display.vvvv(
-                "1220 capturing stdout, running main from {fname}".format(
+                "1220 capturing stdout & stderr, running main from {fname}".format(
                     fname=filename
                 )
             )
             display.vvvv("1220 please remain quiet")
 
+            # preserve previous stdout & stderr, replace with buffers
             stdout = sys.stdout
+            stderr = sys.stderr
             sys.stdout = io.StringIO()
+            sys.stderr = io.StringIO()
 
             # redefine sys.exit, otherwise the module exits & dead worker
             sys.exit = lambda x: None
@@ -102,20 +105,19 @@ class ActionModule(_ActionModule):
             module.main()
 
             # capture the module's output
-            output = sys.stdout.getvalue()
+            output = {'stdout': sys.stdout.getvalue(), 'stderr': sys.stderr.getvalue()}
 
-            # restore stdout
+            # restore stdout & stderr
             sys.stdout = stdout
+            sys.stderr = stderr
             display.vvvv(
-                "1220 stdout restored, ran main from {fname}".format(
+                "1220 stdout & stderr restored, ran main from {fname}".format(
                     fname=filename
                 )
             )
 
-            # load the json from module exit_json or fail_json
-            display.vvvv("1220 Recevied the following stdout from module")
-            display.vvvv(output)
-            result = json.loads(output)
+            # load the response
+            result = self._parse_returned_data(output)
         else:
             result = super(ActionModule, self).run(task_vars=task_vars)
 
