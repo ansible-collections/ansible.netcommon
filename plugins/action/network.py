@@ -44,10 +44,12 @@ class ActionModule(_ActionModule):
             except AnsibleError as exc:
                 return dict(failed=True, msg=to_text(exc))
 
-        make_fast = task_vars.get('ansible_network_make_fast')
-        if make_fast or True:  #FIXME
+        make_fast = task_vars.get("ansible_network_make_fast")
+        if make_fast or True:  # FIXME
             import importlib, io, json, sys
-            from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
+            from ansible.module_utils.basic import (
+                AnsibleModule as _AnsibleModule,
+            )
 
             # get the loader, module file name and import
             mloadr = self._shared_loader_obj.module_loader
@@ -60,9 +62,11 @@ class ActionModule(_ActionModule):
             class AnsibleModule(_AnsibleModule):
                 def _load_params(self):
                     pass
-            
+
             # update the task args w/ all the magic vars
-            self._update_module_args(self._task.action, self._task.args, task_vars)
+            self._update_module_args(
+                self._task.action, self._task.args, task_vars
+            )
 
             # set the params of the ansible module cause we're using stdin
             AnsibleModule.params = self._task.args
