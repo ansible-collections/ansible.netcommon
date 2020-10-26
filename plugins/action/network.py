@@ -46,8 +46,8 @@ class ActionModule(_ActionModule):
             except AnsibleError as exc:
                 return dict(failed=True, msg=to_text(exc))
 
-        make_fast = task_vars.get("ansible_network_make_fast")
-        if make_fast or True and PY3:  # FIXME
+    
+        if PY3:  # FIXME
             display.vvvv("1220 Platform performance enhancements enabled")
 
             import importlib
@@ -113,6 +113,8 @@ class ActionModule(_ActionModule):
             )
 
             # load the json from module exit_json or fail_json
+            display.vvvv("1220 Recevied the following stdout from module")
+            display.vvvv(output)
             result = json.loads(output)
         else:
             result = super(ActionModule, self).run(task_vars=task_vars)
@@ -123,6 +125,9 @@ class ActionModule(_ActionModule):
             and not result.get("failed")
         ):
             self._handle_backup_option(result, task_vars)
+
+        if 'stdout' in result and 'stdout_lines' not in result:
+            result['stdout_lines'] = result['stdout'].splitlines()
 
         return result
 
