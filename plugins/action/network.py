@@ -48,6 +48,8 @@ class ActionModule(_ActionModule):
 
         make_fast = task_vars.get("ansible_network_make_fast")
         if make_fast or True and PY3:  # FIXME
+            display.vvvv("1220 Platform performance enhancements enabled")
+
             import importlib, io, json, sys
             from ansible.module_utils.basic import (
                 AnsibleModule as _AnsibleModule,
@@ -55,6 +57,8 @@ class ActionModule(_ActionModule):
 
             mloadr = self._shared_loader_obj.module_loader
             filename = mloadr.find_plugin(self._task.action)
+            display.vvvv("1220 loading {fname}".format(fname=filename))
+
             spec = importlib.util.spec_from_file_location(
                 self._task.action, filename
             )
@@ -78,6 +82,13 @@ class ActionModule(_ActionModule):
             module.AnsibleModule = AnsibleModule
 
             # redirect stdout to a buffer, because the module "prints"
+            display.vvvv(
+                "1220 capturing stdout, running main from {fname}".format(
+                    fname=filename
+                )
+            )
+            display.vvvv("1220 please remain quiet")
+
             stdout = sys.stdout
             sys.stdout = io.StringIO()
 
@@ -92,6 +103,11 @@ class ActionModule(_ActionModule):
 
             # restore stdout
             sys.stdout = stdout
+            display.vvvv(
+                "1220 stdout restored, ran main from {fname}".format(
+                    fname=filename
+                )
+            )
 
             # load the json from module exit_json or fail_json
             result = json.loads(output)
