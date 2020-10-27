@@ -60,6 +60,7 @@ class ActionModule(_ActionModule):
             from ansible.module_utils.basic import (
                 AnsibleModule as _AnsibleModule,
             )
+            from ansible.vars.clean import remove_internal_keys
 
             mloadr = self._shared_loader_obj.module_loader
             filename = mloadr.find_plugin(self._task.action)
@@ -123,7 +124,6 @@ class ActionModule(_ActionModule):
             module_result = json.loads(output)
 
             # Clean up the response like action _execute_module
-            from ansible.vars.clean import remove_internal_keys
             remove_internal_keys(module_result)
             display.vvvv("{prefix} complete".format(prefix=prefix))
             result = module_result
