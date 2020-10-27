@@ -118,11 +118,9 @@ class ActionModule(_ActionModule):
             # load the response
             module_result = json.loads(output)
 
-            # TODO: figure out why this is necessary
-            # arista/eos/tests/integration/targets/eos_l2_interface/tests/eapi/no_interface.yaml:35
-
-            if 'warnings' in module_result and not module_result['warnings']:
-                del module_result['warnings']
+            # Clean up the response like action _execute_module
+            from ansible.vars.clean import remove_internal_keys
+            remove_internal_keys(module_result)
             result = module_result
         else:
             result = super(ActionModule, self).run(task_vars=task_vars)
