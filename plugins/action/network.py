@@ -50,12 +50,10 @@ class ActionModule(_ActionModule):
         # REMOVE ME
         if PY3:
             direct_execution = True
-        ansible_host = task_vars["ansible_host"]
-        prefix = "<{ah}> ANSIBLE_NETWORK_DIRECT_EXECUTION: ".format(
-            ah=ansible_host
-        )
+        host = task_vars["ansible_host"]
+        prefix = "ANSIBLE_NETWORK_DIRECT_EXECUTION:"
         if direct_execution:
-            display.vvvv("{prefix} enabled".format(prefix=prefix))
+            display.vvvv("{prefix} enabled".format(prefix=prefix), host)
 
             import importlib
             import io
@@ -71,7 +69,8 @@ class ActionModule(_ActionModule):
             display.vvvv(
                 "{prefix} loading {fname}".format(
                     prefix=prefix, fname=filename
-                )
+                ),
+                host,
             )
 
             spec = importlib.util.spec_from_file_location(
@@ -101,12 +100,13 @@ class ActionModule(_ActionModule):
 
                 # redirect stdout to a buffer, because the module "prints"
                 display.vvvv(
-                    "{prefix} capturing stdout, running main from {fname}".format(
-                        prefix=prefix, fname=filename
-                    )
+                    "{prefix} running {module}".format(
+                        prefix=prefix, module=self._task.action
+                    ),
+                    host,
                 )
 
-                # preserve previous stdout, replace with buffers
+                # preserve previous stdout, replace with buffer
                 stdout = sys.stdout
                 sys.stdout = io.StringIO()
 
@@ -121,21 +121,17 @@ class ActionModule(_ActionModule):
 
                 # restore stdout & stderr
                 sys.stdout = stdout
-                display.vvvv(
-                    "{prefix} stdout restored, ran main from {fname}".format(
-                        prefix=prefix, fname=filename
-                    )
-                )
-
-                display.vvvv("{prefix} module ran got:".format(prefix=prefix))
-                display.vvvv(output)
 
                 # load the response
-                module_result = json.loads(output)
+                dict_out = {
+                    "stdout": output,
+                    "stdout_lines": output.splitlines(),
+                }
+                module_result = self._parse_returned_data(dict_out)
 
                 # Clean up the response like action _execute_module
                 remove_internal_keys(module_result)
-                display.vvvv("{prefix} complete".format(prefix=prefix))
+                display.vvvv("{prefix} complete".format(prefix=prefix), host)
                 result = module_result
             else:
                 # some modules don't use AnsibleModule so we'll tar
@@ -143,16 +139,18 @@ class ActionModule(_ActionModule):
                 display.vvvv(
                     "{prefix} {module} doesn't support direct execution".format(
                         prefix=prefix, module=self._task.action
-                    )
+                    ),
+                    host,
                 )
                 direct_execution = False
 
         if not direct_execution:
-            display.vvvv("{prefix} disabled".format(prefix=prefix))
+            display.vvvv("{prefix} disabled".format(prefix=prefix), host)
             display.vvvv(
                 "{prefix} module execution time may be extended".format(
                     prefix=prefix
-                )
+                ),
+                host,
             )
             result = super(ActionModule, self).run(task_vars=task_vars)
 
