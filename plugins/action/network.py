@@ -62,6 +62,7 @@ class ActionModule(_ActionModule):
                 AnsibleModule as _AnsibleModule,
             )
             from ansible.vars.clean import remove_internal_keys
+            from ansible.module_utils._text import to_bytes, to_native
 
             mloadr = self._shared_loader_obj.module_loader
             filename = mloadr.find_plugin(self._task.action)
@@ -106,25 +107,32 @@ class ActionModule(_ActionModule):
                 )
 
                 # preserve previous stdout, replace with buffer
-                stdout = sys.stdout
+                sys_stdout = sys.stdout
                 sys.stdout = io.StringIO()
 
                 # run the module, catch the SystemExit so we continue
+                # capture sys.stdout as stdout
+                # capture str(Exception) as stderr
                 try:
                     module.main()
                 except SystemExit:
-                    pass
-
-                # capture the module's output
-                output = sys.stdout.getvalue()
+                    # module exited cleanly
+                    stdout = sys.stdout.getvalue()
+                    stderr = ""
+                except Exception as exc:
+                    # dirty module or connection
+                    stderr = to_native(exc)
+                    stdout = ""
 
                 # restore stdout & stderr
-                sys.stdout = stdout
+                sys.stdout = sys_stdout
 
-                # load the response
+                # parse the response
                 dict_out = {
-                    "stdout": output,
-                    "stdout_lines": output.splitlines(),
+                    "stdout": stdout,
+                    "stdout_lines": stdout.splitlines(),
+                    "stderr": stderr,
+                    "stderr_lines": stderr.splitlines(),
                 }
                 module_result = self._parse_returned_data(dict_out)
 
