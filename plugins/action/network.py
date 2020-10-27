@@ -116,6 +116,14 @@ class ActionModule(_ActionModule):
             display.vvvv(output)
 
             # load the response
+            module_result = json.loads(output)
+
+            # TODO: figure out why this is necessary
+            # arista/eos/tests/integration/targets/eos_l2_interface/tests/eapi/no_interface.yaml:35
+            
+            if 'warnings' in module_result and not module_result['warnings']:
+                del module_result['warnings']
+
             result = json.loads(output)
         else:
             result = super(ActionModule, self).run(task_vars=task_vars)
