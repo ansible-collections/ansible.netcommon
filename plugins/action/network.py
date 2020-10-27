@@ -57,7 +57,6 @@ class ActionModule(_ActionModule):
 
             import importlib
             import io
-            import json
             import sys
             from ansible.module_utils.basic import (
                 AnsibleModule as _AnsibleModule,
