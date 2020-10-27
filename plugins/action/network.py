@@ -47,12 +47,14 @@ class ActionModule(_ActionModule):
                 return dict(failed=True, msg=to_text(exc))
 
         direct_execution = self.get_connection_option("direct_execution")
+        # REMOVE ME
+        if PY3:
+            direct_execution = True
         ansible_host = task_vars["ansible_host"]
         prefix = "<{ah}> ANSIBLE_NETWORK_DIRECT_EXECUTION: ".format(
             ah=ansible_host
         )
-        # if direct_execution:
-        if PY3:  # FIXME
+        if direct_execution:
             display.vvvv("{prefix} enabled".format(prefix=prefix))
 
             import importlib
@@ -78,69 +80,80 @@ class ActionModule(_ActionModule):
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
 
-            # build an AnsibleModule that doesn't load params
-            class AnsibleModule(_AnsibleModule):
-                def _load_params(self):
+            # make sure the module is using AnsibleModule
+            if getattr(module, "AnsibleModule", None):
+
+                # build an AnsibleModule that doesn't load params
+                class PatchedAnsibleModule(_AnsibleModule):
+                    def _load_params(self):
+                        pass
+
+                # update the task args w/ all the magic vars
+                self._update_module_args(
+                    self._task.action, self._task.args, task_vars
+                )
+
+                # set the params of the ansible module cause we're not using stdin
+                PatchedAnsibleModule.params = self._task.args
+
+                # give the module our revised AnsibleModule
+                module.AnsibleModule = PatchedAnsibleModule
+
+                # redirect stdout to a buffer, because the module "prints"
+                display.vvvv(
+                    "{prefix} capturing stdout, running main from {fname}".format(
+                        prefix=prefix, fname=filename
+                    )
+                )
+
+                # preserve previous stdout, replace with buffers
+                stdout = sys.stdout
+                sys.stdout = io.StringIO()
+
+                # run the module, catch the SystemExit so we continue
+                try:
+                    module.main()
+                except SystemExit:
                     pass
 
-            # update the task args w/ all the magic vars
-            self._update_module_args(
-                self._task.action, self._task.args, task_vars
-            )
+                # capture the module's output
+                output = sys.stdout.getvalue()
 
-            # set the params of the ansible module cause we're not using stdin
-            AnsibleModule.params = self._task.args
-
-            # give the module our revised AnsibleModule
-            module.AnsibleModule = AnsibleModule
-
-            # redirect stdout to a buffer, because the module "prints"
-            display.vvvv(
-                "{prefix} capturing stdout, running main from {fname}".format(
-                    prefix=prefix, fname=filename
+                # restore stdout & stderr
+                sys.stdout = stdout
+                display.vvvv(
+                    "{prefix} stdout restored, ran main from {fname}".format(
+                        prefix=prefix, fname=filename
+                    )
                 )
-            )
-            display.vvvv("{prefix} please remain quiet".format(prefix=prefix))
 
-            # preserve previous stdout, replace with buffers
-            stdout = sys.stdout
-            sys.stdout = io.StringIO()
+                display.vvvv("{prefix} module ran got:".format(prefix=prefix))
+                display.vvvv(output)
 
-            # run the module, catch the SystemExit so we continue
-            try:
-                module.main()
-            except SystemExit:
-                pass
+                # load the response
+                module_result = json.loads(output)
 
-            # capture the module's output
-            output = sys.stdout.getvalue()
-
-            # restore stdout & stderr
-            sys.stdout = stdout
-            display.vvvv(
-                "{prefix} stdout restored, ran main from {fname}".format(
-                    prefix=prefix, fname=filename
+                # Clean up the response like action _execute_module
+                remove_internal_keys(module_result)
+                display.vvvv("{prefix} complete".format(prefix=prefix))
+                result = module_result
+            else:
+                # some modules don't use AnsibleModule so we'll tar
+                # eg eos_bgp
+                display.vvvv(
+                    "{prefix} {module} doesn't support direct execution".format(
+                        prefix=prefix, module=self._task.action
+                    )
                 )
-            )
+                direct_execution = False
 
-            display.vvvv("{prefix} module ran got:".format(prefix=prefix))
-            display.vvvv(output)
-
-            # load the response
-            module_result = json.loads(output)
-
-            # Clean up the response like action _execute_module
-            remove_internal_keys(module_result)
-            display.vvvv("{prefix} complete".format(prefix=prefix))
-            result = module_result
-        else:
+        if not direct_execution:
             display.vvvv("{prefix} disabled".format(prefix=prefix))
             display.vvvv(
-                "{prefix} playbook execution time may be extended".format(
+                "{prefix} module execution time may be extended".format(
                     prefix=prefix
                 )
             )
-
             result = super(ActionModule, self).run(task_vars=task_vars)
 
         if (
