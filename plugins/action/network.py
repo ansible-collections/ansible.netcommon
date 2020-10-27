@@ -95,11 +95,11 @@ class ActionModule(_ActionModule):
             stdout = sys.stdout
             sys.stdout = io.StringIO()
 
-            # redefine sys.exit, otherwise the module exits & dead worker
-            sys.exit = lambda x: None
-
-            # run the module
-            module.main()
+            # run the module, catch the SystemExit so we continue
+            try:
+                module.main()
+            except SystemExit:
+                pass
 
             # capture the module's output
             output = sys.stdout.getvalue()
@@ -114,25 +114,9 @@ class ActionModule(_ActionModule):
 
             display.vvvv("1220 module ran got:")
             display.vvvv(output)
+
             # load the response
-            try:
-                result = json.loads(output)
-            except json.decoder.JSONDecodeError as exc:
-                display.vvvv(
-                    "1220 json decode error: {err}".format(err=str(exc))
-                )
-                display.vvvv("1220 sometime we get 2 json dicts")
-                try:
-                    display.vvvv("1220 using the first json dict")
-                    result = json.loads(output.split("\n\n")[0])
-                except json.decoder.JSONDecodeError as exc:
-                    display.vvvv("1220 using the first json dict")
-                    display.vvvv(
-                        "1220 final json decode error: {err}".format(
-                            err=str(exc)
-                        )
-                    )
-                    result = {"stdout": output}
+            result = json.loads(output)
         else:
             result = super(ActionModule, self).run(task_vars=task_vars)
 

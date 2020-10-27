@@ -24,6 +24,7 @@ from ansible_collections.ansible.netcommon.plugins.action.network import (
     ActionModule as ActionNetworkModule,
 )
 
+
 class ActionModule(ActionNetworkModule):
     def run(self, tmp=None, task_vars=None):
         if self._play_context.connection.split(".")[-1] != "network_cli":
