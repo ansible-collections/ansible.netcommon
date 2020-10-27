@@ -46,10 +46,12 @@ class ActionModule(_ActionModule):
             except AnsibleError as exc:
                 return dict(failed=True, msg=to_text(exc))
 
-        direct_execution = self.get_connection_option('direct_execution')
-        ansible_host = task_vars['ansible_host']
-        prefix = "<{ah}> ANSIBLE_NETWORK_DIRECT_EXECUTION: ".format(ah=ansible_host)
-        # if direct_execution: 
+        direct_execution = self.get_connection_option("direct_execution")
+        ansible_host = task_vars["ansible_host"]
+        prefix = "<{ah}> ANSIBLE_NETWORK_DIRECT_EXECUTION: ".format(
+            ah=ansible_host
+        )
+        # if direct_execution:
         if PY3:  # FIXME
             display.vvvv("{prefix} enabled".format(prefix=prefix))
 
@@ -64,7 +66,11 @@ class ActionModule(_ActionModule):
 
             mloadr = self._shared_loader_obj.module_loader
             filename = mloadr.find_plugin(self._task.action)
-            display.vvvv("{prefix} loading {fname}".format(prefix=prefix, fname=filename))
+            display.vvvv(
+                "{prefix} loading {fname}".format(
+                    prefix=prefix, fname=filename
+                )
+            )
 
             spec = importlib.util.spec_from_file_location(
                 self._task.action, filename
@@ -129,7 +135,11 @@ class ActionModule(_ActionModule):
             result = module_result
         else:
             display.vvvv("{prefix} disabled".format(prefix=prefix))
-            display.vvvv("{prefix} playbook execution time may be extended".format(prefix=prefix))
+            display.vvvv(
+                "{prefix} playbook execution time may be extended".format(
+                    prefix=prefix
+                )
+            )
 
             result = super(ActionModule, self).run(task_vars=task_vars)
 
