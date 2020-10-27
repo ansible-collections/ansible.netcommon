@@ -105,6 +105,21 @@ options:
     - name: ANSIBLE_BECOME_METHOD
     vars:
     - name: ansible_become_method
+  direct_execution:
+    type: boolean
+    description:
+    - Gain potential preformance for network modules by enabling direct execution.
+      Instead of the module being packaged and executed by the shell, it will
+      be directly executed by the Ansible control node using the same python interpreter
+      as the Ansible process.
+    default: false
+    ini:
+    - section: ansible_network
+      key: direct_execution
+    env:
+    - name: ANSIBLE_NETWORK_DIRECT_EXECUTION
+    vars:
+    - name: ansible_network_direct_execution
   host_key_auto_add:
     type: boolean
     description:

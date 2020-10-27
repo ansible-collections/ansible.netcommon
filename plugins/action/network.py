@@ -46,8 +46,12 @@ class ActionModule(_ActionModule):
             except AnsibleError as exc:
                 return dict(failed=True, msg=to_text(exc))
 
+        direct_execution = self.get_connection_option('direct_execution')
+        ansible_host = task_vars['ansible_host']
+        prefix = "<{ah}> ANSIBLE_NETWORK_DIRECT_EXECUTION: ".format(ah=ansible_host)
+        # if direct_execution: 
         if PY3:  # FIXME
-            display.vvvv("1220 Platform performance enhancements enabled")
+            display.vvvv("{prefix} enabled".format(prefix=prefix))
 
             import importlib
             import io
@@ -59,7 +63,7 @@ class ActionModule(_ActionModule):
 
             mloadr = self._shared_loader_obj.module_loader
             filename = mloadr.find_plugin(self._task.action)
-            display.vvvv("1220 loading {fname}".format(fname=filename))
+            display.vvvv("{prefix} loading {fname}".format(prefix=prefix, fname=filename))
 
             spec = importlib.util.spec_from_file_location(
                 self._task.action, filename
@@ -85,11 +89,11 @@ class ActionModule(_ActionModule):
 
             # redirect stdout to a buffer, because the module "prints"
             display.vvvv(
-                "1220 capturing stdout, running main from {fname}".format(
-                    fname=filename
+                "{prefix} capturing stdout, running main from {fname}".format(
+                    prefix=prefix, fname=filename
                 )
             )
-            display.vvvv("1220 please remain quiet")
+            display.vvvv("{prefix} please remain quiet".format(prefix=prefix))
 
             # preserve previous stdout, replace with buffers
             stdout = sys.stdout
@@ -107,12 +111,12 @@ class ActionModule(_ActionModule):
             # restore stdout & stderr
             sys.stdout = stdout
             display.vvvv(
-                "1220 stdout restored, ran main from {fname}".format(
-                    fname=filename
+                "{prefix} stdout restored, ran main from {fname}".format(
+                    prefix=prefix, fname=filename
                 )
             )
 
-            display.vvvv("1220 module ran got:")
+            display.vvvv("{prefix} module ran got:".format(prefix=prefix))
             display.vvvv(output)
 
             # load the response
@@ -121,8 +125,12 @@ class ActionModule(_ActionModule):
             # Clean up the response like action _execute_module
             from ansible.vars.clean import remove_internal_keys
             remove_internal_keys(module_result)
+            display.vvvv("{prefix} complete".format(prefix=prefix))
             result = module_result
         else:
+            display.vvvv("{prefix} disabled".format(prefix=prefix))
+            display.vvvv("{prefix} playbook execution time may be extended".format(prefix=prefix))
+
             result = super(ActionModule, self).run(task_vars=task_vars)
 
         if (
