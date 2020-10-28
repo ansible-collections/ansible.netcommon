@@ -31,7 +31,6 @@ from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
 from ansible.module_utils.six import PY3
 
-
 display = Display()
 
 PRIVATE_KEYS_RE = re.compile("__.+__")
