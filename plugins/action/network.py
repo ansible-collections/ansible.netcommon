@@ -115,9 +115,6 @@ class ActionModule(_ActionModule):
         ):
             self._handle_backup_option(result, task_vars)
 
-        if "stdout" in result and "stdout_lines" not in result:
-            result["stdout_lines"] = result["stdout"].splitlines()
-
         return result
 
     def _handle_backup_option(self, result, task_vars):
