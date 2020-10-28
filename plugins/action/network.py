@@ -49,7 +49,7 @@ class ActionModule(_ActionModule):
         dexec_prefix = "ANSIBLE_NETWORK_DIRECT_EXECUTION:"
         host = task_vars["ansible_host"]
 
-        FIXME:  REMOVE ME BEFORE MERGE
+        # FIXME:  REMOVE ME BEFORE MERGE
         if PY3:
             direct_execution = True
 
@@ -279,7 +279,7 @@ class ActionModule(_ActionModule):
         import importlib
 
         mloadr = self._shared_loader_obj.module_loader
-       
+
         # find the module & import
         filename = mloadr.find_plugin(
             self._task.action, collection_list=self._task.collections
