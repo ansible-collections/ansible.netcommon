@@ -49,9 +49,9 @@ class ActionModule(_ActionModule):
         dexec_prefix = "ANSIBLE_NETWORK_DIRECT_EXECUTION:"
         host = task_vars["ansible_host"]
 
-        # FIXME:  REMOVE ME BEFORE MERGE
-        # if PY3:
-        #     direct_execution = True
+        FIXME:  REMOVE ME BEFORE MERGE
+        if PY3:
+            direct_execution = True
 
         if dexec:
             display.vvvv(
@@ -279,7 +279,7 @@ class ActionModule(_ActionModule):
         import importlib
 
         mloadr = self._shared_loader_obj.module_loader
-
+       
         # find the module & import
         filename = mloadr.find_plugin(
             self._task.action, collection_list=self._task.collections
@@ -290,6 +290,7 @@ class ActionModule(_ActionModule):
         )
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
+
         return filename, module
 
     def _patch_update_module(self, module, task_vars):
