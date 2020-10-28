@@ -50,8 +50,8 @@ class ActionModule(_ActionModule):
         host = task_vars["ansible_host"]
 
         # FIXME:  REMOVE ME BEFORE MERGE
-        if PY3:
-            direct_execution = True
+        # if PY3:
+        #     direct_execution = True
 
         if dexec:
             display.vvvv(
@@ -89,7 +89,7 @@ class ActionModule(_ActionModule):
                 )
 
             else:
-                direct_execution = False
+                dexec = False
                 display.vvvv(
                     "{prefix} {module} doesn't support direct execution".format(
                         prefix=dexec_prefix, module=self._task.action
@@ -97,7 +97,7 @@ class ActionModule(_ActionModule):
                     host,
                 )
 
-        if not direct_execution:
+        if not dexec:
             display.vvvv("{prefix} disabled".format(prefix=dexec_prefix), host)
             display.vvvv(
                 "{prefix} module execution time may be extended".format(
