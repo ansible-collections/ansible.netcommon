@@ -52,7 +52,8 @@ class ActionModule(_ActionModule):
             direct_execution = True
         host = task_vars["ansible_host"]
         prefix = "ANSIBLE_NETWORK_DIRECT_EXECUTION:"
-        if direct_execution:
+
+        while direct_execution:
             display.vvvv("{prefix} enabled".format(prefix=prefix), host)
 
             import importlib
@@ -62,94 +63,104 @@ class ActionModule(_ActionModule):
                 AnsibleModule as _AnsibleModule,
             )
             from ansible.vars.clean import remove_internal_keys
-            from ansible.module_utils._text import to_bytes, to_native
+            from ansible.module_utils._text import to_native
 
             mloadr = self._shared_loader_obj.module_loader
-            filename = mloadr.find_plugin(self._task.action)
+
+            # find the module & import
+            filename = mloadr.find_plugin(
+                self._task.action, collection_list=self._task.collections
+            )
             display.vvvv(
-                "{prefix} loading {fname}".format(
-                    prefix=prefix, fname=filename
+                "{prefix} found {action} {fname}".format(
+                    prefix=prefix, action=self._task.action, fname=filename
                 ),
                 host,
             )
-
             spec = importlib.util.spec_from_file_location(
                 self._task.action, filename
             )
             module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(module)
 
-            # make sure the module is using AnsibleModule
-            if getattr(module, "AnsibleModule", None):
-
-                # build an AnsibleModule that doesn't load params
-                class PatchedAnsibleModule(_AnsibleModule):
-                    def _load_params(self):
-                        pass
-
-                # update the task args w/ all the magic vars
-                self._update_module_args(
-                    self._task.action, self._task.args, task_vars
-                )
-
-                # set the params of the ansible module cause we're not using stdin
-                PatchedAnsibleModule.params = self._task.args
-
-                # give the module our revised AnsibleModule
-                module.AnsibleModule = PatchedAnsibleModule
-
-                # redirect stdout to a buffer, because the module "prints"
-                display.vvvv(
-                    "{prefix} running {module}".format(
-                        prefix=prefix, module=self._task.action
-                    ),
-                    host,
-                )
-
-                # preserve previous stdout, replace with buffer
-                sys_stdout = sys.stdout
-                sys.stdout = io.StringIO()
-
-                # run the module, catch the SystemExit so we continue
-                # capture sys.stdout as stdout
-                # capture str(Exception) as stderr
-                try:
-                    module.main()
-                except SystemExit:
-                    # module exited cleanly
-                    stdout = sys.stdout.getvalue()
-                    stderr = ""
-                except Exception as exc:
-                    # dirty module or connection
-                    stderr = to_native(exc)
-                    stdout = ""
-
-                # restore stdout & stderr
-                sys.stdout = sys_stdout
-
-                # parse the response
-                dict_out = {
-                    "stdout": stdout,
-                    "stdout_lines": stdout.splitlines(),
-                    "stderr": stderr,
-                    "stderr_lines": stderr.splitlines(),
-                }
-                module_result = self._parse_returned_data(dict_out)
-
-                # Clean up the response like action _execute_module
-                remove_internal_keys(module_result)
-                display.vvvv("{prefix} complete".format(prefix=prefix), host)
-                result = module_result
-            else:
-                # some modules don't use AnsibleModule so we'll tar
-                # eg eos_bgp
+            # not using AnsibleModule, return to normal run (eg eos_bgp)
+            if not getattr(module, "AnsibleModule", None):
+                direct_execution = False
                 display.vvvv(
                     "{prefix} {module} doesn't support direct execution".format(
                         prefix=prefix, module=self._task.action
                     ),
                     host,
                 )
-                direct_execution = False
+                break
+
+            # build an AnsibleModule that doesn't load params
+            class PatchedAnsibleModule(_AnsibleModule):
+                def _load_params(self):
+                    pass
+
+            # update the task args w/ all the magic vars
+            self._update_module_args(
+                self._task.action, self._task.args, task_vars
+            )
+
+            # set the params of the ansible module cause we're not using stdin
+            PatchedAnsibleModule.params = self._task.args
+
+            # give the module our revised AnsibleModule
+            module.AnsibleModule = PatchedAnsibleModule
+
+            # redirect stdout to a buffer, because the module "prints"
+            display.vvvv(
+                "{prefix} running {module}".format(
+                    prefix=prefix, module=self._task.action
+                ),
+                host,
+            )
+
+            # preserve previous stdout, replace with buffer
+            sys_stdout = sys.stdout
+            sys.stdout = io.StringIO()
+
+            # run the module, catch the SystemExit so we continue
+            # capture sys.stdout as stdout
+            # capture str(Exception) as stderr
+            try:
+                module.main()
+            except SystemExit:
+                # module exited cleanly
+                stdout = sys.stdout.getvalue()
+                stderr = ""
+            except Exception as exc:
+                # dirty module or connection
+                stderr = to_native(exc)
+                stdout = ""
+
+            # restore stdout & stderr
+            sys.stdout = sys_stdout
+
+            # parse the response
+            dict_out = {
+                "stdout": stdout,
+                "stdout_lines": stdout.splitlines(),
+                "stderr": stderr,
+                "stderr_lines": stderr.splitlines(),
+            }
+            module_result = self._parse_returned_data(dict_out)
+
+            # dump the result
+            display.vvvv(
+                "{prefix} result: {result}".format(
+                    prefix=prefix, result=module_result
+                ),
+                host,
+            )
+
+            # Clean up the response like action _execute_module
+            remove_internal_keys(module_result)
+            display.vvvv("{prefix} complete".format(prefix=prefix), host)
+            result = module_result
+            break
 
         if not direct_execution:
             display.vvvv("{prefix} disabled".format(prefix=prefix), host)
