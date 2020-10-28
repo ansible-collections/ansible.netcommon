@@ -51,7 +51,7 @@ class ActionModule(_ActionModule):
 
         # FIXME:  REMOVE ME BEFORE MERGE
         if PY3:
-            direct_execution = True
+            dexec = True
 
         if dexec:
             display.vvvv(
