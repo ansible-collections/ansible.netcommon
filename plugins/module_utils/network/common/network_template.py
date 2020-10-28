@@ -16,10 +16,11 @@ class NetworkTemplate(object):
         inherit and use to parse and render config lines.
     """
 
-    def __init__(self, lines=None, tmplt=None):
+    def __init__(self, lines=None, tmplt=None, prefix=None):
         self._lines = lines or []
         self._tmplt = tmplt
         self._template = Template()
+        self._prefix = prefix or {}
 
     def _deepformat(self, tmplt, data):
         wtmplt = deepcopy(tmplt)
@@ -80,11 +81,20 @@ class NetworkTemplate(object):
                 )
         except KeyError:
             return None
-        if res and negate:
-            if isinstance(res, list):
-                cmd = [("no " + each) for each in res]
-                return cmd
-            return "no " + res
+
+        if res:
+            if negate:
+                rem = "{0} ".format(self._prefix.get("remove", "no"))
+                if isinstance(res, list):
+                    cmd = [(rem + each) for each in res]
+                    return cmd
+                return rem + res
+            elif self._prefix.get("set"):
+                set_cmd = "{0} ".format(self._prefix.get("set", ""))
+                if isinstance(res, list):
+                    cmd = [(set_cmd + each) for each in res]
+                    return cmd
+                return set_cmd + res
         return res
 
     def render(self, data, parser_name, negate=False):
