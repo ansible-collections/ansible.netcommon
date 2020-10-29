@@ -251,3 +251,11 @@ releases:
     - netconf_get_config_doc_updates.yaml
     - netconf_xmltodict_support.yaml
     release_date: '2020-10-29'
+  1.4.1:
+    changes:
+      release_summary:
+      - Change how black config is specified to avoid issues with Automation Hub release
+        process
+    fragments:
+    - revert_pyproject.yaml
+    release_date: '2020-10-29'
