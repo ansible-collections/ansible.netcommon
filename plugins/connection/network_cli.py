@@ -108,10 +108,13 @@ options:
   direct_execution:
     type: boolean
     description:
-    - Gain potential preformance improvements for network modules
+    - Reduce CPU usage and network module execution time
       by enabling direct execution. Instead of the module being packaged
       and executed by the shell, it will be directly executed by the Ansible
       control node using the same python interpreter as the Ansible process.
+      Note- Incompatible with C(asynchronous mode).
+      Note- Python 3 and Ansible 2.9.16 or greater required.
+      Note- With Ansible 2.9.x fully qualified modules names are required in tasks.
     default: false
     ini:
     - section: ansible_network

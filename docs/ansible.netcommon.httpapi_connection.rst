@@ -101,7 +101,7 @@ Parameters
                                 <div>var: ansible_network_direct_execution</div>
                     </td>
                 <td>
-                        <div>Gain potential preformance improvements for network modules by enabling direct execution. Instead of the module being packaged and executed by the shell, it will be directly executed by the Ansible control node using the same python interpreter as the Ansible process.</div>
+                        <div>Reduce CPU usage and network module execution time by enabling direct execution. Instead of the module being packaged and executed by the shell, it will be directly executed by the Ansible control node using the same python interpreter as the Ansible process. Note- Incompatible with <code>asynchronous mode</code>. Note- Python 3 and Ansible 2.9.16 or greater required. Note- With Ansible 2.9.x fully qualified modules names are required in tasks.</div>
                 </td>
             </tr>
             <tr>

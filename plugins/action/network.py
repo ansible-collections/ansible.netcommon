@@ -49,11 +49,7 @@ class ActionModule(_ActionModule):
         dexec_prefix = "ANSIBLE_NETWORK_DIRECT_EXECUTION:"
         host = task_vars["ansible_host"]
 
-        # FIXME:  REMOVE ME BEFORE MERGE
-        if PY3:
-            dexec = True
-
-        if dexec:
+        if dexec and PY3:
             display.vvvv(
                 "{prefix} enabled".format(prefix=dexec_prefix), host=host
             )
@@ -82,7 +78,10 @@ class ActionModule(_ActionModule):
                 result = self._exec_module(module)
                 # dump the result
                 display.vvvv(
-                    "{prefix} complete. Result: {result}".format(
+                    "{prefix} complete.".format(prefix=dexec_prefix), host
+                )
+                display.vvvvv(
+                    "{prefix} Result: {result}".format(
                         prefix=dexec_prefix, result=result
                     ),
                     host,
@@ -342,8 +341,6 @@ class ActionModule(_ActionModule):
         sys.stdout = io.StringIO()
 
         # run the module, catch the SystemExit so we continue
-        # capture sys.stdout as stdout
-        # capture str(Exception) as stderr
         try:
             module.main()
         except SystemExit:
@@ -351,7 +348,7 @@ class ActionModule(_ActionModule):
             stdout = sys.stdout.getvalue()
             stderr = ""
         except Exception as exc:
-            # dirty module or connection
+            # dirty module or connection traceback
             stderr = to_native(exc)
             stdout = ""
 
