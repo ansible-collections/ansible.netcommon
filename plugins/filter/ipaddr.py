@@ -20,6 +20,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from ansible.utils.display import Display
 from functools import partial
 import types
 
@@ -36,6 +37,9 @@ else:
     mac_linux.word_fmt = "%.2x"
 
 from ansible import errors
+
+
+display = Display()
 
 
 # ---- IP address and network query helpers ----
@@ -554,9 +558,16 @@ def ipaddr(value, query="", version=False, alias="ipaddr"):
         return [item for item in _ret if item]
 
     elif not value or value is True:
-        raise errors.AnsibleFilterError(
-            "{0!r} is not a valid IP address or network".format(value)
+        # TODO: Remove this check in a major version release of collection with porting guide
+        # TODO: and raise exception commented out below
+        display.warning(
+            "The value '%s' is not a valid IP address or network, passing this value to ipaddr filter"
+            " might result in breaking change in future." % value
         )
+        return False
+        # raise errors.AnsibleFilterError(
+        #     "{0!r} is not a valid IP address or network".format(value)
+        # )
 
     # Check if value is a number and convert it to an IP address
     elif str(value).isdigit():
