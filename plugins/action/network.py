@@ -50,8 +50,8 @@ class ActionModule(_ActionModule):
         host = task_vars["ansible_host"]
 
         # FIXME:  REMOVE ME BEFORE MERGE
-        if PY3:
-            dexec = True
+        # if PY3:
+        #     dexec = True
 
         if dexec:
             display.vvvv(
@@ -365,7 +365,18 @@ class ActionModule(_ActionModule):
             "stderr": stderr,
             "stderr_lines": stderr.splitlines(),
         }
-        module_result = self._parse_returned_data(dict_out)
+        data = self._parse_returned_data(dict_out)
         # Clean up the response like action _execute_module
-        remove_internal_keys(module_result)
-        return module_result
+        remove_internal_keys(data)
+
+        # split stdout/stderr into lines if needed
+        if "stdout" in data and "stdout_lines" not in data:
+            # if the value is 'False', a default won't catch it.
+            txt = data.get("stdout", None) or u""
+            data["stdout_lines"] = txt.splitlines()
+        if "stderr" in data and "stderr_lines" not in data:
+            # if the value is 'False', a default won't catch it.
+            txt = data.get("stderr", None) or u""
+            data["stderr_lines"] = txt.splitlines()
+
+        return data
