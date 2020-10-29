@@ -1,4 +1,0 @@
----
-bugfixes:
-  - Fixed ssh_type none issue while using net_put and net_get module
-    (https://github.com/ansible-collections/ansible.netcommon/issues/153)

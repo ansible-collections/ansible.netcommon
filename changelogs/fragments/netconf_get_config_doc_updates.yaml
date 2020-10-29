@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Update docs for netconf_get and netconf_config examples using display=native

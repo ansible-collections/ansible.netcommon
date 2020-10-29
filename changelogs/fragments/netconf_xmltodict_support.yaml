@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Add support for json format input format for netconf modules using ``xmltodict``

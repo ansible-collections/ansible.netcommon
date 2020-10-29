@@ -5,6 +5,27 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v1.4.0
+======
+
+Minor Changes
+-------------
+
+- 'prefix' added to NetworkTemplate class, inorder to handle the negate operation for vyos config commands.
+- Add support for json format input format for netconf modules using ``xmltodict``
+- Update docs for netconf_get and netconf_config examples using display=native
+
+Bugfixes
+--------
+
+- Added support for private key based authentication with libssh transport (https://github.com/ansible-collections/ansible.netcommon/issues/168)
+- Fixed ipaddr filter plugins in ansible.netcommon collections is not working with latest Ansible (https://github.com/ansible-collections/ansible.netcommon/issues/157)
+- Fixed netconf_rpc task fails due to encoding issue in the response (https://github.com/ansible-collections/ansible.netcommon/issues/151)
+- Fixed ssh_type none issue while using net_put and net_get module (https://github.com/ansible-collections/ansible.netcommon/issues/153)
+- Fixed unit tests under python3.5
+- ipaddr filter - query "address/prefix" (also: "gateway", "gw", "host/prefix", "hostnet", and "router") now handles addresses with /32 prefix or /255.255.255.255 netmask
+- network_cli - Update underlying ssh connection's play_context in update_play_context, so that the username or password can be updated
+
 v1.3.0
 ======
 
