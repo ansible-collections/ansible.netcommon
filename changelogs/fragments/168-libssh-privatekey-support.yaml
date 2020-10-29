@@ -1,4 +1,0 @@
----
-bugfixes:
-  - Added support for private key based authentication with libssh transport
-    (https://github.com/ansible-collections/ansible.netcommon/issues/168)
