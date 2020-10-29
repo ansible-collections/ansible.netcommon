@@ -74,7 +74,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: Enable LLDP service
       ansible.netcommon.net_lldp:

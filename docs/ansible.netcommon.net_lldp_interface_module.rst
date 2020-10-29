@@ -122,7 +122,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: Configure LLDP on specific interfaces
       ansible.netcommon.net_lldp_interface:

@@ -150,7 +150,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: Set eth0 IPv4 address
       ansible.netcommon.net_l3_interface:

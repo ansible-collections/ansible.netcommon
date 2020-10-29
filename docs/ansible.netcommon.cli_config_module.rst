@@ -286,7 +286,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: configure device with config
       ansible.netcommon.cli_config:

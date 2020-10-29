@@ -253,7 +253,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: configure interface
       ansible.netcommon.net_interface:

@@ -168,6 +168,69 @@ EXAMPLES = """
     }
     display: native
   register: result
+
+
+# Make a round-trip interface description change, diff the before and after
+# this demonstrates the use of the native display format and several utilities
+# from the ansible.utils collection
+
+- name: Define the openconfig interface filter
+  set_fact:
+    filter:
+      interfaces:
+        "@xmlns": "http://openconfig.net/yang/interfaces"
+        interface:
+          name: Ethernet2
+
+- name: Get the pre-change config using the filter
+  ansible.netcommon.netconf_get:
+    source: running
+    filter: "{{ filter }}"
+    display: native
+  register: pre
+
+- name: Update the description
+  ansible.utils.update_fact:
+    updates:
+    - path: pre.output.data.interfaces.interface.config.description
+      value: "Configured by ansible {{ 100 | random }}"
+  register: updated
+
+- name: Apply the new configuration
+  ansible.netcommon.netconf_config:
+    content:
+      config:
+        interfaces: "{{ updated.pre.output.data.interfaces }}"
+
+- name: Get the post-change config using the filter
+  ansible.netcommon.netconf_get:
+    source: running
+    filter: "{{ filter }}"
+    display: native
+  register: post
+
+- name: Show the differences between the pre and post configurations
+  ansible.utils.fact_diff:
+    before: "{{ pre.output.data|ansible.utils.to_paths }}"
+    after: "{{ post.output.data|ansible.utils.to_paths }}"
+
+# TASK [Show the differences between the pre and post configurations] ********
+# --- before
+# +++ after
+# @@ -1,11 +1,11 @@
+#  {
+# -    "@time-modified": "2020-10-23T12:27:17.462332477Z",
+# +    "@time-modified": "2020-10-23T12:27:21.744541708Z",
+#      "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
+#      "interfaces.interface.aggregation.config['fallback-timeout']['#text']": "90",
+#      "interfaces.interface.aggregation.config['fallback-timeout']['@xmlns']": "http://arista.com/yang/openconfig/interfaces/augments",
+#      "interfaces.interface.aggregation.config['min-links']": "0",
+#      "interfaces.interface.aggregation['@xmlns']": "http://openconfig.net/yang/interfaces/aggregate",
+# -    "interfaces.interface.config.description": "Configured by ansible 56",
+# +    "interfaces.interface.config.description": "Configured by ansible 67",
+#      "interfaces.interface.config.enabled": "true",
+#      "interfaces.interface.config.mtu": "0",
+#      "interfaces.interface.config.name": "Ethernet2",
 """
 
 RETURN = """
