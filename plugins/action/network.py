@@ -50,8 +50,8 @@ class ActionModule(_ActionModule):
         host = task_vars["ansible_host"]
 
         # FIXME:  REMOVE ME BEFORE MERGE
-        # if PY3:
-        #     dexec = True
+        if PY3:
+            dexec = True
 
         if dexec:
             display.vvvv(
