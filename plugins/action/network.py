@@ -302,6 +302,7 @@ class ActionModule(_ActionModule):
         :param task_vars: The vars provided to the task
         :type task_vars: dict
         """
+        import copy
         from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
 
         # build an AnsibleModule that doesn't load params
@@ -313,7 +314,8 @@ class ActionModule(_ActionModule):
         self._update_module_args(self._task.action, self._task.args, task_vars)
 
         # set the params of the ansible module cause we're not using stdin
-        PatchedAnsibleModule.params = self._task.args
+        # use a copy so the module doesn't change the original task args
+        PatchedAnsibleModule.params = copy.deepcopy(self._task.args)
 
         # give the module our revised AnsibleModule
         module.AnsibleModule = PatchedAnsibleModule
