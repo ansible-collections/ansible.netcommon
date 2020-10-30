@@ -49,18 +49,49 @@ class ActionModule(_ActionModule):
         dexec_prefix = "ANSIBLE_NETWORK_DIRECT_EXECUTION:"
         host = task_vars["ansible_host"]
 
-        # FIXME:
+        # FIXME: Prior to a merge
         dexec = True
 
-        if dexec and PY3:
+        # log early about dexec
+        if dexec:
             display.vvvv(
                 "{prefix} enabled".format(prefix=dexec_prefix), host=host
             )
+        else:
+            display.vvvv("{prefix} disabled".format(prefix=dexec_prefix), host)
+            display.vvvv(
+                "{prefix} module execution time may be extended".format(
+                    prefix=dexec_prefix
+                ),
+                host,
+            )
 
+        # disable dexec when running async
+        if self._task.async_val and dexec:
+            dexec = False
+            display.vvvv(
+                "{prefix} disabled for a task using async".format(
+                    prefix=dexec_prefix
+                ),
+                host=host,
+            )
+
+        # disable dexec when not PY3
+        if not PY3:
+            dexec = False
+            display.vvvv(
+                "{prefix} disabled for when not Python 3".format(
+                    prefix=dexec_prefix
+                ),
+                host=host,
+            )
+
+        # attempt to run using dexec
+        if dexec:
             # find and load the module
             filename, module = self._find_load_module()
             display.vvvv(
-                "{prefix} found {action} {fname}".format(
+                "{prefix} found {action}  at {fname}".format(
                     prefix=dexec_prefix,
                     action=self._task.action,
                     fname=filename,
@@ -93,20 +124,13 @@ class ActionModule(_ActionModule):
             else:
                 dexec = False
                 display.vvvv(
-                    "{prefix} {module} doesn't support direct execution".format(
+                    "{prefix} {module} doesn't support direct execution, disabled".format(
                         prefix=dexec_prefix, module=self._task.action
                     ),
                     host,
                 )
 
         if not dexec:
-            display.vvvv("{prefix} disabled".format(prefix=dexec_prefix), host)
-            display.vvvv(
-                "{prefix} module execution time may be extended".format(
-                    prefix=dexec_prefix
-                ),
-                host,
-            )
             result = super(ActionModule, self).run(task_vars=task_vars)
 
         if (
