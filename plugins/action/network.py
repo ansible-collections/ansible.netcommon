@@ -49,6 +49,9 @@ class ActionModule(_ActionModule):
         dexec_prefix = "ANSIBLE_NETWORK_DIRECT_EXECUTION:"
         host = task_vars["ansible_host"]
 
+        # FIXME:
+        dexec = True
+
         if dexec and PY3:
             display.vvvv(
                 "{prefix} enabled".format(prefix=dexec_prefix), host=host
@@ -268,7 +271,7 @@ class ActionModule(_ActionModule):
 
     def _find_load_module(self):
         """ Use the task action to find a module
-        and import it using it's file path
+        and import it.
 
         :return filename: The module's filename
         :rtype filename: str
@@ -279,16 +282,11 @@ class ActionModule(_ActionModule):
 
         mloadr = self._shared_loader_obj.module_loader
 
-        # find the module & import
-        filename = mloadr.find_plugin(
+        context = mloadr.find_plugin_with_context(
             self._task.action, collection_list=self._task.collections
         )
-
-        spec = importlib.util.spec_from_file_location(
-            self._task.action, filename
-        )
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
+        filename = context.plugin_resolved_path
+        module = importlib.import_module(context.plugin_resolved_name)
 
         return filename, module
 
