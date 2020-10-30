@@ -261,7 +261,7 @@ class ActionModule(_ActionModule):
         dexec = self.get_connection_option("direct_execution")
 
         # FIXME: Prior to a merge
-        dexec_eligible = True
+        dexec = True
 
         # log early about dexec
         if dexec:
