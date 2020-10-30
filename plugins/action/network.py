@@ -314,12 +314,19 @@ class ActionModule(_ActionModule):
 
         mloadr = self._shared_loader_obj.module_loader
 
-        context = mloadr.find_plugin_with_context(
-            self._task.action, collection_list=self._task.collections
-        )
-        filename = context.plugin_resolved_path
-        module = importlib.import_module(context.plugin_resolved_name)
-
+        # 2.10
+        try:
+            context = mloadr.find_plugin_with_context(
+                self._task.action, collection_list=self._task.collections
+            )
+            filename = context.plugin_resolved_path
+            module = importlib.import_module(context.plugin_resolved_name)
+        # 2.9
+        except AttributeError as _exc:
+            fullname, filename = mloadr.find_plugin_with_name(
+                self._task.action, collection_list=self._task.collections
+            )
+            module = importlib.import_module(fullname)
         return filename, module
 
     def _patch_update_module(self, module, task_vars):
