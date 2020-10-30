@@ -34,6 +34,7 @@ from ansible.module_utils.six import PY3
 display = Display()
 
 PRIVATE_KEYS_RE = re.compile("__.+__")
+DEXEC_PREFIX = "ANSIBLE_NETWORK_DIRECT_EXECUTION:"
 
 
 class ActionModule(_ActionModule):
@@ -45,54 +46,16 @@ class ActionModule(_ActionModule):
             except AnsibleError as exc:
                 return dict(failed=True, msg=to_text(exc))
 
-        dexec = self.get_connection_option("direct_execution")
-        dexec_prefix = "ANSIBLE_NETWORK_DIRECT_EXECUTION:"
         host = task_vars["ansible_host"]
-
-        # FIXME: Prior to a merge
-        dexec = True
-
-        # log early about dexec
-        if dexec:
-            display.vvvv(
-                "{prefix} enabled".format(prefix=dexec_prefix), host=host
-            )
-        else:
-            display.vvvv("{prefix} disabled".format(prefix=dexec_prefix), host)
-            display.vvvv(
-                "{prefix} module execution time may be extended".format(
-                    prefix=dexec_prefix
-                ),
-                host,
-            )
-
-        # disable dexec when running async
-        if self._task.async_val and dexec:
-            dexec = False
-            display.vvvv(
-                "{prefix} disabled for a task using async".format(
-                    prefix=dexec_prefix
-                ),
-                host=host,
-            )
-
-        # disable dexec when not PY3
-        if not PY3:
-            dexec = False
-            display.vvvv(
-                "{prefix} disabled for when not Python 3".format(
-                    prefix=dexec_prefix
-                ),
-                host=host,
-            )
+        dexec_eligible = self._check_dexec_eligibility(host)
 
         # attempt to run using dexec
-        if dexec:
+        if dexec_eligible:
             # find and load the module
             filename, module = self._find_load_module()
             display.vvvv(
                 "{prefix} found {action}  at {fname}".format(
-                    prefix=dexec_prefix,
+                    prefix=DEXEC_PREFIX,
                     action=self._task.action,
                     fname=filename,
                 ),
@@ -104,33 +67,32 @@ class ActionModule(_ActionModule):
                 self._patch_update_module(module, task_vars)
                 display.vvvv(
                     "{prefix} running {module}".format(
-                        prefix=dexec_prefix, module=self._task.action
+                        prefix=DEXEC_PREFIX, module=self._task.action
                     ),
                     host,
                 )
                 # execute the module, collect result
                 result = self._exec_module(module)
-                # dump the result
                 display.vvvv(
-                    "{prefix} complete.".format(prefix=dexec_prefix), host
+                    "{prefix} complete".format(prefix=DEXEC_PREFIX), host
                 )
                 display.vvvvv(
                     "{prefix} Result: {result}".format(
-                        prefix=dexec_prefix, result=result
+                        prefix=DEXEC_PREFIX, result=result
                     ),
                     host,
                 )
 
             else:
-                dexec = False
+                dexec_eligible = False
                 display.vvvv(
                     "{prefix} {module} doesn't support direct execution, disabled".format(
-                        prefix=dexec_prefix, module=self._task.action
+                        prefix=DEXEC_PREFIX, module=self._task.action
                     ),
                     host,
                 )
 
-        if not dexec:
+        if not dexec_eligible:
             result = super(ActionModule, self).run(task_vars=task_vars)
 
         if (
@@ -292,6 +254,52 @@ class ActionModule(_ActionModule):
             )
 
         return network_os
+
+    def _check_dexec_eligibility(self, host):
+        """ Check if current python and task are eligble
+        """
+        dexec = self.get_connection_option("direct_execution")
+
+        # FIXME: Prior to a merge
+        dexec_eligible = True
+
+        # log early about dexec
+        if dexec:
+            display.vvvv(
+                "{prefix} enabled via connection option".format(
+                    prefix=DEXEC_PREFIX
+                ),
+                host=host,
+            )
+        else:
+            display.vvvv("{prefix} disabled".format(prefix=DEXEC_PREFIX), host)
+            display.vvvv(
+                "{prefix} module execution time may be extended".format(
+                    prefix=DEXEC_PREFIX
+                ),
+                host,
+            )
+
+        # disable dexec when running async
+        if self._task.async_val and dexec:
+            dexec = False
+            display.vvvv(
+                "{prefix} disabled for a task using async".format(
+                    prefix=DEXEC_PREFIX
+                ),
+                host=host,
+            )
+
+        # disable dexec when not PY3
+        if not PY3:
+            dexec = False
+            display.vvvv(
+                "{prefix} disabled for when not Python 3".format(
+                    prefix=DEXEC_PREFIX
+                ),
+                host=host,
+            )
+        return dexec
 
     def _find_load_module(self):
         """ Use the task action to find a module
