@@ -322,7 +322,7 @@ class ActionModule(_ActionModule):
             filename = context.plugin_resolved_path
             module = importlib.import_module(context.plugin_resolved_name)
         # 2.9
-        except AttributeError as _exc:
+        except AttributeError:
             fullname, filename = mloadr.find_plugin_with_name(
                 self._task.action, collection_list=self._task.collections
             )
