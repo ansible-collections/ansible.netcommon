@@ -43,6 +43,7 @@
       - "'failed' not in result"
 
 - name: "configure using JSON format configuration"
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
     content: |
             {

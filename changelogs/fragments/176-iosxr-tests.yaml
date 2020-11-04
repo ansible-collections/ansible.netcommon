@@ -1,0 +1,3 @@
+---
+bugfixes:
+  Force ansible.netcommon.netconf connection for netconf_* testing.
