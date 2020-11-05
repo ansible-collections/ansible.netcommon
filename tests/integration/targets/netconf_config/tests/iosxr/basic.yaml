@@ -40,7 +40,7 @@
 
 - assert:
     that:
-      - "'failed' not in result"
+      - "result['failed'] == false"
 
 - name: "configure using JSON format configuration"
   ansible.netcommon.netconf_config:
