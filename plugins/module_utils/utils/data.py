@@ -94,7 +94,7 @@ def validate_and_normalize_data(data, fmt=None):
                 raise Exception(
                     error + to_native(exc, errors="surrogate_then_replace")
                 )
-        else:
+        elif (data.startswith("{") and data.endswith("}")) or fmt == "json":
             try:
                 result = json.loads(data)
                 if fmt and fmt != "json":
@@ -103,7 +103,10 @@ def validate_and_normalize_data(data, fmt=None):
                         % (fmt, data)
                     )
                 return result, "json"
-            except (TypeError, json.decoder.JSONDecodeError) as exc:
+            except (
+                TypeError,
+                getattr(json.decoder, "JSONDecodeError", ValueError),
+            ) as exc:
                 if fmt == "json":
                     raise Exception(
                         "'%s' JSON validation failed with error '%s'"
@@ -112,13 +115,12 @@ def validate_and_normalize_data(data, fmt=None):
                             to_native(exc, errors="surrogate_then_replace"),
                         )
                     )
-                pass
             except Exception as exc:
                 error = "'%s' recognized as JSON but was not valid." % data
                 raise Exception(
                     error + to_native(exc, errors="surrogate_then_replace")
                 )
-
+        else:
             try:
                 if not HAS_LXML:
                     raise Exception(missing_required_lib("lxml"))
@@ -156,7 +158,10 @@ def validate_and_normalize_data(data, fmt=None):
         try:
             result = json.loads(json.dumps(data))
             return result, "json"
-        except (TypeError, json.decoder.JSONDecodeError) as exc:
+        except (
+            TypeError,
+            getattr(json.decoder, "JSONDecodeError", ValueError),
+        ) as exc:
             raise Exception(
                 "'%s' JSON validation failed with error '%s'"
                 % (data, to_native(exc, errors="surrogate_then_replace"))
@@ -167,7 +172,7 @@ def validate_and_normalize_data(data, fmt=None):
                 error + to_native(exc, errors="surrogate_then_replace")
             )
 
-    return data, "None"
+    return data, None
 
 
 def xml_to_dict(data):

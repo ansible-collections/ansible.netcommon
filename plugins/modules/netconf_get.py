@@ -332,6 +332,9 @@ def main():
         # to maintain backward compatibility for ansible 2.9 which
         # defaults to "subtree" filter type
         filter_type = "subtree"
+        module.warn(
+            "The data format of filter option value couldn't be identified, hence set to 'subtree'"
+        )
     elif filter_type:
         module.fail_json(
             msg="Invalid filter type detected %s for filter value %s"
