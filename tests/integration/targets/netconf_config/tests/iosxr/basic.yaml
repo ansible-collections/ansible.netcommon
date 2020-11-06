@@ -42,6 +42,40 @@
     that:
       - "result['failed'] == false"
 
+- name: "test invalid JSON string format configuration"
+  connection: ansible.netcommon.netconf
+  ansible.netcommon.netconf_config:
+    content: |
+            {
+                "config": {
+                    "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
+                    "@xmlns:nc": "urn:ietf:params:xml:ns:netconf:base:1.0",
+                    "interface-configurations": {
+                        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                        "interface-configuration": {
+                            "active": "act",
+                            "description": "test for ansible Loopback999",
+                            "interface-name": "Loopback999",
+                        }
+                    }
+                }
+            }
+    get_filter: |
+              {
+                  "interface-configurations": {
+                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                      "interface-configuration": null
+                  }
+              }
+  register: result
+  ignore_errors: true
+  diff: true
+
+- assert:
+    that:
+      - result.failed == true
+      - "'Value of content option is invalid as per the identified format xml' in result.msg"
+
 - name: "configure using JSON string format configuration"
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
