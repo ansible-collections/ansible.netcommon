@@ -565,13 +565,16 @@ def main():
         filter_type = "subtree"
     elif filter_type == "xpath":
         pass
-    elif (filter_type is None) and (filter_data is not None):
-        # to maintain backward compatibility for ansible 2.9 which
-        # defaults to "subtree" filter type
-        filter_type = "subtree"
-        module.warn(
-            "The data format of get_filter option value couldn't be identified, hence set to 'subtree'"
-        )
+    elif filter_type is None:
+        if filter_data is not None:
+            # to maintain backward compatibility for ansible 2.9 which
+            # defaults to "subtree" filter type
+            filter_type = "subtree"
+            module.warn(
+                "The data format of get_filter option value couldn't be identified, hence set to 'subtree'"
+            )
+        else:
+            pass
     else:
         module.fail_json(
             msg="Invalid filter type detected %s for get_filter value %s"
