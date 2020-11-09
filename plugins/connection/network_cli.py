@@ -1202,7 +1202,7 @@ class Connection(NetworkConnectionBase):
         :param prompt_retry_check: Bool value for trying to detect more prompts
         :param check_all: Bool value to indicate if all the values in prompt sequence should be matched or any one of
                           given prompt.
-        :param use_cache: Determines if command output should be cached and/or fetched from cache when single_user_mode 
+        :param use_cache: Determines if command output should be cached and/or fetched from cache when single_user_mode
                           is enabled.
         :returns: The output from the device after executing the command
         """
