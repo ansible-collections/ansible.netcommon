@@ -23,7 +23,10 @@ __metaclass__ = type
 
 from ansible.plugins.loader import cache_loader
 
-CACHE_CONFIG = {"memory": {}, "jsonfile": {"_uri": "/tmp/"}}
+# TO-DO: Add configurable options for other caching modes
+#        like `jsonfile`.
+#        CACHE_CONFIG = {"memory": {}, "jsonfile": {"_uri": "/tmp/"}}
+CACHE_CONFIG = {"memory": {}}
 
 
 class NetworkCache:
