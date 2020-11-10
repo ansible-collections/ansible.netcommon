@@ -268,6 +268,7 @@ EXAMPLES = """
 
 - name: "configure using direct native format configuration (cisco iosxr)"
   ansible.netcommon.netconf_config:
+    format: json
     content: {
                 "config": {
                     "interface-configurations": {
@@ -289,6 +290,7 @@ EXAMPLES = """
 
 - name: "configure using json string format configuration (cisco iosxr)"
   ansible.netcommon.netconf_config:
+    format: json
     content: |
             {
                 "config": {
@@ -417,10 +419,16 @@ except ImportError:
 
 def validate_config(module, config, format="xml"):
     if format == "xml":
-        root = fromstring(config)
-        if not root.tag.endswith("config"):
+        try:
+            root = fromstring(config)
+            if not root.tag.endswith("config"):
+                module.fail_json(
+                    msg="content value should have XML string with config tag as the root node"
+                )
+        except Exception as exc:
             module.fail_json(
-                msg="content value should have XML string with config tag as the root node"
+                "Value of content option is invalid as per the identified format %s, validation failed with error: %s"
+                % (format, to_text(exc, errors="surrogate_then_replace"))
             )
 
 
@@ -547,22 +555,31 @@ def main():
     except Exception as exc:
         module.fail_json(msg=to_text(exc))
 
-    if filter_type:
-        if filter_type == "xml":
+    if filter_type == "xml":
+        filter_type = "subtree"
+    elif filter_type == "json":
+        try:
+            filter = dict_to_xml(filter_data)
+        except Exception as exc:
+            module.fail_json(msg=to_text(exc))
+        filter_type = "subtree"
+    elif filter_type == "xpath":
+        pass
+    elif filter_type is None:
+        if filter_data is not None:
+            # to maintain backward compatibility for ansible 2.9 which
+            # defaults to "subtree" filter type
             filter_type = "subtree"
-        elif filter_type == "json":
-            try:
-                filter = dict_to_xml(filter_data)
-            except Exception as exc:
-                module.fail_json(msg=to_text(exc))
-            filter_type = "subtree"
-        elif filter_type == "xpath":
-            pass
-        else:
-            module.fail_json(
-                msg="Invalid filter type detected %s for get_filter value %s"
-                % (filter_type, filter)
+            module.warn(
+                "The data format of get_filter option value couldn't be identified, hence set to 'subtree'"
             )
+        else:
+            pass
+    else:
+        module.fail_json(
+            msg="Invalid filter type detected %s for get_filter value %s"
+            % (filter_type, filter)
+        )
 
     conn = Connection(module._socket_path)
     capabilities = get_capabilities(module)
@@ -701,6 +718,9 @@ def main():
                     format = "xml"
                 elif config_format is None:
                     format = "xml"
+                    module.warn(
+                        "The data format of content option value couldn't be identified, hence set to 'xml'"
+                    )
                 else:
                     format = config_format
 

@@ -155,6 +155,7 @@
         \ in result.msg"
 
 - name: "get configuration with json filter and native output (using xmltodict)"
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     filter: |
               {
@@ -181,6 +182,7 @@
         interface-configuration: null
 
 - name: "get configuration with native filter type using set_facts"
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     filter: "{{ filter }}"
     display: native
@@ -194,6 +196,7 @@
       - "{{ result['output']['data']['interface-configurations']['interface-configuration'] is defined }}"
 
 - name: "get configuration with direct native filter type"
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     filter: {
       "interface-configurations": {

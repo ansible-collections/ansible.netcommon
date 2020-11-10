@@ -40,13 +40,16 @@
 
 - assert:
     that:
-      - "'failed' not in result"
+      - "result['failed'] == false"
 
-- name: "configure using JSON format configuration"
+- name: "test invalid JSON string format configuration"
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
     content: |
             {
                 "config": {
+                    "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
+                    "@xmlns:nc": "urn:ietf:params:xml:ns:netconf:base:1.0",
                     "interface-configurations": {
                         "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
                         "interface-configuration": {
@@ -65,28 +68,23 @@
                   }
               }
   register: result
+  ignore_errors: true
   diff: true
 
 - assert:
     that:
-      - result.changed == true
-      - "'<description>test for ansible Loopback999</description>' in result.diff.after"
+      - result.failed == true
+      - "'Value of content option is invalid as per the identified format xml' in result.msg"
 
-- name: setup - teardown
-  connection: ansible.netcommon.network_cli
-  cisco.iosxr.iosxr_config:
-    commands:
-      - no description
-      - shutdown
-    parents:
-      - interface Loopback999
-    match: none
-
-- name: "configure using JSON format configuration"
+- name: "configure using JSON string format configuration"
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
+    format: json
     content: |
             {
                 "config": {
+                    "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
+                    "@xmlns:nc": "urn:ietf:params:xml:ns:netconf:base:1.0",
                     "interface-configurations": {
                         "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
                         "interface-configuration": {
@@ -123,9 +121,13 @@
     match: none
 
 - name: "configure using direct native format configuration"
+  connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
+    format: json
     content: {
       "config": {
+        "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
+        "@xmlns:nc": "urn:ietf:params:xml:ns:netconf:base:1.0",
         "interface-configurations": {
           "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
           "interface-configuration": {
