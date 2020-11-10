@@ -109,13 +109,6 @@ Name | Description
 [ansible.netcommon.restconf_get](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.restconf_get_module.rst)|Fetch configuration/state data from RESTCONF enabled devices.
 [ansible.netcommon.telnet](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.telnet_module.rst)|Executes a low-down and dirty telnet command
 
-### Cli_parsers plugins
-Name | Description
---- | ---
-[ansible.netcommon.native](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.native_cli_parsers.rst)|Define configurable options for C(native) sub-plugin of C(cli_parse) module
-[ansible.netcommon.ntc_templates](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.ntc_templates_cli_parsers.rst)|Define configurable options for C(ntc_templates) sub-plugin of C(cli_parse) module
-[ansible.netcommon.pyats](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.pyats_cli_parsers.rst)|Define configurable options for C(pyats) sub-plugin of C(cli_parse) module
-
 <!--end collection content-->
 
 

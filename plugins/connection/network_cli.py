@@ -889,8 +889,8 @@ class Connection(NetworkConnectionBase):
         )
 
         self._log_messages("command: %s" % command)
-        if self._ssh_type == "libssh":
-            response = self.receive_libssh(
+        if self._ssh_type == "paramiko":
+            response = self.receive_paramiko(
                 command,
                 prompts,
                 answer,
@@ -899,7 +899,7 @@ class Connection(NetworkConnectionBase):
                 check_all,
             )
         else:
-            response = self.receive_paramiko(
+            response = self.receive_libssh(
                 command,
                 prompts,
                 answer,
@@ -1165,12 +1165,17 @@ class Connection(NetworkConnectionBase):
         """
         ssh = self.ssh_type_conn._connect_uncached()
         if proto == "scp":
-            if not HAS_SCP:
-                raise AnsibleError(
-                    "Required library scp is not installed.  Please install it using `pip install scp`"
-                )
-            with SCPClient(ssh.get_transport(), socket_timeout=timeout) as scp:
-                scp.put(source, destination)
+            if self._ssh_type == "paramiko":
+                if not HAS_SCP:
+                    raise AnsibleError(
+                        "Required library scp is not installed.  Please install it using `pip install scp`"
+                    )
+                with SCPClient(
+                    ssh.get_transport(), socket_timeout=timeout
+                ) as scp:
+                    scp.put(source, destination)
+            else:
+                ssh.put(source, destination, socket_timeout=timeout)
         elif proto == "sftp":
             with ssh.open_sftp() as sftp:
                 sftp.put(source, destination)
