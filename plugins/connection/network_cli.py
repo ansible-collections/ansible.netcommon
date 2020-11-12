@@ -272,6 +272,7 @@ options:
   single_user_mode:
     type: boolean
     default: false
+    version_added: 1.5.0
     description:
     - This option enables caching of data fetched from the target for re-use.
       The cache is invalidated when the target device enters configuration mode.
@@ -912,17 +913,13 @@ class Connection(NetworkConnectionBase):
             )
             response = to_text(response, errors="surrogate_then_replace")
 
-            # check if the target device is in config mode
             if use_cache and self.get_option("single_user_mode"):
-                if (self.is_in_config_mode()) or (
-                    to_text(command)
-                    in self.cliconf.get_option("config_commands")
-                ):
-                    # if so, we invalidate the existing cache (if it exists)
+                if self._needs_cache_invalidation(command):
+                    # invalidate the existing cache
                     if self.get_cache().keys():
                         self.get_cache().invalidate()
                 else:
-                    # populate cache (only if device is not in config mode)
+                    # populate cache
                     self.get_cache().populate(command, response)
 
             return response
@@ -1252,12 +1249,37 @@ class Connection(NetworkConnectionBase):
             self._cache = NetworkCache()
         return self._cache
 
-    def is_in_config_mode(self):
+    def _is_in_config_mode(self):
+        """
+        Check if the target device is in config mode by comparing
+        the current prompt with the platform's `terminal_config_prompt`.
+        Returns False if `terminal_config_prompt` is not defined.
+
+        :returns: A boolean indicating if the device is in config mode or not.
+        """
         cfg_mode = False
         cur_prompt = to_text(
             self.get_prompt(), errors="surrogate_then_replace"
         ).strip()
-        cfg_prompt = self._terminal.terminal_config_prompt
-        if cfg_prompt.match(cur_prompt):
+        cfg_prompt = getattr(self._terminal, "terminal_config_prompt", None)
+        if cfg_prompt and cfg_prompt.match(cur_prompt):
             cfg_mode = True
         return cfg_mode
+
+    def _needs_cache_invalidation(self, command):
+        """
+        This method determines if it is necessary to invalidate
+        the existing cache based on whether the device has entered
+        configuration mode or if the last command sent to the device
+        is potentially capable of making configuration changes.
+
+        :param command: The last command sent to the target device.
+        :returns: A boolean indicating if cache invalidation is required or not.
+        """
+        invalidate = False
+        cfg_cmds = []
+        if self.cliconf.has_option("config_commands"):
+            cfg_cmds = self.cliconf.get_option("config_commands")
+        if (self._is_in_config_mode()) or (to_text(command) in cfg_cmds):
+            invalidate = True
+        return invalidate
