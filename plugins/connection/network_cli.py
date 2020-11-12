@@ -409,7 +409,7 @@ class Connection(NetworkConnectionBase):
             if self._ssh_type not in ["paramiko", "libssh"]:
                 raise AnsibleConnectionFailure(
                     "Invalid value '%s' set for ssh_type option."
-                    " Excpected value is either 'libssh' or 'paramiko'"
+                    " Expected value is either 'libssh' or 'paramiko'"
                     % self._ssh_type
                 )
 
@@ -911,9 +911,15 @@ class Connection(NetworkConnectionBase):
                 command, prompt, answer, newline, prompt_retry_check, check_all
             )
             response = to_text(response, errors="surrogate_then_replace")
-            # populate cache
-            if use_cache and self.get_option("single_user_mode"):
-                self.get_cache().populate(command, response)
+            # check if the target device is in config mode
+            if self.is_in_config_mode():
+                # if so, we invalidate the existing cache (if it exists)
+                if self.get_cache().keys():
+                    self.get_cache().invalidate()
+            else:
+                # populate cache (only if device is not in config mode)
+                if use_cache and self.get_option("single_user_mode"):
+                    self.get_cache().populate(command, response)
 
             return response
         except (socket.timeout, AttributeError):
@@ -1241,3 +1247,10 @@ class Connection(NetworkConnectionBase):
             #        setting `mode` while creating NetworkCache() object.
             self._cache = NetworkCache()
         return self._cache
+
+    def is_in_config_mode(self):
+        cfg_mode = False
+        cfg_prompt = self.cliconf.get_option("config_prompt")
+        if self.get_cli_prompt_context().endswith(cfg_prompt):
+            cfg_mode = True
+        return cfg_mode
