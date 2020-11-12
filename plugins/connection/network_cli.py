@@ -911,14 +911,18 @@ class Connection(NetworkConnectionBase):
                 command, prompt, answer, newline, prompt_retry_check, check_all
             )
             response = to_text(response, errors="surrogate_then_replace")
+
             # check if the target device is in config mode
-            if self.is_in_config_mode():
-                # if so, we invalidate the existing cache (if it exists)
-                if self.get_cache().keys():
-                    self.get_cache().invalidate()
-            else:
-                # populate cache (only if device is not in config mode)
-                if use_cache and self.get_option("single_user_mode"):
+            if use_cache and self.get_option("single_user_mode"):
+                if (self.is_in_config_mode()) or (
+                    to_text(command)
+                    in self.cliconf.get_option("config_commands")
+                ):
+                    # if so, we invalidate the existing cache (if it exists)
+                    if self.get_cache().keys():
+                        self.get_cache().invalidate()
+                else:
+                    # populate cache (only if device is not in config mode)
                     self.get_cache().populate(command, response)
 
             return response
@@ -1250,7 +1254,10 @@ class Connection(NetworkConnectionBase):
 
     def is_in_config_mode(self):
         cfg_mode = False
-        cfg_prompt = self.cliconf.get_option("config_prompt")
-        if self.get_cli_prompt_context().endswith(cfg_prompt):
+        cur_prompt = to_text(
+            self.get_prompt(), errors="surrogate_then_replace"
+        ).strip()
+        cfg_prompt = self._terminal.terminal_config_prompt
+        if cfg_prompt.match(cur_prompt):
             cfg_mode = True
         return cfg_mode
