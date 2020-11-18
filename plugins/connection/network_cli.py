@@ -309,9 +309,7 @@ from ansible.plugins.loader import (
     terminal_loader,
     connection_loader,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.cache import (
-    NetworkCache,
-)
+from ansible_collections.ansible.netcommon.plugins.cache import NetworkCache
 
 try:
     from scp import SCPClient

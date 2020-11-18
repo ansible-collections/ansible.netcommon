@@ -1,2 +1,2 @@
 minor_changes:
-  - Add option to enable configuration caching.
+  - Add `single_user_mode` option for command output caching.
