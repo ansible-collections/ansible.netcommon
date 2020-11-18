@@ -21,6 +21,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+
 from ansible.plugins.loader import cache_loader
 
 # TO-DO: Add configurable options for other caching modes
