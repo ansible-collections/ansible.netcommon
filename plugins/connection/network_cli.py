@@ -309,7 +309,7 @@ from ansible.plugins.loader import (
     terminal_loader,
     connection_loader,
 )
-from ansible_collections.ansible.netcommon.plugins.cache.network import (
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.cache import (
     NetworkCache,
 )
 
@@ -366,6 +366,8 @@ class Connection(NetworkConnectionBase):
         self._task_uuid = to_text(kwargs.get("task_uuid", ""))
         self._ssh_type_conn = None
         self._ssh_type = None
+
+        self._single_user_mode = False
 
         if self._network_os:
             self._terminal = terminal_loader.get(self._network_os, self)
@@ -515,6 +517,8 @@ class Connection(NetworkConnectionBase):
         if hasattr(self, "disable_response_logging"):
             self.disable_response_logging()
 
+        self._single_user_mode = self.get_option("single_user_mode")
+
     def set_check_prompt(self, task_uuid):
         self._check_prompt = task_uuid
 
@@ -534,6 +538,8 @@ class Connection(NetworkConnectionBase):
         self.queue_message(
             "vvvv", "invoked shell using ssh_type: %s" % self._ssh_type
         )
+
+        self._single_user_mode = self.get_option("single_user_mode")
 
         if not self.connected:
             self.ssh_type_conn._set_log_channel(self._get_log_channel())
@@ -888,9 +894,12 @@ class Connection(NetworkConnectionBase):
         Sends the command to the device in the opened shell
         """
         # try cache first
-        if use_cache and self.get_option("single_user_mode"):
+        if use_cache and self._single_user_mode:
             out = self.get_cache().lookup(command)
             if out:
+                self.queue_message(
+                    "vvvv", "cache hit for command: %s" % command
+                )
                 return out
 
         if check_all:
@@ -913,13 +922,19 @@ class Connection(NetworkConnectionBase):
             )
             response = to_text(response, errors="surrogate_then_replace")
 
-            if use_cache and self.get_option("single_user_mode"):
+            if use_cache and self._single_user_mode:
                 if self._needs_cache_invalidation(command):
                     # invalidate the existing cache
                     if self.get_cache().keys():
+                        self.queue_message(
+                            "vvvv", "invalidating existing cache"
+                        )
                         self.get_cache().invalidate()
                 else:
                     # populate cache
+                    self.queue_message(
+                        "vvvv", "populating cache for command: %s" % command
+                    )
                     self.get_cache().populate(command, response)
 
             return response
