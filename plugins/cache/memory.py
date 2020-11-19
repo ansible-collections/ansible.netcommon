@@ -21,46 +21,23 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from ansible.plugins.cache import BaseCacheModule
+from ansible_collections.ansible.netcommon.plugins.cache import (
+    NetworkBaseCacheModule,
+)
 
 
-class CacheModule(BaseCacheModule):
+class CacheModule(NetworkBaseCacheModule):
     def __init__(self, *args, **kwargs):
         self._cache = {}
 
-    def lookup(self, key):
-        out = self.get(key)
-        return out
-
-    def populate(self, key, value):
-        self.set(key, value)
-
-    def invalidate(self):
-        self.flush()
-
-    def keys(self):
-        return self._cache.keys()
-
     def get(self, key):
-        return self._cache[key]
+        return self._cache.get(key)
 
     def set(self, key, value):
         self._cache[key] = value
 
-    def contains(self, key):
-        return key in self._cache
-
-    def delete(self, key):
-        del self._cache[key]
+    def keys(self):
+        return self._cache.keys()
 
     def flush(self):
         self._cache = {}
-
-    def copy(self):
-        return self._cache.copy()
-
-    def __getstate__(self):
-        return self.copy()
-
-    def __setstate__(self, data):
-        self._cache = data
