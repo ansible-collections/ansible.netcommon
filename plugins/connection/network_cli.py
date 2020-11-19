@@ -309,7 +309,7 @@ from ansible.plugins.loader import (
     terminal_loader,
     connection_loader,
 )
-from ansible_collections.ansible.netcommon.plugins.cache import NetworkCache
+from ansible.plugins.loader import cache_loader
 
 try:
     from scp import SCPClient
@@ -1259,7 +1259,7 @@ class Connection(NetworkConnectionBase):
         if not self._cache:
             # TO-DO: support jsonfile or other modes of caching by
             #        setting `mode` while creating NetworkCache() object.
-            self._cache = NetworkCache()
+            self._cache = cache_loader.get("ansible.netcommon.memory")
         return self._cache
 
     def _is_in_config_mode(self):
