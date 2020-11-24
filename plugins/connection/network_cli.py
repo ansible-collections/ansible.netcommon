@@ -1194,8 +1194,8 @@ class Connection(NetworkConnectionBase):
 
     def get_cache(self):
         if not self._cache:
-            # TO-DO: support jsonfile or other modes of caching by
-            #        setting `mode` while creating NetworkCache() object.
+            # TO-DO: support jsonfile or other modes of caching with 
+            #        a configurable option
             self._cache = cache_loader.get("ansible.netcommon.memory")
         return self._cache
 
