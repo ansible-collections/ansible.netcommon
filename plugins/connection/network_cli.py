@@ -886,13 +886,12 @@ class Connection(NetworkConnectionBase):
         sendonly=False,
         prompt_retry_check=False,
         check_all=False,
-        use_cache=False,
     ):
         """
         Sends the command to the device in the opened shell
         """
         # try cache first
-        if use_cache and self._single_user_mode:
+        if (not prompt) and (self._single_user_mode):
             out = self.get_cache().lookup(command)
             if out:
                 self.queue_message(
@@ -920,7 +919,7 @@ class Connection(NetworkConnectionBase):
             )
             response = to_text(response, errors="surrogate_then_replace")
 
-            if use_cache and self._single_user_mode:
+            if (not prompt) and (self._single_user_mode):
                 if self._needs_cache_invalidation(command):
                     # invalidate the existing cache
                     if self.get_cache().keys():
@@ -1192,68 +1191,6 @@ class Connection(NetworkConnectionBase):
         elif proto == "sftp":
             with ssh.open_sftp() as sftp:
                 sftp.get(source, destination)
-
-    def send_command(
-        self,
-        command=None,
-        prompt=None,
-        answer=None,
-        sendonly=False,
-        newline=True,
-        prompt_retry_check=False,
-        check_all=False,
-        use_cache=False,
-    ):
-        """
-        This is a copy of CliconfBase send_command()
-        added to reduce dependency on ansible-base.
-
-        Executes a command over the device connection
-
-        This method will execute a command over the device connection and
-        return the results to the caller.  This method will also perform
-        logging of any commands based on the `nolog` argument.
-
-        :param command: The command to send over the connection to the device
-        :param prompt: A single regex pattern or a sequence of patterns to evaluate the expected prompt from the command
-        :param answer: The answer to respond with if the prompt is matched.
-        :param sendonly: Bool value that will send the command but not wait for a result.
-        :param newline: Bool value that will append the newline character to the command
-        :param prompt_retry_check: Bool value for trying to detect more prompts
-        :param check_all: Bool value to indicate if all the values in prompt sequence should be matched or any one of
-                          given prompt.
-        :param use_cache: Determines if command output should be cached and/or fetched from cache when single_user_mode
-                          is enabled.
-        :returns: The output from the device after executing the command
-        """
-        kwargs = {
-            "command": to_bytes(command),
-            "sendonly": sendonly,
-            "newline": newline,
-            "prompt_retry_check": prompt_retry_check,
-            "check_all": check_all,
-            "use_cache": use_cache,
-        }
-
-        if prompt is not None:
-            if isinstance(prompt, list):
-                kwargs["prompt"] = [to_bytes(p) for p in prompt]
-            else:
-                kwargs["prompt"] = to_bytes(prompt)
-        if answer is not None:
-            if isinstance(answer, list):
-                kwargs["answer"] = [to_bytes(p) for p in answer]
-            else:
-                kwargs["answer"] = to_bytes(answer)
-
-        resp = self.send(**kwargs)
-
-        if not self.response_logging:
-            self.history.append(("*****", "*****"))
-        else:
-            self.history.append((kwargs["command"], resp))
-
-        return resp
 
     def get_cache(self):
         if not self._cache:

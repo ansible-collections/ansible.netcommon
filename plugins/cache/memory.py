@@ -21,6 +21,16 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+DOCUMENTATION = """
+    cache: memory
+    short_description: RAM backed, non persistent cache.
+    description:
+        - RAM backed cache that is not persistent.
+    version_added: 1.5.0
+    author: Ansible Networking Team
+"""
+
+
 from ansible_collections.ansible.netcommon.plugins.cache import (
     NetworkBaseCacheModule,
 )
