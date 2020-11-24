@@ -8,18 +8,20 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     to_list,
     get_from_dict,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.network import (
-    get_resource_connection,
+
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.resource_module_base import (
+    RmbaseEngine,
 )
 
 
-class ResourceModule(object):  # pylint: disable=R0902
+class ResourceModule(RmbaseEngine):  # pylint: disable=R0902
     """ Base class for Network Resource Modules
     """
 
     ACTION_STATES = ["merged", "replaced", "overridden", "deleted", "purged"]
-
     def __init__(self, *_args, **kwargs):
+
+        super(ResourceModule, self).__init__(*_args, **kwargs)
         self._empty_fact_val = kwargs.get("empty_fact_val", [])
         self._facts_module = kwargs.get("facts_module", None)
         self._gather_subset = kwargs.get("gather_subset", ["!all", "!min"])
@@ -27,8 +29,6 @@ class ResourceModule(object):  # pylint: disable=R0902
         self._resource = kwargs.get("resource", None)
         self._tmplt = kwargs.get("tmplt", None)
 
-        self._connection = None
-        self.state = self._module.params["state"]
         self.want = remove_empties(self._module.params).get(
             "config", self._empty_fact_val
         )
@@ -48,8 +48,6 @@ class ResourceModule(object):  # pylint: disable=R0902
         self.changed = False
         self.commands = []
         self.warnings = []
-
-        self._get_connection()
 
     def gather_current(self):
         data = None
@@ -116,14 +114,6 @@ class ResourceModule(object):  # pylint: disable=R0902
         if not facts:
             return empty_val
         return facts
-
-    def _get_connection(self):
-        if self.state not in ["rendered", "parsed"]:
-            if self._connection:
-                return self._connection
-            self._connection = get_resource_connection(self._module)
-            return self._connection
-        return None
 
     def compare(self, parsers, want=None, have=None):
         """ Run through all the parsers and compare

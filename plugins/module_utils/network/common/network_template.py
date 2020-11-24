@@ -10,13 +10,18 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     dict_merge,
 )
 
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.resource_module_base import (
+    RmbaseEngine,
+)
 
-class NetworkTemplate(object):
+
+class NetworkTemplate(RmbaseEngine):
     """ The NetworkTemplate class that Resource Module templates
         inherit and use to parse and render config lines.
     """
 
-    def __init__(self, lines=None, tmplt=None, prefix=None):
+    def __init__(self, lines=None, tmplt=None, prefix=None, module=None):
+        super(NetworkTemplate, self).__init__(module=module)
         self._lines = lines or []
         self._tmplt = tmplt
         self._template = Template()
