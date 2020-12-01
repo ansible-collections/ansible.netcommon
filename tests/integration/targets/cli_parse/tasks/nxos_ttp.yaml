@@ -1,12 +1,16 @@
 ---
 - name: "{{ parser }} Run command and parse with ttp"
-  ansible.netcommon.cli_parse:
+  ansible.utils.cli_parse:
     command: "show interface"
     parser:
-      name: ansible.netcommon.ttp
+      name: ansible.utils.ttp
     set_fact: POpqMQoJWTiDpEW
   register: nxos_ttp_command
 
+# TODO: This testcase test the redirection of cli_parse plugin
+# from ansible.netcommon to ansible.utils
+# remove this test case after ansible.netcommon.cli_parse deprecation is
+# due as this scenario is already covered in ansible.utils collection testing
 - name: "{{ parser }} Pass text and template_path"
   ansible.netcommon.cli_parse:
     text: "{{ nxos_ttp_command['stdout'] }}"
@@ -25,6 +29,10 @@
     - "{{ nxos_ttp_command['stdout_lines'] is defined }}"
     - "{{ nxos_ttp_command['parsed'] == nxos_ttp_text['parsed'] }}"
 
+# TODO: This testcase test the redirection of cli_parse plugin
+# from ansible.netcommon to ansible.utils
+# remove this test case after ansible.netcommon.cli_parse deprecation is
+# due as this scenario is already covered in ansible.utils collection testing
 - name: "{{ parser }} Pass text and ttp_init"
   ansible.netcommon.cli_parse:
     text: "{{ nxos_ttp_command['stdout'] }}"
@@ -46,6 +54,10 @@
   assert:
     that: "{{ file_deleted['changed'] }}"
 
+# TODO: This testcase test the redirection of cli_parse plugin
+# from ansible.netcommon to ansible.utils
+# remove this test case after ansible.netcommon.cli_parse deprecation is
+# due as this scenario is already covered in ansible.utils collection testing
 - name: "{{ parser }} Pass text and custom variable"
   ansible.netcommon.cli_parse:
     text: "{{ nxos_ttp_command['stdout'] }}"
@@ -63,7 +75,10 @@
   with_items:
     - "{{ nxos_ttp_vars['parsed'][0][0][0]['var'] == 'some_text' }}"
 
-
+# TODO: This testcase test the redirection of cli_parse plugin
+# from ansible.netcommon to ansible.utils
+# remove this test case after ansible.netcommon.cli_parse deprecation is
+# due as this scenario is already covered in ansible.utils collection testing
 - name: "{{ parser }} Pass text and ttp_results modified"
   ansible.netcommon.cli_parse:
     text: "{{ nxos_ttp_command['stdout'] }}"

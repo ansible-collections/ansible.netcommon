@@ -12,7 +12,7 @@ __metaclass__ = type
 from ansible.module_utils._text import to_native
 
 from ansible.module_utils.basic import missing_required_lib
-from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
+from ansible_collections.ansible.utils.plugins.cli_parsers._base import (
     CliParserBase,
 )
 

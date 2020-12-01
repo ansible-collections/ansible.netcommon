@@ -1,11 +1,15 @@
 ---
 - name: "{{ parser }} Run command and parse with json"
-  ansible.netcommon.cli_parse:
+  ansible.utils.cli_parse:
     command: "show version | json"
     parser:
-      name: ansible.netcommon.json
+      name: ansible.utils.json
   register: nxos_json_command
 
+# TODO: This testcase test the redirection of cli_parse plugin
+# from ansible.netcommon to ansible.utils
+# remove this test case after ansible.netcommon.cli_parse deprecation is
+# due as this scenario is already covered in ansible.utils collection testing
 - name: "{{ parser }} Run command and parse with json"
   ansible.netcommon.cli_parse:
     # the leading space here is critical so it's not converted on the way in
