@@ -166,13 +166,6 @@ options:
       capability.
     type: bool
     default: false
-  src:
-    description:
-    - Specifies the source path to the xml file that contains the configuration or
-      configuration template to load. The path to the source file can either be the
-      full path on the Ansible control host or a relative path from the playbook or
-      role root directory. This argument is mutually exclusive with I(xml).
-    type: path
   backup_options:
     description:
     - This is a dict object containing configurable options related to backup file
@@ -468,10 +461,10 @@ def main():
     )
 
     mutually_exclusive = [
-        ("content", "src", "source_datastore", "delete", "confirm_commit")
+        ("content", "source_datastore", "delete", "confirm_commit")
     ]
     required_one_of = [
-        ("content", "src", "source_datastore", "delete", "confirm_commit")
+        ("content", "source_datastore", "delete", "confirm_commit")
     ]
 
     module = AnsibleModule(
@@ -481,7 +474,7 @@ def main():
         supports_check_mode=True,
     )
 
-    config = module.params["content"] or module.params["src"]
+    config = module.params["content"]
     target = module.params["target"]
     lock = module.params["lock"]
     source = module.params["source_datastore"]
