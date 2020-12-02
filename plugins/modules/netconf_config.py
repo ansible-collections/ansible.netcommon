@@ -21,7 +21,6 @@ description:
   and detects if there was a configuration change.
 version_added: 1.0.0
 extends_documentation_fragment:
-- ansible.netcommon.netconf
 - ansible.netcommon.network_agnostic
 options:
   content:
@@ -467,62 +466,6 @@ def main():
         validate=dict(type="bool", default=False),
         get_filter=dict(type="raw"),
     )
-
-    # deprecated options
-    netconf_top_spec = {
-        "src": dict(
-            type="path",
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-        ),
-        "host": dict(
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-        ),
-        "port": dict(
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            type="int",
-            default=830,
-        ),
-        "username": dict(
-            fallback=(env_fallback, ["ANSIBLE_NET_USERNAME"]),
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            no_log=True,
-        ),
-        "password": dict(
-            fallback=(env_fallback, ["ANSIBLE_NET_PASSWORD"]),
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            no_log=True,
-        ),
-        "ssh_keyfile": dict(
-            fallback=(env_fallback, ["ANSIBLE_NET_SSH_KEYFILE"]),
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            type="path",
-        ),
-        "hostkey_verify": dict(
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            type="bool",
-            default=True,
-        ),
-        "look_for_keys": dict(
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            type="bool",
-            default=True,
-        ),
-        "timeout": dict(
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            type="int",
-            default=10,
-        ),
-    }
-    argument_spec.update(netconf_top_spec)
 
     mutually_exclusive = [
         ("content", "src", "source_datastore", "delete", "confirm_commit")
