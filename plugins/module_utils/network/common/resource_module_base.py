@@ -18,7 +18,7 @@ class RmbaseEngine(object):  # pylint: disable=R0902
         self._connection = None
         self._module = kwargs.get("module", None)
         self.state = None
-        # backward compatibility for modules, in which, module is not passed 
+        # backward compatibility for modules, in which, module is not passed
         # to the NetworkTemplate
         if self._module:
             self.state = self._module.params["state"]
