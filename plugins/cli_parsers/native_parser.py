@@ -9,6 +9,35 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+DOCUMENTATION = """
+    author: Bradley Thornton (@cidrblock)
+    name: native
+    short_description: Define configurable options for C(native) sub-plugin of C(cli_parse) module
+    description:
+    - This plugin documentation provides the configurable options that can be passed
+      to the I(ansible.utils.cli_parse) plugins when I(ansible.netcommon.native) is used as a value for
+      I(name) option.
+    version_added: 1.0.0
+"""
+
+EXAMPLES = r"""
+- name: "Run command and parse with native"
+  ansible.utils.cli_parse:
+    command: "show interface"
+    parser:
+      name: ansible.netcommon.native
+    set_fact: POpqMQoJWTiDpEW
+  register: nxos_native_command
+
+- name: "Pass text and template_path"
+  ansible.utils.cli_parse:
+    text: "{{ nxos_native_command['stdout'] }}"
+    parser:
+      name: ansible.netcommon.native
+      template_path: "/home/user/templates/nxos_show_interface.yaml"
+  register: nxos_native_text
+"""
+
 from ansible.module_utils._text import to_native
 
 from ansible_collections.ansible.utils.plugins.cli_parsers._base import (

@@ -9,6 +9,34 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+DOCUMENTATION = """
+    author: Bradley Thornton (@cidrblock)
+    name: pyats
+    short_description: Define configurable options for C(pyats) sub-plugin of C(cli_parse) module
+    description:
+    - This plugin documentation provides the configurable options that can be passed
+      to the I(ansible.utils.cli_parse) plugins when I(ansible.netcommon.pyats) is used as a value for
+      I(name) option.
+    version_added: 1.0.0
+"""
+
+EXAMPLES = r"""
+- name: "Run command and parse with pyats"
+  ansible.utils.cli_parse:
+    command: "show interface"
+    parser:
+      name: ansible.netcommon.pyats
+  register: nxos_pyats_command
+
+- name: "Pass text and command"
+  ansible.utils.cli_parse:
+    text: "{{ nxos_pyats_command['stdout'] }}"
+    parser:
+      name: ansible.netcommon.pyats
+      command: show interface
+  register: nxos_pyats_text
+"""
+
 from ansible.module_utils.six import PY3
 from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib

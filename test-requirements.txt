@@ -4,3 +4,13 @@ flake8
 mock ; python_version < '3.5'
 pytest-xdist
 yamllint
+
+# The follow are 3rd party libs for validate
+jsonschema
+# /valiate
+
+# The follow are 3rd party libs for cli_parse
+textfsm
+ttp
+xmltodict
+# /cli_parse
