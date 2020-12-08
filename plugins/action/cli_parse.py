@@ -293,7 +293,7 @@ class ActionModule(ActionBase):
             " See the plugin documentation for more details."
             " This feature will be removed from ansible.netcommon in a release after 2022-11-01"
         )
-        display.deprecated(msg)
+        display.deprecated(msg, date="2022-11-01")
 
         valid, argspec_result, updated_params = check_argspec(
             DOCUMENTATION,
