@@ -448,6 +448,14 @@ class Connection(ConnectionBase):
             rc = self.chan.get_channel_exit_status()
         return rc, out, err
 
+    # SCP-based file copy
+    def put(self, local_path, remote_path):
+        pass
+
+    def get(self, remote_path, local_path):
+        pass
+
+    # SFTP-based file copy
     def put_file(self, in_path, out_path):
         """ transfer a file from local to remote """
 

@@ -1175,7 +1175,7 @@ class Connection(NetworkConnectionBase):
                 ) as scp:
                     scp.put(source, destination)
             else:
-                ssh.put(source, destination, socket_timeout=timeout)
+                ssh.put(source, destination)
         elif proto == "sftp":
             with ssh.open_sftp() as sftp:
                 sftp.put(source, destination)
@@ -1193,18 +1193,21 @@ class Connection(NetworkConnectionBase):
         """Fetch file over scp/sftp from remote device"""
         ssh = self.ssh_type_conn._connect_uncached()
         if proto == "scp":
-            if not HAS_SCP:
-                raise AnsibleError(
-                    "Required library scp is not installed.  Please install it using `pip install scp`"
-                )
-            try:
-                with SCPClient(
-                    ssh.get_transport(), socket_timeout=timeout
-                ) as scp:
-                    scp.get(source, destination)
-            except EOFError:
-                # This appears to be benign.
-                pass
+            if self._ssh_type == "paramiko":
+                if not HAS_SCP:
+                    raise AnsibleError(
+                        "Required library scp is not installed.  Please install it using `pip install scp`"
+                    )
+                try:
+                    with SCPClient(
+                        ssh.get_transport(), socket_timeout=timeout
+                    ) as scp:
+                        scp.get(source, destination)
+                except EOFError:
+                    # This appears to be benign.
+                    pass
+            else:
+                ssh.get(source, destination)
         elif proto == "sftp":
             with ssh.open_sftp() as sftp:
                 sftp.get(source, destination)
