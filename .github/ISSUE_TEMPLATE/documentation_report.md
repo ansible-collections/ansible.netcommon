@@ -1,7 +1,7 @@
 ---
 name: Documentation Report
 about: Ask us about docs
-labels: needs_triage
+labels: needs_triage, docs
 ---
 <!--- Verify first that your improvement is not already reported on GitHub -->
 <!--- Also test if the latest release and devel branch are affected too -->
