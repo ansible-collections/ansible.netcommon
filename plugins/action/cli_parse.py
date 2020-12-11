@@ -291,9 +291,9 @@ class ActionModule(ActionBase):
         msg = (
             "Use 'ansible.utils.cli_parse' instead of 'ansible.netcommon.cli_parse'."
             " See the plugin documentation for more details."
-            " This feature will be removed from ansible.netcommon in a release after 2022-11-01"
+            " This feature will be removed from ansible.netcommon in a release after 2023-01-01"
         )
-        display.deprecated(msg, date="2022-11-01")
+        display.deprecated(msg, date="2023-01-01")
 
         valid, argspec_result, updated_params = check_argspec(
             DOCUMENTATION,

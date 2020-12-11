@@ -58,5 +58,5 @@ plugin_routing:
     cli_parse:
       redirect: ansible.utils.cli_parse
       deprecation:
-        removal_date: '2022-11-01'
+        removal_date: '2023-01-01'
         warning_text: Use 'ansible.utils.cli_parse' instead. See the plugin documentation for more details
