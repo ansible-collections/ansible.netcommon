@@ -8,3 +8,8 @@
   when: ansible_network_os == 'cisco.iosxr.iosxr'
   tags:
     - netconf
+
+- include: nxos.yaml
+  when: ansible_network_os == 'cisco.nxos.nxos'
+  tags:
+    - netconf

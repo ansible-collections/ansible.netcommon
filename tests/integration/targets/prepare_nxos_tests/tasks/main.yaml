@@ -1,0 +1,14 @@
+---
+
+- name: Setup - Enable feature netconf
+  cisco.nxos.nxos_feature:
+    feature: netconf
+    state: enabled
+  vars: &ssh_credentials
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_ssh_port: 22
+  register: result
+  ignore_errors: yes
+
+- debug: msg='Netconf feature is not supported on this platform!'
+  when: result.failed
