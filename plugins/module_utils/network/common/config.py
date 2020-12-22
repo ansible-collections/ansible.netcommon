@@ -381,14 +381,20 @@ class NetworkConfig(object):
 
         visited = set()
         expanded = list()
+        prev_item = None
 
         for item in updates:
-            for p in item._parents:
-                if p.line not in visited:
+            if prev_item is None or (
+                item._parents
+                and prev_item.text != item._parents[-1].text
+                and prev_item._parents != item._parents
+            ):
+                for p in item._parents:
                     visited.add(p.line)
                     expanded.append(p)
             expanded.append(item)
             visited.add(item.line)
+            prev_item = item
 
         return expanded
 
