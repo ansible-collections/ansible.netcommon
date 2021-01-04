@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fix strip() method does't exist for getReply (https://github.com/ansible-collections/cisco.iosxr/issues/96)

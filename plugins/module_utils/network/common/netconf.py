@@ -159,7 +159,7 @@ def remove_namespaces(data):
             "It can be installed using `pip install ncclient`"
         )
     return NCElement(
-        to_text(data.strip(), errors="surrogate_then_replace"),
+        to_text(data, errors="surrogate_then_replace"),
         transform_reply(),
     ).data_xml
 
