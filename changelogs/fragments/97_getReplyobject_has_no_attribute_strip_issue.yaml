@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fix GetReply object has no attribute strip() (https://github.com/ansible-collections/cisco.iosxr/issues/97)	
