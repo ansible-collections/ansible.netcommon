@@ -47,6 +47,12 @@ options:
     choices:
     - json
     - xml
+notes:
+- This module requires the RESTCONF system service be enabled on the remote device
+  being managed.
+- This module is supported with I(ansible_connection) value of I(ansible.netcommon.httpapi) and
+  I(ansible_network_os) value of I(ansible.netcommon.restconf).
+- This module is tested against Cisco IOSXE 16.12.02 version.
 """
 
 EXAMPLES = """
@@ -81,6 +87,9 @@ from ansible.module_utils.connection import ConnectionError
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.restconf import (
     restconf,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
+    dict_to_xml,
+)
 
 
 def main():
@@ -102,6 +111,12 @@ def main():
         response = restconf.get(module, **module.params)
     except ConnectionError as exc:
         module.fail_json(msg=to_text(exc), code=exc.code)
+
+    if module.params["output"] == "xml":
+        try:
+            response = dict_to_xml(response)
+        except Exception as exc:
+            module.fail_json(msg=to_text(exc))
 
     result.update({"response": response})
 

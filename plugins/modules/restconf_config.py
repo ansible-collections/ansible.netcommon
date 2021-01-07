@@ -52,6 +52,12 @@ options:
     choices:
     - json
     - xml
+notes:
+- This module requires the RESTCONF system service be enabled on the remote device
+  being managed.
+- This module is supported with I(ansible_connection) value of I(ansible.netcommon.httpapi) and
+  I(ansible_network_os) value of I(ansible.netcommon.restconf).
+- This module is tested against Cisco IOSXE 16.12.02 version.
 """
 
 EXAMPLES = """
@@ -183,10 +189,6 @@ def main():
                 )
         else:
             if running:
-                if method == "post":
-                    module.fail_json(
-                        msg="resource '%s' already exist" % path, code=409
-                    )
                 diff = dict_diff(running, candidate)
                 result["candidate"] = candidate
                 result["running"] = running
