@@ -11,11 +11,11 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 )
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.resource_module_base import (
-    RmBaseEngine,
+    RmEngineBase,
 )
 
 
-class NetworkTemplate(RmBaseEngine):
+class NetworkTemplate(RmEngineBase):
     """ The NetworkTemplate class that Resource Module templates
         inherit and use to parse and render config lines.
     """
