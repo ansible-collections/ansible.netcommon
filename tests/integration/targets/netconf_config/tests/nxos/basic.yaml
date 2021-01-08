@@ -1,0 +1,66 @@
+---
+- debug: msg="START netconf_config nxos/basic.yaml on connection={{ ansible_connection }}"
+
+- name: Setup - Remove Vlan
+  cisco.nxos.nxos_config:
+    lines:
+      - no vlan 42
+  ignore_errors: yes
+  when: not result.failed
+
+- include_vars: "fixtures/config.yaml"
+
+- block:
+  - name: Configure vlan
+    ansible.netcommon.netconf_config: &config_vlan
+      datastore: running
+      commit: false
+      get_filter: <System xmlns="http://cisco.com/ns/yang/cisco-nx-os-device"><bd-items><bd-items><BD-list></BD-list></bd-items></bd-items></System>
+      content: "{{ vlan_config }}"
+    register: result
+
+  - assert: &true
+      that:
+        - "result.changed == true"
+
+  - name: Configure vlan - idempotence check
+    ansible.netcommon.netconf_config: *config_vlan
+    register: result
+
+  - assert: &false
+      that:
+        - "result.changed == false"
+
+  - name: Query Running Config
+    ansible.netcommon.netconf_get:
+      source: running
+      filter: <System xmlns="http://cisco.com/ns/yang/cisco-nx-os-device"><bd-items><bd-items><BD-list></BD-list></bd-items></bd-items></System>
+    register: result
+
+  - assert:
+      that:
+        - "'vlan-42' in result.stdout"
+
+  vars:
+    ansible_connection: ansible.netcommon.netconf
+    ansible_port: 830
+
+  always:
+  - name: Disable feature netconf
+    cisco.nxos.nxos_feature:
+      feature: netconf
+      state: disabled
+    vars: &ssh_credentials
+      ansible_connection: ansible.netcommon.network_cli
+      ansible_ssh_port: 22
+    when: not result.failed
+
+  - name: Cleanup - Remove vlan
+    cisco.nxos.nxos_config:
+      lines:
+        - no vlan 42
+    vars: *ssh_credentials
+    ignore_errors: yes
+    when: not result.failed
+
+  - debug: msg="END nxos_netconf cli/basic.yaml"
