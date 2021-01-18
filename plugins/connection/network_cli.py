@@ -724,6 +724,8 @@ class Connection(NetworkConnectionBase):
                     )
 
             if self._find_error(window):
+                # We can't exit here, as we need to drain the buffer in case
+                # the error isn't fatal, and will be using the buffer again
                 errored_response = window
 
             if self._find_prompt(window):
@@ -751,6 +753,7 @@ class Connection(NetworkConnectionBase):
         self._command_response = resp = b""
         command_prompt_matched = False
         handled = False
+        errored_response = None
 
         while True:
 
@@ -798,7 +801,14 @@ class Connection(NetworkConnectionBase):
                         % self._matched_cmd_prompt
                     )
 
+            if self._find_error(resp):
+                # We can't exit here, as we need to drain the buffer in case
+                # the error isn't fatal, and will be using the buffer again
+                errored_response = resp
+
             if self._find_prompt(resp):
+                if errored_response:
+                    raise AnsibleConnectionFailure(errored_response)
                 self._last_response = data
                 self._command_response += self._sanitize(resp, command)
                 command_prompt_matched = True
