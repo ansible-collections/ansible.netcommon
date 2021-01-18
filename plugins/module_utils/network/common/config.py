@@ -381,20 +381,31 @@ class NetworkConfig(object):
 
         visited = set()
         expanded = list()
-        prev_item = None
 
-        for item in updates:
-            if prev_item is None or (
-                item._parents
-                and prev_item.text != item._parents[-1].text
-                and prev_item._parents != item._parents
-            ):
-                for p in item._parents:
+        for curr_elem in updates:
+            add_parents = False
+            if expanded:
+                last_elem = expanded[-1]
+                # If parent of current line not added in expanded list flag it
+                # to be added later on
+                if (
+                    all([curr_elem.has_parents, last_elem.has_parents])
+                    and curr_elem.parents[0] != last_elem.parents[0]
+                ):
+                    add_parents = True
+                # check if parent of current line is already added, if added don't
+                # add again
+                if (
+                    last_elem.has_children
+                    and last_elem.children[0] != curr_elem.text
+                ):
+                    add_parents = True
+            for p in curr_elem._parents:
+                if p.line not in visited or add_parents:
                     visited.add(p.line)
                     expanded.append(p)
-            expanded.append(item)
-            visited.add(item.line)
-            prev_item = item
+            expanded.append(curr_elem)
+            visited.add(curr_elem.line)
 
         return expanded
 
