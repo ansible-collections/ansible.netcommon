@@ -650,6 +650,7 @@ class Connection(NetworkConnectionBase):
         cache_socket_timeout = self._ssh_shell.gettimeout()
         command_prompt_matched = False
         handled = False
+        errored_response = None
 
         while True:
             if command_prompt_matched:
@@ -722,7 +723,12 @@ class Connection(NetworkConnectionBase):
                         % self._matched_cmd_prompt
                     )
 
+            if self._find_error(window):
+                errored_response = window
+
             if self._find_prompt(window):
+                if errored_response:
+                    raise AnsibleConnectionFailure(errored_response)
                 self._last_response = recv.getvalue()
                 resp = self._strip(self._last_response)
                 self._command_response = self._sanitize(resp, command)
@@ -993,59 +999,37 @@ class Connection(NetworkConnectionBase):
                 cleaned.append(line)
         return b"\n".join(cleaned).strip()
 
-    def _find_prompt(self, response):
-        """Searches the buffered response for a matching command prompt
+    def _find_error(self, response):
+        """Searches the buffered response for a matching error condition
         """
-        errored_response = None
-        is_error_message = False
-
         for stderr_regex in self._terminal_stderr_re:
             if stderr_regex.search(response):
-                is_error_message = True
                 self._log_messages(
                     "matched error regex (terminal_stderr_re) '%s' from response '%s'"
                     % (stderr_regex.pattern, response)
                 )
-                # Check if error response ends with command prompt if not
-                # receive it buffered prompt
-                for stdout_regex in self._terminal_stdout_re:
-                    match = stdout_regex.search(response)
-                    if match:
-                        errored_response = response
-                        self._matched_pattern = stdout_regex.pattern
-                        self._matched_prompt = match.group()
-                        self._log_messages(
-                            "matched stdout regex (terminal_stdout_re) '%s' from error response '%s'"
-                            % (self._matched_pattern, errored_response)
-                        )
-                        break
-                else:
-                    self._log_messages(
-                        "Ignoring matched error regex (terminal_stderr_re) '%s' from response '%s' as the cli prompt is not in the same response"
-                        % (stderr_regex.pattern, response)
-                    )
-                if errored_response:
-                    break
 
-        if not is_error_message:
-            for regex in self._terminal_stdout_re:
-                match = regex.search(response)
-                if match:
-                    self._matched_pattern = regex.pattern
-                    self._matched_prompt = match.group()
-                    self._log_messages(
-                        "matched cli prompt '%s' with regex '%s' from response '%s'"
-                        % (
-                            self._matched_prompt,
-                            self._matched_pattern,
-                            response,
-                        )
-                    )
-                    if not errored_response:
-                        return True
+                self._log_messages(
+                    "matched stdout regex (terminal_stdout_re) '%s' from error response '%s'"
+                    % (self._matched_pattern, response)
+                )
+                return True
 
-        if errored_response:
-            raise AnsibleConnectionFailure(errored_response)
+        return False
+
+    def _find_prompt(self, response):
+        """Searches the buffered response for a matching command prompt
+        """
+        for stdout_regex in self._terminal_stdout_re:
+            match = stdout_regex.search(response)
+            if match:
+                self._matched_pattern = stdout_regex.pattern
+                self._matched_prompt = match.group()
+                self._log_messages(
+                    "matched cli prompt '%s' with regex '%s' from response '%s'"
+                    % (self._matched_prompt, self._matched_pattern, response)
+                )
+                return True
 
         return False
 
