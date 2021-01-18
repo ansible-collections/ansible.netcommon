@@ -51,7 +51,7 @@ options:
     - binary
     - text
 requirements:
-- scp
+- scp if using protocol=scp with paramiko
 notes:
 - Some devices need specific configurations to be enabled before scp can work These
   configuration should be pre-configured before using this module e.g ios - C(ip scp

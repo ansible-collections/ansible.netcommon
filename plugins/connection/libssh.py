@@ -129,7 +129,7 @@ display = Display()
 
 try:
     from pylibsshext.session import Session
-    from pylibsshext.errors import LibsshSessionException
+    from pylibsshext.errors import LibsshSessionException, LibsshSCPException
 
     HAS_PYLIBSSH = True
 except ImportError:
@@ -450,10 +450,39 @@ class Connection(ConnectionBase):
 
     # SCP-based file copy
     def put(self, local_path, remote_path):
-        pass
+        display.vvv(
+            "PUT %s TO %s" % (local_path, remote_path),
+            host=self._play_context.remote_addr,
+        )
+
+        if not os.path.exists(local_path):
+            raise AnsibleFileNotFound(
+                "file or module does not exist: %s" % local_path
+            )
+
+        scp = self.ssh.scp()
+        try:
+            scp.put(local_path, remote_path)
+        except Exception as exc:
+            raise AnsibleError(
+                "Error transferring file to %s: %s"
+                % (remote_path, to_text(exc))
+            )
 
     def get(self, remote_path, local_path):
-        pass
+        display.vvv(
+            "FETCH %s TO %s" % (remote_path, local_path),
+            host=self._play_context.remote_addr,
+        )
+
+        scp = self.ssh.scp()
+        try:
+            scp.get(remote_path, local_path)
+        except Exception as exc:
+            raise AnsibleError(
+                "Error transferring file from %s: %s"
+                % (remote_path, to_text(exc))
+            )
 
     # SFTP-based file copy
     def put_file(self, in_path, out_path):

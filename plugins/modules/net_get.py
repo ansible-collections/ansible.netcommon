@@ -41,7 +41,7 @@ options:
     - Same filename as specified in I(src). The path will be playbook root or role
       root directory if playbook is part of a role.
 requirements:
-- scp
+- scp if using protocol=scp with paramiko
 notes:
 - Some devices need specific configurations to be enabled before scp can work These
   configuration should be pre-configured before using this module e.g ios - C(ip scp
