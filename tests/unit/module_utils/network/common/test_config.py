@@ -26,8 +26,6 @@ import re
 
 import pytest
 
-from copy import deepcopy
-
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
     config,
 )
@@ -104,7 +102,7 @@ interface GigabitEthernet0/1
 interface GigabitEthernet0/2
 """
 
-ORIGINAL_DEFAULT_IGNORE_LINES_RE = deepcopy(config.DEFAULT_IGNORE_LINES_RE)
+ORIGINAL_DEFAULT_IGNORE_LINES_RE = config.DEFAULT_IGNORE_LINES_RE.copy()
 
 
 def test_config_items():
