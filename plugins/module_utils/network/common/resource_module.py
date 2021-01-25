@@ -17,7 +17,7 @@ class ResourceModule(object):  # pylint: disable=R0902
     """ Base class for Network Resource Modules
     """
 
-    ACTION_STATES = ["merged", "replaced", "overridden", "deleted"]
+    ACTION_STATES = ["merged", "replaced", "overridden", "deleted", "purged"]
 
     def __init__(self, *_args, **kwargs):
         self._empty_fact_val = kwargs.get("empty_fact_val", [])
