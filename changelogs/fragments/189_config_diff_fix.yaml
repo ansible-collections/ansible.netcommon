@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - Fix config diff logic if parent configuration is present more than once in the candidate config and
+    update docs (https://github.com/ansible-collections/ansible.netcommon/pull/189)

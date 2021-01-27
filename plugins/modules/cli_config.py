@@ -16,6 +16,9 @@ notes:
 - The commands will be returned only for platforms that do not support onbox diff.
   The C(--diff) option with the playbook will return the difference in configuration
   for devices that has support for onbox diff
+- To ensure idempotency and correct diff the configuration lines in the relevant module
+  options should be similar to how they appear if present in the running configuration on
+  device including the indentation.
 short_description: Push text based configuration to network devices over network_cli
 description:
 - This module provides platform agnostic way of pushing text based configuration to
@@ -27,8 +30,9 @@ options:
   config:
     description:
     - The config to be pushed to the network device. This argument is mutually exclusive
-      with C(rollback) and either one of the option should be given as input. The
-      config should have indentation that the device uses.
+      with C(rollback) and either one of the option should be given as input. To ensure
+      idempotency and correct diff the configuration lines should be similar to how they
+      appear if present in the running configuration on device including the indentation.
     type: str
   commit:
     description:
@@ -322,6 +326,13 @@ def run(
             result["diff"] = resp["diff"]
 
     elif device_operations.get("supports_generate_diff"):
+        msg = (
+            "To ensure idempotency and correct diff the input configuration lines should be"
+            " similar to how they appear if present in"
+            " the running configuration on device including the indentation"
+        )
+        module.warn(msg)
+
         kwargs = {"candidate": candidate, "running": running}
         if diff_match:
             kwargs.update({"diff_match": diff_match})
