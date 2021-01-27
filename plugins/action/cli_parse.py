@@ -131,10 +131,19 @@ class ActionModule(ActionBase):
                 )
             )
             self._display.warning(msg)
+        elif cref["cname"] == "netcommon" and cref["plugin"] in ["native", "ntc_templates", "pyats"]:
+            parserlib = "ansible_collections.{corg}.{cname}.plugins.sub_plugins.cli_parser.{plugin}_parser".format(
+                **cref
+            )
+        else:
+            msg = "The custom cli_parse sub-plugin location is changed from 'plugins/cli_parsers/' to 'plugins/sub_plugins/cli_parse/'." \
+                  " Move the sub-plugins to the new location and update it to use the imports from 'ansible.utils>=2.0.0' collection." \
+                  " The old sub-plugin location will no longer be supported after the end of the deprecation cycle for 'ansible.netcommon.cli_parse' module"
 
-        parserlib = "ansible_collections.{corg}.{cname}.plugins.cli_parsers.{plugin}_parser".format(
-            **cref
-        )
+            self._display.warning(msg)
+            parserlib = "ansible_collections.{corg}.{cname}.plugins.cli_parsers.{plugin}_parser".format(
+                **cref
+            )
         try:
             parsercls = getattr(import_module(parserlib), self.PARSER_CLS_NAME)
             parser = parsercls(
