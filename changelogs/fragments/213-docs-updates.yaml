@@ -1,0 +1,4 @@
+---
+trivial:
+  - net_l3_interface - changed inline JSON to YAML in documentation
+  - net_vrf - changed inline JSON to YAML in documentation
