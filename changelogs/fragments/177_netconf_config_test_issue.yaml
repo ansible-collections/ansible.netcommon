@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Fix netconf_config module integration test issuea (https://github.com/ansible-collections/ansible.netcommon/pull/177)

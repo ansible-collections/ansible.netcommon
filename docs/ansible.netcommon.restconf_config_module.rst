@@ -109,6 +109,14 @@ Parameters
     <br/>
 
 
+Notes
+-----
+
+.. note::
+   - This module requires the RESTCONF system service be enabled on the remote device being managed.
+   - This module is supported with *ansible_connection* value of *ansible.netcommon.httpapi* and *ansible_network_os* value of *ansible.netcommon.restconf*.
+   - This module is tested against Cisco IOSXE 16.12.02 version.
+
 
 
 Examples

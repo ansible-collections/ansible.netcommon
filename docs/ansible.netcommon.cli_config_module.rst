@@ -146,7 +146,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The config to be pushed to the network device. This argument is mutually exclusive with <code>rollback</code> and either one of the option should be given as input. The config should have indentation that the device uses.</div>
+                        <div>The config to be pushed to the network device. This argument is mutually exclusive with <code>rollback</code> and either one of the option should be given as input. To ensure idempotency and correct diff the configuration lines should be similar to how they appear if present in the running configuration on device including the indentation.</div>
                 </td>
             </tr>
             <tr>
@@ -279,6 +279,7 @@ Notes
 
 .. note::
    - The commands will be returned only for platforms that do not support onbox diff. The ``--diff`` option with the playbook will return the difference in configuration for devices that has support for onbox diff
+   - To ensure idempotency and correct diff the configuration lines in the relevant module options should be similar to how they appear if present in the running configuration on device including the indentation.
    - This module is supported on ``ansible_network_os`` network platforms. See the :ref:`Network Platform Options <platform_options>` for details.
 
 

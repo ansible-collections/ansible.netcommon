@@ -5,6 +5,25 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v1.5.0
+======
+
+Minor Changes
+-------------
+
+- Add 'purged' to ACTION_STATES.
+
+Bugfixes
+--------
+
+- Add netconf_config integration tests for nxos (https://github.com/ansible-collections/ansible.netcommon/pull/185)
+- Fix GetReply object has no attribute strip() (https://github.com/ansible-collections/cisco.iosxr/issues/97)
+- Fix config diff logic if parent configuration is present more than once in the candidate config and update docs (https://github.com/ansible-collections/ansible.netcommon/pull/189)
+- Fix missing changed from net_get (https://github.com/ansible-collections/ansible.netcommon/issues/198)
+- Fix netconf_config module integration test issuea (https://github.com/ansible-collections/ansible.netcommon/pull/177)
+- Fix restconf_config incorrectly spoofs HTTP 409 codes (https://github.com/ansible-collections/ansible.netcommon/issues/191)
+- Split checks for prompt and errors in network_cli so that detected errors are not lost if the prompt is in a later chunk.
+
 v1.4.1
 ======
 

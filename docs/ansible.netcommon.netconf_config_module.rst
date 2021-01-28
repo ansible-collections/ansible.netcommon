@@ -592,6 +592,7 @@ Examples
 
     - name: "configure using direct native format configuration (cisco iosxr)"
       ansible.netcommon.netconf_config:
+        format: json
         content: {
                     "config": {
                         "interface-configurations": {
@@ -613,6 +614,7 @@ Examples
 
     - name: "configure using json string format configuration (cisco iosxr)"
       ansible.netcommon.netconf_config:
+        format: json
         content: |
                 {
                     "config": {
