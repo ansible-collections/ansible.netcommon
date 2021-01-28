@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Fix restconf_config incorrectly spoofs HTTP 409 codes (https://github.com/ansible-collections/ansible.netcommon/issues/191)

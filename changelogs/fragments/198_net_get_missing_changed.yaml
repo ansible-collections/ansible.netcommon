@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Fix missing changed from net_get (https://github.com/ansible-collections/ansible.netcommon/issues/198)

@@ -1,3 +1,0 @@
----
-tests:
-  - Add netconf_config integration tests for nxos (https://github.com/ansible-collections/ansible.netcommon/pull/185)

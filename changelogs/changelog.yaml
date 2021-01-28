@@ -259,3 +259,27 @@ releases:
     fragments:
     - revert_pyproject.yaml
     release_date: '2020-10-29'
+  1.5.0:
+    changes:
+      bugfixes:
+      - Add netconf_config integration tests for nxos (https://github.com/ansible-collections/ansible.netcommon/pull/185)
+      - Fix GetReply object has no attribute strip() (https://github.com/ansible-collections/cisco.iosxr/issues/97)
+      - Fix config diff logic if parent configuration is present more than once in
+        the candidate config and update docs (https://github.com/ansible-collections/ansible.netcommon/pull/189)
+      - Fix missing changed from net_get (https://github.com/ansible-collections/ansible.netcommon/issues/198)
+      - Fix netconf_config module integration test issuea (https://github.com/ansible-collections/ansible.netcommon/pull/177)
+      - Fix restconf_config incorrectly spoofs HTTP 409 codes (https://github.com/ansible-collections/ansible.netcommon/issues/191)
+      - Split checks for prompt and errors in network_cli so that detected errors
+        are not lost if the prompt is in a later chunk.
+      minor_changes:
+      - Add 'purged' to ACTION_STATES.
+    fragments:
+    - 177_netconf_config_test_issue.yaml
+    - 189_config_diff_fix.yaml
+    - 191_restconf_config_fix.yaml
+    - 198_net_get_missing_changed.yaml
+    - 97_getReplyobject_has_no_attribute_strip_issue.yaml
+    - add_purged_action_state.yaml
+    - error-independently.yaml
+    - netconf_nxos_tests.yaml
+    release_date: '2021-01-27'

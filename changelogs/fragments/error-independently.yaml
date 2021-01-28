@@ -1,4 +1,0 @@
----
-bugfixes:
-  - Split checks for prompt and errors in network_cli so that detected errors are not lost if
-    the prompt is in a later chunk.
