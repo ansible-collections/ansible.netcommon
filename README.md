@@ -9,7 +9,7 @@ This includes  connection plugins, such as ``network_cli``, ``httpapi``, and ``n
 <!--start requires_ansible-->
 ## Ansible version compatibility
 
-This collection has been tested against following Ansible versions: **>=2.9.10,<2.11**.
+This collection has been tested against following Ansible versions: **>=2.9.10**.
 
 Plugins and modules within a collection may be tested with only specific Ansible versions.
 A collection may contain metadata that identifies these versions.
@@ -34,7 +34,7 @@ Name | Description
 [ansible.netcommon.network_cli](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.network_cli_connection.rst)|Use network_cli to run command on network appliances
 [ansible.netcommon.persistent](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.persistent_connection.rst)|Use a persistent unix socket for connection
 
-### Ipaddr.py filter plugins
+### Ipaddr filter plugins
 IP address and network manipulation filters
 
 Detailed documentation available at https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html
@@ -58,7 +58,7 @@ ansible.netcommon.previous_nth_usable|ansible.netcommon previous_nth_usable filt
 ansible.netcommon.reduce_on_network|Reduces a list of addresses to only the addresses that match a given network.
 ansible.netcommon.slaac|Get the SLAAC address within given network
 
-### Network.py filter plugins
+### Network filter plugins
 Filters for working with output from network devices
 Name | Description
 --- | ---
