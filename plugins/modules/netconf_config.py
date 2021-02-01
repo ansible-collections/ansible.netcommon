@@ -21,7 +21,6 @@ description:
   and detects if there was a configuration change.
 version_added: 1.0.0
 extends_documentation_fragment:
-- ansible.netcommon.netconf
 - ansible.netcommon.network_agnostic
 options:
   content:
@@ -167,13 +166,6 @@ options:
       capability.
     type: bool
     default: false
-  src:
-    description:
-    - Specifies the source path to the xml file that contains the configuration or
-      configuration template to load. The path to the source file can either be the
-      full path on the Ansible control host or a relative path from the playbook or
-      role root directory. This argument is mutually exclusive with I(xml).
-    type: path
   backup_options:
     description:
     - This is a dict object containing configurable options related to backup file
@@ -399,7 +391,7 @@ diff:
 """
 
 from ansible.module_utils._text import to_text
-from ansible.module_utils.basic import AnsibleModule, env_fallback
+from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection, ConnectionError
 from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
     validate_and_normalize_data,
@@ -468,67 +460,11 @@ def main():
         get_filter=dict(type="raw"),
     )
 
-    # deprecated options
-    netconf_top_spec = {
-        "src": dict(
-            type="path",
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-        ),
-        "host": dict(
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-        ),
-        "port": dict(
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            type="int",
-            default=830,
-        ),
-        "username": dict(
-            fallback=(env_fallback, ["ANSIBLE_NET_USERNAME"]),
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            no_log=True,
-        ),
-        "password": dict(
-            fallback=(env_fallback, ["ANSIBLE_NET_PASSWORD"]),
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            no_log=True,
-        ),
-        "ssh_keyfile": dict(
-            fallback=(env_fallback, ["ANSIBLE_NET_SSH_KEYFILE"]),
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            type="path",
-        ),
-        "hostkey_verify": dict(
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            type="bool",
-            default=True,
-        ),
-        "look_for_keys": dict(
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            type="bool",
-            default=True,
-        ),
-        "timeout": dict(
-            removed_at_date="2020-12-01",
-            removed_from_collection="ansible.netcommon",
-            type="int",
-            default=10,
-        ),
-    }
-    argument_spec.update(netconf_top_spec)
-
     mutually_exclusive = [
-        ("content", "src", "source_datastore", "delete", "confirm_commit")
+        ("content", "source_datastore", "delete", "confirm_commit")
     ]
     required_one_of = [
-        ("content", "src", "source_datastore", "delete", "confirm_commit")
+        ("content", "source_datastore", "delete", "confirm_commit")
     ]
 
     module = AnsibleModule(
@@ -538,7 +474,7 @@ def main():
         supports_check_mode=True,
     )
 
-    config = module.params["content"] or module.params["src"]
+    config = module.params["content"]
     target = module.params["target"]
     lock = module.params["lock"]
     source = module.params["source_datastore"]
