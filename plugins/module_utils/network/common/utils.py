@@ -728,7 +728,7 @@ class Template:
             )
 
         self.env = Environment(undefined=StrictUndefined)
-        self.env.filters.update({"ternary": ternary})
+        self.env.filters.update({"ternary": ternary, "all": all, "any": any})
 
     def __call__(self, value, variables=None, fail_on_undefined=True):
         variables = variables or {}
