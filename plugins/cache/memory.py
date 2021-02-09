@@ -26,7 +26,8 @@ DOCUMENTATION = """
     short_description: RAM backed, non persistent cache.
     description:
         - RAM backed cache that is not persistent.
-    version_added: 1.5.0
+        - Tailored for networking use case.
+    version_added: 2.0.0
     author: Ansible Networking Team
 """
 

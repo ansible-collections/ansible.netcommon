@@ -272,7 +272,7 @@ options:
   single_user_mode:
     type: boolean
     default: false
-    version_added: 1.5.0
+    version_added: 2.0.0
     description:
     - This option enables caching of data fetched from the target for re-use.
       The cache is invalidated when the target device enters configuration mode.
