@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - network_cli - When using ssh_type libssh, handle closed connection gracefully instead of throwing an exception

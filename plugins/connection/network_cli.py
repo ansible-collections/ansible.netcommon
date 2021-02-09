@@ -764,7 +764,11 @@ class Connection(NetworkConnectionBase):
                 else:
                     return self._command_response
             else:
-                data = self._ssh_shell.read_bulk_response()
+                try:
+                    data = self._ssh_shell.read_bulk_response()
+                except ConnectionError:
+                    # Socket has closed
+                    break
 
             if not data:
                 continue
