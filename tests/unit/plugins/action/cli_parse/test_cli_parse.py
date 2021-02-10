@@ -30,7 +30,7 @@ from ansible_collections.ansible.netcommon.plugins.modules.cli_parse import (
 from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (
     check_argspec,
 )
-from ansible_collections.ansible.utils.plugins.cli_parsers._base import (
+from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
     CliParserBase,
 )
 from ansible.module_utils.connection import (
