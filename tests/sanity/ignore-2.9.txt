@@ -27,5 +27,3 @@ plugins/modules/net_vlan.py validate-modules:deprecation-mismatch
 plugins/modules/net_vlan.py validate-modules:invalid-documentation
 plugins/modules/net_vrf.py validate-modules:deprecation-mismatch
 plugins/modules/net_vrf.py validate-modules:invalid-documentation
-plugins/module_utils/compat/ipaddress.py no-assert
-plugins/module_utils/compat/ipaddress.py no-unicode-literals

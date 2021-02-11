@@ -13,6 +13,7 @@ this contains methods common to all facts subsets
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.network import (
     get_resource_connection,
 )
+from ansible.module_utils._text import to_text
 from ansible.module_utils.six import iteritems
 
 
@@ -128,7 +129,12 @@ class FactsBase(object):
                     )
 
             for inst in instances:
-                inst.populate_facts(self._connection, self.ansible_facts, data)
+                try:
+                    inst.populate_facts(
+                        self._connection, self.ansible_facts, data
+                    )
+                except Exception as exc:
+                    self._module.fail_json(msg=to_text(exc))
 
     def get_network_legacy_facts(
         self, fact_legacy_obj_map, legacy_facts_type=None
