@@ -60,7 +60,12 @@ class NetworkTemplate(object):
                     if parser.get("shared"):
                         shared = capdict
                     vals = dict_merge(capdict, shared)
-                    res = self._deepformat(deepcopy(parser["result"]), vals)
+                    try:
+                        res = self._deepformat(
+                            deepcopy(parser["result"]), vals
+                        )
+                    except Exception as ex:
+                        continue
                     result = dict_merge(result, res)
                     break
         return result
