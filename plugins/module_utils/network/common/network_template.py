@@ -64,7 +64,7 @@ class NetworkTemplate(object):
                         res = self._deepformat(
                             deepcopy(parser["result"]), vals
                         )
-                    except Exception as ex:
+                    except UndefinedError:
                         continue
                     result = dict_merge(result, res)
                     break
