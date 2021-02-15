@@ -1,0 +1,3 @@
+---
+trivial:
+  - Allow runs with ansible-base 2.11.
