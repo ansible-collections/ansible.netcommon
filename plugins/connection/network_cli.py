@@ -105,7 +105,7 @@ options:
     - name: ANSIBLE_BECOME_METHOD
     vars:
     - name: ansible_become_method
-  direct_execution:
+  import_modules:
     type: boolean
     description:
     - Reduce CPU usage and network module execution time
@@ -118,11 +118,11 @@ options:
     default: false
     ini:
     - section: ansible_network
-      key: direct_execution
+      key: import_modules
     env:
-    - name: ANSIBLE_NETWORK_DIRECT_EXECUTION
+    - name: ANSIBLE_NETWORK_IMPORT_MODULES
     vars:
-    - name: ansible_network_direct_execution
+    - name: ansible_network_import_modules
   host_key_auto_add:
     type: boolean
     description:

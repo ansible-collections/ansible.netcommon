@@ -14,7 +14,7 @@ description:
   api.
 version_added: 1.0.0
 options:
-  direct_execution:
+  import_modules:
     type: boolean
     description:
     - Reduce CPU usage and network module execution time
@@ -27,11 +27,11 @@ options:
     default: false
     ini:
     - section: ansible_network
-      key: direct_execution
+      key: import_modules
     env:
-    - name: ANSIBLE_NETWORK_DIRECT_EXECUTION
+    - name: ANSIBLE_NETWORK_IMPORT_MODULES
     vars:
-    - name: ansible_network_direct_execution
+    - name: ansible_network_import_modules
   host:
     description:
     - Specifies the remote device FQDN or IP address to establish the HTTP(S) connection

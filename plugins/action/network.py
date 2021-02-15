@@ -34,7 +34,7 @@ from ansible.module_utils.six import PY3
 display = Display()
 
 PRIVATE_KEYS_RE = re.compile("__.+__")
-DEXEC_PREFIX = "ANSIBLE_NETWORK_DIRECT_EXECUTION:"
+DEXEC_PREFIX = "ANSIBLE_NETWORK_IMPORT_MODULES:"
 
 
 class ActionModule(_ActionModule):
@@ -258,7 +258,7 @@ class ActionModule(_ActionModule):
     def _check_dexec_eligibility(self, host):
         """ Check if current python and task are eligble
         """
-        dexec = self.get_connection_option("direct_execution")
+        dexec = self.get_connection_option("import_modules")
 
         # log early about dexec
         if dexec:
