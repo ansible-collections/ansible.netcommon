@@ -766,7 +766,8 @@ class Connection(NetworkConnectionBase):
             else:
                 try:
                     data = self._ssh_shell.read_bulk_response()
-                except ConnectionError:
+                # TODO: Should be ConnectionError when pylibssh drops Python 2 support
+                except OSError:
                     # Socket has closed
                     break
 
