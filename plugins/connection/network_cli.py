@@ -269,6 +269,18 @@ options:
           key: ssh_type
     vars:
     - name: ansible_network_cli_ssh_type
+  single_user_mode:
+    type: boolean
+    default: false
+    version_added: 2.0.0
+    description:
+    - This option enables caching of data fetched from the target for re-use.
+      The cache is invalidated when the target device enters configuration mode.
+    - Applicable only for platforms where this has been implemented.
+    env:
+    - name: ANSIBLE_NETWORK_SINGLE_USER_MODE
+    vars:
+    - name: ansible_network_single_user_mode
 """
 
 from functools import wraps
@@ -297,6 +309,7 @@ from ansible.plugins.loader import (
     terminal_loader,
     connection_loader,
 )
+from ansible.plugins.loader import cache_loader
 
 try:
     from scp import SCPClient
@@ -340,6 +353,7 @@ class Connection(NetworkConnectionBase):
         self._history = list()
         self._command_response = None
         self._last_recv_window = None
+        self._cache = None
 
         self._terminal = None
         self.cliconf = None
@@ -350,6 +364,8 @@ class Connection(NetworkConnectionBase):
         self._task_uuid = to_text(kwargs.get("task_uuid", ""))
         self._ssh_type_conn = None
         self._ssh_type = None
+
+        self._single_user_mode = False
 
         if self._network_os:
             self._terminal = terminal_loader.get(self._network_os, self)
@@ -394,7 +410,7 @@ class Connection(NetworkConnectionBase):
             if self._ssh_type not in ["paramiko", "libssh"]:
                 raise AnsibleConnectionFailure(
                     "Invalid value '%s' set for ssh_type option."
-                    " Excpected value is either 'libssh' or 'paramiko'"
+                    " Expected value is either 'libssh' or 'paramiko'"
                     % self._ssh_type
                 )
 
@@ -499,6 +515,8 @@ class Connection(NetworkConnectionBase):
         if hasattr(self, "disable_response_logging"):
             self.disable_response_logging()
 
+        self._single_user_mode = self.get_option("single_user_mode")
+
     def set_check_prompt(self, task_uuid):
         self._check_prompt = task_uuid
 
@@ -518,6 +536,8 @@ class Connection(NetworkConnectionBase):
         self.queue_message(
             "vvvv", "invoked shell using ssh_type: %s" % self._ssh_type
         )
+
+        self._single_user_mode = self.get_option("single_user_mode")
 
         if not self.connected:
             self.ssh_type_conn._set_log_channel(self._get_log_channel())
@@ -886,6 +906,15 @@ class Connection(NetworkConnectionBase):
         """
         Sends the command to the device in the opened shell
         """
+        # try cache first
+        if (not prompt) and (self._single_user_mode):
+            out = self.get_cache().lookup(command)
+            if out:
+                self.queue_message(
+                    "vvvv", "cache hit for command: %s" % command
+                )
+                return out
+
         if check_all:
             prompt_len = len(to_list(prompt))
             answer_len = len(to_list(answer))
@@ -904,7 +933,24 @@ class Connection(NetworkConnectionBase):
             response = self.receive(
                 command, prompt, answer, newline, prompt_retry_check, check_all
             )
-            return to_text(response, errors="surrogate_then_replace")
+            response = to_text(response, errors="surrogate_then_replace")
+
+            if (not prompt) and (self._single_user_mode):
+                if self._needs_cache_invalidation(command):
+                    # invalidate the existing cache
+                    if self.get_cache().keys():
+                        self.queue_message(
+                            "vvvv", "invalidating existing cache"
+                        )
+                        self.get_cache().invalidate()
+                else:
+                    # populate cache
+                    self.queue_message(
+                        "vvvv", "populating cache for command: %s" % command
+                    )
+                    self.get_cache().populate(command, response)
+
+            return response
         except (socket.timeout, AttributeError):
             self.queue_message("error", traceback.format_exc())
             raise AnsibleConnectionFailure(
@@ -1139,3 +1185,45 @@ class Connection(NetworkConnectionBase):
         elif proto == "sftp":
             with ssh.open_sftp() as sftp:
                 sftp.get(source, destination)
+
+    def get_cache(self):
+        if not self._cache:
+            # TO-DO: support jsonfile or other modes of caching with
+            #        a configurable option
+            self._cache = cache_loader.get("ansible.netcommon.memory")
+        return self._cache
+
+    def _is_in_config_mode(self):
+        """
+        Check if the target device is in config mode by comparing
+        the current prompt with the platform's `terminal_config_prompt`.
+        Returns False if `terminal_config_prompt` is not defined.
+
+        :returns: A boolean indicating if the device is in config mode or not.
+        """
+        cfg_mode = False
+        cur_prompt = to_text(
+            self.get_prompt(), errors="surrogate_then_replace"
+        ).strip()
+        cfg_prompt = getattr(self._terminal, "terminal_config_prompt", None)
+        if cfg_prompt and cfg_prompt.match(cur_prompt):
+            cfg_mode = True
+        return cfg_mode
+
+    def _needs_cache_invalidation(self, command):
+        """
+        This method determines if it is necessary to invalidate
+        the existing cache based on whether the device has entered
+        configuration mode or if the last command sent to the device
+        is potentially capable of making configuration changes.
+
+        :param command: The last command sent to the target device.
+        :returns: A boolean indicating if cache invalidation is required or not.
+        """
+        invalidate = False
+        cfg_cmds = []
+        if self.cliconf.has_option("config_commands"):
+            cfg_cmds = self.cliconf.get_option("config_commands")
+        if (self._is_in_config_mode()) or (to_text(command) in cfg_cmds):
+            invalidate = True
+        return invalidate
