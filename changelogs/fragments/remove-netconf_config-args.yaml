@@ -1,2 +1,3 @@
+---
 major_changes:
-- Remove deprecated connection arguments from netconf_config
+  - Remove deprecated connection arguments from netconf_config

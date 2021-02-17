@@ -8,7 +8,7 @@
     ansible_connection: ansible.netcommon.network_cli
     ansible_ssh_port: 22
   register: result
-  ignore_errors: yes
+  ignore_errors: true
 
 - debug: msg='Netconf feature is not supported on this platform!'
   when: result.failed
