@@ -1,2 +1,3 @@
+---
 minor_changes:
   - Add `single_user_mode` option for command output caching.

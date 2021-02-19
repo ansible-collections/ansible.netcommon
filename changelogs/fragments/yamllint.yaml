@@ -1,0 +1,3 @@
+---
+trivial:
+  - Clean up yamllint failures in tests folder.

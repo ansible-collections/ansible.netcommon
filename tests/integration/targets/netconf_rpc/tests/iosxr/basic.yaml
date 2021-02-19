@@ -13,7 +13,7 @@
       </filter>
     display: xml
   vars:
-        ansible_persistent_log_messages: True
+    ansible_persistent_log_messages: true
   register: out
 
 - debug: msg="netconf_rpc get output in xml {{ out }}"
