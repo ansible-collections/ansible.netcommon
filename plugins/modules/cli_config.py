@@ -326,13 +326,6 @@ def run(
             result["diff"] = resp["diff"]
 
     elif device_operations.get("supports_generate_diff"):
-        msg = (
-            "To ensure idempotency and correct diff the input configuration lines should be"
-            " similar to how they appear if present in"
-            " the running configuration on device including the indentation"
-        )
-        module.warn(msg)
-
         kwargs = {"candidate": candidate, "running": running}
         if diff_match:
             kwargs.update({"diff_match": diff_match})
@@ -387,6 +380,16 @@ def run(
                 diff += json.dumps(banner_diff)
             result["diff"] = {"prepared": diff}
 
+    if result.get("changed"):
+        msg = (
+            "To ensure idempotency and correct diff the input configuration lines should be"
+            " similar to how they appear if present in"
+            " the running configuration on device including the indentation"
+        )
+        if "warnings" in result:
+            result["warnings"].append(msg)
+        else:
+            result["warnings"] = msg
     return result
 
 
