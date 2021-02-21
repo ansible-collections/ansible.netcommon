@@ -2,8 +2,6 @@ plugins/action/cli_parse.py pylint:ansible-deprecated-no-version
 plugins/action/net_base.py action-plugin-docs # base class for other net_* action plugins which have a matching module
 plugins/action/netconf.py action-plugin-docs # base class for deprecated network platform modules using `connection: local`
 plugins/action/network.py action-plugin-docs # base class for network action plugins
-plugins/modules/cli_parse.py validate-modules:deprecation-mismatch
-plugins/modules/cli_parse.py validate-modules:invalid-documentation
 plugins/modules/net_banner.py validate-modules:deprecation-mismatch
 plugins/modules/net_banner.py validate-modules:invalid-documentation
 plugins/modules/net_interface.py validate-modules:deprecation-mismatch

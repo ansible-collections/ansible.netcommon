@@ -16,10 +16,6 @@ short_description: Parse cli output or text using a variety of parsers
 description:
 - Parse cli output or text using a variety of parsers
 version_added: 1.2.0
-deprecated:
-  alternative: Use "ansible.utils.cli_parse" module instead
-  why: This module is moved to I(ansible.utils) collection as it rightly fits in Ansible utilities collection.
-  removed_at_date: '2022-11-01'
 options:
     command:
         type: str
