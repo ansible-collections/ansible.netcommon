@@ -14,19 +14,19 @@ import json
 from importlib import import_module
 
 from ansible.errors import AnsibleActionFail
-from ansible.module_utils._text import to_native, to_text, to_bytes
-from ansible.module_utils import basic
+from ansible.module_utils._text import to_native, to_text
 from ansible.module_utils.connection import (
     Connection,
     ConnectionError as AnsibleConnectionError,
 )
 from ansible.plugins.action import ActionBase
-from ansible_collections.ansible.netcommon.plugins.modules.cli_parse import (
+from ansible.utils.display import Display
+
+from ansible_collections.ansible.utils.plugins.modules.cli_parse import (
     DOCUMENTATION,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    convert_doc_to_ansible_module_kwargs,
-    dict_merge,
+from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (
+    check_argspec,
 )
 
 # python 2.7 compat for FileNotFoundError
@@ -44,13 +44,7 @@ ARGSPEC_CONDITIONALS = {
     "mutually_exclusive": [["command", "text"]],
 }
 
-
-def generate_argspec():
-    """ Generate an argspec
-    """
-    argspec = convert_doc_to_ansible_module_kwargs(DOCUMENTATION)
-    argspec = dict_merge(argspec, ARGSPEC_CONDITIONALS)
-    return argspec
+display = Display()
 
 
 class ActionModule(ActionBase):
@@ -86,27 +80,20 @@ class ActionModule(ActionBase):
         msg = msg.replace("(basic.py)", self._task.action)
         raise AnsibleActionFail(msg)
 
-    def _check_argspec(self):
-        """ Load the doc and convert
-        Add the root conditionals to what was returned from the conversion
-        and instantiate an AnsibleModule to validate
-        """
-        argspec = generate_argspec()
-        basic._ANSIBLE_ARGS = to_bytes(
-            json.dumps({"ANSIBLE_MODULE_ARGS": self._task.args})
-        )
-        basic.AnsibleModule.fail_json = self._fail_json
-        basic.AnsibleModule(**argspec)
-
     def _extended_check_argspec(self):
         """ Check additional requirements for the argspec
         that cannot be covered using stnd techniques
         """
         errors = []
-        if len(self._task.args.get("parser").get("name").split(".")) != 3:
+        requested_parser = self._task.args.get("parser").get("name")
+        if len(requested_parser.split(".")) != 3:
             msg = "Parser name should be provided as a full name including collection"
             errors.append(msg)
-        if self._task.args.get("text"):
+
+        if self._task.args.get("text") and requested_parser not in [
+            "ansible.utils.json",
+            "ansible.utils.xml",
+        ]:
             if not (
                 self._task.args.get("parser").get("command")
                 or self._task.args.get("parser").get("template_path")
@@ -129,9 +116,40 @@ class ActionModule(ActionBase):
         cref = dict(
             zip(["corg", "cname", "plugin"], requested_parser.split("."))
         )
-        parserlib = "ansible_collections.{corg}.{cname}.plugins.cli_parsers.{plugin}_parser".format(
-            **cref
-        )
+        if cref["cname"] == "netcommon" and cref["plugin"] in [
+            "json",
+            "textfsm",
+            "ttp",
+            "xml",
+        ]:
+            cref["cname"] = "utils"
+            msg = (
+                "Use 'ansible.utils.{plugin}' for parser name instead of '{requested_parser}'."
+                " This feature will be removed from 'ansible.netcommon' collection in a release"
+                " after 2022-11-01".format(
+                    plugin=cref["plugin"], requested_parser=requested_parser
+                )
+            )
+            self._display.warning(msg)
+        elif cref["cname"] == "netcommon" and cref["plugin"] in [
+            "native",
+            "ntc_templates",
+            "pyats",
+        ]:
+            parserlib = "ansible_collections.{corg}.{cname}.plugins.sub_plugins.cli_parser.{plugin}_parser".format(
+                **cref
+            )
+        else:
+            msg = (
+                "The custom cli_parse sub-plugin location is changed from 'plugins/cli_parsers/' to 'plugins/sub_plugins/cli_parse/'."
+                " Move the sub-plugins to the new location and update it to use the imports from 'ansible.utils>=2.0.0' collection."
+                " The old sub-plugin location will no longer be supported after the end of the deprecation cycle for 'ansible.netcommon.cli_parse' module"
+            )
+
+            self._display.warning(msg)
+            parserlib = "ansible_collections.{corg}.{cname}.plugins.cli_parsers.{plugin}_parser".format(
+                **cref
+            )
         try:
             parsercls = getattr(import_module(parserlib), self.PARSER_CLS_NAME)
             parser = parsercls(
@@ -285,7 +303,24 @@ class ActionModule(ActionBase):
         :return: The results from the parser
         :rtype: dict
         """
-        self._check_argspec()
+        msg = (
+            "Use 'ansible.utils.cli_parse' instead of 'ansible.netcommon.cli_parse'."
+            " See the plugin documentation for more details."
+            " This feature will be removed from ansible.netcommon in a release after 2023-01-01"
+        )
+        display.deprecated(
+            msg, date="2023-01-01", collection_name="ansible.netcommon"
+        )
+
+        valid, argspec_result, updated_params = check_argspec(
+            DOCUMENTATION,
+            "cli_parse module",
+            schema_conditionals=ARGSPEC_CONDITIONALS,
+            **self._task.args
+        )
+        if not valid:
+            return argspec_result
+
         self._extended_check_argspec()
         if self._result.get("failed"):
             return self._result

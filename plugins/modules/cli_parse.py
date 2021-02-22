@@ -56,7 +56,7 @@ options:
                 description:
                 - Additional parser specific parameters
                 - See the cli_parse user guide for examples of parser specific variables
-                - https://docs.ansible.com/ansible/latest/network/user_guide/cli_parsing.html
+                - U(https://docs.ansible.com/ansible/latest/network/user_guide/cli_parsing.html)
 
     set_fact:
         description:

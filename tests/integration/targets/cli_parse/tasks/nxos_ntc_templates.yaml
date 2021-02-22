@@ -1,13 +1,13 @@
 ---
 - name: "{{ parser }} Run command and parse with ntc_templates"
-  ansible.netcommon.cli_parse:
+  ansible.utils.cli_parse:
     command: "show interface"
     parser:
       name: ansible.netcommon.ntc_templates
   register: nxos_ntc_templates_command
 
 - name: "{{ parser }} Pass text and command"
-  ansible.netcommon.cli_parse:
+  ansible.utils.cli_parse:
     text: "{{ nxos_ntc_templates_command['stdout'] }}"
     parser:
       name: ansible.netcommon.ntc_templates

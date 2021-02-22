@@ -17,14 +17,14 @@
   when: pyver_found == '3'
   block:
     - name: "{{ parser }} Run command and parse with pyats"
-      ansible.netcommon.cli_parse:
+      ansible.utils.cli_parse:
         command: "show interface"
         parser:
           name: ansible.netcommon.pyats
       register: nxos_pyats_command
 
     - name: "{{ parser }} Pass text and command"
-      ansible.netcommon.cli_parse:
+      ansible.utils.cli_parse:
         text: "{{ nxos_pyats_command['stdout'] }}"
         parser:
           name: ansible.netcommon.pyats
@@ -41,7 +41,7 @@
         - "{{ nxos_pyats_command['parsed']['mgmt0'] is defined }}"
 
     - name: "Pass text, command, and os"
-      ansible.netcommon.cli_parse:
+      ansible.utils.cli_parse:
         text: "{{ nxos_pyats_command['stdout'] }}"
         parser:
           name: ansible.netcommon.pyats
@@ -59,7 +59,7 @@
         - "{{ nxos_pyats_command['parsed']['mgmt0'] is defined }}"
 
     - name: "{{ parser }} Confirm parser found message"
-      ansible.netcommon.cli_parse:
+      ansible.utils.cli_parse:
         text: "{{ nxos_pyats_command['stdout'] }}"
         parser:
           name: ansible.netcommon.pyats

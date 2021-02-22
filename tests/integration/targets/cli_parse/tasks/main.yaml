@@ -7,11 +7,6 @@
   set_fact:
     os: "{{ ansible_distribution|d or (ansible_network_os|d('')).split('.')[-1] }}"
 
-- include_tasks: argspec.yaml
-  when: inventory_hostname == 'localhost'
-  vars:
-    parser: "({{ inventory_hostname }}/argspec)"
-
 - include_tasks: "{{ os|lower }}_native.yaml"
   vars:
     parser: "({{ os }}/native)"

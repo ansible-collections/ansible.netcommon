@@ -1,11 +1,15 @@
 ---
 - name: "{{ parser }} Run command and parse with xml"
-  ansible.netcommon.cli_parse:
+  ansible.utils.cli_parse:
     command: "show interface | xml"
     parser:
-      name: ansible.netcommon.xml
+      name: ansible.utils.xml
   register: nxos_xml_command
 
+# TODO: This testcase test the redirection of cli_parse plugin
+# from ansible.netcommon to ansible.utils
+# remove this test case after ansible.netcommon.cli_parse deprecation is
+# due as this scenario is already covered in ansible.utils collection testing
 - name: "{{ parser }} Pass text and parse with xml"
   ansible.netcommon.cli_parse:
     text: "{{ nxos_xml_command['stdout'] }}"

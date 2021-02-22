@@ -10,7 +10,7 @@ import os
 import pytest
 
 from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
-from ansible_collections.ansible.netcommon.plugins.cli_parsers.pyats_parser import (
+from ansible_collections.ansible.netcommon.plugins.sub_plugins.cli_parser.pyats_parser import (
     CliParser,
 )
 

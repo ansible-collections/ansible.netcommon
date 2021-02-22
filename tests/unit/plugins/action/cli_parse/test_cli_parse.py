@@ -21,7 +21,16 @@ from ansible_collections.ansible.netcommon.tests.unit.mock.loader import (
 from ansible_collections.ansible.netcommon.plugins.action.cli_parse import (
     ActionModule,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parserbase import (
+from ansible_collections.ansible.netcommon.plugins.action.cli_parse import (
+    ARGSPEC_CONDITIONALS,
+)
+from ansible_collections.ansible.netcommon.plugins.modules.cli_parse import (
+    DOCUMENTATION,
+)
+from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (
+    check_argspec,
+)
+from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
     CliParserBase,
 )
 from ansible.module_utils.connection import (
@@ -80,45 +89,51 @@ class TestCli_Parse(unittest.TestCase):
     def test_fn_check_argspec_pass(self):
         """ Confirm a valid argspec passes
         """
-        self._plugin._task.args = {
+        kwargs = {
             "text": "text",
             "parser": {
-                "name": "ansible.netcommon.pyats",
+                "name": "ansible.utils.textfsm",
                 "command": "show version",
             },
         }
-        result = self._plugin._check_argspec()
-        self.assertEqual(result, None)
+        valid, result, updated_params = check_argspec(
+            DOCUMENTATION, "cli_parse module", schema_conditionals={}, **kwargs
+        )
+        self.assertEqual(valid, True)
 
     def test_fn_check_argspec_fail_no_test_or_command(self):
         """ Confirm failed argpsec w/o text or command
         """
-        self._plugin._task.args = {
+        kwargs = {
             "parser": {
-                "name": "ansible.netcommon.pyats",
+                "name": "ansible.utils.textfsm",
                 "command": "show version",
             }
         }
-        self._plugin.task_vars = {"ansible_network_os": "cisco.nxos.nxos"}
-        with self.assertRaises(Exception) as error:
-            self._plugin._check_argspec()
+        valid, result, updated_params = check_argspec(
+            DOCUMENTATION,
+            "cli_parse module",
+            schema_conditionals=ARGSPEC_CONDITIONALS,
+            **kwargs
+        )
+
         self.assertEqual(
-            "one of the following is required: command, text",
-            str(error.exception),
+            "one of the following is required: command, text", result["errors"]
         )
 
     def test_fn_check_argspec_fail_no_parser_name(self):
         """ Confirm failed argspec no parser name
         """
-        self._plugin._task.args = {
-            "text": "anything",
-            "parser": {"command": "show version"},
-        }
-        with self.assertRaises(Exception) as error:
-            self._plugin._check_argspec()
+        kwargs = {"text": "anything", "parser": {"command": "show version"}}
+        valid, result, updated_params = check_argspec(
+            DOCUMENTATION,
+            "cli_parse module",
+            schema_conditionals=ARGSPEC_CONDITIONALS,
+            **kwargs
+        )
         self.assertEqual(
             "missing required arguments: name found in parser",
-            str(error.exception),
+            result["errors"],
         )
 
     def test_fn_extended_check_argspec_parser_name_not_coll(self):
@@ -152,15 +167,7 @@ class TestCli_Parse(unittest.TestCase):
     def test_fn_load_parser_pass(self):
         """ Confirm each each of the parsers loads from the filesystem
         """
-        parser_names = [
-            "json",
-            "native",
-            "ntc_templates",
-            "pyats",
-            "textfsm",
-            "ttp",
-            "xml",
-        ]
+        parser_names = ["native", "ntc_templates", "pyats"]
         for parser_name in parser_names:
             self._plugin._task.args = {
                 "text": "anything",
@@ -500,6 +507,7 @@ class TestCli_Parse(unittest.TestCase):
     def test_fn_run_pass_empty_parser(self, mock_rpc):
         """ Check full module run with valid params
         """
+
         mock_out = self._load_fixture("nxos_show_version.txt")
         mock_rpc.return_value = mock_out
         self._plugin._connection.socket_path = (
