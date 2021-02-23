@@ -25,7 +25,7 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- scp
+- scp if using protocol=scp with paramiko
 
 
 Parameters
