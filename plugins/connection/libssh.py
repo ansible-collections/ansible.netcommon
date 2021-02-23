@@ -123,6 +123,7 @@ from ansible.module_utils.six.moves import input
 from ansible.plugins.connection import ConnectionBase
 from ansible.utils.display import Display
 from ansible.module_utils._text import to_bytes, to_native, to_text
+from ansible.module_utils.basic import missing_required_lib
 import logging
 
 display = Display()
@@ -276,7 +277,7 @@ class Connection(ConnectionBase):
         """ activates the connection object """
 
         if not HAS_PYLIBSSH:
-            raise AnsibleError("ansible-pylibssh is not installed")
+            raise AnsibleError(missing_required_lib("ansible-pylibssh"))
 
         ssh_connect_kwargs = {}
 

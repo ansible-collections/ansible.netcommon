@@ -314,6 +314,7 @@ import traceback
 from io import BytesIO
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
+from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
@@ -1167,15 +1168,18 @@ class Connection(NetworkConnectionBase):
         if proto == "scp":
             if self._ssh_type == "libssh":
                 ssh.put(source, destination)
-            else:
+            elif self._ssh_type == "paramiko":
                 if not HAS_SCP:
-                    raise AnsibleError(
-                        "Required library scp is not installed.  Please install it using `pip install scp`"
-                    )
+                    raise AnsibleError(missing_required_lib("scp"))
                 with SCPClient(
                     ssh.get_transport(), socket_timeout=timeout
                 ) as scp:
                     scp.put(source, destination)
+            else:
+                raise AnsibleError(
+                    "Do not know how to do SCP with ssh_type %s"
+                    % self._ssh_type
+                )
         elif proto == "sftp":
             with ssh.open_sftp() as sftp:
                 sftp.put(source, destination)
@@ -1195,11 +1199,9 @@ class Connection(NetworkConnectionBase):
         if proto == "scp":
             if self._ssh_type == "libssh":
                 ssh.get(source, destination)
-            else:
+            elif self._ssh_type == "paramiko":
                 if not HAS_SCP:
-                    raise AnsibleError(
-                        "Required library scp is not installed.  Please install it using `pip install scp`"
-                    )
+                    raise AnsibleError(missing_required_lib("scp"))
                 try:
                     with SCPClient(
                         ssh.get_transport(), socket_timeout=timeout
@@ -1208,6 +1210,11 @@ class Connection(NetworkConnectionBase):
                 except EOFError:
                     # This appears to be benign.
                     pass
+            else:
+                raise AnsibleError(
+                    "Do not know how to do SCP with ssh_type %s"
+                    % self._ssh_type
+                )
         elif proto == "sftp":
             with ssh.open_sftp() as sftp:
                 sftp.get(source, destination)
