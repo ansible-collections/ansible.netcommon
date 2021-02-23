@@ -14,6 +14,24 @@ description:
   api.
 version_added: 1.0.0
 options:
+  import_modules:
+    type: boolean
+    description:
+    - Reduce CPU usage and network module execution time
+      by enabling direct execution. Instead of the module being packaged
+      and executed by the shell, it will be directly executed by the Ansible
+      control node using the same python interpreter as the Ansible process.
+      Note- Incompatible with C(asynchronous mode).
+      Note- Python 3 and Ansible 2.9.16 or greater required.
+      Note- With Ansible 2.9.x fully qualified modules names are required in tasks.
+    default: false
+    ini:
+    - section: ansible_network
+      key: import_modules
+    env:
+    - name: ANSIBLE_NETWORK_IMPORT_MODULES
+    vars:
+    - name: ansible_network_import_modules
   host:
     description:
     - Specifies the remote device FQDN or IP address to establish the HTTP(S) connection

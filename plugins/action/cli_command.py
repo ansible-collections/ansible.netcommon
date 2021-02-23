@@ -20,10 +20,12 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-from ansible.plugins.action.normal import ActionModule as _ActionModule
+from ansible_collections.ansible.netcommon.plugins.action.network import (
+    ActionModule as ActionNetworkModule,
+)
 
 
-class ActionModule(_ActionModule):
+class ActionModule(ActionNetworkModule):
     def run(self, tmp=None, task_vars=None):
         if self._play_context.connection.split(".")[-1] != "network_cli":
             return {
@@ -31,5 +33,4 @@ class ActionModule(_ActionModule):
                 "msg": "Connection type %s is not valid for this module"
                 % self._play_context.connection,
             }
-
         return super(ActionModule, self).run(task_vars=task_vars)
