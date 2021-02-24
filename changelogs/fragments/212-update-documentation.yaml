@@ -1,0 +1,4 @@
+---
+trivial:
+  - Regenerated documentaiton with latest version of collection_prep
+  - Added link to further documentation in ipaddr docstring

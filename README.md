@@ -9,7 +9,7 @@ This includes  connection plugins, such as ``network_cli``, ``httpapi``, and ``n
 <!--start requires_ansible-->
 ## Ansible version compatibility
 
-This collection has been tested against following Ansible versions: **>=2.9.10,<2.11**.
+This collection has been tested against following Ansible versions: **>=2.9.10**.
 
 Plugins and modules within a collection may be tested with only specific Ansible versions.
 A collection may contain metadata that identifies these versions.
@@ -34,12 +34,13 @@ Name | Description
 [ansible.netcommon.network_cli](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.network_cli_connection.rst)|Use network_cli to run command on network appliances
 [ansible.netcommon.persistent](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.persistent_connection.rst)|Use a persistent unix socket for connection
 
-### Filter plugins
+### Ipaddr filter plugins
+IP address and network manipulation filters
+
+Detailed documentation available at https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html
 Name | Description
 --- | ---
 ansible.netcommon.cidr_merge|ansible.netcommon cidr_merge filter plugin
-ansible.netcommon.comp_type5|ansible.netcommon comp_type5 filter plugin
-ansible.netcommon.hash_salt|ansible.netcommon hash_salt filter plugin
 ansible.netcommon.hwaddr|Check if string is a HW/MAC address and filter it
 ansible.netcommon.ip4_hex|Convert an IPv4 address to Hexadecimal notation
 ansible.netcommon.ipaddr|Check if string is an IP address or network and filter it
@@ -53,12 +54,19 @@ ansible.netcommon.network_in_network|Checks whether the 'test' address or addres
 ansible.netcommon.network_in_usable|Checks whether 'test' is a useable address or addresses in 'value'
 ansible.netcommon.next_nth_usable|ansible.netcommon next_nth_usable filter plugin
 ansible.netcommon.nthhost|Get the nth host within a given network
-ansible.netcommon.parse_cli|ansible.netcommon parse_cli filter plugin
-ansible.netcommon.parse_cli_textfsm|ansible.netcommon parse_cli_textfsm filter plugin
-ansible.netcommon.parse_xml|ansible.netcommon parse_xml filter plugin
 ansible.netcommon.previous_nth_usable|ansible.netcommon previous_nth_usable filter plugin
 ansible.netcommon.reduce_on_network|Reduces a list of addresses to only the addresses that match a given network.
 ansible.netcommon.slaac|Get the SLAAC address within given network
+
+### Network filter plugins
+Filters for working with output from network devices
+Name | Description
+--- | ---
+ansible.netcommon.comp_type5|ansible.netcommon comp_type5 filter plugin
+ansible.netcommon.hash_salt|ansible.netcommon hash_salt filter plugin
+ansible.netcommon.parse_cli|ansible.netcommon parse_cli filter plugin
+ansible.netcommon.parse_cli_textfsm|ansible.netcommon parse_cli_textfsm filter plugin
+ansible.netcommon.parse_xml|ansible.netcommon parse_xml filter plugin
 ansible.netcommon.type5_pw|ansible.netcommon type5_pw filter plugin
 ansible.netcommon.vlan_parser|Input: Unsorted list of vlan integers
 

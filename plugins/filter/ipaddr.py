@@ -1138,7 +1138,10 @@ def ip4_hex(arg, delimiter=""):
 
 # ---- Ansible filters ----
 class FilterModule(object):
-    """ IP address and network manipulation filters """
+    """IP address and network manipulation filters
+
+    Detailed documentation available at https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html
+    """
 
     filter_map = {
         # IP addresses and networks
