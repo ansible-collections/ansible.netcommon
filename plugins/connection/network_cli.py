@@ -1165,24 +1165,28 @@ class Connection(NetworkConnectionBase):
         :return: None
         """
         ssh = self.ssh_type_conn._connect_uncached()
-        if proto == "scp":
-            if self._ssh_type == "libssh":
-                ssh.put(source, destination)
-            elif self._ssh_type == "paramiko":
+        if self._ssh_type == "libssh":
+            ssh.put_file(source, destination, proto=proto)
+        elif self._ssh_type == "paramiko":
+            if proto == "scp":
                 if not HAS_SCP:
                     raise AnsibleError(missing_required_lib("scp"))
                 with SCPClient(
                     ssh.get_transport(), socket_timeout=timeout
                 ) as scp:
                     scp.put(source, destination)
+            elif proto == "sftp":
+                with ssh.open_sftp() as sftp:
+                    sftp.put(source, destination)
             else:
                 raise AnsibleError(
-                    "Do not know how to do SCP with ssh_type %s"
-                    % self._ssh_type
+                    "Do not know how to do transfer file over protocol %s"
+                    % proto
                 )
-        elif proto == "sftp":
-            with ssh.open_sftp() as sftp:
-                sftp.put(source, destination)
+        else:
+            raise AnsibleError(
+                "Do not know how to do SCP with ssh_type %s" % self._ssh_type
+            )
 
     def get_file(self, source=None, destination=None, proto="scp", timeout=30):
         """Fetch file over scp/sftp from remote device
@@ -1196,10 +1200,10 @@ class Connection(NetworkConnectionBase):
         """
         """Fetch file over scp/sftp from remote device"""
         ssh = self.ssh_type_conn._connect_uncached()
-        if proto == "scp":
-            if self._ssh_type == "libssh":
-                ssh.get(source, destination)
-            elif self._ssh_type == "paramiko":
+        if self._ssh_type == "libssh":
+            ssh.fetch_file(source, destination, proto=proto)
+        elif self._ssh_type == "paramiko":
+            if proto == "scp":
                 if not HAS_SCP:
                     raise AnsibleError(missing_required_lib("scp"))
                 try:
@@ -1210,14 +1214,18 @@ class Connection(NetworkConnectionBase):
                 except EOFError:
                     # This appears to be benign.
                     pass
+            elif proto == "sftp":
+                with ssh.open_sftp() as sftp:
+                    sftp.get(source, destination)
             else:
                 raise AnsibleError(
-                    "Do not know how to do SCP with ssh_type %s"
-                    % self._ssh_type
+                    "Do not know how to do transfer file over protocol %s"
+                    % proto
                 )
-        elif proto == "sftp":
-            with ssh.open_sftp() as sftp:
-                sftp.get(source, destination)
+        else:
+            raise AnsibleError(
+                "Do not know how to do SCP with ssh_type %s" % self._ssh_type
+            )
 
     def get_cache(self):
         if not self._cache:

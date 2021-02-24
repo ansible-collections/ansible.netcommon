@@ -449,44 +449,7 @@ class Connection(ConnectionBase):
             rc = self.chan.get_channel_exit_status()
         return rc, out, err
 
-    # SCP-based file copy
-    def put(self, local_path, remote_path):
-        display.vvv(
-            "PUT %s TO %s" % (local_path, remote_path),
-            host=self._play_context.remote_addr,
-        )
-
-        if not os.path.exists(local_path):
-            raise AnsibleFileNotFound(
-                "file or module does not exist: %s" % local_path
-            )
-
-        scp = self.ssh.scp()
-        try:
-            scp.put(local_path, remote_path)
-        except LibsshSCPException as exc:
-            raise AnsibleError(
-                "Error transferring file to %s: %s"
-                % (remote_path, to_text(exc))
-            )
-
-    def get(self, remote_path, local_path):
-        display.vvv(
-            "FETCH %s TO %s" % (remote_path, local_path),
-            host=self._play_context.remote_addr,
-        )
-
-        scp = self.ssh.scp()
-        try:
-            scp.get(remote_path, local_path)
-        except LibsshSCPException as exc:
-            raise AnsibleError(
-                "Error transferring file from %s: %s"
-                % (remote_path, to_text(exc))
-            )
-
-    # SFTP-based file copy
-    def put_file(self, in_path, out_path):
+    def put_file(self, in_path, out_path, proto="sftp"):
         """ transfer a file from local to remote """
 
         super(Connection, self).put_file(in_path, out_path)
@@ -501,18 +464,32 @@ class Connection(ConnectionBase):
                 "file or module does not exist: %s" % in_path
             )
 
-        try:
-            self.sftp = self.ssh.sftp()
-        except Exception as e:
-            raise AnsibleError("failed to open a SFTP connection (%s)" % e)
+        if proto == "sftp":
+            try:
+                self.sftp = self.ssh.sftp()
+            except Exception as e:
+                raise AnsibleError("failed to open a SFTP connection (%s)" % e)
 
-        try:
-            self.sftp.put(
-                to_bytes(in_path, errors="surrogate_or_strict"),
-                to_bytes(out_path, errors="surrogate_or_strict"),
+            try:
+                self.sftp.put(
+                    to_bytes(in_path, errors="surrogate_or_strict"),
+                    to_bytes(out_path, errors="surrogate_or_strict"),
+                )
+            except IOError:
+                raise AnsibleError("failed to transfer file to %s" % out_path)
+        elif proto == "scp":
+            scp = self.ssh.scp()
+            try:
+                scp.put(in_path, out_path)
+            except LibsshSCPException as exc:
+                raise AnsibleError(
+                    "Error transferring file to %s: %s"
+                    % (out_path, to_text(exc))
+                )
+        else:
+            raise AnsibleError(
+                "Don't know how to transfer file over protocol %s" % proto
             )
-        except IOError:
-            raise AnsibleError("failed to transfer file to %s" % out_path)
 
     def _connect_sftp(self):
         cache_key = "%s__%s__" % (
@@ -527,7 +504,7 @@ class Connection(ConnectionBase):
             ] = self._connect().ssh.sftp()
             return result
 
-    def fetch_file(self, in_path, out_path):
+    def fetch_file(self, in_path, out_path, proto="sftp"):
         """ save a remote file to the specified path """
 
         super(Connection, self).fetch_file(in_path, out_path)
@@ -537,20 +514,34 @@ class Connection(ConnectionBase):
             host=self._play_context.remote_addr,
         )
 
-        try:
-            self.sftp = self._connect_sftp()
-        except Exception as e:
-            raise AnsibleError(
-                "failed to open a SFTP connection (%s)" % to_native(e)
-            )
+        if proto == "sftp":
+            try:
+                self.sftp = self._connect_sftp()
+            except Exception as e:
+                raise AnsibleError(
+                    "failed to open a SFTP connection (%s)" % to_native(e)
+                )
 
-        try:
-            self.sftp.get(
-                to_bytes(in_path, errors="surrogate_or_strict"),
-                to_bytes(out_path, errors="surrogate_or_strict"),
+            try:
+                self.sftp.get(
+                    to_bytes(in_path, errors="surrogate_or_strict"),
+                    to_bytes(out_path, errors="surrogate_or_strict"),
+                )
+            except IOError:
+                raise AnsibleError("failed to transfer file from %s" % in_path)
+        elif proto == "scp":
+            scp = self.ssh.scp()
+            try:
+                scp.get(out_path, in_path)
+            except LibsshSCPException as exc:
+                raise AnsibleError(
+                    "Error transferring file from %s: %s"
+                    % (out_path, to_text(exc))
+                )
+        else:
+            raise AnsibleError(
+                "Don't know how to transfer file over protocol %s" % proto
             )
-        except IOError:
-            raise AnsibleError("failed to transfer file from %s" % in_path)
 
     def reset(self):
         self.close()
