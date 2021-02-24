@@ -464,7 +464,7 @@ class Connection(ConnectionBase):
         scp = self.ssh.scp()
         try:
             scp.put(local_path, remote_path)
-        except Exception as exc:
+        except LibsshSCPException as exc:
             raise AnsibleError(
                 "Error transferring file to %s: %s"
                 % (remote_path, to_text(exc))
@@ -479,7 +479,7 @@ class Connection(ConnectionBase):
         scp = self.ssh.scp()
         try:
             scp.get(remote_path, local_path)
-        except Exception as exc:
+        except LibsshSCPException as exc:
             raise AnsibleError(
                 "Error transferring file from %s: %s"
                 % (remote_path, to_text(exc))
