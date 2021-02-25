@@ -802,7 +802,12 @@ class Connection(NetworkConnectionBase):
                 else:
                     return self._command_response
             else:
-                data = self._ssh_shell.read_bulk_response()
+                try:
+                    data = self._ssh_shell.read_bulk_response()
+                # TODO: Should be ConnectionError when pylibssh drops Python 2 support
+                except OSError:
+                    # Socket has closed
+                    break
 
             if not data:
                 continue
