@@ -1,3 +1,0 @@
----
-breaking_changes:
-  - Removed vendored ipaddress package from collection.
