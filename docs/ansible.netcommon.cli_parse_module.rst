@@ -146,7 +146,7 @@ Parameters
                 <td>
                         <div>Additional parser specific parameters</div>
                         <div>See the cli_parse user guide for examples of parser specific variables</div>
-                        <div>https://docs.ansible.com/ansible/latest/network/user_guide/cli_parsing.html</div>
+                        <div><a href='https://docs.ansible.com/ansible/latest/network/user_guide/cli_parsing.html'>https://docs.ansible.com/ansible/latest/network/user_guide/cli_parsing.html</a></div>
                 </td>
             </tr>
 

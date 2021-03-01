@@ -314,6 +314,7 @@ import traceback
 from io import BytesIO
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
+from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
@@ -1169,16 +1170,28 @@ class Connection(NetworkConnectionBase):
         :return: None
         """
         ssh = self.ssh_type_conn._connect_uncached()
-        if proto == "scp":
-            if not HAS_SCP:
+        if self._ssh_type == "libssh":
+            ssh.put_file(source, destination, proto=proto)
+        elif self._ssh_type == "paramiko":
+            if proto == "scp":
+                if not HAS_SCP:
+                    raise AnsibleError(missing_required_lib("scp"))
+                with SCPClient(
+                    ssh.get_transport(), socket_timeout=timeout
+                ) as scp:
+                    scp.put(source, destination)
+            elif proto == "sftp":
+                with ssh.open_sftp() as sftp:
+                    sftp.put(source, destination)
+            else:
                 raise AnsibleError(
-                    "Required library scp is not installed.  Please install it using `pip install scp`"
+                    "Do not know how to do transfer file over protocol %s"
+                    % proto
                 )
-            with SCPClient(ssh.get_transport(), socket_timeout=timeout) as scp:
-                scp.put(source, destination)
-        elif proto == "sftp":
-            with ssh.open_sftp() as sftp:
-                sftp.put(source, destination)
+        else:
+            raise AnsibleError(
+                "Do not know how to do SCP with ssh_type %s" % self._ssh_type
+            )
 
     def get_file(self, source=None, destination=None, proto="scp", timeout=30):
         """Fetch file over scp/sftp from remote device
@@ -1192,22 +1205,32 @@ class Connection(NetworkConnectionBase):
         """
         """Fetch file over scp/sftp from remote device"""
         ssh = self.ssh_type_conn._connect_uncached()
-        if proto == "scp":
-            if not HAS_SCP:
+        if self._ssh_type == "libssh":
+            ssh.fetch_file(source, destination, proto=proto)
+        elif self._ssh_type == "paramiko":
+            if proto == "scp":
+                if not HAS_SCP:
+                    raise AnsibleError(missing_required_lib("scp"))
+                try:
+                    with SCPClient(
+                        ssh.get_transport(), socket_timeout=timeout
+                    ) as scp:
+                        scp.get(source, destination)
+                except EOFError:
+                    # This appears to be benign.
+                    pass
+            elif proto == "sftp":
+                with ssh.open_sftp() as sftp:
+                    sftp.get(source, destination)
+            else:
                 raise AnsibleError(
-                    "Required library scp is not installed.  Please install it using `pip install scp`"
+                    "Do not know how to do transfer file over protocol %s"
+                    % proto
                 )
-            try:
-                with SCPClient(
-                    ssh.get_transport(), socket_timeout=timeout
-                ) as scp:
-                    scp.get(source, destination)
-            except EOFError:
-                # This appears to be benign.
-                pass
-        elif proto == "sftp":
-            with ssh.open_sftp() as sftp:
-                sftp.get(source, destination)
+        else:
+            raise AnsibleError(
+                "Do not know how to do SCP with ssh_type %s" % self._ssh_type
+            )
 
     def get_cache(self):
         if not self._cache:
