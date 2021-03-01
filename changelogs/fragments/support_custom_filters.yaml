@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Support any() and all() filters in Jinja2.

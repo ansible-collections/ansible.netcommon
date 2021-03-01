@@ -5,6 +5,47 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v2.0.0
+======
+
+Major Changes
+-------------
+
+- Remove deprecated connection arguments from netconf_config
+
+Minor Changes
+-------------
+
+- Add SCP support when using ssh_type libssh
+- Add `single_user_mode` option for command output caching.
+- Move cli_config idempotent warning message with the task response under `warnings` key if `changed` is `True`
+- Reduce CPU usage and network module run time when using `ansible_network_import_modules`
+- Support any() and all() filters in Jinja2.
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- Removed vendored ipaddress package from collection.
+
+Deprecated Features
+-------------------
+
+- Deprecate cli_parse module and textfsm, ttp, xml, json parser plugins as they are moved to ansible.utils collection (https://github.com/ansible-collections/ansible.netcommon/pull/182 https://github.com/ansible-collections/ansible.utils/pull/28)
+
+Bugfixes
+--------
+
+- Expose connection class object to rm_template (https://github.com/ansible-collections/ansible.netcommon/pull/180)
+- network_cli - When using ssh_type libssh, handle closed connection gracefully instead of throwing an exception
+
+New Plugins
+-----------
+
+Cache
+~~~~~
+
+- memory - RAM backed, non persistent cache.
+
 v1.5.0
 ======
 

@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Reduce CPU usage and network module run time when using `ansible_network_import_modules`

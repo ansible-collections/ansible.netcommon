@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Add SCP support when using ssh_type libssh

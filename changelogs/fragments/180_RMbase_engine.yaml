@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Expose connection class object to rm_template (https://github.com/ansible-collections/ansible.netcommon/pull/180)
