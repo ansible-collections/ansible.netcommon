@@ -269,6 +269,21 @@ options:
           key: ssh_type
     vars:
     - name: ansible_network_cli_ssh_type
+  host_key_checking:
+    description: 'Set this to "False" if you want to avoid host key checking by the underlying tools Ansible uses to connect to the host'
+    type: boolean
+    default: True
+    env:
+    - name: ANSIBLE_HOST_KEY_CHECKING
+    - name: ANSIBLE_SSH_HOST_KEY_CHECKING
+    ini:
+    - section: defaults
+      key: host_key_checking
+    - section: persistent_connection
+      key: host_key_checking
+    vars:
+    - name: ansible_host_key_checking
+    - name: ansible_ssh_host_key_checking
   single_user_mode:
     type: boolean
     default: false
@@ -421,14 +436,18 @@ class Connection(NetworkConnectionBase):
             self._ssh_type_conn = connection_loader.get(
                 self._ssh_type, self._play_context, "/dev/null"
             )
+
             self._ssh_type_conn.set_options(
                 direct={
                     "look_for_keys": not bool(
                         self._play_context.password
                         and not self._play_context.private_key_file
-                    )
-                }
+                    ),
+                    "host_key_checking": self.get_option("host_key_checking"),
+                },
+
             )
+
             self.queue_message(
                 "vvvv", "ssh type is set to %s" % self.get_option("ssh_type")
             )
