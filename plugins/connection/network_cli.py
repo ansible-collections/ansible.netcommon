@@ -443,8 +443,7 @@ class Connection(NetworkConnectionBase):
                         and not self._play_context.private_key_file
                     ),
                     "host_key_checking": self.get_option("host_key_checking"),
-                },
-
+                }
             )
             self.queue_message(
                 "vvvv", "ssh type is set to %s" % self.get_option("ssh_type")
