@@ -432,10 +432,10 @@ class Connection(NetworkConnectionBase):
             # TODO: Remove this check if/when libssh connection plugin is moved to ansible-base
             if self._ssh_type == "libssh":
                 self._ssh_type = "ansible.netcommon.libssh"
+
             self._ssh_type_conn = connection_loader.get(
                 self._ssh_type, self._play_context, "/dev/null"
             )
-
             self._ssh_type_conn.set_options(
                 direct={
                     "look_for_keys": not bool(
