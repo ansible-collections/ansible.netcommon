@@ -71,7 +71,7 @@ v1.4.1
 Release Summary
 ---------------
 
-- Change how black config is specified to avoid issues with Automation Hub release process
+Change how black config is specified to avoid issues with Automation Hub release process
 
 v1.4.0
 ======
