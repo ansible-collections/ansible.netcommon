@@ -1,0 +1,3 @@
+---
+trivial:
+  - Fix broken unit tests when testing with network-ee
