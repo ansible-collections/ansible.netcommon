@@ -127,7 +127,7 @@ class TestConnectionClass(unittest.TestCase):
         terminal = MagicMock(supports_multiplexing=False)
         conn._terminal = terminal
         conn._ssh_shell = MagicMock()
-        conn._paramiko_conn = MagicMock()
+        conn._ssh_type_conn = MagicMock()
         conn._connected = True
         conn.close()
         self.assertTrue(terminal.on_close_shell.called)
@@ -146,7 +146,7 @@ class TestConnectionClass(unittest.TestCase):
         terminal = MagicMock(supports_multiplexing=False)
         conn._terminal = terminal
         conn._ssh_shell = MagicMock()
-        conn._paramiko_conn = MagicMock()
+        conn._ssh_type_conn = MagicMock()
         conn._connected = True
         conn.close()
         self.assertTrue(terminal.on_close_shell.called)
