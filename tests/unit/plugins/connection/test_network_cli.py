@@ -44,7 +44,7 @@ class TestConnectionClass(unittest.TestCase):
         self.assertRaises(
             AnsibleConnectionFailure,
             connection_loader.get,
-            "network_cli",
+            "ansible.netcommon.network_cli",
             pc,
             "/dev/null",
         )
@@ -56,7 +56,7 @@ class TestConnectionClass(unittest.TestCase):
         self.assertRaises(
             AnsibleConnectionFailure,
             connection_loader.get,
-            "network_cli",
+            "ansible.netcommon.network_cli",
             pc,
             "/dev/null",
         )
@@ -70,7 +70,9 @@ class TestConnectionClass(unittest.TestCase):
     ):
         pc = PlayContext()
         pc.network_os = "ios"
-        conn = connection_loader.get("network_cli", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.network_cli", pc, "/dev/null"
+        )
 
         conn.ssh = MagicMock()
         conn.receive = MagicMock()
@@ -99,7 +101,9 @@ class TestConnectionClass(unittest.TestCase):
     ):
         pc = PlayContext()
         pc.network_os = "ios"
-        conn = connection_loader.get("network_cli", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.network_cli", pc, "/dev/null"
+        )
 
         conn.ssh = MagicMock()
         conn.receive = MagicMock()
@@ -121,13 +125,15 @@ class TestConnectionClass(unittest.TestCase):
     def test_network_cli_close_paramiko(self, mocked_super):
         pc = PlayContext()
         pc.network_os = "ios"
-        conn = connection_loader.get("network_cli", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.network_cli", pc, "/dev/null"
+        )
         conn._ssh_type = "paramiko"
 
         terminal = MagicMock(supports_multiplexing=False)
         conn._terminal = terminal
         conn._ssh_shell = MagicMock()
-        conn._paramiko_conn = MagicMock()
+        conn._ssh_type_conn = MagicMock()
         conn._connected = True
         conn.close()
         self.assertTrue(terminal.on_close_shell.called)
@@ -140,13 +146,15 @@ class TestConnectionClass(unittest.TestCase):
     def test_network_cli_close_libssh(self, mocked_super):
         pc = PlayContext()
         pc.network_os = "ios"
-        conn = connection_loader.get("network_cli", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.network_cli", pc, "/dev/null"
+        )
         conn._ssh_type = "libssh"
 
         terminal = MagicMock(supports_multiplexing=False)
         conn._terminal = terminal
         conn._ssh_shell = MagicMock()
-        conn._paramiko_conn = MagicMock()
+        conn._ssh_type_conn = MagicMock()
         conn._connected = True
         conn.close()
         self.assertTrue(terminal.on_close_shell.called)
@@ -157,7 +165,9 @@ class TestConnectionClass(unittest.TestCase):
     def test_network_cli_exec_command(self, mocked_super):
         pc = PlayContext()
         pc.network_os = "ios"
-        conn = connection_loader.get("network_cli", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.network_cli", pc, "/dev/null"
+        )
 
         mock_send = MagicMock(return_value=b"command response")
         conn.send = mock_send
@@ -184,7 +194,9 @@ class TestConnectionClass(unittest.TestCase):
         pc = PlayContext()
         pc.network_os = "ios"
         pc.remote_addr = "localhost"
-        conn = connection_loader.get("network_cli", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.network_cli", pc, "/dev/null"
+        )
 
         mock__terminal = MagicMock()
         mocked_terminal_re.side_effect = [

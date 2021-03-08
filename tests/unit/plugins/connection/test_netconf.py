@@ -75,7 +75,9 @@ class TestNetconfConnectionClass(unittest.TestCase):
     )
     def test_netconf__connect(self, mock_netconf_loader):
         pc = PlayContext()
-        conn = connection_loader.get("netconf", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.netconf", pc, "/dev/null"
+        )
 
         mock_manager = MagicMock()
         mock_manager.session_id = "123456789"
@@ -90,7 +92,9 @@ class TestNetconfConnectionClass(unittest.TestCase):
 
     def test_netconf_exec_command(self):
         pc = PlayContext()
-        conn = connection_loader.get("netconf", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.netconf", pc, "/dev/null"
+        )
 
         conn._connected = True
 
@@ -107,7 +111,9 @@ class TestNetconfConnectionClass(unittest.TestCase):
 
     def test_netconf_exec_command_invalid_request(self):
         pc = PlayContext()
-        conn = connection_loader.get("netconf", pc, "/dev/null")
+        conn = connection_loader.get(
+            "ansible.netcommon.netconf", pc, "/dev/null"
+        )
 
         conn._connected = True
 

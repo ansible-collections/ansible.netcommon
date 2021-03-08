@@ -48,6 +48,7 @@ class TestConnectionClass(unittest.TestCase):
             port=8080,
             timeout=60,
             user="user1",
+            private_key=None,
         )
 
     def test_libssh_close(self):
