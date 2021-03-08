@@ -25,7 +25,7 @@ Minor Changes
 Breaking Changes / Porting Guide
 --------------------------------
 
-- Removed vendored ipaddress package from collection.
+- Removed vendored ipaddress package from collection. If you use ansible_collections.ansible.netcommon.plugins.module_utils.compat.ipaddress in your collection, you will need to change this to import ipaddress instead. If your content using ipaddress supports Python 2.7, you will additionally need to make sure that the user has the ipaddress package installed. Please refer to https://docs.ansible.com/ansible/latest/dev_guide/developing_modules_best_practices.html#importing-and-using-shared-code to see how to safely import external packages that may be missing from the user's system A backport of ipaddress for Python 2.7 is available at https://pypi.org/project/ipaddress/
 
 Deprecated Features
 -------------------
@@ -71,7 +71,7 @@ v1.4.1
 Release Summary
 ---------------
 
-- Change how black config is specified to avoid issues with Automation Hub release process
+Change how black config is specified to avoid issues with Automation Hub release process
 
 v1.4.0
 ======
