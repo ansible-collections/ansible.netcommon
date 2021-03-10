@@ -1,0 +1,3 @@
+---
+bugfixes:
+ - Allow setting `host_key_checking` through a play/task var for `network_cli`.
