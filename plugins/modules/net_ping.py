@@ -15,8 +15,7 @@ author: Jacob McGill (@jmcgill298)
 short_description: Tests reachability using ping from a network device
 description:
 - Tests reachability using ping from network device to a remote destination.
-- For Windows targets, use the M(ansible.windows.win_ping) module instead.
-- For targets running Python, use the M(ansible.builtin.ping) module instead.
+- For targets running Python, use the M(ansible.builtin.wait_for) module instead.
 version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
