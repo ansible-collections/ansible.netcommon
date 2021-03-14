@@ -18,8 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Tests reachability using ping from network device to a remote destination.
-- For Windows targets, use the :ref:`ansible.windows.win_ping <ansible.windows.win_ping_module>` module instead.
-- For targets running Python, use the :ref:`ansible.builtin.ping <ansible.builtin.ping_module>` module instead.
+- For targets running Python, use the :ref:`ansible.builtin.wait_for <ansible.builtin.wait_for_module>` module instead.
 
 
 
@@ -125,8 +124,7 @@ Notes
 -----
 
 .. note::
-   - For Windows targets, use the :ref:`ansible.windows.win_ping <ansible.windows.win_ping_module>` module instead.
-   - For targets running Python, use the :ref:`ansible.builtin.ping <ansible.builtin.ping_module>` module instead.
+   - For targets running Python, use the :ref:`ansible.builtin.wait_for <ansible.builtin.wait_for_module>` module instead.
    - This module is supported on ``ansible_network_os`` network platforms. See the :ref:`Network Platform Options <platform_options>` for details.
 
 
