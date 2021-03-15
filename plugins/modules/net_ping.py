@@ -43,14 +43,8 @@ options:
     - The VRF to use for forwarding.
     default: default
 notes:
-- For targets running Python, use the M(ansible.builtin.wait_for) module instead. 
-  Example: 
-    wait_for:
-        host: 10.1.2.3
-        port: 22
-        delay: 5
-        state: started
-        timeout: 10
+- For targets running Python, use the M(ansible.builtin.wait_for) module instead.
+
 """
 
 
