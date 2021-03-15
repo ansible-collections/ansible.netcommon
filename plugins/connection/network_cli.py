@@ -645,8 +645,8 @@ class Connection(NetworkConnectionBase):
             )
 
             self.receive(
-                prompts=terminal_initial_prompt,
-                answer=terminal_initial_answer,
+                prompts=to_bytes(terminal_initial_prompt),
+                answer=to_bytes(terminal_initial_answer),
                 newline=newline,
                 check_all=check_all,
             )
