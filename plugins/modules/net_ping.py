@@ -15,7 +15,6 @@ author: Jacob McGill (@jmcgill298)
 short_description: Tests reachability using ping from a network device
 description:
 - Tests reachability using ping from network device to a remote destination.
-- For targets running Python, use the M(ansible.builtin.wait_for) module instead.
 version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
@@ -42,8 +41,6 @@ options:
     description:
     - The VRF to use for forwarding.
     default: default
-notes:
-- For targets running Python, use the M(ansible.builtin.wait_for) module instead.
 
 """
 
