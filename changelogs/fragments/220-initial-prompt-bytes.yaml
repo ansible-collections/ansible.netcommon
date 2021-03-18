@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Ensure passed-in terminal_initial_prompt and terminal_initial_answer values are cast to bytes before using

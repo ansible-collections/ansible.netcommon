@@ -126,6 +126,32 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>host_key_checking</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"yes"</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[defaults]<br>host_key_checking = yes</p>
+                                    <p>[persistent_connection]<br>host_key_checking = yes</p>
+                            </div>
+                                <div>env:ANSIBLE_HOST_KEY_CHECKING</div>
+                                <div>env:ANSIBLE_SSH_HOST_KEY_CHECKING</div>
+                                <div>var: ansible_host_key_checking</div>
+                                <div>var: ansible_ssh_host_key_checking</div>
+                    </td>
+                <td>
+                        <div>Set this to &quot;False&quot; if you want to avoid host key checking by the underlying tools Ansible uses to connect to the host</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>import_modules</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
