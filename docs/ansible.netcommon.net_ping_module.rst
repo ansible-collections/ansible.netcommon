@@ -123,6 +123,7 @@ Notes
 -----
 
 .. note::
+   - For targets running Python, use the :ref:`ansible.builtin.shell <ansible.builtin.shell_module>` module along with ping command instead.
    - This module is supported on ``ansible_network_os`` network platforms. See the :ref:`Network Platform Options <platform_options>` for details.
 
 
@@ -152,6 +153,12 @@ Examples
         source: loopback0
         vrf: prod
         count: 20
+
+    Note:
+        - For targets running Python, use the M(ansible.builtin.shell) module along with ping command instead.
+        - Example:
+            name: ping
+            shell: ping -c 1 <remote-ip>
 
 
 
