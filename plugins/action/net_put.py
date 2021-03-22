@@ -106,7 +106,6 @@ class ActionModule(ActionBase):
 
         if dest is None:
             dest = src_file_path_name
-
         try:
             changed = self._handle_existing_file(
                 conn, output_file, dest, proto, sock_timeout
@@ -114,6 +113,9 @@ class ActionModule(ActionBase):
             if changed is False:
                 result["changed"] = changed
                 result["destination"] = dest
+                if mode == "text":
+                    # Cleanup tmp file expanded wih ansible vars
+                    os.remove(output_file)
                 return result
         except Exception as exc:
             result["msg"] = (
@@ -169,7 +171,6 @@ class ActionModule(ActionBase):
                 if os.path.exists(tmp_source_file):
                     os.remove(tmp_source_file)
                 return True
-
         try:
             with open(source, "r") as f:
                 new_content = f.read()
