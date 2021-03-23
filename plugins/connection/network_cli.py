@@ -675,7 +675,9 @@ class Connection(NetworkConnectionBase):
         data = self._ssh_shell.read_bulk_response()
         return data if data else None
 
-    def receive_paramiko(self, command=None,
+    def receive_paramiko(
+        self,
+        command=None,
         prompts=None,
         answer=None,
         newline=True,
