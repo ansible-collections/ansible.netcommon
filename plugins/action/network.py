@@ -108,7 +108,6 @@ class ActionModule(_ActionModule):
 
         filename = None
         backup_path = None
-
         try:
             content = self._sanitize_contents(
                 contents=result.pop("__backup__"),
