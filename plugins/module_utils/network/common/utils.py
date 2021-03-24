@@ -667,7 +667,7 @@ def remove_empties(cfg_dict):
     return final_cfg
 
 
-def validate_config(spec, data):
+def validate_config(spec, data, module=None):
     """
     Validate if the input data against the AnsibleModule spec format
     :param spec: Ansible argument spec
@@ -678,6 +678,10 @@ def validate_config(spec, data):
     basic._ANSIBLE_ARGS = to_bytes(json.dumps({"ANSIBLE_MODULE_ARGS": data}))
     validated_data = basic.AnsibleModule(spec).params
     basic._ANSIBLE_ARGS = params
+    if module:
+        module.no_log_values.update(
+            basic.list_no_log_values(spec, validated_data)
+        )
     return validated_data
 
 
