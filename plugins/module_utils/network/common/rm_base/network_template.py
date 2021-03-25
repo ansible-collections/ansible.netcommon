@@ -5,14 +5,26 @@ __metaclass__ = type
 import re
 from copy import deepcopy
 
+import json
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    validate_config,
+)
+from ansible.module_utils._text import to_bytes
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     Template,
     dict_merge,
 )
-
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
     RmEngineBase,
 )
+
+try:
+    # this method was renamed in 2.11 devel
+    from ansible.module_utils.common.parameters import (
+        _list_no_log_values as list_no_log_values,
+    )
+except ImportError:
+    from ansible.module_utils.common.parameters import list_no_log_values
 
 
 class NetworkTemplate(RmEngineBase):
@@ -114,3 +126,11 @@ class NetworkTemplate(RmEngineBase):
             tmplt = self.get_parser(parser_name)["setval"]
         command = self._render(tmplt, data, negate)
         return command
+
+    def validate_config(self, spec, data, redact=False):
+        validated_data = validate_config(spec, data)
+        if redact:
+            self._module.no_log_values.update(
+                list_no_log_values(spec, validated_data)
+            )
+        return validated_data
