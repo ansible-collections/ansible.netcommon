@@ -81,14 +81,6 @@ try:
 except ImportError:
     HAS_YAML = False
 
-try:
-    # this method was renamed in 2.11 devel
-    from ansible.module_utils.common.parameters import (
-        _list_no_log_values as list_no_log_values,
-    )
-except ImportError:
-    from ansible.module_utils.common.parameters import list_no_log_values
-
 OPERATORS = frozenset(["ge", "gt", "eq", "neq", "lt", "le"])
 ALIASES = frozenset(
     [("min", "ge"), ("max", "le"), ("exactly", "eq"), ("neq", "ne")]
@@ -675,7 +667,7 @@ def remove_empties(cfg_dict):
     return final_cfg
 
 
-def validate_config(spec, data, module=None):
+def validate_config(spec, data):
     """
     Validate if the input data against the AnsibleModule spec format
     :param spec: Ansible argument spec
@@ -686,8 +678,6 @@ def validate_config(spec, data, module=None):
     basic._ANSIBLE_ARGS = to_bytes(json.dumps({"ANSIBLE_MODULE_ARGS": data}))
     validated_data = basic.AnsibleModule(spec).params
     basic._ANSIBLE_ARGS = params
-    if module:
-        module.no_log_values.update(list_no_log_values(spec, validated_data))
     return validated_data
 
 
