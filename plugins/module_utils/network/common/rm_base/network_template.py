@@ -5,11 +5,9 @@ __metaclass__ = type
 import re
 from copy import deepcopy
 
-import json
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     validate_config,
 )
-from ansible.module_utils._text import to_bytes
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     Template,
     dict_merge,
