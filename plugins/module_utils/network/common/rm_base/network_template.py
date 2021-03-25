@@ -15,11 +15,11 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 )
 
 try:
-    # this method was renamed in 2.11 devel
     from ansible.module_utils.common.parameters import (
         _list_no_log_values as list_no_log_values,
     )
 except ImportError:
+    # TODO: Remove this import when we no longer support ansible < 2.11
     from ansible.module_utils.common.parameters import list_no_log_values
 
 
