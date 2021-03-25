@@ -9,6 +9,8 @@ python3 [test platform:rpm]
 
 # ncclient
 python38-six [platform:centos-8]
+libxml2-dev [platform:dpkg]
+libxslt1-dev [platform:dpkg]
 
 # paramiko
 python38-cffi [platform:centos-8]
