@@ -6,11 +6,9 @@ import re
 from copy import deepcopy
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    validate_config,
-)
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     Template,
     dict_merge,
+    validate_config as _validate_config,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
     RmEngineBase,
@@ -126,7 +124,7 @@ class NetworkTemplate(RmEngineBase):
         return command
 
     def validate_config(self, spec, data, redact=False):
-        validated_data = validate_config(spec, data)
+        validated_data = _validate_config(spec, data)
         if redact:
             self._module.no_log_values.update(
                 list_no_log_values(spec, validated_data)
