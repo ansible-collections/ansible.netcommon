@@ -40,8 +40,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     RmEngineBase,
 )
 
-# from . import RmEngineBase
-
 
 class ResourceModule(RmEngineBase):  # pylint: disable=R0902
     """ Base class for Network Resource Modules
