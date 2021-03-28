@@ -15,8 +15,6 @@ author: Jacob McGill (@jmcgill298)
 short_description: Tests reachability using ping from a network device
 description:
 - Tests reachability using ping from network device to a remote destination.
-- For Windows targets, use the M(ansible.windows.win_ping) module instead.
-- For targets running Python, use the M(ansible.builtin.ping) module instead.
 version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
@@ -44,8 +42,7 @@ options:
     - The VRF to use for forwarding.
     default: default
 notes:
-- For Windows targets, use the M(ansible.windows.win_ping) module instead.
-- For targets running Python, use the M(ansible.builtin.ping) module instead.
+- For targets running Python, use the M(ansible.builtin.shell) module along with ping command instead.
 """
 
 
@@ -70,6 +67,12 @@ EXAMPLES = """
     source: loopback0
     vrf: prod
     count: 20
+
+- Note:
+    - For targets running Python, use the M(ansible.builtin.shell) module along with ping command instead.
+    - Example:
+        name: ping
+        shell: ping -c 1 <remote-ip>
 """
 
 RETURN = r"""
