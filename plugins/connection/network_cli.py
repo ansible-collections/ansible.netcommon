@@ -15,6 +15,8 @@ description:
   implements a CLI shell.  This connection plugin is typically used by network devices
   for sending and receiving CLi commands to network devices.
 version_added: 1.0.0
+requirements:
+- ansible-pylibssh if using I(ssh_type=libssh)
 options:
   host:
     description:
@@ -279,6 +281,7 @@ options:
     description:
       - The type of the transport used by C(network_cli) connection plugin to connection to remote host.
         Valid value is either I(paramiko) or I(libssh)
+      - In order to use I(libssh), the ansible-pylibssh package needs to be installed
     default: paramiko
     env:
         - name: ANSIBLE_NETWORK_CLI_SSH_TYPE

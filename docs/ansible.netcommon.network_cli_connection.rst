@@ -21,6 +21,12 @@ Synopsis
 
 
 
+Requirements
+------------
+The below requirements are needed on the local Ansible controller node that executes this connection.
+
+- ansible-pylibssh if using *ssh_type=libssh*
+
 
 Parameters
 ----------
@@ -437,6 +443,7 @@ Parameters
                     </td>
                 <td>
                         <div>The type of the transport used by <code>network_cli</code> connection plugin to connection to remote host. Valid value is either <em>paramiko</em> or <em>libssh</em></div>
+                        <div>In order to use <em>libssh</em>, the ansible-pylibssh package needs to be installed</div>
                 </td>
             </tr>
             <tr>

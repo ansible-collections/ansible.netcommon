@@ -1,0 +1,3 @@
+---
+trivial:
+  - Add ansible_libssh requirement to network_cli
