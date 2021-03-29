@@ -1,0 +1,3 @@
+---
+bugfixes:
+ - Remove temp file created when file already exist on destination when mode is 'text'.
