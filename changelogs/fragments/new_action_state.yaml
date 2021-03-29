@@ -1,0 +1,3 @@
+---
+trivial:
+  - Add state purged to ACTION_STATES.

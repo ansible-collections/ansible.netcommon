@@ -19,7 +19,7 @@ class ConfigBase(object):
     """ The base class for all resource modules
     """
 
-    ACTION_STATES = ["merged", "replaced", "overridden", "deleted"]
+    ACTION_STATES = ["merged", "replaced", "overridden", "deleted", "purged"]
 
     def __init__(self, module):
         self._module = module
