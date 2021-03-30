@@ -5,6 +5,23 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v2.0.1
+======
+
+Minor Changes
+-------------
+
+- Several module_utils files were intended to be licensed BSD, but missing a license preamble in the files. The preamble has been added, and all authors for the files have given their assent to the intended license https://github.com/ansible-collections/ansible.netcommon/pull/122
+
+Bugfixes
+--------
+
+- Allow setting `host_key_checking` through a play/task var for `network_cli`.
+- Ensure passed-in terminal_initial_prompt and terminal_initial_answer values are cast to bytes before using
+- Update valid documentation for net_ping module.
+- ncclient - catch and handle exception to prevent stack trace when running in FIPS mode
+- net_put - Remove temp file created when file already exist on destination when mode is 'text'.
+
 v2.0.0
 ======
 
