@@ -154,7 +154,7 @@ Examples
         vrf: prod
         count: 20
 
-    Note:
+    - Note:
         - For targets running Python, use the M(ansible.builtin.shell) module along with ping command instead.
         - Example:
             name: ping

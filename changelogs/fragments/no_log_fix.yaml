@@ -1,3 +1,0 @@
----
-trivial:
-  - Let `validate_config()` update no_log_values from module spec and facts generated.

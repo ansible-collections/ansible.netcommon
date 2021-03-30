@@ -38,6 +38,7 @@ Name | Description
 IP address and network manipulation filters
 
 Detailed documentation available at https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html
+
 Name | Description
 --- | ---
 ansible.netcommon.cidr_merge|ansible.netcommon cidr_merge filter plugin
@@ -60,6 +61,7 @@ ansible.netcommon.slaac|Get the SLAAC address within given network
 
 ### Network filter plugins
 Filters for working with output from network devices
+
 Name | Description
 --- | ---
 ansible.netcommon.comp_type5|ansible.netcommon comp_type5 filter plugin
