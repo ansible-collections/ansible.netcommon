@@ -28,3 +28,4 @@ plugins/modules/net_vlan.py validate-modules:deprecation-mismatch
 plugins/modules/net_vlan.py validate-modules:invalid-documentation
 plugins/modules/net_vrf.py validate-modules:deprecation-mismatch
 plugins/modules/net_vrf.py validate-modules:invalid-documentation
+plugins/cache/base.py ansible-doc!skip # base class for network cache plugins
