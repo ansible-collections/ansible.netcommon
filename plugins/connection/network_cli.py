@@ -1287,8 +1287,12 @@ class Connection(NetworkConnectionBase):
         """
         invalidate = False
         cfg_cmds = []
-        if self.cliconf.has_option("config_commands"):
+        try:
+            # AnsiblePlugin base class in Ansible 2.9 does not have has_option() method.
+            # TO-DO: use has_option() when we drop 2.9 support.
             cfg_cmds = self.cliconf.get_option("config_commands")
+        except AttributeError:
+            cfg_cmds = []
         if (self._is_in_config_mode()) or (to_text(command) in cfg_cmds):
             invalidate = True
         return invalidate
