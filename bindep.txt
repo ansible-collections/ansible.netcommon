@@ -8,9 +8,10 @@ python3-devel [test platform:rpm]
 python3 [test platform:rpm]
 
 # ncclient
-python38-six [platform:centos-8]
+python38-six [platform:centos-8 platform:rhel-8]
+python38-lxml [platform:centos-8 platform:rhel-8]
 
 # paramiko
-python38-cffi [platform:centos-8]
-python38-cryptography [platform:centos-8]
-python38-pycparser [platform:centos-8]
+python38-cffi [platform:centos-8 platform:rhel-8]
+python38-cryptography [platform:centos-8 platform:rhel-8]
+python38-pycparser [platform:centos-8 platform:rhel-8]
