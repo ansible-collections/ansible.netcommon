@@ -1,7 +1,11 @@
 ansible-pylibssh >= 0.2.0
+genie ; python_version >= '3.6' and python_version < '3.9'
 jxmlease
 ncclient
-selectors2 ; python_version == '3.5'
 netaddr
+ntc_templates
 paramiko
+pyats ; python_version >= '3.6' and python_version < '3.9'
+selectors2 ; python_version == '3.5'
+textfsm
 xmltodict
