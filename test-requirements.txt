@@ -4,3 +4,8 @@ flake8
 mock ; python_version < '3.5'
 pytest-xdist
 yamllint
+
+# The follow are 3rd party libs for cli_parse
+ntc_templates
+pyats ; python_version >= '3.6' and python_version < '3.9'
+genie ; python_version >= '3.6' and python_version < '3.9'
