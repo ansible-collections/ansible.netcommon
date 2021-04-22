@@ -1,7 +1,6 @@
 ansible-pylibssh >= 0.2.0
 jxmlease
 ncclient
-selectors2 ; python_version == '3.5'
 netaddr
 paramiko
 xmltodict
