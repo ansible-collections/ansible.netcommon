@@ -415,16 +415,6 @@ class Connection(NetworkConnectionBase):
             self._ssh_type_conn = connection_loader.get(
                 self._ssh_type, self._play_context, "/dev/null"
             )
-            self._ssh_type_conn.set_options(
-                direct={
-                    "host_key_checking": self.get_option("host_key_checking"),
-                    "look_for_keys": not bool(
-                        self.get_option("password")
-                        and not self.get_option("private_key_file")
-                    ),
-                    "password": self.get_option("password"),
-                }
-            )
             self.queue_message(
                 "vvvv", "ssh type is set to %s" % self.get_option("ssh_type")
             )
@@ -478,6 +468,27 @@ class Connection(NetworkConnectionBase):
 
         else:
             return super(Connection, self).exec_command(cmd, in_data, sudoable)
+
+    def get_options(self, hostvars=None):
+        options = super(Connection, self).get_options(hostvars=hostvars)
+        options.update(self.ssh_type_conn.get_options(hostvars=hostvars))
+        return options
+
+    def set_options(self, task_keys=None, var_options=None, direct=None):
+        super(Connection, self).set_options(
+            task_keys=task_keys, var_options=var_options, direct=direct
+        )
+        self.ssh_type_conn.set_options(
+            task_keys=task_keys, var_options=var_options, direct=direct
+        )
+        # Retain old look_for_keys behaviour
+        self.ssh_type_conn.set_option(
+            "look_for_keys",
+            not bool(
+                self.get_option("password")
+                and not self.get_option("private_key_file")
+            ),
+        )
 
     def update_play_context(self, pc_data):
         """Updates the play context information for the connection"""
