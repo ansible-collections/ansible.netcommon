@@ -9,8 +9,9 @@ netaddr
 
 # The follow are 3rd party libs for cli_parse
 ntc_templates
-pyats ; python_version >= '3.6' and python_version < '3.9'
-genie ; python_version >= '3.6' and python_version < '3.9'
+# 21.4 changed the output of an error message we check in tests
+pyats >= 21.4 ; python_version >= '3.6'
+genie >= 21.4 ; python_version >= '3.6'
 textfsm
 ttp
 xmltodict

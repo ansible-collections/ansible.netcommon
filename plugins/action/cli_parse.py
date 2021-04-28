@@ -131,6 +131,9 @@ class ActionModule(ActionBase):
                 )
             )
             self._display.warning(msg)
+            parserlib = "ansible_collections.{corg}.{cname}.plugins.sub_plugins.cli_parser.{plugin}_parser".format(
+                **cref
+            )
         elif cref["cname"] == "netcommon" and cref["plugin"] in [
             "native",
             "ntc_templates",
