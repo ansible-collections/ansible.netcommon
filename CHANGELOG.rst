@@ -5,6 +5,15 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v2.0.2
+======
+
+Bugfixes
+--------
+
+- Fix cli_parse issue with parsers in utils collection (https://github.com/ansible-collections/ansible.netcommon/pull/270)
+- Support single_user_mode with Ansible 2.9.
+
 v2.0.1
 ======
 
