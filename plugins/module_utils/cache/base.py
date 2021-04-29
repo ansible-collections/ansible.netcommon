@@ -21,34 +21,31 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = """
-    cache: memory
-    short_description: RAM backed, non persistent cache.
-    description:
-        - RAM backed cache that is not persistent.
-        - Tailored for networking use case.
-    version_added: 2.0.0
-    author: Ansible Networking Team
-"""
-
-from ansible.plugins import AnsiblePlugin
-from ansible_collections.ansible.netcommon.plugins.module_utils.cache.base import (
-    NetworkCacheBase,
-)
+from abc import abstractmethod
 
 
-class CacheModule(AnsiblePlugin, NetworkCacheBase):
-    def __init__(self, *args, **kwargs):
-        self._cache = {}
-
+class NetworkCacheBase:
+    @abstractmethod
     def get(self, key):
-        return self._cache.get(key)
+        pass
 
+    @abstractmethod
     def set(self, key, value):
-        self._cache[key] = value
+        pass
 
+    @abstractmethod
     def keys(self):
-        return self._cache.keys()
+        pass
 
+    @abstractmethod
     def flush(self):
-        self._cache = {}
+        pass
+
+    def lookup(self, key):
+        return self.get(key)
+
+    def populate(self, key, value):
+        self.set(key, value)
+
+    def invalidate(self):
+        self.flush()
