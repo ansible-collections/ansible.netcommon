@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Variables in play_context will now be updated for netconf connections on each task run.
