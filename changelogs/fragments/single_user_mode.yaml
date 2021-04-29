@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Support single_user_mode with Ansible 2.9.
