@@ -31,7 +31,7 @@ DOCUMENTATION = """
     author: Ansible Networking Team
 """
 
-from ansible_collections.ansible.netcommon.plugins.cache.base import (
+from ansible_collections.ansible.netcommon.plugins.cache import (
     NetworkBaseCacheModule,
 )
 
