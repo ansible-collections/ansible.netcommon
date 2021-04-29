@@ -31,13 +31,12 @@ DOCUMENTATION = """
     author: Ansible Networking Team
 """
 
-from ansible_collections.ansible.netcommon.plugins.cache.base import (
-    NetworkBaseCacheModule,
-)
+from ansible.plugins import AnsiblePlugin
 
 
-class CacheModule(NetworkBaseCacheModule):
+class CacheModule(AnsiblePlugin):
     def __init__(self, *args, **kwargs):
+        super(CacheModule, self).__init__(*args, **kwargs)
         self._cache = {}
 
     def get(self, key):
@@ -51,3 +50,12 @@ class CacheModule(NetworkBaseCacheModule):
 
     def flush(self):
         self._cache = {}
+
+    def lookup(self, key):
+        return self.get(key)
+
+    def populate(self, key, value):
+        self.set(key, value)
+
+    def invalidate(self):
+        self.flush()
