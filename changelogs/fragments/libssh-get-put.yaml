@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - fix SCP/SFTP when using network_cli with libssh

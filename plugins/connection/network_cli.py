@@ -1190,7 +1190,7 @@ class Connection(NetworkConnectionBase):
         """
         ssh = self.ssh_type_conn._connect_uncached()
         if self._ssh_type == "libssh":
-            ssh.put_file(source, destination, proto=proto)
+            self.ssh_type_conn.put_file(source, destination, proto=proto)
         elif self._ssh_type == "paramiko":
             if proto == "scp":
                 if not HAS_SCP:
@@ -1225,7 +1225,7 @@ class Connection(NetworkConnectionBase):
         """Fetch file over scp/sftp from remote device"""
         ssh = self.ssh_type_conn._connect_uncached()
         if self._ssh_type == "libssh":
-            ssh.fetch_file(source, destination, proto=proto)
+            self.ssh_type_conn.fetch_file(source, destination, proto=proto)
         elif self._ssh_type == "paramiko":
             if proto == "scp":
                 if not HAS_SCP:
