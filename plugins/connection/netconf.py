@@ -150,6 +150,9 @@ options:
       - name: ANSIBLE_NETCONF_PROXY_COMMAND
     ini:
       - {key: proxy_command, section: paramiko_connection}
+    vars:
+      - name: ansible_paramiko_proxy_command
+      - name: ansible_netconf_proxy_command
   persistent_command_timeout:
     type: int
     description:
@@ -315,12 +318,12 @@ class Connection(NetworkConnectionBase):
 
     def _get_proxy_command(self, port=22):
         proxy_command = None
-        sock_kwarg = {}
 
         # TO-DO: Add logic to scan ssh_* args to read ProxyCommand
 
-        proxy_command = proxy_command or self.get_option("proxy_command")
+        proxy_command = self.get_option("proxy_command")
 
+        sock = None
         if proxy_command:
             if LooseVersion(NCCLIENT_VERSION) < LooseVersion("0.6.10"):
                 raise AnsibleError(
@@ -337,9 +340,9 @@ class Connection(NetworkConnectionBase):
 
             for find, replace in replacers.items():
                 proxy_command = proxy_command.replace(find, str(replace))
-            sock_kwarg = {"sock": ProxyCommand(proxy_command)}
+            sock = ProxyCommand(proxy_command)
 
-        return sock_kwarg
+        return sock
 
     def _connect(self):
         if not HAS_NCCLIENT:
@@ -417,10 +420,6 @@ class Connection(NetworkConnectionBase):
                 ),
             )
 
-            netconf_connect_kwargs = {}
-
-            netconf_connect_kwargs.update(self._get_proxy_command(port))
-
             self._manager = manager.connect(
                 host=self._play_context.remote_addr,
                 port=port,
@@ -433,7 +432,7 @@ class Connection(NetworkConnectionBase):
                 allow_agent=self._play_context.allow_agent,
                 timeout=self.get_option("persistent_connect_timeout"),
                 ssh_config=self._ssh_config,
-                **netconf_connect_kwargs,
+                sock=self._get_proxy_command(port),
             )
 
             self._manager._timeout = self.get_option(
