@@ -440,6 +440,17 @@ def comp_type5(
     return False
 
 
+def vlan_expander(raw_vlan):
+    expanded_list = []
+    for each in raw_vlan.split(","):
+        if "-" in each:
+            f, t = map(int, each.split("-"))
+            expanded_list.extend(range(f, t + 1))
+        else:
+            expanded_list.append(int(each))
+    return sorted(expanded_list)
+
+
 def vlan_parser(vlan_list, first_line_len=48, other_line_len=44):
 
     """
@@ -526,6 +537,7 @@ class FilterModule(object):
         "hash_salt": hash_salt,
         "comp_type5": comp_type5,
         "vlan_parser": vlan_parser,
+        "vlan_expander": vlan_expander,
     }
 
     def filters(self):
