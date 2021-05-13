@@ -28,6 +28,7 @@ from ansible_collections.ansible.netcommon.plugins.filter.network import (
     hash_salt,
     comp_type5,
     vlan_parser,
+    vlan_expander,
 )
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "network")
@@ -297,6 +298,23 @@ class TestCompareType5(unittest.TestCase):
         encrypted_password = "$1$nTc1$Z28sUTcWfXlvVe2x.3XAa."
         parsed = comp_type5(unencrypted_password, encrypted_password)
         self.assertEqual(parsed, False)
+
+
+class TestVlanExapander(unittest.TestCase):
+    def test_single_range(self):
+        raw_list = "1-3"
+        expanded_list = [1, 2, 3]
+        self.assertEqual(vlan_expander(raw_list), expanded_list)
+
+    def test_multi_ranges(self):
+        raw_list = "1,10-12,15,20-22"
+        expanded_list = [1, 10, 11, 12, 15, 20, 21, 22]
+        self.assertEqual(vlan_expander(raw_list), expanded_list)
+
+    def test_no_ranges(self):
+        raw_list = "1,3,5"
+        expanded_list = [1, 3, 5]
+        self.assertEqual(vlan_expander(raw_list), expanded_list)
 
 
 class TestVlanParser(unittest.TestCase):

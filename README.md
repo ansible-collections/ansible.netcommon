@@ -70,6 +70,7 @@ ansible.netcommon.parse_cli|ansible.netcommon parse_cli filter plugin
 ansible.netcommon.parse_cli_textfsm|ansible.netcommon parse_cli_textfsm filter plugin
 ansible.netcommon.parse_xml|ansible.netcommon parse_xml filter plugin
 ansible.netcommon.type5_pw|ansible.netcommon type5_pw filter plugin
+ansible.netcommon.vlan_expander|nsible.netcommon vlan_expander filter plugin
 ansible.netcommon.vlan_parser|Input: Unsorted list of vlan integers
 
 ### Httpapi plugins
