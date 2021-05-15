@@ -312,6 +312,31 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>proxy_command</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">""</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[paramiko_connection]<br>proxy_command = </p>
+                            </div>
+                                <div>env:ANSIBLE_NETCONF_PROXY_COMMAND</div>
+                                <div>var: ansible_paramiko_proxy_command</div>
+                                <div>var: ansible_netconf_proxy_command</div>
+                    </td>
+                <td>
+                        <div>Proxy information for running the connection via a jumphost.</div>
+                        <div>This requires ncclient &gt;= 0.6.10 to be installed on the controller.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>remote_user</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
