@@ -1188,10 +1188,11 @@ class Connection(NetworkConnectionBase):
                         remote host before triggering timeout exception
         :return: None
         """
+        ssh_type = self.get_option("ssh_type")
         ssh = self.ssh_type_conn._connect_uncached()
-        if self._ssh_type == "libssh":
+        if ssh_type == "libssh":
             self.ssh_type_conn.put_file(source, destination, proto=proto)
-        elif self._ssh_type == "paramiko":
+        elif ssh_type == "paramiko":
             if proto == "scp":
                 if not HAS_SCP:
                     raise AnsibleError(missing_required_lib("scp"))
@@ -1209,7 +1210,7 @@ class Connection(NetworkConnectionBase):
                 )
         else:
             raise AnsibleError(
-                "Do not know how to do SCP with ssh_type %s" % self._ssh_type
+                "Do not know how to do SCP with ssh_type %s" % ssh_type
             )
 
     def get_file(self, source=None, destination=None, proto="scp", timeout=30):
@@ -1223,10 +1224,11 @@ class Connection(NetworkConnectionBase):
         :return: None
         """
         """Fetch file over scp/sftp from remote device"""
+        ssh_type = self.get_option("ssh_type")
         ssh = self.ssh_type_conn._connect_uncached()
-        if self._ssh_type == "libssh":
+        if ssh_type == "libssh":
             self.ssh_type_conn.fetch_file(source, destination, proto=proto)
-        elif self._ssh_type == "paramiko":
+        elif ssh_type == "paramiko":
             if proto == "scp":
                 if not HAS_SCP:
                     raise AnsibleError(missing_required_lib("scp"))
@@ -1248,7 +1250,7 @@ class Connection(NetworkConnectionBase):
                 )
         else:
             raise AnsibleError(
-                "Do not know how to do SCP with ssh_type %s" % self._ssh_type
+                "Do not know how to do SCP with ssh_type %s" % ssh_type
             )
 
     def get_cache(self):
