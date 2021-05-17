@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - checking for the libssh string when connection is libssh.
