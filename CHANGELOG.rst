@@ -5,6 +5,20 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v2.1.0
+======
+
+Minor Changes
+-------------
+
+- Add support for ProxyCommand with netconf connection.
+
+Bugfixes
+--------
+
+- Variables in play_context will now be updated for netconf connections on each task run.
+- fix SCP/SFTP when using network_cli with libssh
+
 v2.0.2
 ======
 
