@@ -368,3 +368,17 @@ releases:
     - cli_parse_fix.yaml
     - single_user_mode.yaml
     release_date: '2021-04-28'
+  2.1.0:
+    changes:
+      bugfixes:
+      - Variables in play_context will now be updated for netconf connections on each
+        task run.
+      - fix SCP/SFTP when using network_cli with libssh
+      minor_changes:
+      - Add support for ProxyCommand with netconf connection.
+    fragments:
+    - 259-netconf-play-context.yaml
+    - drop-base-cache.yaml
+    - libssh-get-put.yaml
+    - support_proxycommand_netconf.yaml
+    release_date: '2021-05-17'

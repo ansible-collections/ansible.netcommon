@@ -1,3 +1,0 @@
----
-trivial:
-  - Remove base.py from plugins/cache to avoid ansible-doc issues
