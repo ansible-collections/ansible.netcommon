@@ -180,7 +180,8 @@ class MyAddPolicy(object):
                 # don't print the prompt string since the user cannot respond
                 # to the question anyway
                 raise AnsibleError(
-                    AUTHENTICITY_MSG[1:92] % (hostname, key_type, fingerprint)
+                    AUTHENTICITY_MSG.rsplit("\n", 2)[0]
+                    % (hostname, message, key_type, fingerprint)
                 )
 
             self.connection.connection_lock()
