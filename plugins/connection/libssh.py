@@ -64,11 +64,15 @@ DOCUMENTATION = """
       proxy_command:
         default: ''
         description:
-            - Proxy information for running the connection via a jumphost
+            - Proxy information for running the connection via a jumphost.
             - Also this plugin will scan 'ssh_args', 'ssh_extra_args' and 'ssh_common_args' from the 'ssh' plugin settings for proxy information if set.
-        env: [{name: ANSIBLE_LIBSSH_PROXY_COMMAND}]
+        env:
+          - name: ANSIBLE_LIBSSH_PROXY_COMMAND
         ini:
           - {key: proxy_command, section: libssh_connection}
+        vars:
+          - name: ansible_paramiko_proxy_command
+          - name: ansible_libssh_proxy_command
       pty:
         default: True
         description: 'TODO: write it'

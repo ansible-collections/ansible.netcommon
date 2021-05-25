@@ -147,9 +147,11 @@ Parameters
                                     <p>[libssh_connection]<br>proxy_command = </p>
                             </div>
                                 <div>env:ANSIBLE_LIBSSH_PROXY_COMMAND</div>
+                                <div>var: ansible_paramiko_proxy_command</div>
+                                <div>var: ansible_libssh_proxy_command</div>
                     </td>
                 <td>
-                        <div>Proxy information for running the connection via a jumphost</div>
+                        <div>Proxy information for running the connection via a jumphost.</div>
                         <div>Also this plugin will scan &#x27;ssh_args&#x27;, &#x27;ssh_extra_args&#x27; and &#x27;ssh_common_args&#x27; from the &#x27;ssh&#x27; plugin settings for proxy information if set.</div>
                 </td>
             </tr>
