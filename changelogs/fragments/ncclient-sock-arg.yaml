@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - netconf - Fix connection with ncclient versions < 0.6.10
