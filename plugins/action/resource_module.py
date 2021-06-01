@@ -180,7 +180,6 @@ class ActionModule(ActionNetworkModule):
             display.vvvv("fetching facts list from path %s" % (fact_modulelib))
             facts_resource_subset = getattr(import_module(fact_modulelib), "FACT_RESOURCE_SUBSETS")
             resource_modules = sorted(facts_resource_subset.keys())
-            resource_modules = [ ".".join(self._os_name.split(".")[:2] + [rm]) for rm in resource_modules]
         except ModuleNotFoundError:
             display.vvvv("'%s' is not defined" % (fact_modulelib))
         except AttributeError:
