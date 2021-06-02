@@ -1,4 +1,0 @@
----
-minor_changes:
-  - Add resource_module plugin to manage and provide single entry point
-    for all resource modules for higher oder roles.

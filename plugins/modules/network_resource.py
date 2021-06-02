@@ -10,7 +10,7 @@ __metaclass__ = type
 
 
 DOCUMENTATION = """
-module: resource_module
+module: network_resource
 author: 
 - Ganesh B. Nalawade (@ganeshrn)
 short_description: Manage resource modules
@@ -63,17 +63,17 @@ notes:
 
 EXAMPLES = r"""
 - name: get list of resource modules for given network_os
-  ansible.netcommon.resource_module:
+  ansible.netcommon.network_resource:
   register: result
 
 - name: fetch acl config for 
-  ansible.netcommon.resource_module:
+  ansible.netcommon.network_resource:
     os_name: cisco.ios.ios
     name: acls
     state: gathered
 
   - name: manage acl config for cisco.ios.ios network os.
-    ansible.netcommon.resource_module:
+    ansible.netcommon.network_resource:
       name: acls
       config:
         - afi: ipv4
@@ -105,7 +105,7 @@ modules:
   description: List of resource modules supported for given OS.
   returned: When only I(os_name) or I(ansible_network_os) is set
   type: list
-  sample: ["cisco.ios.acl_interfaces", "cisco.ios.acls", "cisco.ios.bgp_global"]
+  sample: ["acl_interfaces", "acls", "bgp_global"]
 before:
   description: The configuration as structured data prior to module invocation.
   returned: When I(state) and/or I(config) option is set

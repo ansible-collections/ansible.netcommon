@@ -46,10 +46,12 @@ from ansible.utils.display import Display
 
 display = Display()
 
-class RunMode():
-    RM_LIST = 0 # get list of supported resource modules for given os_name
-    RM_GET = 1 # get resource module facts for given host
-    RM_CONFIG = 1 # push resource module configuration
+
+class RunMode:
+    RM_LIST = 0  # get list of supported resource modules for given os_name
+    RM_GET = 1  # get resource module facts for given host
+    RM_CONFIG = 1  # push resource module configuration
+
 
 class ActionModule(ActionNetworkModule):
     def run(self, task_vars=None):
@@ -59,12 +61,16 @@ class ActionModule(ActionNetworkModule):
         self._rm_play_context = copy.deepcopy(self._play_context)
         self._os_name = self._task.args.get("os_name") or self._get_os_name()
         if not self._os_name:
-            return {'error': "either value of 'os_name' or 'ansible_network_os' should be set"}
+            return {
+                "error": "either value of 'os_name' or 'ansible_network_os' should be set"
+            }
 
         if len(self._os_name.split(".")) != 3:
-            msg = "OS value name should a fully qualified collection name in the format" \
-                  " <org-name>.<collection-name>.<plugin-name>"
-            return {'error': msg}
+            msg = (
+                "OS value name should a fully qualified collection name in the format"
+                " <org-name>.<collection-name>.<plugin-name>"
+            )
+            return {"error": msg}
 
         self._rm_play_context.network_os = self._os_name
 
@@ -81,44 +87,50 @@ class ActionModule(ActionNetworkModule):
             return self._run_resource_module()
 
     def _run_resource_module(self):
-            new_task = self._task.copy()
+        new_task = self._task.copy()
 
-            module = self._get_resource_module()
-            if not module:
-                msg = "Could find resource module '%s' for os name '%s'" % (self._name, self._os_name)
-                raise AnsibleActionFail(msg)
-
-            new_task.action = module
-
-            action = self._shared_loader_obj.action_loader.get(
-                self._rm_play_context.network_os,
-                task=new_task,
-                connection=self._connection,
-                play_context= self._rm_play_context,
-                loader=self._loader,
-                templar=self._templar,
-                shared_loader_obj=self._shared_loader_obj,
+        module = self._get_resource_module()
+        if not module:
+            msg = "Could not find resource module '%s' for os name '%s'" % (
+                self._name,
+                self._os_name,
             )
-            display.vvvv("Running resource module %s" % module)
-            for option in ['os_name', 'name']:
-                if option in new_task.args:
-                    new_task.args.pop(option)
+            raise AnsibleActionFail(msg)
 
-            return action.run(task_vars=self._task_vars)
+        new_task.action = module
 
+        action = self._shared_loader_obj.action_loader.get(
+            self._rm_play_context.network_os,
+            task=new_task,
+            connection=self._connection,
+            play_context=self._rm_play_context,
+            loader=self._loader,
+            templar=self._templar,
+            shared_loader_obj=self._shared_loader_obj,
+        )
+        display.vvvv("Running resource module %s" % module)
+        for option in ["os_name", "name"]:
+            if option in new_task.args:
+                new_task.args.pop(option)
+
+        return action.run(task_vars=self._task_vars)
 
     def _get_resource_module(self):
-        if '.' in self._name:
+        if "." in self._name:
             if len(self._name.split(".")) != 3:
-                msg = "name should a fully qualified collection name in the format" \
+                msg = (
+                    "name should a fully qualified collection name in the format"
                     " <org-name>.<collection-name>.<resource-module-name>"
-                raise AnsibleActionFail (msg)
+                )
+                raise AnsibleActionFail(msg)
             fqcn_module_name = self._name
         else:
-            fqcn_module_name = ".".join(self._os_name.split(".")[:2] + [self._name])
+            fqcn_module_name = ".".join(
+                self._os_name.split(".")[:2] + [self._name]
+            )
 
         return fqcn_module_name
-    
+
     def _get_os_name(self):
         os_name = None
         if "network_os" in self._task.args and self._task.args["network_os"]:
@@ -136,10 +148,9 @@ class ActionModule(ActionNetworkModule):
 
         return os_name
 
-
     def _is_resource_module(self, docs):
         doc_obj = yaml.load(docs, SafeLoader)
-        if 'config' in doc_obj['options'] and 'state' in doc_obj['options']:
+        if "config" in doc_obj["options"] and "state" in doc_obj["options"]:
             return True
 
     def _get_run_mode(self):
@@ -149,18 +160,20 @@ class ActionModule(ActionNetworkModule):
                 error_msg = "'name' is required if 'config' option is set"
             if not self._state:
                 error_msg = "'state' is required if 'config' option is set"
-            run_mode =  RunMode.RM_CONFIG
+            run_mode = RunMode.RM_CONFIG
         elif self._state:
             if not self._name:
-                error_msg = "'name' is required if 'state' option is set"                
-            run_mode =  RunMode.RM_GET
+                error_msg = "'name' is required if 'state' option is set"
+            run_mode = RunMode.RM_GET
         elif self._name:
             if not any([self._config, self._running_config, self._state]):
-                error_msg = "If 'name' is set atleast one of 'config', " \
-                      "'running_config' or 'state' is required"
+                error_msg = (
+                    "If 'name' is set atleast one of 'config', "
+                    "'running_config' or 'state' is required"
+                )
         else:
             run_mode = RunMode.RM_LIST
-        
+
         if error_msg:
             raise AnsibleActionFail(error_msg)
         return run_mode
@@ -174,40 +187,62 @@ class ActionModule(ActionNetworkModule):
         )
 
         fact_modulelib = "ansible_collections.{corg}.{cname}.plugins.module_utils.network.{plugin}.facts.facts".format(
-        corg=self._cref['corg'], cname=self._cref['cname'], plugin=self._cref['plugin'])
+            corg=self._cref["corg"],
+            cname=self._cref["cname"],
+            plugin=self._cref["plugin"],
+        )
 
         try:
             display.vvvv("fetching facts list from path %s" % (fact_modulelib))
-            facts_resource_subset = getattr(import_module(fact_modulelib), "FACT_RESOURCE_SUBSETS")
+            facts_resource_subset = getattr(
+                import_module(fact_modulelib), "FACT_RESOURCE_SUBSETS"
+            )
             resource_modules = sorted(facts_resource_subset.keys())
         except ModuleNotFoundError:
             display.vvvv("'%s' is not defined" % (fact_modulelib))
         except AttributeError:
-            display.vvvv("'FACT_RESOURCE_SUBSETS is not defined in '%s'" % (fact_modulelib))
+            display.vvvv(
+                "'FACT_RESOURCE_SUBSETS is not defined in '%s'"
+                % (fact_modulelib)
+            )
 
-        # pase module docs to check for 'config' and 'state' options to identify it as resource module
+        # parse module docs to check for 'config' and 'state' options to identify it as resource module
         if not resource_modules:
             modulelib = "ansible_collections.{corg}.{cname}.plugins.modules".format(
-                corg=self._cref['corg'], cname=self._cref['cname'])
+                corg=self._cref["corg"], cname=self._cref["cname"]
+            )
 
-            module_dir_path = os.path.dirname(import_module(modulelib).__file__)
+            module_dir_path = os.path.dirname(
+                import_module(modulelib).__file__
+            )
             module_paths = glob.glob(f"{module_dir_path}/[!_]*.py")
-    
+
             for module_path in module_paths:
-                module_name = os.path.basename(module_path).split('.')[0]
+                module_name = os.path.basename(module_path).split(".")[0]
                 try:
-                    display.vvvv("reading 'DOCUMENTATION' from path %s" % (module_path))
-                    docs = getattr(import_module("%s.%s" % (modulelib, module_name)), "DOCUMENTATION")
+                    display.vvvv(
+                        "reading 'DOCUMENTATION' from path %s" % (module_path)
+                    )
+                    docs = getattr(
+                        import_module("%s.%s" % (modulelib, module_name)),
+                        "DOCUMENTATION",
+                    )
                 except ModuleNotFoundError:
                     display.vvvv("'%s' is not defined" % (fact_modulelib))
                 except AttributeError:
-                    display.vvvv("'FACT_RESOURCE_SUBSETS is not defined in '%s'" % (fact_modulelib))
-                
+                    display.vvvv(
+                        "'FACT_RESOURCE_SUBSETS is not defined in '%s'"
+                        % (fact_modulelib)
+                    )
+
                 if docs:
                     if self._is_resource_module(docs):
                         resource_modules.append(module_name)
                     else:
-                        display.vvvvv("module in path '%s' is not a resource module" % (module_path))
+                        display.vvvvv(
+                            "module in path '%s' is not a resource module"
+                            % (module_path)
+                        )
 
-        result.update({'modules': sorted(resource_modules)})
+        result.update({"modules": sorted(resource_modules)})
         return result
