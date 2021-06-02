@@ -461,8 +461,8 @@ class Connection(NetworkConnectionBase):
             self._ssh_type_conn.set_options(
                 direct={
                     "look_for_keys": not bool(
-                        self._play_context.password
-                        and not self._play_context.private_key_file
+                        self.get_option("password")
+                        and not self.get_option("private_key_file")
                     ),
                     "host_key_checking": self.get_option("host_key_checking"),
                 }
