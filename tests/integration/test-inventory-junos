@@ -1,0 +1,9 @@
+[netconf]
+38.145.32.45
+
+[netconf:vars]
+ansible_ssh_private_key_file=/Users/amhatre/sshkeys/junos.pub
+ansible_network_os=junipernetworks.junos.junos
+ansible_user=rohit
+ansible_connection=ansible.netcommon.netconf
+

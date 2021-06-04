@@ -85,17 +85,6 @@
     that:
       - "'<description>this is test interface Loopback999</description>' in result.stdout"
 
-- name: Failure scenario, get information from running with lock
-  register: result
-  ignore_errors: true
-  connection: ansible.netcommon.netconf
-  ansible.netcommon.netconf_get:
-    lock: always
-
-- assert:
-    that:
-      - "'<bad-element>running</bad-element>' in result.msg"
-
 - name: get configuration and state data in json format
   register: result
   connection: ansible.netcommon.netconf
