@@ -7,6 +7,11 @@ libyaml-dev [test platform:dpkg]
 python3-devel [test platform:rpm]
 python3 [test platform:rpm]
 
+# ansible-pylibssh
+gcc [compile platform:centos-8 platform:rhel-8]
+libssh-devel [platform:centos-8 platform:rhel-8]
+python38-Cython [compile platform:centos-8 platform:rhel-8]
+
 # ncclient
 python38-six [platform:centos-8 platform:rhel-8]
 python38-lxml [platform:centos-8 platform:rhel-8]
