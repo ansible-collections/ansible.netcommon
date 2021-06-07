@@ -11,6 +11,10 @@
       - interface Loopback999
     match: none
 
+- name: Sleep for 30 seconds and continue with play
+  wait_for:
+    timeout: 30
+
 - name: save config test
   register: result
   connection: ansible.netcommon.netconf
