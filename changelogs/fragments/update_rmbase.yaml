@@ -1,0 +1,8 @@
+---
+minor_changes:
+  - >
+    `NetworkTemplate` and `ResouceModule` base classes have been moved under `module_utils.network.common.rm_base`.
+     Stubs have been kept for backwards compatibility. These will be removed in ansible.netcommon v3.0.0.
+     Please update imports for existing modules that subclass them.
+     The `cli_rm_builder` has been updated to use the new imports.
+
