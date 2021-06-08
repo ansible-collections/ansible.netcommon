@@ -22,7 +22,6 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import sys
-import pytest
 
 from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
 from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
@@ -31,13 +30,12 @@ from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
     PropertyMock,
 )
 from ansible.playbook.play_context import PlayContext
+import pytest
 
 pytest.importorskip("ncclient")
 
-PY3 = sys.version_info[0] == 3
 
 builtin_import = __import__
-
 mock_ncclient = MagicMock(name="ncclient")
 mock_ncclient.__version__ = "0.6.10"
 
@@ -48,6 +46,7 @@ def import_mock(name, *args):
     return builtin_import(name, *args)
 
 
+PY3 = sys.version_info[0] == 3
 if PY3:
     with patch("builtins.__import__", side_effect=import_mock):
         from ansible_collections.ansible.netcommon.plugins.connection import (
@@ -126,3 +125,23 @@ class TestNetconfConnectionClass(unittest.TestCase):
         out = conn.exec_command("test string")
 
         self.assertEqual("unable to parse request", out)
+
+
+@pytest.mark.parametrize(
+    "proxy_command,proxy_response",
+    [
+        ('ssh -W "%h:%p" bastion', ["ssh", "-W", "example.com:22", "bastion"]),
+        (None, None),
+    ],
+)
+def test_netconf_proxy_command(proxy_command, proxy_response):
+    pc = PlayContext()
+    pc.remote_addr = "example.com"
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+    conn.set_option("proxy_command", proxy_command)
+
+    response = conn._get_proxy_command()
+    if proxy_command is None:
+        assert response is proxy_response
+    else:
+        assert response.cmd == proxy_response
