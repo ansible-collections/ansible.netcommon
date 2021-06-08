@@ -434,7 +434,7 @@ class Connection(NetworkConnectionBase):
                 ),
             )
 
-            self._manager = manager.connect(
+            params = dict(
                 host=self._play_context.remote_addr,
                 port=port,
                 username=self._play_context.remote_user,
@@ -446,8 +446,17 @@ class Connection(NetworkConnectionBase):
                 allow_agent=self._play_context.allow_agent,
                 timeout=self.get_option("persistent_connect_timeout"),
                 ssh_config=self._ssh_config,
-                sock=self._get_proxy_command(port),
             )
+            # sock is only supported by ncclient >= 0.6.10, and will error if
+            # included on older versions. We check the version in
+            # _get_proxy_command, so if this returns a value, the version is
+            # fine and we have something to send. Otherwise, don't even send
+            # the option to support older versions of ncclient
+            sock = self._get_proxy_command(port)
+            if sock:
+                params["sock"] = sock
+
+            self._manager = manager.connect(**params)
 
             self._manager._timeout = self.get_option(
                 "persistent_command_timeout"
