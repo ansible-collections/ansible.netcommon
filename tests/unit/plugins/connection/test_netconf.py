@@ -23,7 +23,6 @@ __metaclass__ = type
 
 import sys
 
-from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
 from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
     patch,
     MagicMock,
@@ -61,70 +60,32 @@ else:
         from ansible.plugins.loader import connection_loader
 
 
-class TestNetconfConnectionClass(unittest.TestCase):
-    def test_netconf_init(self):
-        pc = PlayContext()
-        conn = connection_loader.get("netconf", pc, "/dev/null")
+def test_netconf_init():
+    pc = PlayContext()
+    conn = connection_loader.get("netconf", pc, "/dev/null")
 
-        self.assertEqual("auto", conn._network_os)
-        self.assertIsNone(conn._manager)
-        self.assertFalse(conn._connected)
+    assert conn._network_os == "auto"
+    assert conn._manager is None
+    assert conn._connected is False
 
-    @patch(
-        "ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader"
-    )
-    def test_netconf__connect(self, mock_netconf_loader):
-        pc = PlayContext()
-        conn = connection_loader.get(
-            "ansible.netcommon.netconf", pc, "/dev/null"
-        )
 
-        mock_manager = MagicMock()
-        mock_manager.session_id = "123456789"
-        netconf.manager.connect = MagicMock(return_value=mock_manager)
+@patch(
+    "ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader"
+)
+def test_netconf__connect(mock_netconf_loader):
+    pc = PlayContext()
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
 
-        rc, out, err = conn._connect()
+    mock_manager = MagicMock()
+    mock_manager.session_id = "123456789"
+    netconf.manager.connect = MagicMock(return_value=mock_manager)
 
-        self.assertEqual(0, rc)
-        self.assertEqual(b"123456789", out)
-        self.assertEqual(b"", err)
-        self.assertTrue(conn._connected)
+    rc, out, err = conn._connect()
 
-    def test_netconf_exec_command(self):
-        pc = PlayContext()
-        conn = connection_loader.get(
-            "ansible.netcommon.netconf", pc, "/dev/null"
-        )
-
-        conn._connected = True
-
-        mock_reply = MagicMock(name="reply")
-        type(mock_reply).data_xml = PropertyMock(return_value="<test/>")
-
-        mock_manager = MagicMock(name="self._manager")
-        mock_manager.rpc.return_value = mock_reply
-        conn._manager = mock_manager
-
-        out = conn.exec_command("<test/>")
-
-        self.assertEqual("<test/>", out)
-
-    def test_netconf_exec_command_invalid_request(self):
-        pc = PlayContext()
-        conn = connection_loader.get(
-            "ansible.netcommon.netconf", pc, "/dev/null"
-        )
-
-        conn._connected = True
-
-        mock_manager = MagicMock(name="self._manager")
-        conn._manager = mock_manager
-
-        netconf.to_ele.return_value = None
-
-        out = conn.exec_command("test string")
-
-        self.assertEqual("unable to parse request", out)
+    assert rc == 0
+    assert out == b"123456789"
+    assert err == b""
+    assert conn._connected is True
 
 
 @pytest.mark.parametrize(
@@ -145,3 +106,50 @@ def test_netconf_proxy_command(proxy_command, proxy_response):
         assert response is proxy_response
     else:
         assert response.cmd == proxy_response
+
+
+def test_netconf_exec_command():
+    pc = PlayContext()
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+
+    conn._connected = True
+
+    mock_manager = MagicMock(name="self._manager")
+    conn._manager = mock_manager
+
+    mock_reply = MagicMock(name="reply")
+    type(mock_reply).data_xml = PropertyMock(return_value="<test/>")
+    mock_manager.rpc.return_value = mock_reply
+
+    out = conn.exec_command("<test/>")
+
+    assert out == "<test/>"
+
+
+def test_netconf_exec_command_invalid_request():
+    pc = PlayContext()
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+
+    conn._connected = True
+
+    mock_manager = MagicMock(name="self._manager")
+    conn._manager = mock_manager
+
+    netconf.to_ele.return_value = None
+
+    out = conn.exec_command("test string")
+
+    assert out == "unable to parse request"
+
+
+def test_netconf_close():
+    pc = PlayContext()
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+
+    conn._manager = MagicMock()
+    conn._connected = True
+
+    conn.close()
+
+    assert conn._connected is False
+    assert conn._manager.close_session.called is True
