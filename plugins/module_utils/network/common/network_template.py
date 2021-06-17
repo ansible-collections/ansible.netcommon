@@ -31,7 +31,7 @@ __metaclass__ = type
 
 # moved actual class in `rm_base.network_template`
 # this is kept here for backwards compatibility
-# will be removed in ansible.netcommon version 3.0.0
+# TODO: Remove after 2023-01-01
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template import (  # noqa: F401
     NetworkTemplate,
 )
