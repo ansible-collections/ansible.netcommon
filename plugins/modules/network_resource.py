@@ -11,7 +11,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 module: network_resource
-author: 
+author:
 - Ganesh B. Nalawade (@ganeshrn)
 short_description: Manage resource modules
 description:
@@ -23,10 +23,10 @@ options:
         type: str
         description:
         - The name of the os to manage the resource modules.
-        - The name should be fully qualified collection name format, 
+        - The name should be fully qualified collection name format,
           that is I(<namespace>.<collection-name>.<plugin-name>).
         - If value of this option is not set the os value will be
-          read from I(ansible_network_os) variable. 
+          read from I(ansible_network_os) variable.
         - If value of both I(os_name) and I(ansible_network_os)
           is not set it will result in error.
     name:
@@ -36,7 +36,7 @@ options:
         - The resource module should be supported for given I(os_name),
           if not supported it will result in error.
     config:
-      description: 
+      description:
       - The resource module configuration. For details on the type and
         structure of this option refer the individual resource module
         platform documentation.
@@ -66,7 +66,7 @@ EXAMPLES = r"""
   ansible.netcommon.network_resource:
   register: result
 
-- name: fetch acl config for 
+- name: fetch acl config for
   ansible.netcommon.network_resource:
     os_name: cisco.ios.ios
     name: acls

@@ -81,23 +81,36 @@ class ActionModule(ActionNetworkModule):
 
         run_mode = self._get_run_mode()
 
+        result = {}
         if run_mode == RunMode.RM_LIST:
-            return self._list_resource_modules()
+            result = self._list_resource_modules()
         elif run_mode in [RunMode.RM_GET, RunMode.RM_CONFIG]:
-            return self._run_resource_module()
+            result = self._run_resource_module()
+
+        result.update(
+            {
+                "ansible_network_os": self._task_vars.get(
+                    "ansible_network_os"
+                ),
+                "ansible_connection": self._task_vars.get(
+                    "ansible_connection"
+                ),
+            }
+        )
+        return result
 
     def _run_resource_module(self):
         new_task = self._task.copy()
 
-        module = self._get_resource_module()
-        if not module:
+        self._module = self._get_resource_module()
+        if not self._module:
             msg = "Could not find resource module '%s' for os name '%s'" % (
                 self._name,
                 self._os_name,
             )
             raise AnsibleActionFail(msg)
 
-        new_task.action = module
+        new_task.action = self._module
 
         action = self._shared_loader_obj.action_loader.get(
             self._rm_play_context.network_os,
@@ -108,12 +121,14 @@ class ActionModule(ActionNetworkModule):
             templar=self._templar,
             shared_loader_obj=self._shared_loader_obj,
         )
-        display.vvvv("Running resource module %s" % module)
+        display.vvvv("Running resource module %s" % self._module)
         for option in ["os_name", "name"]:
             if option in new_task.args:
                 new_task.args.pop(option)
 
-        return action.run(task_vars=self._task_vars)
+        result = action.run(task_vars=self._task_vars)
+        result.update({"resource_module_name": self._module})
+        return result
 
     def _get_resource_module(self):
         if "." in self._name:
