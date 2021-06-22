@@ -29,6 +29,9 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+# moved actual class under `rm_base.resource_module`
+# this is kept here for backwards compatibility
+# TODO: Remove after 2023-01-01
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module import (  # noqa: F401
     ResourceModule,
 )
