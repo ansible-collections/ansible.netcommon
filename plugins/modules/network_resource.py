@@ -11,8 +11,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 module: network_resource
-author:
-- Ganesh B. Nalawade (@ganeshrn)
+author: Ganesh B. Nalawade (@ganeshrn)
 short_description: Manage resource modules
 description:
 - Get list of available resource modules for given os name
@@ -41,27 +40,26 @@ options:
         structure of this option refer the individual resource module
         platform documentation.
       type: raw
-  running_config:
-    description:
-    - This option is used only with state I(parsed).
-    - The value of this option should be the output received from the host device
-      by executing the cli command to get the resource configuration on host.
-    - The state I(parsed) reads the configuration from C(running_config) option and
-      transforms it into Ansible structured data as per the resource module's argspec
-      and the value is then returned in the I(parsed) key within the result.
-  state:
-    description:
-      - The state the configuration should be left in.
-      - For supported values refer the individual resource module
-        platform documentation.
+    running_config:
+      description:
+      - This option is used only with state I(parsed).
+      - The value of this option should be the output received from the host device
+        by executing the cli command to get the resource configuration on host.
+      - The state I(parsed) reads the configuration from C(running_config) option and
+        transforms it into Ansible structured data as per the resource module's argspec
+        and the value is then returned in the I(parsed) key within the result.
+    state:
+      description:
+        - The state the configuration should be left in.
+        - For supported values refer the individual resource module
+          platform documentation.
 version_added: 2.2.0
 notes:
 - Refer the individual module documentation for the valid inputs of I(state)
   and I(config) modules.
 """
 
-
-EXAMPLES = r"""
+EXAMPLES = """
 - name: get list of resource modules for given network_os
   ansible.netcommon.network_resource:
   register: result
@@ -72,35 +70,35 @@ EXAMPLES = r"""
     name: acls
     state: gathered
 
-  - name: manage acl config for cisco.ios.ios network os.
-    ansible.netcommon.network_resource:
-      name: acls
-      config:
-        - afi: ipv4
-          acls:
-            - name: test_acl
-              acl_type: extended
-              aces:
-                - grant: deny
-                  protocol_options:
-                    tcp:
-                      fin: true
-                  source:
-                    address: 192.0.2.0
-                    wildcard_bits: 0.0.0.255
-                  destination:
-                    address: 192.0.3.0
-                    wildcard_bits: 0.0.0.255
-                    port_protocol:
-                      eq: www
-                  option:
-                    traceroute: true
-                  ttl:
-                    eq: 10
-      state: merged
+- name: manage acl config for cisco.ios.ios network os.
+  ansible.netcommon.network_resource:
+    name: acls
+    config:
+      - afi: ipv4
+        acls:
+          - name: test_acl
+            acl_type: extended
+            aces:
+              - grant: deny
+                protocol_options:
+                  tcp:
+                    fin: true
+                source:
+                  address: 192.0.2.0
+                  wildcard_bits: 0.0.0.255
+                destination:
+                  address: 192.0.3.0
+                  wildcard_bits: 0.0.0.255
+                  port_protocol:
+                    eq: www
+                option:
+                  traceroute: true
+                ttl:
+                  eq: 10
+    state: merged
 """
 
-RETURN = r"""
+RETURN = """
 modules:
   description: List of resource modules supported for given OS.
   returned: When only I(os_name) or I(ansible_network_os) is set

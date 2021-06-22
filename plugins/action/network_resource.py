@@ -37,7 +37,8 @@ try:
 except ImportError:
     HAS_YAML = False
 
-from ansible.errors import AnsibleActionFail
+from ansible.errors import AnsibleActionFail, AnsibleError
+from ansible.module_utils._text import to_text
 
 from ansible_collections.ansible.netcommon.plugins.action.network import (
     ActionModule as ActionNetworkModule,
@@ -85,7 +86,14 @@ class ActionModule(ActionNetworkModule):
         if run_mode == RunMode.RM_LIST:
             result = self._list_resource_modules()
         elif run_mode in [RunMode.RM_GET, RunMode.RM_CONFIG]:
-            result = self._run_resource_module()
+            try:
+                result = self._run_resource_module()
+            except AnsibleError as exc:
+                # handle short name redirection not working for ansible-2.9
+                if "was not found" in to_text(exc):
+                    result = self._run_resource_module(prefix_os_name=True)
+                else:
+                    raise
 
         result.update(
             {
@@ -99,10 +107,10 @@ class ActionModule(ActionNetworkModule):
         )
         return result
 
-    def _run_resource_module(self):
+    def _run_resource_module(self, prefix_os_name=False):
         new_task = self._task.copy()
 
-        self._module = self._get_resource_module()
+        self._module = self._get_resource_module(prefix_os_name=prefix_os_name)
         if not self._module:
             msg = "Could not find resource module '%s' for os name '%s'" % (
                 self._name,
@@ -111,7 +119,6 @@ class ActionModule(ActionNetworkModule):
             raise AnsibleActionFail(msg)
 
         new_task.action = self._module
-
         action = self._shared_loader_obj.action_loader.get(
             self._rm_play_context.network_os,
             task=new_task,
@@ -130,7 +137,7 @@ class ActionModule(ActionNetworkModule):
         result.update({"resource_module_name": self._module})
         return result
 
-    def _get_resource_module(self):
+    def _get_resource_module(self, prefix_os_name=False):
         if "." in self._name:
             if len(self._name.split(".")) != 3:
                 msg = (
@@ -140,8 +147,13 @@ class ActionModule(ActionNetworkModule):
                 raise AnsibleActionFail(msg)
             fqcn_module_name = self._name
         else:
+            if prefix_os_name:
+                module_name = self._os_name.split(".")[1] + "_" + self._name
+            else:
+                module_name = self._name
+
             fqcn_module_name = ".".join(
-                self._os_name.split(".")[:2] + [self._name]
+                self._os_name.split(".")[:2] + [module_name]
             )
 
         return fqcn_module_name
@@ -230,7 +242,11 @@ class ActionModule(ActionNetworkModule):
             module_dir_path = os.path.dirname(
                 import_module(modulelib).__file__
             )
-            module_paths = glob.glob(f"{module_dir_path}/[!_]*.py")
+            module_paths = glob.glob(
+                "{module_dir_path}/[!_]*.py".format(
+                    module_dir_path=module_dir_path
+                )
+            )
 
             for module_path in module_paths:
                 module_name = os.path.basename(module_path).split(".")[0]
