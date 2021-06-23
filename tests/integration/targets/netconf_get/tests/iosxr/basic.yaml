@@ -52,18 +52,6 @@
       - "'<description>this is test interface Loopback999</description>' in result.stdout"
       - "'<usernames>' not in result.stdout"
 
-- name: Failure scenario, get-config information with lock
-  register: result
-  ignore_errors: true
-  connection: ansible.netcommon.netconf
-  ansible.netcommon.netconf_get:
-    source: running
-    lock: always
-
-- assert:
-    that:
-      - "'<bad-element>running</bad-element>' in result.msg"
-
 - name: Failure scenario, fetch config from startup
   register: result
   ignore_errors: true
@@ -96,17 +84,6 @@
 - assert:
     that:
       - "'<description>this is test interface Loopback999</description>' in result.stdout"
-
-- name: Failure scenario, get information from running with lock
-  register: result
-  ignore_errors: true
-  connection: ansible.netcommon.netconf
-  ansible.netcommon.netconf_get:
-    lock: always
-
-- assert:
-    that:
-      - "'<bad-element>running</bad-element>' in result.msg"
 
 - name: get configuration and state data in json format
   register: result
