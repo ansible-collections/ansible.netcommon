@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Add variable to control ProxyCommand with libssh connection.

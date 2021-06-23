@@ -1,3 +1,0 @@
----
-bugfixes:
-  - libssh - Fix fromatting of authenticity error message when not prompting for input (https://github.com/ansible-collections/ansible.netcommon/issues/283)

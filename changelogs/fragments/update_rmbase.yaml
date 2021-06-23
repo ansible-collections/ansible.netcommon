@@ -1,7 +1,0 @@
----
-minor_changes:
-  - >
-    NetworkTemplate and ResouceModule base classes have been moved under module_utils.network.common.rm_base.
-    Stubs have been kept for backwards compatibility. These will be removed after 2023-01-01.
-    Please update imports for existing modules that subclass them.
-    The `cli_rm_builder <https://github.com/ansible-network/cli_rm_builder>`_ has been updated to use the new imports.
