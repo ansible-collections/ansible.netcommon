@@ -21,6 +21,7 @@ from ansible.module_utils.connection import Connection
 
 
 def get_connection(module):
+    import q
     if hasattr(module, '_grpc_connection'):
         return module._grpc_connection
 
@@ -30,7 +31,7 @@ def get_connection(module):
         module._grpc_connection = Connection(module._socket_path)
     else:
         module.fail_json(msg='Invalid connection type %s' % network_api)
-
+    q(module._grpc_connection)
     return module._grpc_connection
 
 
