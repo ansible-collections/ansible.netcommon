@@ -204,16 +204,11 @@ class Connection(NetworkConnectionBase):
         # TODO: Need to add support to make grpc connection work with non-network target host.
         # Currently this works only with network target host.
         if self._network_os:
-            grpc_type = self.get_option('grpc_type')
-            os = self.get_option('network_os')
-            time = self.get_option('persistent_command_timeout')
-            q(grpc_type, time, os, )
             if not HAS_PROTOBUF:
                 raise AnsibleError(
                     "protobuf is required to use the grpc connection type. Please run 'pip install protobuf'"
                 )
-            grpc_type = self.get_option('grpc_type') # cisco.iosxr.grpc
-            grpc_type = "cisco.iosxr.grpc"
+            grpc_type = self._network_os
             cref = dict(zip(["corg", "cname", "plugin"], grpc_type.split(".")))
             grpclib = "ansible_collections.{corg}.{cname}.plugins.sub_plugins.grpc.{plugin}".format(
                 **cref
