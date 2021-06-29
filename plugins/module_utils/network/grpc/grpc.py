@@ -26,7 +26,7 @@ def get_connection(module):
 
     capabilities = get_capabilities(module)
     network_api = capabilities.get('network_api')
-    if network_api == 'grpc':
+    if network_api == 'ansible.netcommon.grpc':
         module._grpc_connection = Connection(module._socket_path)
     else:
         module.fail_json(msg='Invalid connection type %s' % network_api)
