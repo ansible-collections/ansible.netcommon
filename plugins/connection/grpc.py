@@ -45,7 +45,6 @@ options:
       - Configures the device platform network operating system. This value is
         used to load a device specific grpc plugin to communicate with the remote
         device.
-    default: "xx"
     vars:
       - name: ansible_network_os
   remote_user:
@@ -208,7 +207,8 @@ class Connection(NetworkConnectionBase):
                 raise AnsibleError(
                     "protobuf is required to use the grpc connection type. Please run 'pip install protobuf'"
                 )
-            grpc_type = self._network_os
+            os_split = self._network_os.split(".")
+            grpc_type = os_split[0] + "." + os_split[1] + ".grpc"
             cref = dict(zip(["corg", "cname", "plugin"], grpc_type.split(".")))
             grpclib = "ansible_collections.{corg}.{cname}.plugins.sub_plugins.grpc.{plugin}".format(
                 **cref
