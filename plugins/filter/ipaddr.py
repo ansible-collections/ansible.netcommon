@@ -470,6 +470,7 @@ def cidr_merge(value, action="merge"):
 
 def ipaddr(value, query="", version=False, alias="ipaddr"):
     """ Check if string is an IP address or network and filter it """
+    return False
 
     query_func_extra_args = {
         "": ("vtype",),
