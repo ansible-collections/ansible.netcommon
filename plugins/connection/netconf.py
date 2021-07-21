@@ -19,6 +19,8 @@ description:
 version_added: 1.0.0
 requirements:
 - ncclient
+extends_documentation_fragment:
+- ansible.netcommon.connection_persistent
 options:
   import_modules:
     type: boolean
@@ -127,20 +129,6 @@ options:
     - name: ansible_host_key_checking
     - name: ansible_ssh_host_key_checking
     - name: ansible_netconf_host_key_checking
-  persistent_connect_timeout:
-    type: int
-    description:
-    - Configures, in seconds, the amount of time to wait when trying to initially
-      establish a persistent connection.  If this value expires before the connection
-      to the remote device is completed, the connection will fail.
-    default: 30
-    ini:
-    - section: persistent_connection
-      key: connect_timeout
-    env:
-    - name: ANSIBLE_PERSISTENT_CONNECT_TIMEOUT
-    vars:
-    - name: ansible_connect_timeout
   proxy_command:
     default: ''
     description:
@@ -153,20 +141,6 @@ options:
     vars:
       - name: ansible_paramiko_proxy_command
       - name: ansible_netconf_proxy_command
-  persistent_command_timeout:
-    type: int
-    description:
-    - Configures, in seconds, the amount of time to wait for a command to return from
-      the remote device.  If this timer is exceeded before the command returns, the
-      connection plugin will raise an exception and close.
-    default: 30
-    ini:
-    - section: persistent_connection
-      key: command_timeout
-    env:
-    - name: ANSIBLE_PERSISTENT_COMMAND_TIMEOUT
-    vars:
-    - name: ansible_command_timeout
   netconf_ssh_config:
     description:
     - This variable is used to enable bastion/jump host with netconf connection. If
@@ -180,23 +154,6 @@ options:
     - name: ANSIBLE_NETCONF_SSH_CONFIG
     vars:
     - name: ansible_netconf_ssh_config
-  persistent_log_messages:
-    type: boolean
-    description:
-    - This flag will enable logging the command executed and response received from
-      target device in the ansible log file. For this option to work 'log_path' ansible
-      configuration option is required to be set to a file path with write access.
-    - Be sure to fully understand the security implications of enabling this option
-      as it could create a security vulnerability by logging sensitive information
-      in log file.
-    default: false
-    ini:
-    - section: persistent_connection
-      key: log_messages
-    env:
-    - name: ANSIBLE_PERSISTENT_LOG_MESSAGES
-    vars:
-    - name: ansible_persistent_log_messages
 """
 
 import os
