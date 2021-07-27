@@ -406,3 +406,17 @@ releases:
     - ncclient-sock-arg.yaml
     - update_rmbase.yaml
     release_date: '2021-06-23'
+  2.3.0:
+    changes:
+      minor_changes:
+      - Add vlan_expander filter
+      - Persistent connection options (persistent_command_timeout, persistent_log_messages,
+        etc.) have been unified across all persistent connections. New persistent
+        connections may also now get these options by extending the connection_persistent
+        documentation fragment.
+    fragments:
+    - 280-vlan_expander.yaml
+    - 295-connection-tests.yaml
+    - 308-unify-persistent.yaml
+    - fix_integration_test_iosxr_7.0.2.yaml
+    release_date: '2021-07-27'
