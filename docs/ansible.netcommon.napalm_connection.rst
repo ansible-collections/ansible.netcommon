@@ -176,6 +176,30 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>persistent_log_messages</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"no"</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[persistent_connection]<br>log_messages = no</p>
+                            </div>
+                                <div>env:ANSIBLE_PERSISTENT_LOG_MESSAGES</div>
+                                <div>var: ansible_persistent_log_messages</div>
+                    </td>
+                <td>
+                        <div>This flag will enable logging the command executed and response received from target device in the ansible log file. For this option to work &#x27;log_path&#x27; ansible configuration option is required to be set to a file path with write access.</div>
+                        <div>Be sure to fully understand the security implications of enabling this option as it could create a security vulnerability by logging sensitive information in log file.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>port</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">

@@ -13,21 +13,8 @@ short_description: Use a persistent unix socket for connection
 description:
 - This is a helper plugin to allow making other connections persistent.
 version_added: 1.0.0
-options:
-  persistent_command_timeout:
-    type: int
-    description:
-    - Configures, in seconds, the amount of time to wait for a command to return from
-      the remote device.  If this timer is exceeded before the command returns, the
-      connection plugin will raise an exception and close
-    default: 10
-    ini:
-    - section: persistent_connection
-      key: command_timeout
-    env:
-    - name: ANSIBLE_PERSISTENT_COMMAND_TIMEOUT
-    vars:
-    - name: ansible_command_timeout
+extends_documentation_fragment:
+- ansible.netcommon.connection_persistent
 """
 from ansible.executor.task_executor import start_connection
 from ansible.plugins.connection import ConnectionBase
