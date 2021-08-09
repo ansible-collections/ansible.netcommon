@@ -22,7 +22,6 @@ __metaclass__ = type
 
 import os
 import time
-import re
 
 from ansible.errors import AnsibleError
 from ansible.module_utils._text import to_text
@@ -34,7 +33,6 @@ from ansible.module_utils.six import PY3
 
 display = Display()
 
-PRIVATE_KEYS_RE = re.compile("__.+__")
 DEXEC_PREFIX = "ANSIBLE_NETWORK_IMPORT_MODULES:"
 
 
@@ -110,7 +108,7 @@ class ActionModule(_ActionModule):
         filename = None
         backup_path = None
         try:
-            content = result["__backup__"]
+            content = result.pop("__backup__")
         except KeyError:
             raise AnsibleError("Failed while reading configuration backup")
 
@@ -136,9 +134,18 @@ class ActionModule(_ActionModule):
             os.makedirs(backup_path)
 
         changed = False
+        # Do not overwrite the destination if the contents match.
         if not os.path.exists(dest) or checksum(dest) != checksum_s(content):
-            with open(dest, "w") as output_file:
-                output_file.write(content)
+            try:
+                with open(dest, "w") as output_file:
+                    output_file.write(content)
+            except Exception as exc:
+                result["failed"] = True
+                result["msg"] = (
+                    "Could not write to destination file %s: %s"
+                    % (dest, to_text(exc))
+                )
+                return
             changed = True
 
         result["backup_path"] = dest
@@ -148,12 +155,6 @@ class ActionModule(_ActionModule):
         if not (backup_options and backup_options.get("filename")):
             result["filename"] = os.path.basename(result["backup_path"])
             result["shortname"] = os.path.splitext(result["backup_path"])[0]
-
-        # strip out any keys that have two leading and two trailing
-        # underscore characters
-        for key in list(result.keys()):
-            if PRIVATE_KEYS_RE.match(key):
-                del result[key]
 
     def _get_working_path(self):
         cwd = self._loader.get_basedir()
