@@ -1,0 +1,3 @@
+---
+trivial:
+  - Remove dependence of config backup on copy module
