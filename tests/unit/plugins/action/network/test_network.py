@@ -46,27 +46,34 @@ def plugin():
     return plugin
 
 
-@pytest.mark.parametrize(
-    "backup_path", ["", "/tmp/", "backup_file", "/tmp/backup_file"]
-)
-@pytest.mark.parametrize("has_role", [True, False])
-def test_backup_options(plugin, backup_path, has_role):
+# If you think this looks weird, you are correct! These two params are not
+# correlated in any way, and there would normally be no reason to combine the
+# two. However: when running in a container, writing to the playbook directory
+# fails, but succeeds otherwise.
+# By always making sure we are writing to somewhere in /tmp when we write the
+# file, the test will pass in both containerized and non-containerized
+# environments, and by using role_path to do it, we still manage to test all of
+# the branches in the method.
+# TODO: At some point, writing to the playbook dir should start working in a
+# container. At that point, we should be able to disentangle these params and
+# remove this comment.
+@pytest.mark.parametrize("backup_dir,role_path", [("", "/tmp"), ("/tmp", "")])
+@pytest.mark.parametrize("backup_file", ["", "backup_file"])
+def test_backup_options(plugin, backup_dir, backup_file, role_path):
     plugin._task.args = {}
     content = "This is the backup content"
-    dirname, basename = os.path.split(backup_path)
 
     # This doesn't need to be conditional, but doing so tests the equivalent
     # `if backup_options:` in the action plugin itself.
-    if backup_path:
+    if backup_dir or backup_file:
         plugin._task.args["backup_options"] = {
-            "dir_path": dirname,
-            "filename": basename,
+            "dir_path": backup_dir,
+            "filename": backup_file,
         }
 
     # Test with role_path
-    if has_role:
+    if role_path:
         plugin._task._role = MagicMock(Role)
-        role_path = "/var/tmp"
         plugin._task._role._role_path = role_path
 
     result = {"__backup__": content}
@@ -74,19 +81,19 @@ def test_backup_options(plugin, backup_path, has_role):
     plugin._handle_backup_option(result, task_vars)
     assert not result.get("failed")
 
-    with open(result["backup_path"]) as backup_file:
-        assert backup_file.read() == content
+    with open(result["backup_path"]) as backup_file_obj:
+        assert backup_file_obj.read() == content
 
-    if basename:
+    if backup_file:
         # check that presented and returned backup paths match
-        if dirname:
-            assert os.path.samefile(backup_path, result["backup_path"])
-        elif has_role:
-            final_path = os.path.join(role_path, "backup", backup_path)
-            assert os.path.samefile(final_path, result["backup_path"])
+        if backup_dir:
+            backup_path = os.path.join(backup_dir, backup_file)
+        elif role_path:
+            backup_path = os.path.join(role_path, "backup", backup_file)
         else:
-            final_path = os.path.join("backup", backup_path)
-            assert os.path.samefile(final_path, result["backup_path"])
+            backup_path = os.path.join("backup", backup_file)
+
+        assert os.path.samefile(backup_path, result["backup_path"])
 
         # check for idempotency
         result = {"__backup__": content}
