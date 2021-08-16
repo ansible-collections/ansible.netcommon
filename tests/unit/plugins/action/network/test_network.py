@@ -78,34 +78,45 @@ def test_backup_options(plugin, backup_dir, backup_file, role_path):
 
     result = {"__backup__": content}
     task_vars = dict(inventory_hostname="example.com")
-    plugin._handle_backup_option(result, task_vars)
-    assert not result.get("failed")
 
-    with open(result["backup_path"]) as backup_file_obj:
-        assert backup_file_obj.read() == content
-
-    if backup_file:
-        # check that presented and returned backup paths match
-        if backup_dir:
-            backup_path = os.path.join(backup_dir, backup_file)
-        elif role_path:
-            backup_path = os.path.join(role_path, "backup", backup_file)
-        else:
-            backup_path = os.path.join("backup", backup_file)
-
-        assert os.path.samefile(backup_path, result["backup_path"])
-
-        # check for idempotency
-        result = {"__backup__": content}
+    try:
+        # result is updated in place, nothing is returned
         plugin._handle_backup_option(result, task_vars)
         assert not result.get("failed")
-        assert result["changed"] is False
-    else:
-        assert result["date"] in result["backup_path"]
-        assert result["time"] in result["backup_path"]
 
-    assert os.path.exists(result["backup_path"])
-    os.remove(result["backup_path"])
+        with open(result["backup_path"]) as backup_file_obj:
+            assert backup_file_obj.read() == content
+
+        if backup_dir:
+            backup_path = backup_dir
+        elif role_path:
+            backup_path = os.path.join(role_path, "backup")
+        else:
+            backup_path = "backup"
+
+        if backup_file:
+            backup_path = os.path.join(backup_path, backup_file)
+        else:
+            backup_path = os.path.join(
+                backup_path,
+                "example.com_config.{0}@{1}".format(
+                    result["date"], result["time"]
+                ),
+            )
+
+        # check that expected and returned backup paths match
+        assert os.path.samefile(backup_path, result["backup_path"])
+
+        if backup_file:
+            # check for idempotency
+            result = {"__backup__": content}
+            plugin._handle_backup_option(result, task_vars)
+            assert not result.get("failed")
+            assert result["changed"] is False
+
+    finally:
+        if os.path.exists(result["backup_path"]):
+            os.remove(result["backup_path"])
 
 
 def test_backup_no_content(plugin):
