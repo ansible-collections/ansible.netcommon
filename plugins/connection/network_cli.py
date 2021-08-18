@@ -420,7 +420,7 @@ class Connection(NetworkConnectionBase):
                     "host_key_checking": self.get_option("host_key_checking"),
                     "look_for_keys": not bool(
                         self.get_option("password")
-                        and not self.get_option("private_key_file")
+                        or self.get_option("private_key_file")
                     ),
                     "password": self.get_option("password"),
                 }
