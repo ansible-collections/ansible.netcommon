@@ -274,6 +274,13 @@ options:
     - name: ANSIBLE_NETWORK_SINGLE_USER_MODE
     vars:
     - name: ansible_network_single_user_mode
+  platform_type:
+    description:
+    - Set type of platform.
+    env:
+    - name: ANSIBLE_PLATFORM_TYPE
+    vars:
+    - name: ansible_platform_type
 """
 
 from functools import wraps
@@ -362,13 +369,29 @@ class Connection(NetworkConnectionBase):
         self._single_user_mode = False
 
         if self._network_os:
-            self._terminal = terminal_loader.get(self._network_os, self)
+            self.load_platform_plugins(self._network_os)
+
+    def load_platform_plugins(self, platform_type=None):
+        platform_type = platform_type or self.get_option("platform_type")
+
+        if platform_type:
+            self._terminal = terminal_loader.get(platform_type, self)
             if not self._terminal:
                 raise AnsibleConnectionFailure(
-                    "network os %s is not supported" % self._network_os
+                    "network os %s is not supported" % platform_type
+                )
+            else:
+                self.queue_message(
+                    "vvvv",
+                    "loaded terminal plugin %s from path %s for network_os %s"
+                    % (
+                        self.terminal._load_name,
+                        self.terminal._original_path,
+                        platform_type,
+                    ),
                 )
 
-            self.cliconf = cliconf_loader.get(self._network_os, self)
+            self.cliconf = cliconf_loader.get(platform_type, self)
             if self.cliconf:
                 self._sub_plugin = {
                     "type": "cliconf",
@@ -381,21 +404,20 @@ class Connection(NetworkConnectionBase):
                     % (
                         self.cliconf._load_name,
                         self.cliconf._original_path,
-                        self._network_os,
+                        platform_type,
                     ),
                 )
             else:
                 self.queue_message(
                     "vvvv",
-                    "unable to load cliconf for network_os %s"
-                    % self._network_os,
+                    "unable to load cliconf for network_os %s" % platform_type,
                 )
         else:
             raise AnsibleConnectionFailure(
                 "Unable to automatically determine host network os. Please "
-                "manually configure ansible_network_os value for this host"
+                "manually configure platform_type value for this host"
             )
-        self.queue_message("log", "network_os is set to %s" % self._network_os)
+        self.queue_message("log", "platform_type is set to %s" % platform_type)
 
     @property
     def ssh_type_conn(self):
@@ -611,11 +633,6 @@ class Connection(NetworkConnectionBase):
             self._ssh_shell = ssh.ssh.invoke_shell()
             if self._ssh_type == "paramiko":
                 self._ssh_shell.settimeout(command_timeout)
-
-            self.queue_message(
-                "vvvv",
-                "loaded terminal plugin for network_os %s" % self._network_os,
-            )
 
             terminal_initial_prompt = (
                 self.get_option("terminal_initial_prompt")

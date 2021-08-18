@@ -154,6 +154,13 @@ options:
     - name: ANSIBLE_NETCONF_SSH_CONFIG
     vars:
     - name: ansible_netconf_ssh_config
+  platform_type:
+    description:
+    - Set type of platform.
+    env:
+    - name: ANSIBLE_PLATFORM_TYPE
+    vars:
+    - name: ansible_platform_type
 """
 
 import os
@@ -207,12 +214,20 @@ class Connection(NetworkConnectionBase):
         super(Connection, self).__init__(
             play_context, new_stdin, *args, **kwargs
         )
+        self._manager = None
+        self.key_filename = None
+        self._ssh_config = None
+        self._platform_type = None
+        self.load_platform_plugins(self._network_os)
 
-        # If network_os is not specified then set the network os to auto
+    def load_platform_plugins(self, platform_type=None):
+        # If network_os/platform_type is not specified then set the network os to auto
         # This will be used to trigger the use of guess_network_os when connecting.
-        self._network_os = self._network_os or "auto"
+        platform_type = (
+            platform_type or self.get_option("platform_type") or "auto"
+        )
 
-        self.netconf = netconf_loader.get(self._network_os, self)
+        self.netconf = netconf_loader.get(platform_type, self)
         if self.netconf:
             self._sub_plugin = {
                 "type": "netconf",
@@ -225,7 +240,7 @@ class Connection(NetworkConnectionBase):
                 % (
                     self.netconf._load_name,
                     self.netconf._original_path,
-                    self._network_os,
+                    platform_type,
                 ),
             )
         else:
@@ -238,13 +253,11 @@ class Connection(NetworkConnectionBase):
             self.queue_message(
                 "vvvv",
                 "unable to load netconf plugin for network_os %s, falling back to default plugin"
-                % self._network_os,
+                % platform_type,
             )
 
-        self.queue_message("log", "network_os is set to %s" % self._network_os)
-        self._manager = None
-        self.key_filename = None
-        self._ssh_config = None
+        self.queue_message("log", "network_os is set to %s" % platform_type)
+        self._network_os = platform_type
 
     def exec_command(self, cmd, in_data=None, sudoable=True):
         """Sends the request to the node and returns the reply
