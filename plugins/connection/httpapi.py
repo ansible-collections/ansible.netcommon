@@ -180,9 +180,9 @@ class Connection(NetworkConnectionBase):
 
         self._auth = None
         if self._network_os:
-          self.load_platfrom_plugins(self._network_os)
+          self.load_platform_plugins(self._network_os)
 
-    def load_platfrom_plugins(self, platform_type=None):
+    def load_platform_plugins(self, platform_type=None):
       platform_type = platform_type or self.get_option("platform_type")
 
       if platform_type:
