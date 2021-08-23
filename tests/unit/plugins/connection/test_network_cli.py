@@ -52,10 +52,13 @@ def test_network_cli_invalid_os(network_os):
         connection_loader.get("ansible.netcommon.network_cli", pc, "/dev/null")
 
 
+@pytest.mark.parametrize("look_for_keys", [True, False, None])
 @pytest.mark.parametrize("password", ["password", None])
 @pytest.mark.parametrize("private_key_file", ["/path/to/key/file", None])
 @pytest.mark.parametrize("ssh_type", ["paramiko", "libssh"])
-def test_look_for_keys(conn, password, private_key_file, ssh_type):
+def test_look_for_keys(
+    conn, look_for_keys, password, private_key_file, ssh_type
+):
     conn.set_options(
         direct={
             "ssh_type": ssh_type,
@@ -63,10 +66,14 @@ def test_look_for_keys(conn, password, private_key_file, ssh_type):
             "private_key_file": private_key_file,
         }
     )
+    if look_for_keys is not None:
+        conn.set_options(direct={"look_for_keys": look_for_keys})
+        assert conn.ssh_type_conn.get_option("look_for_keys") is look_for_keys
 
     # We automagically set look_for_keys based on the state of password and
-    # private_key_file. Make sure that setting is preserved
-    if private_key_file:
+    # private_key_file. Make sure that setting is preserved if the option
+    # is not set manually.
+    elif private_key_file:
         assert conn.ssh_type_conn.get_option("look_for_keys") is True
     elif password:
         assert conn.ssh_type_conn.get_option("look_for_keys") is False
