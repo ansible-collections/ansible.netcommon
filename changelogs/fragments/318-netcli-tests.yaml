@@ -1,0 +1,3 @@
+---
+trivial:
+  - Add tests for existing behavior of network_cli options
