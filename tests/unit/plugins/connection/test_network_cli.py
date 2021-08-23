@@ -21,7 +21,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import re
 import json
 
 from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
@@ -98,44 +97,30 @@ def test_options_pass_through(conn, ssh_type):
     assert conn.ssh_type_conn.get_option("host_key_checking") is False
 
 
-@patch(
-    "ansible_collections.ansible.netcommon.plugins.connection.network_cli.terminal_loader"
-)
 @pytest.mark.parametrize("ssh_type,ssh_implementation", SSH_TYPES)
 @pytest.mark.parametrize(
-    "become,become_method,become_pass",
-    [(True, "enable", "password"), (False, None, None)],
+    "become_method,become_pass", [("enable", "password"), (None, None)]
 )
 def test_network_cli__connect(
-    mocked_terminal,
-    ssh_type,
-    ssh_implementation,
-    become,
-    become_method,
-    become_pass,
+    conn, ssh_type, ssh_implementation, become_method, become_pass
 ):
-    pc = PlayContext()
-    pc.network_os = "ios"
+    conn.ssh = MagicMock()
+    conn.receive = MagicMock()
+    conn._terminal = MagicMock()
 
-    with patch("%s._connect" % ssh_implementation) as mocked_super:
-        conn = connection_loader.get(
-            "ansible.netcommon.network_cli", pc, "/dev/null"
-        )
-
-        conn.ssh = MagicMock()
-        conn.receive = MagicMock()
-        conn._terminal = MagicMock()
-        conn.set_options(direct={"ssh_type": ssh_type})
-
-        conn._play_context.become = become
+    if become_method:
+        conn._play_context.become = True
         conn._play_context.become_method = become_method
         conn._play_context.become_pass = become_pass
 
+    conn.set_options(direct={"ssh_type": ssh_type})
+
+    with patch("%s._connect" % ssh_implementation) as mocked_super:
         conn._connect()
         assert mocked_super.called is True
 
     assert conn._terminal.on_open_shell.called is True
-    if become:
+    if become_method:
         conn._terminal.on_become.assert_called_with(passwd=become_pass)
     else:
         assert conn._terminal.on_become.called is False
@@ -145,12 +130,7 @@ def test_network_cli__connect(
 @pytest.mark.parametrize(
     "command", ["command", json.dumps({"command": "command"})]
 )
-def test_network_cli_exec_command(ssh_type, ssh_implementation, command):
-    pc = PlayContext()
-    pc.network_os = "ios"
-    conn = connection_loader.get(
-        "ansible.netcommon.network_cli", pc, "/dev/null"
-    )
+def test_network_cli_exec_command(conn, ssh_type, ssh_implementation, command):
     conn._ssh_type = ssh_type
 
     mock_send = MagicMock(return_value=b"command response")
@@ -164,9 +144,6 @@ def test_network_cli_exec_command(ssh_type, ssh_implementation, command):
     assert out == b"command response"
 
 
-@patch(
-    "ansible_collections.ansible.netcommon.plugins.connection.network_cli.Connection._get_terminal_std_re"
-)
 @pytest.mark.parametrize(
     "response",
     [
@@ -177,24 +154,18 @@ def test_network_cli_exec_command(ssh_type, ssh_implementation, command):
         ),
     ],
 )
-def test_network_cli_send(mocked_terminal_re, response):
-    pc = PlayContext()
-    pc.network_os = "ios"
-    pc.remote_addr = "localhost"
-    conn = connection_loader.get(
-        "ansible.netcommon.network_cli", pc, "/dev/null"
+def test_network_cli_send(conn, response):
+    conn.set_options(
+        direct={
+            "terminal_stderr_re": [{"pattern": "^ERROR"}],
+            "terminal_stdout_re": [{"pattern": "device#"}],
+        }
     )
-    conn._connected = True
-
-    mock__terminal = MagicMock()
-    mocked_terminal_re.side_effect = [
-        [re.compile(b"^ERROR")],
-        [re.compile(b"device#")],
-    ]
-    conn._terminal = mock__terminal
-
     mock__shell = MagicMock()
+
+    conn._terminal = MagicMock()
     conn._ssh_shell = mock__shell
+    conn._connected = True
 
     mock__shell.recv.side_effect = [response, None]
     conn.send(b"command")
@@ -204,12 +175,7 @@ def test_network_cli_send(mocked_terminal_re, response):
 
 
 @pytest.mark.parametrize("ssh_type,ssh_implementation", SSH_TYPES)
-def test_network_cli_close(ssh_type, ssh_implementation):
-    pc = PlayContext()
-    pc.network_os = "ios"
-    conn = connection_loader.get(
-        "ansible.netcommon.network_cli", pc, "/dev/null"
-    )
+def test_network_cli_close(conn, ssh_type, ssh_implementation):
     conn._ssh_type = ssh_type
 
     terminal = MagicMock(supports_multiplexing=False)
