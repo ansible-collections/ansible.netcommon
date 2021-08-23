@@ -76,7 +76,13 @@ def test_look_for_keys(conn, password, private_key_file, ssh_type):
 
 @pytest.mark.parametrize("ssh_type", ["paramiko", "libssh"])
 def test_options_pass_through(conn, ssh_type):
-    conn.set_options(direct={"ssh_type": ssh_type, "host_key_checking": False})
+    conn.set_options(
+        direct={
+            "ssh_type": ssh_type,
+            "host_key_checking": False,
+            "proxy_command": "do a proxy",
+        }
+    )
     # Options not found in underlying connection plugin are not set
     assert conn.get_option("ssh_type") == ssh_type
     with pytest.raises(KeyError):
@@ -85,6 +91,10 @@ def test_options_pass_through(conn, ssh_type):
     # At some point these options should be able to be dropped from network_cli
     assert conn.get_option("host_key_checking") is False
     assert conn.ssh_type_conn.get_option("host_key_checking") is False
+    # Options not found in network_cli are not saved there
+    with pytest.raises(KeyError):
+        conn.get_option("proxy_command")
+    assert conn.ssh_type_conn.get_option("proxy_command") == "do a proxy"
 
 
 @pytest.mark.parametrize(
