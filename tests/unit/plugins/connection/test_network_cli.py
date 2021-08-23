@@ -24,7 +24,6 @@ __metaclass__ = type
 import json
 
 from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
-    patch,
     MagicMock,
 )
 from ansible.errors import AnsibleConnectionFailure
@@ -32,15 +31,6 @@ from ansible.module_utils._text import to_text
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
 import pytest
-
-
-SSH_TYPES = [
-    ("paramiko", "ansible.plugins.connection.paramiko_ssh.Connection"),
-    (
-        "libssh",
-        "ansible_collections.ansible.netcommon.plugins.connection.libssh.Connection",
-    ),
-]
 
 
 @pytest.fixture(name="conn")
@@ -97,28 +87,22 @@ def test_options_pass_through(conn, ssh_type):
     assert conn.ssh_type_conn.get_option("host_key_checking") is False
 
 
-@pytest.mark.parametrize("ssh_type,ssh_implementation", SSH_TYPES)
 @pytest.mark.parametrize(
     "become_method,become_pass", [("enable", "password"), (None, None)]
 )
-def test_network_cli__connect(
-    conn, ssh_type, ssh_implementation, become_method, become_pass
-):
+def test_network_cli__connect(conn, become_method, become_pass):
     conn.ssh = MagicMock()
     conn.receive = MagicMock()
     conn._terminal = MagicMock()
+    conn._ssh_type_conn = MagicMock()
 
     if become_method:
         conn._play_context.become = True
         conn._play_context.become_method = become_method
         conn._play_context.become_pass = become_pass
 
-    conn.set_options(direct={"ssh_type": ssh_type})
-
-    with patch("%s._connect" % ssh_implementation) as mocked_super:
-        conn._connect()
-        assert mocked_super.called is True
-
+    conn._connect()
+    assert conn._ssh_type_conn._connect.called is True
     assert conn._terminal.on_open_shell.called is True
     if become_method:
         conn._terminal.on_become.assert_called_with(passwd=become_pass)
@@ -126,19 +110,16 @@ def test_network_cli__connect(
         assert conn._terminal.on_become.called is False
 
 
-@pytest.mark.parametrize("ssh_type,ssh_implementation", SSH_TYPES)
 @pytest.mark.parametrize(
     "command", ["command", json.dumps({"command": "command"})]
 )
-def test_network_cli_exec_command(conn, ssh_type, ssh_implementation, command):
-    conn._ssh_type = ssh_type
-
+def test_network_cli_exec_command(conn, command):
     mock_send = MagicMock(return_value=b"command response")
     conn.send = mock_send
     conn._ssh_shell = MagicMock()
+    conn._ssh_type_conn = MagicMock()
 
-    with patch("%s._connect" % ssh_implementation):
-        out = conn.exec_command(command)
+    out = conn.exec_command(command)
 
     mock_send.assert_called_with(command=b"command")
     assert out == b"command response"
@@ -174,19 +155,15 @@ def test_network_cli_send(conn, response):
     assert to_text(conn._command_response) == "command response"
 
 
-@pytest.mark.parametrize("ssh_type,ssh_implementation", SSH_TYPES)
-def test_network_cli_close(conn, ssh_type, ssh_implementation):
-    conn._ssh_type = ssh_type
-
-    terminal = MagicMock(supports_multiplexing=False)
-    conn._terminal = terminal
+def test_network_cli_close(conn):
+    conn._terminal = MagicMock()
     conn._ssh_shell = MagicMock()
     conn._ssh_type_conn = MagicMock()
     conn._connected = True
-    with patch("%s.close" % ssh_implementation):
-        conn.close()
+
+    conn.close()
 
     assert conn._connected is False
-    assert terminal.on_close_shell.called is True
+    assert conn._terminal.on_close_shell.called is True
     assert conn._ssh_shell is None
     assert conn._ssh_type_conn is None
