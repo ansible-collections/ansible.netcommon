@@ -44,6 +44,16 @@ SSH_TYPES = [
 ]
 
 
+@pytest.fixture(name="conn")
+def plugin_fixture():
+    pc = PlayContext()
+    pc.network_os = "ios"
+    conn = connection_loader.get(
+        "ansible.netcommon.network_cli", pc, "/dev/null"
+    )
+    return conn
+
+
 @pytest.mark.parametrize("network_os", [None, "invalid"])
 def test_network_cli_invalid_os(network_os):
     pc = PlayContext()
@@ -51,6 +61,41 @@ def test_network_cli_invalid_os(network_os):
 
     with pytest.raises(AnsibleConnectionFailure):
         connection_loader.get("ansible.netcommon.network_cli", pc, "/dev/null")
+
+
+@pytest.mark.parametrize("password", ["password", None])
+@pytest.mark.parametrize("private_key_file", ["/path/to/key/file", None])
+@pytest.mark.parametrize("ssh_type", ["paramiko", "libssh"])
+def test_look_for_keys(conn, password, private_key_file, ssh_type):
+    conn.set_options(
+        direct={
+            "ssh_type": ssh_type,
+            "password": password,
+            "private_key_file": private_key_file,
+        }
+    )
+
+    # We automagically set look_for_keys based on the state of password and
+    # private_key_file. Make sure that setting is preserved
+    if private_key_file:
+        assert conn.ssh_type_conn.get_option("look_for_keys") is True
+    elif password:
+        assert conn.ssh_type_conn.get_option("look_for_keys") is False
+    else:
+        assert conn.ssh_type_conn.get_option("look_for_keys") is True
+
+
+@pytest.mark.parametrize("ssh_type", ["paramiko", "libssh"])
+def test_options_pass_through(conn, ssh_type):
+    conn.set_options(direct={"ssh_type": ssh_type, "host_key_checking": False})
+    # Options not found in underlying connection plugin are not set
+    assert conn.get_option("ssh_type") == ssh_type
+    with pytest.raises(KeyError):
+        conn.ssh_type_conn.get_option("ssh_type")
+    # Options which are shared do pass through
+    # At some point these options should be able to be dropped from network_cli
+    assert conn.get_option("host_key_checking") is False
+    assert conn.ssh_type_conn.get_option("host_key_checking") is False
 
 
 @patch(
