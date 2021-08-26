@@ -494,15 +494,17 @@ class Connection(NetworkConnectionBase):
                 and not self.get_option("private_key_file")
             )
             if not look_for_keys:
-                self.queue_message(
-                    "warning",
-                    "Option look_for_keys has been implicitly set to {0} because "
-                    "it was not set explicitly. This is retained to maintain "
-                    "backwards compatibility with the old behavior. This behavior "
-                    "will be removed in some release after 2024-01-01".format(
-                        look_for_keys
-                    ),
-                )
+                # This actually can't be overridden yet without changes in ansible-core
+                # TODO: Uncomment when appropriate
+                # self.queue_message(
+                #     "warning",
+                #     "Option look_for_keys has been implicitly set to {0} because "
+                #     "it was not set explicitly. This is retained to maintain "
+                #     "backwards compatibility with the old behavior. This behavior "
+                #     "will be removed in some release after 2024-01-01".format(
+                #         look_for_keys
+                #     ),
+                # )
                 self.ssh_type_conn.set_option("look_for_keys", look_for_keys)
 
     def update_play_context(self, pc_data):
