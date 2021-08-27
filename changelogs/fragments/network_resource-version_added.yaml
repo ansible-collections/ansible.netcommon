@@ -1,0 +1,3 @@
+---
+trivial:
+  - network_resource - Update version_added to reflect the actual version the module was added in
