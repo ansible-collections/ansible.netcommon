@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - Add network_resource plugin to manage and provide single entry point
+    for all resource modules for higher oder roles.
