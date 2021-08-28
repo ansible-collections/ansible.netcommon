@@ -1,3 +1,0 @@
----
-trivial:
-  - Undo warning on look_for_keys for now because users can't do anything about it yet.
