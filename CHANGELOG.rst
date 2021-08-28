@@ -5,6 +5,29 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v2.4.0
+======
+
+Minor Changes
+-------------
+
+- Add network_resource plugin to manage and provide single entry point for all resource modules for higher oder roles.
+
+Deprecated Features
+-------------------
+
+- network_cli - The paramiko_ssh setting ``look_for_keys`` was set automatically based on the values of the ``password`` and ``private_key_file`` options passed to network_cli. This option can now be set explicitly, and the automatic setting of ``look_for_keys`` will be removed after 2024-01-01  (https://github.com/ansible-collections/ansible.netcommon/pull/271).
+
+Bugfixes
+--------
+
+- network_cli - Add ability to set options inherited from paramiko/libssh in ansible >= 2.11 (https://github.com/ansible-collections/ansible.netcommon/pull/271).
+
+New Modules
+-----------
+
+- network_resource - Manage resource modules
+
 v2.3.0
 ======
 
