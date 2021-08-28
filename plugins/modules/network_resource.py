@@ -53,7 +53,7 @@ options:
         - The state the configuration should be left in.
         - For supported values refer the individual resource module
           platform documentation.
-version_added: 2.2.0
+version_added: 2.4.0
 notes:
 - Refer the individual module documentation for the valid inputs of I(state)
   and I(config) modules.
