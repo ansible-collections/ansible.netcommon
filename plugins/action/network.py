@@ -112,7 +112,7 @@ class ActionModule(_ActionModule):
             non_config_regexes = self._connection.cliconf.get_option(
                 "non_config_lines", task_vars
             )
-        except KeyError:
+        except (AttributeError, KeyError):
             non_config_regexes = []
         try:
             content = self._sanitize_contents(
