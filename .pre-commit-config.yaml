@@ -15,6 +15,6 @@ repos:
       - id: black
         args: [-l, "79"]
   - repo: https://github.com/ansible-network/collection_prep
-    rev: 0.9.2
+    rev: 0.9.3
     hooks:
       - id: update-docs
