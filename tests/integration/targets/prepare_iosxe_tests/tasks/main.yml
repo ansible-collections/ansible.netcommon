@@ -1,7 +1,0 @@
----
-- name: Ensure restconf
-  connection: ansible.netcommon.network_cli
-  ansible.netcommon.cli_config:
-    config: restconf
-  vars:
-    ansible_network_os: cisco.ios.ios
