@@ -1,0 +1,3 @@
+---
+minor_changes:
+- Make ansible_network_os as optional param for httpapi connection plugin.
