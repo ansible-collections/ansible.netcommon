@@ -22,18 +22,17 @@ __metaclass__ = type
 
 import os
 import time
-import re
 
 from ansible.errors import AnsibleError
-from ansible.module_utils._text import to_text, to_bytes
+from ansible.module_utils._text import to_text
 from ansible.module_utils.six.moves.urllib.parse import urlsplit
 from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
+from ansible.utils.hashing import checksum, checksum_s
 from ansible.module_utils.six import PY3
 
 display = Display()
 
-PRIVATE_KEYS_RE = re.compile("__.+__")
 DEXEC_PREFIX = "ANSIBLE_NETWORK_IMPORT_MODULES:"
 
 
@@ -109,7 +108,7 @@ class ActionModule(_ActionModule):
         filename = None
         backup_path = None
         try:
-            content = result["__backup__"]
+            content = result.pop("__backup__")
         except KeyError:
             raise AnsibleError("Failed while reading configuration backup")
 
@@ -118,76 +117,44 @@ class ActionModule(_ActionModule):
             filename = backup_options.get("filename")
             backup_path = backup_options.get("dir_path")
 
+        tstamp = time.strftime(
+            "%Y-%m-%d@%H:%M:%S", time.localtime(time.time())
+        )
         if not backup_path:
             cwd = self._get_working_path()
             backup_path = os.path.join(cwd, "backup")
         if not filename:
-            tstamp = time.strftime(
-                "%Y-%m-%d@%H:%M:%S", time.localtime(time.time())
-            )
             filename = "%s_config.%s" % (
                 task_vars["inventory_hostname"],
                 tstamp,
             )
 
         dest = os.path.join(backup_path, filename)
-        backup_path = os.path.expanduser(
-            os.path.expandvars(
-                to_bytes(backup_path, errors="surrogate_or_strict")
-            )
-        )
-
         if not os.path.exists(backup_path):
             os.makedirs(backup_path)
 
-        new_task = self._task.copy()
-        for item in self._task.args:
-            if not item.startswith("_"):
-                new_task.args.pop(item, None)
-
-        new_task.args.update(dict(content=content, dest=dest))
-        copy_action = self._shared_loader_obj.action_loader.get(
-            "copy",
-            task=new_task,
-            connection=self._connection,
-            play_context=self._play_context,
-            loader=self._loader,
-            templar=self._templar,
-            shared_loader_obj=self._shared_loader_obj,
-        )
-        copy_result = copy_action.run(task_vars=task_vars)
-        if copy_result.get("failed"):
-            result["failed"] = copy_result["failed"]
-            result["msg"] = copy_result.get("msg")
-            return
+        changed = False
+        # Do not overwrite the destination if the contents match.
+        if not os.path.exists(dest) or checksum(dest) != checksum_s(content):
+            try:
+                with open(dest, "w") as output_file:
+                    output_file.write(content)
+            except Exception as exc:
+                result["failed"] = True
+                result["msg"] = (
+                    "Could not write to destination file %s: %s"
+                    % (dest, to_text(exc))
+                )
+                return
+            changed = True
 
         result["backup_path"] = dest
-        if copy_result.get("changed", False):
-            result["changed"] = copy_result["changed"]
+        result["changed"] = changed
 
-        if backup_options and backup_options.get("filename"):
-            result["date"] = time.strftime(
-                "%Y-%m-%d",
-                time.gmtime(os.stat(result["backup_path"]).st_ctime),
-            )
-            result["time"] = time.strftime(
-                "%H:%M:%S",
-                time.gmtime(os.stat(result["backup_path"]).st_ctime),
-            )
-
-        else:
-            result["date"] = tstamp.split("@")[0]
-            result["time"] = tstamp.split("@")[1]
-            result["shortname"] = result["backup_path"][::-1].split(".", 1)[1][
-                ::-1
-            ]
-            result["filename"] = result["backup_path"].split("/")[-1]
-
-        # strip out any keys that have two leading and two trailing
-        # underscore characters
-        for key in list(result.keys()):
-            if PRIVATE_KEYS_RE.match(key):
-                del result[key]
+        result["date"], result["time"] = tstamp.split("@")
+        if not (backup_options and backup_options.get("filename")):
+            result["filename"] = os.path.basename(result["backup_path"])
+            result["shortname"] = os.path.splitext(result["backup_path"])[0]
 
     def _get_working_path(self):
         cwd = self._loader.get_basedir()

@@ -117,9 +117,12 @@ class TestCli_Parse(unittest.TestCase):
             **kwargs
         )
 
-        self.assertEqual(
-            "one of the following is required: command, text", result["errors"]
-        )
+        # NOTE: Ansible 2.11+ returns result["errors"] as a list
+        error_msg = "one of the following is required: command, text"
+        if isinstance(result["errors"], list):
+            self.assertIn(error_msg, result["errors"])
+        else:
+            self.assertEqual(error_msg, result["errors"])
 
     def test_fn_check_argspec_fail_no_parser_name(self):
         """ Confirm failed argspec no parser name
@@ -131,10 +134,12 @@ class TestCli_Parse(unittest.TestCase):
             schema_conditionals=ARGSPEC_CONDITIONALS,
             **kwargs
         )
-        self.assertEqual(
-            "missing required arguments: name found in parser",
-            result["errors"],
-        )
+        # NOTE: Ansible 2.11+ returns result["errors"] as a list
+        error_msg = "missing required arguments: name found in parser"
+        if isinstance(result["errors"], list):
+            self.assertIn(error_msg, result["errors"])
+        else:
+            self.assertEqual(error_msg, result["errors"])
 
     def test_fn_extended_check_argspec_parser_name_not_coll(self):
         """ Confirm failed argpsec parser not collection format
