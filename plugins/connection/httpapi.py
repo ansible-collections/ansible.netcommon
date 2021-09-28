@@ -145,9 +145,6 @@ options:
   platform_type:
     description:
     - Set type of platform.
-    ini:
-    - section: persistent_connetion
-      key: platform_type
     env:
     - name: ANSIBLE_PLATFORM_TYPE
     vars:
