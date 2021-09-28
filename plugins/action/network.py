@@ -21,6 +21,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import os
+import re
 import time
 
 from ansible.errors import AnsibleError
@@ -108,7 +109,15 @@ class ActionModule(_ActionModule):
         filename = None
         backup_path = None
         try:
-            content = result.pop("__backup__")
+            non_config_regexes = self._connection.cliconf.get_option(
+                "non_config_lines", task_vars
+            )
+        except (AttributeError, KeyError):
+            non_config_regexes = []
+        try:
+            content = self._sanitize_contents(
+                contents=result.pop("__backup__"), filters=non_config_regexes
+            )
         except KeyError:
             raise AnsibleError("Failed while reading configuration backup")
 
@@ -378,3 +387,11 @@ class ActionModule(_ActionModule):
             data["stderr_lines"] = txt.splitlines()
 
         return data
+
+    def _sanitize_contents(self, contents, filters):
+        """ remove lines from contents that match
+        regexes specified in the `filters` list
+        """
+        for x in filters:
+            contents = re.sub(x, "", contents)
+        return contents.strip()
