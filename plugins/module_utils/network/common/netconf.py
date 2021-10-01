@@ -41,7 +41,7 @@ except (ImportError, AttributeError):
     HAS_NCCLIENT = False
 
 try:
-    from lxml.etree import Element, fromstring, XMLSyntaxError
+    from lxml.etree import Element, fromstring, XMLSyntaxError, XMLParser
 except ImportError:
     from xml.etree.ElementTree import Element, fromstring
 
@@ -73,6 +73,7 @@ class NetconfConnection(Connection):
         """
         self.check_rc = kwargs.pop("check_rc", True)
         self.ignore_warning = kwargs.pop("ignore_warning", True)
+        self.huge_tree = kwargs.pop("huge_tree", False)
 
         response = self._exec_jsonrpc(name, *args, **kwargs)
         if "error" in response:
@@ -81,9 +82,16 @@ class NetconfConnection(Connection):
                 to_bytes(rpc_error, errors="surrogate_then_replace")
             )
 
-        return fromstring(
-            to_bytes(response["result"], errors="surrogate_then_replace")
-        )
+        if self.huge_tree:
+            _parser = XMLParser(encoding="utf-8", recover=True, huge_tree=True)
+            return fromstring(
+                to_bytes(response["result"], errors="surrogate_then_replace"),
+                _parser,
+            )
+        else:
+            return fromstring(
+                to_bytes(response["result"], errors="surrogate_then_replace")
+            )
 
     def parse_rpc_error(self, rpc_error):
         if self.check_rc:
