@@ -142,6 +142,13 @@ options:
     - name: ANSIBLE_BECOME_METHOD
     vars:
     - name: ansible_become_method
+  platform_type:
+    description:
+    - Set type of platform.
+    env:
+    - name: ANSIBLE_PLATFORM_TYPE
+    vars:
+    - name: ansible_platform_type
 """
 
 from io import BytesIO
@@ -169,10 +176,14 @@ class Connection(NetworkConnectionBase):
         )
 
         self._auth = None
-
         if self._network_os:
+            self.load_platform_plugins(self._network_os)
 
-            self.httpapi = httpapi_loader.get(self._network_os, self)
+    def load_platform_plugins(self, platform_type=None):
+        platform_type = platform_type or self.get_option("platform_type")
+
+        if platform_type:
+            self.httpapi = httpapi_loader.get(platform_type, self)
             if self.httpapi:
                 self._sub_plugin = {
                     "type": "httpapi",
@@ -181,25 +192,25 @@ class Connection(NetworkConnectionBase):
                 }
                 self.queue_message(
                     "vvvv",
-                    "loaded API plugin %s from path %s for network_os %s"
+                    "loaded API plugin %s from path %s for platform type %s"
                     % (
                         self.httpapi._load_name,
                         self.httpapi._original_path,
-                        self._network_os,
+                        platform_type,
                     ),
                 )
             else:
                 raise AnsibleConnectionFailure(
-                    "unable to load API plugin for network_os %s"
-                    % self._network_os
+                    "unable to load API plugin for platform type %s"
+                    % platform_type
                 )
 
         else:
             raise AnsibleConnectionFailure(
-                "Unable to automatically determine host network os. Please "
-                "manually configure ansible_network_os value for this host"
+                "Unable to automatically determine host platform type. Please "
+                "manually configure platform_type value for this host"
             )
-        self.queue_message("log", "network_os is set to %s" % self._network_os)
+        self.queue_message("log", "platform_type is set to %s" % platform_type)
 
     @property
     def _url(self):
