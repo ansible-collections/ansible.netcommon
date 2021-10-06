@@ -83,7 +83,12 @@ class NetconfConnection(Connection):
             )
 
         if self.huge_tree:
-            _parser = XMLParser(encoding="utf-8", recover=True, huge_tree=True)
+            try:
+                _parser = XMLParser(
+                    encoding="utf-8", recover=True, huge_tree=True
+                )
+            except TypeError as e:
+                raise RuntimeError("XML huge_tree requires lxml.") from e
             return fromstring(
                 to_bytes(response["result"], errors="surrogate_then_replace"),
                 _parser,
