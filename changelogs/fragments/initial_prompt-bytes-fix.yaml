@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - network_cli - fix issue when multiple terminal_initial_(prompt|answer) values are given (https://github.com/ansible-collections/ansible.netcommon/issues/331).
