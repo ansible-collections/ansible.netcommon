@@ -292,18 +292,20 @@ from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    to_list,
-)
 from ansible.module_utils._text import to_bytes, to_text
 from ansible.playbook.play_context import PlayContext
-from ansible.plugins.connection import NetworkConnectionBase
 from ansible.plugins.loader import (
     cliconf_loader,
     terminal_loader,
     connection_loader,
 )
 from ansible.plugins.loader import cache_loader
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    to_list,
+)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
+    NetworkConnectionBase,
+)
 
 try:
     from scp import SCPClient

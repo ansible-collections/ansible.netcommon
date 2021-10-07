@@ -171,7 +171,10 @@ from ansible.module_utils.parsing.convert_bool import (
 )
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import netconf_loader
-from ansible.plugins.connection import NetworkConnectionBase, ensure_connect
+from ansible.plugins.connection import ensure_connect
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
+    NetworkConnectionBase,
+)
 from distutils.version import LooseVersion
 
 try:
