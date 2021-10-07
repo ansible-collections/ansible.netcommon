@@ -42,7 +42,9 @@ options:
 import json
 
 from ansible.module_utils._text import to_text
-from ansible.plugins.netconf import NetconfBase
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.netconf_base import (
+    NetconfBase,
+)
 
 
 class Netconf(NetconfBase):
