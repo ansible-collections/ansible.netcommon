@@ -398,7 +398,7 @@ class CliconfBase(AnsiblePlugin):
                     "Required library scp is not installed.  Please install it using `pip install scp`"
                 )
             with SCPClient(ssh.get_transport(), socket_timeout=timeout) as scp:
-                out = scp.put(source, destination)
+                scp.put(source, destination)
         elif proto == "sftp":
             with ssh.open_sftp() as sftp:
                 sftp.put(source, destination)

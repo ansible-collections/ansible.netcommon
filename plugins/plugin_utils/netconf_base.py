@@ -42,9 +42,9 @@ except Exception as err:
     NCCLIENT_IMP_ERR = err
 
 try:
-    from lxml.etree import Element, SubElement, tostring, fromstring
+    from lxml.etree import fromstring
 except ImportError:
-    from xml.etree.ElementTree import Element, SubElement, tostring, fromstring
+    from xml.etree.ElementTree import fromstring
 
 
 def ensure_ncclient(func):
