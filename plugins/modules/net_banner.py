@@ -10,7 +10,7 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_banner
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
-short_description: (deprecated, removed after 2022-06-01) Manage multiline banners
+short_description: (deprecated, removed after 2022-07-01) Manage multiline banners
   on network devices
 description:
 - This will configure both login and motd banners on network devices. It allows playbooks
@@ -19,7 +19,7 @@ version_added: 1.0.0
 deprecated:
   alternative: Use platform-specific "[netos]_banner" module
   why: Updated modules released with more functionality
-  removed_at_date: '2022-06-01'
+  removed_at_date: '2022-07-01'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:

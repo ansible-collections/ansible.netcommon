@@ -12,7 +12,7 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_logging
 author: Ganesh Nalawade (@ganeshrn)
-short_description: (deprecated, removed after 2022-06-01) Manage logging on network
+short_description: (deprecated, removed after 2022-07-01) Manage logging on network
   devices
 description:
 - This module provides declarative management of logging on network devices.
@@ -20,7 +20,7 @@ version_added: 1.0.0
 deprecated:
   alternative: Use platform-specific "[netos]_logging" module
   why: Updated modules released with more functionality
-  removed_at_date: '2022-06-01'
+  removed_at_date: '2022-07-01'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:

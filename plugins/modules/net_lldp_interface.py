@@ -12,7 +12,7 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_lldp_interface
 author: Ganesh Nalawade (@ganeshrn)
-short_description: (deprecated, removed after 2022-06-01) Manage LLDP interfaces configuration
+short_description: (deprecated, removed after 2022-07-01) Manage LLDP interfaces configuration
   on network devices
 description:
 - This module provides declarative management of LLDP interfaces configuration on
@@ -21,7 +21,7 @@ version_added: 1.0.0
 deprecated:
   alternative: Use platform-specific "[netos]_lldp_interfaces" module
   why: Updated modules released with more functionality
-  removed_at_date: '2022-06-01'
+  removed_at_date: '2022-07-01'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:

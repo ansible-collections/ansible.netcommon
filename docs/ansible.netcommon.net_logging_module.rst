@@ -5,7 +5,7 @@
 ansible.netcommon.net_logging
 *****************************
 
-**(deprecated, removed after 2022-06-01) Manage logging on network devices**
+**(deprecated, removed after 2022-07-01) Manage logging on network devices**
 
 
 Version added: 1.0.0
@@ -16,7 +16,7 @@ Version added: 1.0.0
 
 DEPRECATED
 ----------
-:Removed in collection release after 2022-06-01
+:Removed in collection release after 2022-07-01
 :Why: Updated modules released with more functionality
 :Alternative: Use platform-specific "[netos]_logging" module
 
@@ -250,7 +250,7 @@ Status
 ------
 
 
-- This module will be removed in a release after 2022-06-01. *[deprecated]*
+- This module will be removed in a release after 2022-07-01. *[deprecated]*
 - For more information see `DEPRECATED`_.
 
 

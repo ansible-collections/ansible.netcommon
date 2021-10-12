@@ -12,7 +12,7 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_system
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
-short_description: (deprecated, removed after 2022-06-01) Manage the system attributes
+short_description: (deprecated, removed after 2022-07-01) Manage the system attributes
   on network devices
 description:
 - This module provides declarative management of node system attributes on network
@@ -22,7 +22,7 @@ version_added: 1.0.0
 deprecated:
   alternative: Use platform-specific "[netos]_system" module
   why: Updated modules released with more functionality
-  removed_at_date: '2022-06-01'
+  removed_at_date: '2022-07-01'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:

@@ -12,7 +12,7 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_linkagg
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
-short_description: (deprecated, removed after 2022-06-01) Manage link aggregation
+short_description: (deprecated, removed after 2022-07-01) Manage link aggregation
   groups on network devices
 description:
 - This module provides declarative management of link aggregation groups on network
@@ -21,7 +21,7 @@ version_added: 1.0.0
 deprecated:
   alternative: Use platform-specific "[netos]_lag_interfaces" module
   why: Updated modules released with more functionality
-  removed_at_date: '2022-06-01'
+  removed_at_date: '2022-07-01'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:

@@ -12,7 +12,7 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_static_route
 author: Ricardo Carrillo Cruz (@rcarrillocruz)
-short_description: (deprecated, removed after 2022-06-01) Manage static IP routes
+short_description: (deprecated, removed after 2022-07-01) Manage static IP routes
   on network appliances (routers, switches et. al.)
 description:
 - This module provides declarative management of static IP routes on network appliances
@@ -21,7 +21,7 @@ version_added: 1.0.0
 deprecated:
   alternative: Use platform-specific "[netos]_static_route" module
   why: Updated modules released with more functionality
-  removed_at_date: '2022-06-01'
+  removed_at_date: '2022-07-01'
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
