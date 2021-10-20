@@ -380,16 +380,6 @@ class Connection(NetworkConnectionBase):
                 raise AnsibleConnectionFailure(
                     "network os %s is not supported" % platform_type
                 )
-            else:
-                self.queue_message(
-                    "vvvv",
-                    "loaded terminal plugin %s from path %s for network_os %s"
-                    % (
-                        self.terminal._load_name,
-                        self.terminal._original_path,
-                        platform_type,
-                    ),
-                )
 
             self.cliconf = cliconf_loader.get(platform_type, self)
             if self.cliconf:
@@ -417,6 +407,7 @@ class Connection(NetworkConnectionBase):
                 "Unable to automatically determine host network os. Please "
                 "manually configure platform_type value for this host"
             )
+        self._network_os = platform_type
         self.queue_message("log", "platform_type is set to %s" % platform_type)
 
     @property
@@ -633,6 +624,11 @@ class Connection(NetworkConnectionBase):
             self._ssh_shell = ssh.ssh.invoke_shell()
             if self._ssh_type == "paramiko":
                 self._ssh_shell.settimeout(command_timeout)
+
+            self.queue_message(
+                "vvvv",
+                "loaded terminal plugin for network_os %s" % self._network_os,
+            )
 
             terminal_initial_prompt = (
                 self.get_option("terminal_initial_prompt")
