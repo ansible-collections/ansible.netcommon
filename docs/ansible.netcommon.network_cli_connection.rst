@@ -67,6 +67,26 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>become_errors</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"fail"</div>
+                </td>
+                    <td>
+                                <div>var: ansible_network_become_errors</div>
+                    </td>
+                <td>
+                        <div>This option determines how privilege escalation failures are handled when <em>become</em> is enabled.</div>
+                        <div>When set to <code>ignore</code>, the errors are silently ignored. When set to <code>warn</code>, a warning message is displayed. The default option <code>fail</code>, triggers a failure and halts execution.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>become_method</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
