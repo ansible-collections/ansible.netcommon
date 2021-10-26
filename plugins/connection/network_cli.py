@@ -107,6 +107,7 @@ options:
     vars:
     - name: ansible_network_become_errors
     default: fail
+    choices: ["ignore", "warn", "fail"]
   become_method:
     description:
     - This option allows the become method to be specified in for handling privilege

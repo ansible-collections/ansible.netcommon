@@ -74,7 +74,11 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"fail"</div>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>ignore</li>
+                                    <li>warn</li>
+                                    <li><div style="color: blue"><b>fail</b>&nbsp;&larr;</div></li>
+                        </ul>
                 </td>
                     <td>
                                 <div>var: ansible_network_become_errors</div>
