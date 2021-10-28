@@ -96,6 +96,18 @@ options:
     - name: ANSIBLE_BECOME
     vars:
     - name: ansible_become
+  become_errors:
+    type: str
+    description:
+    - This option determines how privilege escalation failures are handled when
+      I(become) is enabled.
+    - When set to C(ignore), the errors are silently ignored.
+      When set to C(warn), a warning message is displayed.
+      The default option C(fail), triggers a failure and halts execution.
+    vars:
+    - name: ansible_network_become_errors
+    default: fail
+    choices: ["ignore", "warn", "fail"]
   become_method:
     description:
     - This option allows the become method to be specified in for handling privilege
@@ -521,7 +533,7 @@ class Connection(NetworkConnectionBase):
         if self._play_context.become ^ play_context.become:
             if play_context.become is True:
                 auth_pass = play_context.become_pass
-                self._terminal.on_become(passwd=auth_pass)
+                self._on_become(become_pass=auth_pass)
                 self.queue_message("vvvv", "authorizing connection")
             else:
                 self._terminal.on_unbecome()
@@ -643,7 +655,7 @@ class Connection(NetworkConnectionBase):
             if self._play_context.become:
                 self.queue_message("vvvv", "firing event: on_become")
                 auth_pass = self._play_context.become_pass
-                self._terminal.on_become(passwd=auth_pass)
+                self._on_become(become_pass=auth_pass)
 
             self.queue_message("vvvv", "firing event: on_open_shell()")
             self._terminal.on_open_shell()
@@ -653,6 +665,24 @@ class Connection(NetworkConnectionBase):
             )
 
         return self
+
+    def _on_become(self, become_pass=None):
+        """
+        Wraps terminal.on_become() to handle
+        privilege escalation failures based on user preference
+        """
+        on_become_error = self.get_option("become_errors")
+        try:
+            self._terminal.on_become(passwd=become_pass)
+        except AnsibleConnectionFailure:
+            if on_become_error == "ignore":
+                pass
+            elif on_become_error == "warn":
+                self.queue_message(
+                    "warning", "on_become: privilege escalation failed"
+                )
+            else:
+                raise
 
     def close(self):
         """
