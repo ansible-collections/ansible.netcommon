@@ -648,8 +648,8 @@ class Connection(NetworkConnectionBase):
             )
 
             self.receive(
-                prompts=to_bytes(terminal_initial_prompt),
-                answer=to_bytes(terminal_initial_answer),
+                prompts=terminal_initial_prompt,
+                answer=terminal_initial_answer,
                 newline=newline,
                 check_all=check_all,
             )
@@ -1083,13 +1083,12 @@ class Connection(NetworkConnectionBase):
                 # if prompt_retry_check is enabled to check if same prompt is
                 # repeated don't send answer again.
                 if not prompt_retry_check:
-                    prompt_answer = (
+                    prompt_answer = to_bytes(
                         answer[index] if len(answer) > index else answer[0]
                     )
-                    self._ssh_shell.sendall(b"%s" % prompt_answer)
                     if newline:
-                        self._ssh_shell.sendall(b"\r")
                         prompt_answer += b"\r"
+                    self._ssh_shell.sendall(prompt_answer)
                     self._log_messages(
                         "matched command prompt answer: %s" % prompt_answer
                     )
