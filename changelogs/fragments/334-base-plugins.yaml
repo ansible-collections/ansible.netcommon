@@ -1,0 +1,6 @@
+---
+minor_changes:
+  - Copied the cliconf, httpapi, netconf, and terminal base plugins and NetworkConnectionBase into netcommon.
+    These base plugins may now be imported from netcommmon instead of ansible if a collection depends on
+    netcommon versions newer than this version, allowing features and bugfixes to flow to those collections
+    without upgrading ansible.

@@ -108,7 +108,9 @@ options:
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils.basic import missing_required_lib
-from ansible.plugins.connection import NetworkConnectionBase
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
+    NetworkConnectionBase,
+)
 
 try:
     from napalm import get_network_driver
