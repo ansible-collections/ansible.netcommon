@@ -1075,9 +1075,8 @@ class Connection(NetworkConnectionBase):
             prompts_regex = [re.compile(to_bytes(r), re.I) for r in prompts]
         except re.error as exc:
             raise ConnectionError(
-                "Failed to compile one or more terminal prompts: {0}. {1}".format(
-                    prompts, to_text(exc)
-                )
+                "Failed to compile one or more terminal prompt regexes: %s.\n"
+                "Prompts provided: %s" % (to_text(exc), prompts)
             )
         for index, regex in enumerate(prompts_regex):
             match = regex.search(resp)
