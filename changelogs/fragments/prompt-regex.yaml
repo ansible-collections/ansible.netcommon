@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Provide clearer error message when a prompt regex fails to compile
