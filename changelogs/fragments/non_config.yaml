@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Support removal of non-config lines from running config while taking backup.
