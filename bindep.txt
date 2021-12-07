@@ -8,8 +8,9 @@ python3-devel [test platform:rpm]
 python3 [test platform:rpm]
 
 # ansible-pylibssh
-gcc [compile platform:centos-8 platform:rhel-8]
-libssh-devel [compile platform:centos-8 platform:rhel-8]
+gcc [compile test platform:rpm]
+libssh-devel [compile test platform:rpm]
+python3-Cython [test platform:fedora-35]
 python38-Cython [compile platform:centos-8 platform:rhel-8]
 
 # ncclient
