@@ -1,3 +1,0 @@
----
-minor_changes:
-  - "`network_cli` - added new option 'become_errors' to determine how privilege escalation failures are handled."

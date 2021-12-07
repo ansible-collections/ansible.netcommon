@@ -8,5 +8,5 @@ yamllint
 # The follow are 3rd party libs for cli_parse
 ntc_templates
 # 21.4 changed the output of an error message we check in tests
-pyats >= 21.4 ; python_version >= '3.6'
-genie >= 21.4 ; python_version >= '3.6'
+pyats >= 21.4 ; python_version >= '3.6' and python_version < '3.10'
+genie >= 21.4 ; python_version >= '3.6' and python_version < '3.10'

@@ -1,3 +1,0 @@
----
-bugfixes:
-  - network_cli - Provide clearer error message when a prompt regex fails to compile

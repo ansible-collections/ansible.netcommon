@@ -5,6 +5,23 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v2.5.0
+======
+
+Minor Changes
+-------------
+
+- Copied the cliconf, httpapi, netconf, and terminal base plugins and NetworkConnectionBase into netcommon. These base plugins may now be imported from netcommmon instead of ansible if a collection depends on netcommon versions newer than this version, allowing features and bugfixes to flow to those collections without upgrading ansible.
+- Make ansible_network_os as optional param for httpapi connection plugin.
+- Support removal of non-config lines from running config while taking backup.
+- `network_cli` - added new option 'become_errors' to determine how privilege escalation failures are handled.
+
+Bugfixes
+--------
+
+- network_cli - Provide clearer error message when a prompt regex fails to compile
+- network_cli - fix issue when multiple terminal_initial_(prompt|answer) values are given (https://github.com/ansible-collections/ansible.netcommon/issues/331).
+
 v2.4.0
 ======
 
