@@ -5,3 +5,17 @@
     parser:
       name: ansible.netcommon.native
     set_fact: myfact
+
+- name: "{{ parser }} Run command which output nothing and parse with native"
+  ansible.utils.cli_parse:
+    command: "touch test_output"
+    parser:
+      name: ansible.netcommon.native
+    ignore_errors: true
+    set_fact: myfact
+  register: result
+
+- assert:
+    that:
+        - result.ansible_facts.myfact == {}
+        - result.changed == false

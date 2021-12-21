@@ -87,7 +87,7 @@ class CliParser(CliParserBase):
 
         template_contents = kwargs["template_contents"]
         parser = CliParserTemplate(
-            lines=self._task_args.get("text").splitlines()
+            lines=self._task_args.get("text", "").splitlines()
         )
         try:
             template_obj = yaml.load(template_contents, SafeLoader)

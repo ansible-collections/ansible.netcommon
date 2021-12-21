@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fix issue in native parser of Cli_parse plugin.
