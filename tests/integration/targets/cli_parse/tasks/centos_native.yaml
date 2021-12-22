@@ -17,5 +17,5 @@
 
 - assert:
     that:
-        - result.ansible_facts.myfact == {}
-        - result.changed == false
+      - result.ansible_facts.myfact == {}
+      - result.changed == false
