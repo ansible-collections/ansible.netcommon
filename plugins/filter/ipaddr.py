@@ -210,7 +210,7 @@ def _last_usable_query(v, vtype):
 def _link_local_query(v, value):
     v_ip = netaddr.IPAddress(str(v.ip))
     if v.version == 4:
-        if ipaddr(str(v_ip), "169.254.0.0/24"):
+        if ipaddr(str(v_ip), "169.254.0.0/16"):
             return value
 
     elif v.version == 6:

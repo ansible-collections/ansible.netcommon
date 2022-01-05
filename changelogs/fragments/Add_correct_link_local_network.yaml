@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - ipaddr - Add valid network for link-local (https://github.com/ansible-collections/ansible.netcommon/issues/350).
