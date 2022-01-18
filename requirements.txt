@@ -3,5 +3,5 @@ jxmlease
 ncclient
 selectors2 ; python_version == '3.5'
 netaddr
-paramiko
+paramiko==2.8.1
 xmltodict
