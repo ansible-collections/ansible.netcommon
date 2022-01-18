@@ -62,6 +62,7 @@ class TerminalBase(TerminalBaseBase):
     terminal_inital_prompt_newline = True
 
     def __init__(self, connection):
+        super(TerminalBase, self).__init__(connection)
         self._connection = connection
 
     def _exec_cli_command(self, cmd, check_rc=True):

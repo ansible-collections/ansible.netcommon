@@ -94,7 +94,7 @@ class CliconfBase(CliconfBaseBase):
     ]
 
     def __init__(self, connection):
-        super(CliconfBase, self).__init__()
+        super(CliconfBase, self).__init__(connection)
         self._connection = connection
         self.history = list()
         self.response_logging = False

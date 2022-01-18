@@ -134,7 +134,7 @@ class NetconfBase(NetconfBaseBase):
     ]
 
     def __init__(self, connection):
-        super(NetconfBase, self).__init__()
+        super(NetconfBase, self).__init__(connection)
         self._connection = connection
 
     @property
