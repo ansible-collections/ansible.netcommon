@@ -26,8 +26,11 @@ from abc import ABCMeta
 
 from ansible.module_utils.six import with_metaclass
 
+# Needed to satisfy PluginLoader's required_base_class
+from ansible.plugins.terminal import TerminalBase as TerminalBaseBase
 
-class TerminalBase(with_metaclass(ABCMeta, object)):
+
+class TerminalBase(TerminalBaseBase):
     """
     A base class for implementing cli connections
 
