@@ -1,0 +1,3 @@
+---
+trivial:
+  - disable update-docs in pre-commit.ci because it can't seem to run it
