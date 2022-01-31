@@ -43,7 +43,7 @@ class FactsBase(object):
             self._gather_network_resources = ["!all"]
 
     def gen_runable(self, subsets, valid_subsets, resource_facts=False):
-        """ Generate the runable subset
+        """Generate the runable subset
 
         :param module: The module instance
         :param subsets: The provided subsets

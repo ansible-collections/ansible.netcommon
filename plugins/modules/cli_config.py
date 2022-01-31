@@ -230,8 +230,7 @@ from ansible.module_utils._text import to_text
 
 
 def validate_args(module, device_operations):
-    """validate param if it is supported on the platform
-    """
+    """validate param if it is supported on the platform"""
     feature_list = [
         "replace",
         "rollback",
@@ -394,8 +393,7 @@ def run(
 
 
 def main():
-    """main entry point for execution
-    """
+    """main entry point for execution"""
     backup_spec = dict(filename=dict(), dir_path=dict(type="path"))
     argument_spec = dict(
         backup=dict(default=False, type="bool"),

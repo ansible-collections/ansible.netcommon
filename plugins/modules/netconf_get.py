@@ -292,8 +292,7 @@ except ImportError:
 
 
 def main():
-    """entry point for module execution
-    """
+    """entry point for module execution"""
     argument_spec = dict(
         source=dict(choices=["running", "candidate", "startup"]),
         filter=dict(type="raw"),

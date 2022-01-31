@@ -58,7 +58,7 @@ class TestCli_Parse(unittest.TestCase):
 
     @staticmethod
     def _load_fixture(filename):
-        """ Load a fixture from the filesystem
+        """Load a fixture from the filesystem
 
         :param filename: The name of the file to load
         :type filename: str
@@ -72,23 +72,20 @@ class TestCli_Parse(unittest.TestCase):
             return fhand.read()
 
     def test_fn_debug(self):
-        """ Confirm debug doesn't fail and return None
-        """
+        """Confirm debug doesn't fail and return None"""
         msg = "some message"
         result = self._plugin._debug(msg)
         self.assertEqual(result, None)
 
     def test_fn_ail_json(self):
-        """ Confirm fail json replaces basic.py in msg
-        """
+        """Confirm fail json replaces basic.py in msg"""
         msg = "text (basic.py)"
         with self.assertRaises(Exception) as error:
             self._plugin._fail_json(msg)
         self.assertEqual("text cli_parse", str(error.exception))
 
     def test_fn_check_argspec_pass(self):
-        """ Confirm a valid argspec passes
-        """
+        """Confirm a valid argspec passes"""
         kwargs = {
             "text": "text",
             "parser": {
@@ -102,8 +99,7 @@ class TestCli_Parse(unittest.TestCase):
         self.assertEqual(valid, True)
 
     def test_fn_check_argspec_fail_no_test_or_command(self):
-        """ Confirm failed argpsec w/o text or command
-        """
+        """Confirm failed argpsec w/o text or command"""
         kwargs = {
             "parser": {
                 "name": "ansible.utils.textfsm",
@@ -125,8 +121,7 @@ class TestCli_Parse(unittest.TestCase):
             self.assertEqual(error_msg, result["errors"])
 
     def test_fn_check_argspec_fail_no_parser_name(self):
-        """ Confirm failed argspec no parser name
-        """
+        """Confirm failed argspec no parser name"""
         kwargs = {"text": "anything", "parser": {"command": "show version"}}
         valid, result, updated_params = check_argspec(
             DOCUMENTATION,
@@ -142,8 +137,7 @@ class TestCli_Parse(unittest.TestCase):
             self.assertEqual(error_msg, result["errors"])
 
     def test_fn_extended_check_argspec_parser_name_not_coll(self):
-        """ Confirm failed argpsec parser not collection format
-        """
+        """Confirm failed argpsec parser not collection format"""
         self._plugin._task.args = {
             "text": "anything",
             "parser": {
@@ -156,7 +150,7 @@ class TestCli_Parse(unittest.TestCase):
         self.assertIn("including collection", self._plugin._result["msg"])
 
     def test_fn_extended_check_argspec_missing_tpath_or_command(self):
-        """ Confirm failed argpsec missing template_path
+        """Confirm failed argpsec missing template_path
         or command when text provided
         """
         self._plugin._task.args = {
@@ -170,8 +164,7 @@ class TestCli_Parse(unittest.TestCase):
         )
 
     def test_fn_load_parser_pass(self):
-        """ Confirm each each of the parsers loads from the filesystem
-        """
+        """Confirm each each of the parsers loads from the filesystem"""
         parser_names = ["native", "ntc_templates", "pyats"]
         for parser_name in parser_names:
             self._plugin._task.args = {
@@ -184,8 +177,7 @@ class TestCli_Parse(unittest.TestCase):
             self.assertTrue(callable(parser.parse))
 
     def test_fn_load_parser_fail(self):
-        """ Confirm missing parser fails gracefully
-        """
+        """Confirm missing parser fails gracefully"""
         self._plugin._task.args = {
             "text": "anything",
             "parser": {"name": "a.b.c"},
@@ -196,7 +188,7 @@ class TestCli_Parse(unittest.TestCase):
         self.assertIn("No module named", self._plugin._result["msg"])
 
     def test_fn_set_parser_command_missing(self):
-        """ Confirm parser/command is set if missing
+        """Confirm parser/command is set if missing
         and command provided
         """
         self._plugin._task.args = {
@@ -209,8 +201,7 @@ class TestCli_Parse(unittest.TestCase):
         )
 
     def test_fn_set_parser_command_present(self):
-        """ Confirm parser/command is not changed if provided
-        """
+        """Confirm parser/command is not changed if provided"""
         self._plugin._task.args = {
             "command": "anything",
             "parser": {"command": "something", "name": "a.b.c"},
@@ -221,15 +212,13 @@ class TestCli_Parse(unittest.TestCase):
         )
 
     def test_fn_set_parser_command_absent(self):
-        """ Confirm parser/command is not added
-        """
+        """Confirm parser/command is not added"""
         self._plugin._task.args = {"parser": {}}
         self._plugin._set_parser_command()
         self.assertNotIn("command", self._plugin._task.args["parser"])
 
     def test_fn_set_text_present(self):
-        """ Check task args text is set to stdout
-        """
+        """Check task args text is set to stdout"""
         expected = "output"
         self._plugin._result["stdout"] = expected
         self._plugin._task.args = {}
@@ -237,16 +226,14 @@ class TestCli_Parse(unittest.TestCase):
         self.assertEqual(self._plugin._task.args["text"], expected)
 
     def test_fn_set_text_absent(self):
-        """ Check task args text is set to stdout
-        """
+        """Check task args text is set to stdout"""
         self._plugin._result["stdout"] = None
         self._plugin._task.args = {}
         self._plugin._set_text()
         self.assertNotIn("text", self._plugin._task.args)
 
     def test_fn_os_from_task_vars(self):
-        """ Confirm os is set based on task vars
-        """
+        """Confirm os is set based on task vars"""
         checks = [
             ("ansible_network_os", "cisco.nxos.nxos", "nxos"),
             ("ansible_network_os", "NXOS", "nxos"),
@@ -259,7 +246,7 @@ class TestCli_Parse(unittest.TestCase):
             self.assertEqual(result, check[2])
 
     def test_fn_update_template_path_not_exist(self):
-        """ Check the creation of the template_path if
+        """Check the creation of the template_path if
         it doesn't exist in the user provided data
         """
         self._plugin._task.args = {
@@ -274,7 +261,7 @@ class TestCli_Parse(unittest.TestCase):
         )
 
     def test_fn_update_template_path_not_exist_os(self):
-        """ Check the creation of the template_path if
+        """Check the creation of the template_path if
         it doesn't exist in the user provided data
         name based on os provided in task
         """
@@ -289,7 +276,7 @@ class TestCli_Parse(unittest.TestCase):
         )
 
     def test_fn_update_template_path_mock_find_needle(self):
-        """ Check the creation of the template_path
+        """Check the creation of the template_path
         mock the find needle fn so the template doesn't
         need to be in the default template folder
         """
@@ -307,8 +294,7 @@ class TestCli_Parse(unittest.TestCase):
         )
 
     def test_fn_get_template_contents_pass(self):
-        """ Check the retrieval of the template contents
-        """
+        """Check the retrieval of the template contents"""
         temp = tempfile.NamedTemporaryFile()
         contents = "abcdef"
         with open(temp.name, "w") as fileh:
@@ -319,8 +305,7 @@ class TestCli_Parse(unittest.TestCase):
         self.assertEqual(result, contents)
 
     def test_fn_get_template_contents_missing(self):
-        """ Check the retrieval of the template contents
-        """
+        """Check the retrieval of the template contents"""
         self._plugin._task.args = {"parser": {"template_path": "non-exist"}}
         with self.assertRaises(Exception) as error:
             self._plugin._get_template_contents()
@@ -329,15 +314,13 @@ class TestCli_Parse(unittest.TestCase):
         )
 
     def test_fn_get_template_contents_not_specified(self):
-        """ Check the none when template_path not specified
-        """
+        """Check the none when template_path not specified"""
         self._plugin._task.args = {"parser": {}}
         result = self._plugin._get_template_contents()
         self.assertIsNone(result)
 
     def test_fn_prune_result_pass(self):
-        """ Test the removal of stdout and stdout_lines from the _result
-        """
+        """Test the removal of stdout and stdout_lines from the _result"""
         self._plugin._result["stdout"] = "abc"
         self._plugin._result["stdout_lines"] = "abc"
         self._plugin._prune_result()
@@ -345,15 +328,13 @@ class TestCli_Parse(unittest.TestCase):
         self.assertNotIn("stdout_lines", self._plugin._result)
 
     def test_fn_prune_result_not_exist(self):
-        """ Test the removal of stdout and stdout_lines from the _result
-        """
+        """Test the removal of stdout and stdout_lines from the _result"""
         self._plugin._prune_result()
         self.assertNotIn("stdout", self._plugin._result)
         self.assertNotIn("stdout_lines", self._plugin._result)
 
     def test_fn_run_command_lx_rc0(self):
-        """ Check run command for non network
-        """
+        """Check run command for non network"""
         response = "abc"
         self._plugin._connection.socket_path = None
         self._plugin._low_level_execute_command = MagicMock()
@@ -368,8 +349,7 @@ class TestCli_Parse(unittest.TestCase):
         self.assertEqual(self._plugin._result["stdout_lines"], response)
 
     def test_fn_run_command_lx_rc1(self):
-        """ Check run command for non network
-        """
+        """Check run command for non network"""
         response = "abc"
         self._plugin._connection.socket_path = None
         self._plugin._low_level_execute_command = MagicMock()
@@ -386,8 +366,7 @@ class TestCli_Parse(unittest.TestCase):
 
     @patch("ansible.module_utils.connection.Connection.__rpc__")
     def test_fn_run_command_network(self, mock_rpc):
-        """ Check run command for network
-        """
+        """Check run command for network"""
         expected = "abc"
         mock_rpc.return_value = expected
         self._plugin._connection.socket_path = (
@@ -399,16 +378,14 @@ class TestCli_Parse(unittest.TestCase):
         self.assertEqual(self._plugin._result["stdout_lines"], [expected])
 
     def test_fn_run_command_not_specified(self):
-        """ Check run command for network
-        """
+        """Check run command for network"""
         self._plugin._task.args = {"command": None}
         result = self._plugin._run_command()
         self.assertIsNone(result)
 
     @patch("ansible.module_utils.connection.Connection.__rpc__")
     def test_fn_run_pass_w_fact(self, mock_rpc):
-        """ Check full module run with valid params
-        """
+        """Check full module run with valid params"""
         mock_out = self._load_fixture("nxos_show_version.txt")
         mock_rpc.return_value = mock_out
         self._plugin._connection.socket_path = (
@@ -436,8 +413,7 @@ class TestCli_Parse(unittest.TestCase):
 
     @patch("ansible.module_utils.connection.Connection.__rpc__")
     def test_fn_run_pass_wo_fact(self, mock_rpc):
-        """ Check full module run with valid params
-        """
+        """Check full module run with valid params"""
         mock_out = self._load_fixture("nxos_show_version.txt")
         mock_rpc.return_value = mock_out
         self._plugin._connection.socket_path = (
@@ -461,8 +437,7 @@ class TestCli_Parse(unittest.TestCase):
         self.assertNotIn("ansible_facts", result)
 
     def test_fn_run_fail_argspec(self):
-        """ Check full module run with invalid params
-        """
+        """Check full module run with invalid params"""
         self._plugin._task.args = {
             "text": "anything",
             "parser": {
@@ -475,8 +450,7 @@ class TestCli_Parse(unittest.TestCase):
         self.assertIn("including collection", self._plugin._result["msg"])
 
     def test_fn_run_fail_command(self):
-        """ Confirm clean fail with rc 1
-        """
+        """Confirm clean fail with rc 1"""
         self._plugin._connection.socket_path = None
         self._plugin._low_level_execute_command = MagicMock()
         self._plugin._low_level_execute_command.return_value = {
@@ -500,8 +474,7 @@ class TestCli_Parse(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_fn_run_fail_missing_parser(self):
-        """Confirm clean fail with missing parser
-        """
+        """Confirm clean fail with missing parser"""
         self._plugin._task.args = {"text": None, "parser": {"name": "a.b.c"}}
         task_vars = {"inventory_hostname": "mockdevice"}
         result = self._plugin.run(task_vars=task_vars)
@@ -510,8 +483,7 @@ class TestCli_Parse(unittest.TestCase):
 
     @patch("ansible.module_utils.connection.Connection.__rpc__")
     def test_fn_run_pass_empty_parser(self, mock_rpc):
-        """ Check full module run with valid params
-        """
+        """Check full module run with valid params"""
 
         mock_out = self._load_fixture("nxos_show_version.txt")
         mock_rpc.return_value = mock_out
@@ -535,7 +507,7 @@ class TestCli_Parse(unittest.TestCase):
 
     @patch("ansible.module_utils.connection.Connection.__rpc__")
     def test_fn_run_pass_missing_parser_constants(self, mock_rpc):
-        """ Check full module run using parser w/o
+        """Check full module run using parser w/o
         DEFAULT_TEMPLATE_EXTENSION or PROVIDE_TEMPLATE_CONTENTS
         defined in the parser
         """
@@ -572,7 +544,7 @@ class TestCli_Parse(unittest.TestCase):
 
     @patch("ansible.module_utils.connection.Connection.__rpc__")
     def test_fn_run_pass_missing_parser_in_parser(self, mock_rpc):
-        """ Check full module run using parser w/o
+        """Check full module run using parser w/o
         a parser function defined in the parser
         defined in the parser
         """
@@ -607,8 +579,7 @@ class TestCli_Parse(unittest.TestCase):
 
     @patch("ansible.module_utils.connection.Connection.__rpc__")
     def test_fn_run_net_device_error(self, mock_rpc):
-        """ Check full module run mock error from network device
-        """
+        """Check full module run mock error from network device"""
         msg = "I was mocked"
         mock_rpc.side_effect = AnsibleConnectionError(msg)
         self._plugin._connection.socket_path = (

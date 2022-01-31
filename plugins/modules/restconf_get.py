@@ -93,8 +93,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data impor
 
 
 def main():
-    """entry point for module execution
-    """
+    """entry point for module execution"""
     argument_spec = dict(
         path=dict(required=True),
         content=dict(choices=["config", "nonconfig", "all"]),

@@ -343,7 +343,7 @@ class AnsibleCmdRespRecv(Exception):
 
 
 class Connection(NetworkConnectionBase):
-    """ CLI (shell) SSH connections on Paramiko """
+    """CLI (shell) SSH connections on Paramiko"""
 
     transport = "ansible.netcommon.network_cli"
     has_pipelining = True
@@ -605,8 +605,8 @@ class Connection(NetworkConnectionBase):
                         )
                     else:
                         msg = (
-                            u"network_cli_retry: attempt: %d, caught exception(%s), "
-                            u"pausing for %d seconds"
+                            "network_cli_retry: attempt: %d, caught exception(%s), "
+                            "pausing for %d seconds"
                             % (
                                 attempt + 1,
                                 to_text(e, errors="surrogate_or_strict"),
@@ -1122,8 +1122,7 @@ class Connection(NetworkConnectionBase):
         return b"\n".join(cleaned).strip()
 
     def _find_error(self, response):
-        """Searches the buffered response for a matching error condition
-        """
+        """Searches the buffered response for a matching error condition"""
         for stderr_regex in self._terminal_stderr_re:
             if stderr_regex.search(response):
                 self._log_messages(
@@ -1140,8 +1139,7 @@ class Connection(NetworkConnectionBase):
         return False
 
     def _find_prompt(self, response):
-        """Searches the buffered response for a matching command prompt
-        """
+        """Searches the buffered response for a matching command prompt"""
         for stdout_regex in self._terminal_stdout_re:
             match = stdout_regex.search(response)
             if match:
@@ -1187,7 +1185,7 @@ class Connection(NetworkConnectionBase):
                         "'pattern' is a required key for option '%s',"
                         " received option value is %s" % (option, item)
                     )
-                pattern = br"%s" % to_bytes(item["pattern"])
+                pattern = rb"%s" % to_bytes(item["pattern"])
                 flag = item.get("flags", 0)
                 if flag:
                     flag = getattr(re, flag.split(".")[1])

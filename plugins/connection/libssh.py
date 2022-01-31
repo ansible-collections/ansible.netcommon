@@ -216,7 +216,7 @@ SFTP_CONNECTION_CACHE = {}
 
 
 class Connection(ConnectionBase):
-    """ SSH based connections with Paramiko """
+    """SSH based connections with Paramiko"""
 
     transport = "ansible.netcommon.libssh"
     _log_channel = None
@@ -279,7 +279,7 @@ class Connection(ConnectionBase):
         return proxy_command
 
     def _connect_uncached(self):
-        """ activates the connection object """
+        """activates the connection object"""
 
         if not HAS_PYLIBSSH:
             raise AnsibleError(missing_required_lib("ansible-pylibssh"))
@@ -345,7 +345,7 @@ class Connection(ConnectionBase):
         return self.ssh
 
     def exec_command(self, cmd, in_data=None, sudoable=True):
-        """ run a command on the remote host """
+        """run a command on the remote host"""
 
         super(Connection, self).exec_command(
             cmd, in_data=in_data, sudoable=sudoable
@@ -362,9 +362,9 @@ class Connection(ConnectionBase):
             self.chan = self.ssh.new_channel()
         except Exception as e:
             text_e = to_text(e)
-            msg = u"Failed to open session"
+            msg = "Failed to open session"
             if text_e:
-                msg += u": %s" % text_e
+                msg += ": %s" % text_e
             raise AnsibleConnectionFailure(to_native(msg))
 
         # sudo usually requires a PTY (cf. requiretty option), therefore
@@ -455,7 +455,7 @@ class Connection(ConnectionBase):
         return rc, out, err
 
     def put_file(self, in_path, out_path, proto="sftp"):
-        """ transfer a file from local to remote """
+        """transfer a file from local to remote"""
 
         super(Connection, self).put_file(in_path, out_path)
 
@@ -510,7 +510,7 @@ class Connection(ConnectionBase):
             return result
 
     def fetch_file(self, in_path, out_path, proto="sftp"):
-        """ save a remote file to the specified path """
+        """save a remote file to the specified path"""
 
         super(Connection, self).fetch_file(in_path, out_path)
 
@@ -553,7 +553,7 @@ class Connection(ConnectionBase):
         self._connect()
 
     def close(self):
-        """ terminate the connection """
+        """terminate the connection"""
 
         cache_key = self._cache_key()
         SSH_CONNECTION_CACHE.pop(cache_key, None)

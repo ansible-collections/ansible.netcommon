@@ -32,7 +32,7 @@ class HttpApiBase(AnsiblePlugin):
         pass
 
     def logout(self):
-        """ Call to implement session logout.
+        """Call to implement session logout.
 
         Method to clear session gracefully e.g. tokens granted in login
         need to be revoked.
@@ -69,7 +69,7 @@ class HttpApiBase(AnsiblePlugin):
             * Any other value returned is taken as a valid response from the
             server without making another request. In many cases, this can just
             be the original exception.
-            """
+        """
         if exc.code == 401:
             if self.connection._auth:
                 # Stored auth appears to be invalid, clear and retry
