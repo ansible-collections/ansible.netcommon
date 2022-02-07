@@ -1,0 +1,3 @@
+---
+trivial:
+  - Add an option that determines whether network_cli strips matched prompts from returned responses or not.
