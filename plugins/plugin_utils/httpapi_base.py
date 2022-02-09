@@ -7,12 +7,13 @@ __metaclass__ = type
 
 from abc import abstractmethod
 
-from ansible.plugins import AnsiblePlugin
+# Needed to satisfy PluginLoader's required_base_class
+from ansible.plugins.httpapi import HttpApiBase as HttpApiBaseBase
 
 
-class HttpApiBase(AnsiblePlugin):
+class HttpApiBase(HttpApiBaseBase):
     def __init__(self, connection):
-        super(HttpApiBase, self).__init__()
+        super(HttpApiBase, self).__init__(connection)
 
         self.connection = connection
         self._become = False

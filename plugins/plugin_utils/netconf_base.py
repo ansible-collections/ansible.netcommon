@@ -24,9 +24,11 @@ from abc import abstractmethod
 from functools import wraps
 
 from ansible.errors import AnsibleError
-from ansible.plugins import AnsiblePlugin
 from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
+
+# Needed to satisfy PluginLoader's required_base_class
+from ansible.plugins.netconf import NetconfBase as NetconfBaseBase
 
 try:
     from ncclient.operations import RPCError
@@ -63,7 +65,7 @@ def ensure_ncclient(func):
     return wrapped
 
 
-class NetconfBase(AnsiblePlugin):
+class NetconfBase(NetconfBaseBase):
     """
     A base class for implementing Netconf connections
 
@@ -132,7 +134,7 @@ class NetconfBase(AnsiblePlugin):
     ]
 
     def __init__(self, connection):
-        super(NetconfBase, self).__init__()
+        super(NetconfBase, self).__init__(connection)
         self._connection = connection
 
     @property

@@ -23,9 +23,11 @@ __metaclass__ = type
 from abc import abstractmethod
 from functools import wraps
 
-from ansible.plugins import AnsiblePlugin
 from ansible.errors import AnsibleError, AnsibleConnectionFailure
 from ansible.module_utils._text import to_bytes, to_text
+
+# Needed to satisfy PluginLoader's required_base_class
+from ansible.plugins.cliconf import CliconfBase as CliconfBaseBase
 
 try:
     from scp import SCPClient
@@ -50,7 +52,7 @@ def enable_mode(func):
     return wrapped
 
 
-class CliconfBase(AnsiblePlugin):
+class CliconfBase(CliconfBaseBase):
     """
     A base class for implementing cli connections
 
@@ -92,7 +94,7 @@ class CliconfBase(AnsiblePlugin):
     ]
 
     def __init__(self, connection):
-        super(CliconfBase, self).__init__()
+        super(CliconfBase, self).__init__(connection)
         self._connection = connection
         self.history = list()
         self.response_logging = False
