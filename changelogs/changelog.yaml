@@ -470,3 +470,12 @@ releases:
     - on_become_errors.yaml
     - prompt-regex.yaml
     release_date: '2021-12-07'
+  2.5.1:
+    changes:
+      bugfixes:
+      - Fixed plugins inheriting from netcommon's base plugins (for example httpapi/restconf
+        or netconf/default) so that they can be properly loaded (https://github.com/ansible-collections/ansible.netcommon/issues/356).
+    fragments:
+    - 358-pluginloader.yaml
+    - pre-commit.yaml
+    release_date: '2022-02-09'
