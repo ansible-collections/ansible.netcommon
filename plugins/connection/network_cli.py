@@ -1130,12 +1130,12 @@ class Connection(NetworkConnectionBase):
             if command and line.strip() == command.strip():
                 continue
 
-            if strip_prompt:
-                for prompt in self._matched_prompt.strip().splitlines():
-                    if prompt.strip() in line:
-                        break
+            for prompt in self._matched_prompt.strip().splitlines():
+                if prompt.strip() in line and strip_prompt:
+                    break
             else:
                 cleaned.append(line)
+
         return b"\n".join(cleaned).strip()
 
     def _find_error(self, response):
