@@ -117,6 +117,7 @@ class CliconfBase(CliconfBaseBase):
         newline=True,
         prompt_retry_check=False,
         check_all=False,
+        strip_prompt=True,
     ):
         """Executes a command over the device connection
 
@@ -132,6 +133,7 @@ class CliconfBase(CliconfBaseBase):
         :param prompt_retry_check: Bool value for trying to detect more prompts
         :param check_all: Bool value to indicate if all the values in prompt sequence should be matched or any one of
                           given prompt.
+        :param strip_prompt: Bool value to indicate if the matched prompt is removed from the returned response or not.
         :returns: The output from the device after executing the command
         """
         kwargs = {
@@ -140,6 +142,7 @@ class CliconfBase(CliconfBaseBase):
             "newline": newline,
             "prompt_retry_check": prompt_retry_check,
             "check_all": check_all,
+            "strip_prompt": strip_prompt,
         }
 
         if prompt is not None:
