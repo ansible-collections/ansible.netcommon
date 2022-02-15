@@ -723,7 +723,7 @@ class Connection(NetworkConnectionBase):
     ):
 
         recv = BytesIO()
-        cache_socket_timeout = self._ssh_shell.gettimeout()
+        cache_socket_timeout = self.get_option("persistent_command_timeout")
         command_prompt_matched = False
         handled = False
         errored_response = None
