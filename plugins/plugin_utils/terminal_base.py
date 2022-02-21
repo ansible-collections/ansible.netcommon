@@ -48,9 +48,9 @@ class TerminalBase(with_metaclass(ABCMeta, object)):
 
     #: compiled bytes regular expressions to remove ANSI codes
     ansi_re = [
-        re.compile(rb"\x1b\[\?1h\x1b="),  # CSI ? 1 h ESC =
-        re.compile(rb"\x08."),  # [Backspace] .
-        re.compile(rb"\x1b\[m"),  # ANSI reset code
+        re.compile(br"\x1b\[\?1h\x1b="),  # CSI ? 1 h ESC =
+        re.compile(br"\x08."),  # [Backspace] .
+        re.compile(br"\x1b\[m"),  # ANSI reset code
     ]
 
     #: terminal initial prompt
