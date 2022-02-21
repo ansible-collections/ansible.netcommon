@@ -150,9 +150,11 @@ class ActionModule(_ActionModule):
                     output_file.write(content)
             except Exception as exc:
                 result["failed"] = True
-                result["msg"] = (
-                    "Could not write to destination file %s: %s"
-                    % (dest, to_text(exc))
+                result[
+                    "msg"
+                ] = "Could not write to destination file %s: %s" % (
+                    dest,
+                    to_text(exc),
                 )
                 return
             changed = True
@@ -232,8 +234,7 @@ class ActionModule(_ActionModule):
         return network_os
 
     def _check_dexec_eligibility(self, host):
-        """ Check if current python and task are eligble
-        """
+        """Check if current python and task are eligble"""
         dexec = self.get_connection_option("import_modules")
 
         # log early about dexec
@@ -275,7 +276,7 @@ class ActionModule(_ActionModule):
         return dexec
 
     def _find_load_module(self):
-        """ Use the task action to find a module
+        """Use the task action to find a module
         and import it.
 
         :return filename: The module's filename
@@ -303,7 +304,7 @@ class ActionModule(_ActionModule):
         return filename, module
 
     def _patch_update_module(self, module, task_vars):
-        """ Update a module instance, replacing it's AnsibleModule
+        """Update a module instance, replacing it's AnsibleModule
         with one that doesn't load params
 
         :param module: An loaded module
@@ -330,7 +331,7 @@ class ActionModule(_ActionModule):
         module.AnsibleModule = PatchedAnsibleModule
 
     def _exec_module(self, module):
-        """ exec the module's main() since modules
+        """exec the module's main() since modules
         print their result, we need to replace stdout
         with a buffer. If main() fails, we assume that as stderr
         Once we collect stdout/stderr, use our super to json load
@@ -379,17 +380,17 @@ class ActionModule(_ActionModule):
         # split stdout/stderr into lines if needed
         if "stdout" in data and "stdout_lines" not in data:
             # if the value is 'False', a default won't catch it.
-            txt = data.get("stdout", None) or u""
+            txt = data.get("stdout", None) or ""
             data["stdout_lines"] = txt.splitlines()
         if "stderr" in data and "stderr_lines" not in data:
             # if the value is 'False', a default won't catch it.
-            txt = data.get("stderr", None) or u""
+            txt = data.get("stderr", None) or ""
             data["stderr_lines"] = txt.splitlines()
 
         return data
 
     def _sanitize_contents(self, contents, filters):
-        """ remove lines from contents that match
+        """remove lines from contents that match
         regexes specified in the `filters` list
         """
         for x in filters:

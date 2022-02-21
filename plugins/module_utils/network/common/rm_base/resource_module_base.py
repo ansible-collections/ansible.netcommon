@@ -35,8 +35,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.n
 
 
 class RmEngineBase(object):  # pylint: disable=R0902
-    """ Base class for Network Resource Modules
-    """
+    """Base class for Network Resource Modules"""
 
     ACTION_STATES = ["merged", "replaced", "overridden", "deleted", "purged"]
 

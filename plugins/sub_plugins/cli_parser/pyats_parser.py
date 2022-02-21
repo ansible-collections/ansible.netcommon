@@ -60,7 +60,7 @@ except ImportError:
 
 
 class CliParser(CliParserBase):
-    """ The pyats parser class
+    """The pyats parser class
     Convert raw text to structured data using pyats/genie
     """
 
@@ -69,7 +69,7 @@ class CliParser(CliParserBase):
 
     @staticmethod
     def _check_reqs():
-        """ Check the prerequisites are installed for pyats/genie
+        """Check the prerequisites are installed for pyats/genie
 
         :return dict: A dict with a list of errors
         """
@@ -83,7 +83,7 @@ class CliParser(CliParserBase):
         return errors
 
     def _check_vars(self):
-        """ Ensure specific args are set
+        """Ensure specific args are set
 
         :return: A dict with a list of errors
         :rtype: dict
@@ -96,7 +96,7 @@ class CliParser(CliParserBase):
         return errors
 
     def _transform_ansible_network_os(self):
-        """ Transform the ansible_network_os to a pyats OS
+        """Transform the ansible_network_os to a pyats OS
         The last part of the fully qualified name is used
         org.name.platform => platform
 
@@ -112,7 +112,7 @@ class CliParser(CliParserBase):
         return ane
 
     def parse(self, *_args, **_kwargs):
-        """ Std entry point for a cli_parse parse execution
+        """Std entry point for a cli_parse parse execution
 
         :return: Errors or parsed text as structured data
         :rtype: dict

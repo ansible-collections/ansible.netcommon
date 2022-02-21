@@ -235,8 +235,10 @@ class ActionModule(ActionNetworkModule):
 
         # parse module docs to check for 'config' and 'state' options to identify it as resource module
         if not resource_modules:
-            modulelib = "ansible_collections.{corg}.{cname}.plugins.modules".format(
-                corg=self._cref["corg"], cname=self._cref["cname"]
+            modulelib = (
+                "ansible_collections.{corg}.{cname}.plugins.modules".format(
+                    corg=self._cref["corg"], cname=self._cref["cname"]
+                )
             )
 
             module_dir_path = os.path.dirname(

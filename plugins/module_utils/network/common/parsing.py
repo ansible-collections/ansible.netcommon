@@ -197,8 +197,7 @@ class CommandRunner(object):
 
 
 class Conditional(object):
-    """Used in command modules to evaluate waitfor conditions
-    """
+    """Used in command modules to evaluate waitfor conditions"""
 
     OPERATORS = {
         "eq": ["eq", "=="],
