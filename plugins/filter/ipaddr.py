@@ -469,7 +469,7 @@ def cidr_merge(value, action="merge"):
 
 
 def ipaddr(value, query="", version=False, alias="ipaddr"):
-    """ Check if string is an IP address or network and filter it """
+    """Check if string is an IP address or network and filter it"""
 
     query_func_extra_args = {
         "": ("vtype",),
@@ -772,7 +772,7 @@ def ipv6(value, query=""):
 #  - address/prefix | ipsubnet(subnet/prefix)
 #      return the index of the subnet in the subnet
 def ipsubnet(value, query="", index="x"):
-    """ Manipulate IPv4/IPv6 subnets """
+    """Manipulate IPv4/IPv6 subnets"""
 
     try:
         vtype = ipaddr(value, "type")
@@ -847,7 +847,7 @@ def ipsubnet(value, query="", index="x"):
 #  - address or address/prefix | nthhost(nth)
 #      returns the nth host within the given network
 def nthhost(value, query=""):
-    """ Get the nth host within a given network """
+    """Get the nth host within a given network"""
     try:
         vtype = ipaddr(value, "type")
         if vtype == "address":
@@ -1048,7 +1048,7 @@ def reduce_on_network(value, network):
 #
 #  - prefix | slaac(mac)
 def slaac(value, query=""):
-    """ Get the SLAAC address within given network """
+    """Get the SLAAC address within given network"""
     try:
         vtype = ipaddr(value, "type")
         if vtype == "address":
@@ -1078,7 +1078,7 @@ def slaac(value, query=""):
 
 # ---- HWaddr / MAC address filters ----
 def hwaddr(value, query="", alias="hwaddr"):
-    """ Check if string is a HW/MAC address and filter it """
+    """Check if string is a HW/MAC address and filter it"""
 
     query_func_extra_args = {"": ("value",)}
 
@@ -1129,7 +1129,7 @@ def _need_netaddr(f_name, *args, **kwargs):
 
 
 def ip4_hex(arg, delimiter=""):
-    """ Convert an IPv4 address to Hexadecimal notation """
+    """Convert an IPv4 address to Hexadecimal notation"""
     numbers = list(map(int, arg.split(".")))
     return "{0:02x}{sep}{1:02x}{sep}{2:02x}{sep}{3:02x}".format(
         *numbers, sep=delimiter

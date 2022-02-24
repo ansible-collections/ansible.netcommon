@@ -61,7 +61,7 @@ except ImportError:
 
 
 class CliParser(CliParserBase):
-    """ The native parser class
+    """The native parser class
     Convert raw text to structured data using the resource module parser
     """
 
@@ -69,7 +69,7 @@ class CliParser(CliParserBase):
     PROVIDE_TEMPLATE_CONTENTS = True
 
     def parse(self, *_args, **kwargs):
-        """ Std entry point for a cli_parse parse execution
+        """Std entry point for a cli_parse parse execution
 
         :return: Errors or parsed text as structured data
         :rtype: dict

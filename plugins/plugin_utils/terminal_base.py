@@ -129,6 +129,5 @@ class TerminalBase(TerminalBaseBase):
         return self.on_become(passwd)
 
     def on_deauthorize(self):
-        """Deprecated method for privilege deescalation
-        """
+        """Deprecated method for privilege deescalation"""
         return self.on_unbecome()

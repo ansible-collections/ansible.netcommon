@@ -138,8 +138,7 @@ from ansible.module_utils.connection import Connection, ConnectionError
 
 
 def main():
-    """entry point for module execution
-    """
+    """entry point for module execution"""
     argument_spec = dict(
         command=dict(type="str", required=True),
         prompt=dict(type="list", elements="str", required=False),

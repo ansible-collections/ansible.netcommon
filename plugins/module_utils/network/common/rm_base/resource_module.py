@@ -42,8 +42,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
 
 
 class ResourceModule(RmEngineBase):  # pylint: disable=R0902
-    """ Base class for Network Resource Modules
-    """
+    """Base class for Network Resource Modules"""
 
     def __init__(self, *_args, **kwargs):
         super(ResourceModule, self).__init__(*_args, **kwargs)
@@ -88,8 +87,7 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
 
     @property
     def result(self):
-        """ Compute the final result
-        """
+        """Compute the final result"""
         result = {"warnings": self.warnings}
         if self.state not in self.ACTION_STATES:
             if self.state == "gathered":
@@ -107,15 +105,13 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         return result
 
     def addcmd(self, data, tmplt, negate=False):
-        """ addcmd
-        """
+        """addcmd"""
         command = self._tmplt.render(data, tmplt, negate)
         if command:
             self.commands.extend(to_list(command))
 
     def addcmd_first_found(self, data, tmplts, negate=False):
-        """ addcmd first found
-        """
+        """addcmd first found"""
         for pname in tmplts:
             before = len(self.commands)
             self.addcmd(data, pname, negate)
@@ -123,7 +119,7 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
                 break
 
     def get_facts(self, empty_val=None, data=None):
-        """ Get the 'facts' (the current configuration)
+        """Get the 'facts' (the current configuration)
 
         :rtype: A dictionary
         :returns: The current configuration as a dictionary
@@ -141,8 +137,8 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         return facts
 
     def compare(self, parsers, want=None, have=None):
-        """ Run through all the parsers and compare
-            the want and have dicts
+        """Run through all the parsers and compare
+        the want and have dicts
         """
         if want is None:
             want = self.want
@@ -172,8 +168,7 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
                     self.addcmd(have, parser, True)
 
     def run_commands(self):
-        """ Send commands to the device
-        """
+        """Send commands to the device"""
         if self.commands and self.state in self.ACTION_STATES:
             if not self._module.check_mode:
                 self._connection.edit_config(self.commands)

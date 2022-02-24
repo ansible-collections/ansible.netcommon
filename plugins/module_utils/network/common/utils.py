@@ -299,7 +299,7 @@ class Entity(object):
 
 
 class EntityCollection(Entity):
-    """Extends ```Entity``` to handle a list of dicts """
+    """Extends ```Entity``` to handle a list of dicts"""
 
     def __call__(self, iterable, strict=True):
         if iterable is None:
@@ -326,7 +326,7 @@ class ComplexList(EntityCollection):
 
 
 def dict_diff(base, comparable):
-    """ Generate a dict object of differences
+    """Generate a dict object of differences
 
     This function will compare two dict objects and return the difference
     between them as a dict object.  For scalar values, the key will reflect
@@ -370,7 +370,7 @@ def dict_diff(base, comparable):
 
 
 def dict_merge(base, other):
-    """ Return a new dict object that combines base and other
+    """Return a new dict object that combines base and other
 
     This will create a new dict object that is a combination of the key/value
     pairs from base and other.  When both keys exist, the value will be
@@ -480,7 +480,7 @@ def conditional(expr, val, cast=None):
 
 
 def ternary(value, true_val, false_val):
-    """  value ? true_val : false_val """
+    """value ? true_val : false_val"""
     if value:
         return true_val
     else:
@@ -691,8 +691,7 @@ def search_obj_in_list(name, lst, key="name"):
 
 
 def get_from_dict(data_dict, keypath):
-    """ get from dictionary
-    """
+    """get from dictionary"""
     map_list = keypath.split(".")
     try:
         return reduce(operator.getitem, map_list, data_dict)
@@ -701,8 +700,7 @@ def get_from_dict(data_dict, keypath):
 
 
 def compare_partial_dict(want, have, compare_keys):
-    """ compare
-    """
+    """compare"""
     rmkeys = [ckey[1:] for ckey in compare_keys if ckey.startswith("!")]
     kkeys = [ckey for ckey in compare_keys if not ckey.startswith("!")]
 

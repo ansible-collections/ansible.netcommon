@@ -5,7 +5,7 @@ ci:
     - update-docs
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v3.1.0
+    rev: v4.1.0
     hooks:
       - id: check-merge-conflict
       - id: debug-statements
@@ -14,7 +14,9 @@ repos:
         args: [--branch, main]
       - id: trailing-whitespace
   - repo: https://github.com/psf/black
-    rev: 19.3b0
+    # black v22+ drops Python 2 support. We can't update until we do as well.
+    # This hash corresponds to 21.12b0
+    rev: f1d4e742c91dd5179d742b0db9293c4472b765f8
     hooks:
       - id: black
         args: [-l, "79"]

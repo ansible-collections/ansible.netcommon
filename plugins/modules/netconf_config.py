@@ -425,8 +425,7 @@ def validate_config(module, config, format="xml"):
 
 
 def main():
-    """ main entry point for module execution
-    """
+    """main entry point for module execution"""
     backup_spec = dict(filename=dict(), dir_path=dict(type="path"))
     argument_spec = dict(
         content=dict(aliases=["xml"], type="raw"),

@@ -100,7 +100,7 @@ class CliconfBase(CliconfBaseBase):
         self.response_logging = False
 
     def _alarm_handler(self, signum, frame):
-        """Alarm handler raised in case of command timeout """
+        """Alarm handler raised in case of command timeout"""
         self._connection.queue_message(
             "log",
             "closing shell due to command timeout (%s seconds)."
@@ -167,7 +167,7 @@ class CliconfBase(CliconfBaseBase):
         return self.__rpc__
 
     def get_history(self):
-        """ Returns the history file for all commands
+        """Returns the history file for all commands
 
         This will return a log of all the commands that have been sent to
         the device and all of the output received.  By default, all commands
@@ -178,7 +178,7 @@ class CliconfBase(CliconfBaseBase):
         return self.history
 
     def reset_history(self):
-        """ Resets the history of run commands
+        """Resets the history of run commands
         :return: None
         """
         self.history = list()
@@ -543,8 +543,8 @@ class CliconfBase(CliconfBaseBase):
         out = self._connection.get_prompt()
         if out is None:
             raise AnsibleConnectionFailure(
-                message=u"cli prompt is not identified from the last received"
-                u" response window: %s" % self._connection._last_recv_window
+                message="cli prompt is not identified from the last received"
+                " response window: %s" % self._connection._last_recv_window
             )
 
         while True:

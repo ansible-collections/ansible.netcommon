@@ -227,8 +227,7 @@ def get_xml_request(module, request, xmlns, content):
 
 
 def main():
-    """entry point for module execution
-    """
+    """entry point for module execution"""
     argument_spec = dict(
         rpc=dict(type="str", required=True),
         xmlns=dict(type="str"),

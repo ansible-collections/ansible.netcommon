@@ -26,7 +26,7 @@ display = Display()
 
 
 class Connection(ConnectionBase):
-    """ Local based connections """
+    """Local based connections"""
 
     transport = "ansible.netcommon.persistent"
     has_pipelining = False

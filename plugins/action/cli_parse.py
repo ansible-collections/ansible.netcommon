@@ -48,8 +48,7 @@ display = Display()
 
 
 class ActionModule(ActionBase):
-    """ action module
-    """
+    """action module"""
 
     PARSER_CLS_NAME = "CliParser"
 
@@ -61,7 +60,7 @@ class ActionModule(ActionBase):
         self._task_vars = None
 
     def _debug(self, msg):
-        """ Output text using ansible's display
+        """Output text using ansible's display
 
         :param msg: The message
         :type msg: str
@@ -72,7 +71,7 @@ class ActionModule(ActionBase):
         self._display.vvvv(msg)
 
     def _fail_json(self, msg):
-        """ Replace the AnsibleModule fai_json here
+        """Replace the AnsibleModule fai_json here
 
         :param msg: The message for the failure
         :type msg: str
@@ -81,7 +80,7 @@ class ActionModule(ActionBase):
         raise AnsibleActionFail(msg)
 
     def _extended_check_argspec(self):
-        """ Check additional requirements for the argspec
+        """Check additional requirements for the argspec
         that cannot be covered using stnd techniques
         """
         errors = []
@@ -105,7 +104,7 @@ class ActionModule(ActionBase):
             self._result["msg"] = " ".join(errors)
 
     def _load_parser(self, task_vars):
-        """ Load a parser from the fs
+        """Load a parser from the fs
 
         :param task_vars: The vars provided when the task was run
         :type task_vars: dict
@@ -169,8 +168,7 @@ class ActionModule(ActionBase):
             return None
 
     def _set_parser_command(self):
-        """ Set the /parser/command in the task args based on /command if needed
-        """
+        """Set the /parser/command in the task args based on /command if needed"""
         if self._task.args.get("command"):
             if not self._task.args.get("parser").get("command"):
                 self._task.args.get("parser")["command"] = self._task.args.get(
@@ -178,13 +176,12 @@ class ActionModule(ActionBase):
                 )
 
     def _set_text(self):
-        """ Set the /text in the task_args based on the command run
-        """
+        """Set the /text in the task_args based on the command run"""
         if self._result.get("stdout"):
             self._task.args["text"] = self._result["stdout"]
 
     def _os_from_task_vars(self):
-        """ Extract an os str from the task's vars
+        """Extract an os str from the task's vars
 
         :return: A short OS name
         :rtype: str
@@ -210,7 +207,7 @@ class ActionModule(ActionBase):
         return oper_sys.lower()
 
     def _update_template_path(self, template_extension):
-        """ Update the template_path in the task args
+        """Update the template_path in the task args
         If not provided, generate template name using os and command
 
         :param template_extension: The parser specific template extension
@@ -236,7 +233,7 @@ class ActionModule(ActionBase):
             self._task.args["parser"]["template_path"] = source
 
     def _get_template_contents(self):
-        """ Retrieve the contents of the parser template
+        """Retrieve the contents of the parser template
 
         :return: The parser's contents
         :rtype: str
@@ -263,7 +260,7 @@ class ActionModule(ActionBase):
         return template_contents
 
     def _prune_result(self):
-        """ In the case of an error, remove stdout and stdout_lines
+        """In the case of an error, remove stdout and stdout_lines
         this allows for easier visibility of the error message.
         In the case of an actual command error, it will be thrown
         in the module
@@ -272,7 +269,7 @@ class ActionModule(ActionBase):
         self._result.pop("stdout_lines", None)
 
     def _run_command(self):
-        """ Run a command on the host
+        """Run a command on the host
         If socket_path exists, assume it's a network device
         else, run a low level command
         """
@@ -297,7 +294,7 @@ class ActionModule(ActionBase):
                 self._result["stdout_lines"] = result["stdout_lines"]
 
     def run(self, tmp=None, task_vars=None):
-        """ The std execution entry pt for an action plugin
+        """The std execution entry pt for an action plugin
 
         :param tmp: no longer used
         :type tmp: none
