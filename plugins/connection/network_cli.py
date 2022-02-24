@@ -604,14 +604,10 @@ class Connection(NetworkConnectionBase):
                             to_text(e, errors="surrogate_or_strict")
                         )
                     else:
-                        msg = (
-                            "network_cli_retry: attempt: %d, caught exception(%s), "
-                            "pausing for %d seconds"
-                            % (
-                                attempt + 1,
-                                to_text(e, errors="surrogate_or_strict"),
-                                pause,
-                            )
+                        msg = "network_cli_retry: attempt: %d, caught exception(%s), " "pausing for %d seconds" % (
+                            attempt + 1,
+                            to_text(e, errors="surrogate_or_strict"),
+                            pause,
                         )
 
                         self.queue_message("vv", msg)
