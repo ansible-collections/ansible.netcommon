@@ -724,6 +724,7 @@ class Connection(NetworkConnectionBase):
 
         recv = BytesIO()
         cache_socket_timeout = self.get_option("persistent_command_timeout")
+        self._ssh_shell.settimeout(cache_socket_timeout)
         command_prompt_matched = False
         handled = False
         errored_response = None
@@ -753,7 +754,6 @@ class Connection(NetworkConnectionBase):
 
                 except AnsibleCmdRespRecv:
                     # reset socket timeout to global timeout
-                    self._ssh_shell.settimeout(cache_socket_timeout)
                     return self._command_response
             else:
                 data = self._ssh_shell.recv(256)
@@ -812,7 +812,6 @@ class Connection(NetworkConnectionBase):
                 self._command_response = self._sanitize(resp, command)
                 if self._buffer_read_timeout == 0.0:
                     # reset socket timeout to global timeout
-                    self._ssh_shell.settimeout(cache_socket_timeout)
                     return self._command_response
                 else:
                     command_prompt_matched = True
