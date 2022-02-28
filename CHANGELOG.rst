@@ -5,6 +5,14 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v2.5.1
+======
+
+Bugfixes
+--------
+
+- Fixed plugins inheriting from netcommon's base plugins (for example httpapi/restconf or netconf/default) so that they can be properly loaded (https://github.com/ansible-collections/ansible.netcommon/issues/356).
+
 v2.5.0
 ======
 

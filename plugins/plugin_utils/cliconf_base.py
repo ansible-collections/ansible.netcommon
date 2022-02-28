@@ -23,9 +23,11 @@ __metaclass__ = type
 from abc import abstractmethod
 from functools import wraps
 
-from ansible.plugins import AnsiblePlugin
 from ansible.errors import AnsibleError, AnsibleConnectionFailure
 from ansible.module_utils._text import to_bytes, to_text
+
+# Needed to satisfy PluginLoader's required_base_class
+from ansible.plugins.cliconf import CliconfBase as CliconfBaseBase
 
 try:
     from scp import SCPClient
@@ -50,7 +52,7 @@ def enable_mode(func):
     return wrapped
 
 
-class CliconfBase(AnsiblePlugin):
+class CliconfBase(CliconfBaseBase):
     """
     A base class for implementing cli connections
 
@@ -92,13 +94,13 @@ class CliconfBase(AnsiblePlugin):
     ]
 
     def __init__(self, connection):
-        super(CliconfBase, self).__init__()
+        super(CliconfBase, self).__init__(connection)
         self._connection = connection
         self.history = list()
         self.response_logging = False
 
     def _alarm_handler(self, signum, frame):
-        """Alarm handler raised in case of command timeout """
+        """Alarm handler raised in case of command timeout"""
         self._connection.queue_message(
             "log",
             "closing shell due to command timeout (%s seconds)."
@@ -165,7 +167,7 @@ class CliconfBase(AnsiblePlugin):
         return self.__rpc__
 
     def get_history(self):
-        """ Returns the history file for all commands
+        """Returns the history file for all commands
 
         This will return a log of all the commands that have been sent to
         the device and all of the output received.  By default, all commands
@@ -176,7 +178,7 @@ class CliconfBase(AnsiblePlugin):
         return self.history
 
     def reset_history(self):
-        """ Resets the history of run commands
+        """Resets the history of run commands
         :return: None
         """
         self.history = list()
@@ -541,8 +543,8 @@ class CliconfBase(AnsiblePlugin):
         out = self._connection.get_prompt()
         if out is None:
             raise AnsibleConnectionFailure(
-                message=u"cli prompt is not identified from the last received"
-                u" response window: %s" % self._connection._last_recv_window
+                message="cli prompt is not identified from the last received"
+                " response window: %s" % self._connection._last_recv_window
             )
 
         while True:

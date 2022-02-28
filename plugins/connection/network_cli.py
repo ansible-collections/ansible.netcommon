@@ -343,7 +343,7 @@ class AnsibleCmdRespRecv(Exception):
 
 
 class Connection(NetworkConnectionBase):
-    """ CLI (shell) SSH connections on Paramiko """
+    """CLI (shell) SSH connections on Paramiko"""
 
     transport = "ansible.netcommon.network_cli"
     has_pipelining = True
@@ -604,14 +604,10 @@ class Connection(NetworkConnectionBase):
                             to_text(e, errors="surrogate_or_strict")
                         )
                     else:
-                        msg = (
-                            u"network_cli_retry: attempt: %d, caught exception(%s), "
-                            u"pausing for %d seconds"
-                            % (
-                                attempt + 1,
-                                to_text(e, errors="surrogate_or_strict"),
-                                pause,
-                            )
+                        msg = "network_cli_retry: attempt: %d, caught exception(%s), " "pausing for %d seconds" % (
+                            attempt + 1,
+                            to_text(e, errors="surrogate_or_strict"),
+                            pause,
                         )
 
                         self.queue_message("vv", msg)
@@ -723,7 +719,8 @@ class Connection(NetworkConnectionBase):
     ):
 
         recv = BytesIO()
-        cache_socket_timeout = self._ssh_shell.gettimeout()
+        cache_socket_timeout = self.get_option("persistent_command_timeout")
+        self._ssh_shell.settimeout(cache_socket_timeout)
         command_prompt_matched = False
         handled = False
         errored_response = None
@@ -753,7 +750,6 @@ class Connection(NetworkConnectionBase):
 
                 except AnsibleCmdRespRecv:
                     # reset socket timeout to global timeout
-                    self._ssh_shell.settimeout(cache_socket_timeout)
                     return self._command_response
             else:
                 data = self._ssh_shell.recv(256)
@@ -812,7 +808,6 @@ class Connection(NetworkConnectionBase):
                 self._command_response = self._sanitize(resp, command)
                 if self._buffer_read_timeout == 0.0:
                     # reset socket timeout to global timeout
-                    self._ssh_shell.settimeout(cache_socket_timeout)
                     return self._command_response
                 else:
                     command_prompt_matched = True
@@ -1122,8 +1117,7 @@ class Connection(NetworkConnectionBase):
         return b"\n".join(cleaned).strip()
 
     def _find_error(self, response):
-        """Searches the buffered response for a matching error condition
-        """
+        """Searches the buffered response for a matching error condition"""
         for stderr_regex in self._terminal_stderr_re:
             if stderr_regex.search(response):
                 self._log_messages(
@@ -1140,8 +1134,7 @@ class Connection(NetworkConnectionBase):
         return False
 
     def _find_prompt(self, response):
-        """Searches the buffered response for a matching command prompt
-        """
+        """Searches the buffered response for a matching command prompt"""
         for stdout_regex in self._terminal_stdout_re:
             match = stdout_regex.search(response)
             if match:

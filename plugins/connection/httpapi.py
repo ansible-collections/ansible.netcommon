@@ -271,7 +271,7 @@ class Connection(NetworkConnectionBase):
         super(Connection, self).close()
 
     @ensure_connect
-    def send(self, path, data, **kwargs):
+    def send(self, path, data, retries=None, **kwargs):
         """
         Sends the command to the device over api
         """
@@ -302,11 +302,15 @@ class Connection(NetworkConnectionBase):
         except HTTPError as exc:
             is_handled = self.handle_httperror(exc)
             if is_handled is True:
-                return self.send(path, data, **kwargs)
-            elif is_handled is False:
+                if retries is None:
+                    # The default behavior, retry indefinitely until timeout.
+                    return self.send(path, data, **kwargs)
+                if retries:
+                    return self.send(path, data, retries=retries - 1, **kwargs)
                 raise
-            else:
-                response = is_handled
+            if is_handled is False:
+                raise
+            response = is_handled
         except URLError as exc:
             raise AnsibleConnectionFailure(
                 "Could not connect to {0}: {1}".format(

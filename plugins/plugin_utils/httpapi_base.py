@@ -7,12 +7,13 @@ __metaclass__ = type
 
 from abc import abstractmethod
 
-from ansible.plugins import AnsiblePlugin
+# Needed to satisfy PluginLoader's required_base_class
+from ansible.plugins.httpapi import HttpApiBase as HttpApiBaseBase
 
 
-class HttpApiBase(AnsiblePlugin):
+class HttpApiBase(HttpApiBaseBase):
     def __init__(self, connection):
-        super(HttpApiBase, self).__init__()
+        super(HttpApiBase, self).__init__(connection)
 
         self.connection = connection
         self._become = False
@@ -32,7 +33,7 @@ class HttpApiBase(AnsiblePlugin):
         pass
 
     def logout(self):
-        """ Call to implement session logout.
+        """Call to implement session logout.
 
         Method to clear session gracefully e.g. tokens granted in login
         need to be revoked.
@@ -69,7 +70,7 @@ class HttpApiBase(AnsiblePlugin):
             * Any other value returned is taken as a valid response from the
             server without making another request. In many cases, this can just
             be the original exception.
-            """
+        """
         if exc.code == 401:
             if self.connection._auth:
                 # Stored auth appears to be invalid, clear and retry

@@ -51,8 +51,8 @@ except ImportError:
 
 
 class NetworkTemplate(RmEngineBase):
-    """ The NetworkTemplate class that Resource Module templates
-        inherit and use to parse and render config lines.
+    """The NetworkTemplate class that Resource Module templates
+    inherit and use to parse and render config lines.
     """
 
     def __init__(self, lines=None, tmplt=None, prefix=None, module=None):
@@ -85,8 +85,7 @@ class NetworkTemplate(RmEngineBase):
         return wtmplt
 
     def parse(self):
-        """ parse
-        """
+        """parse"""
         result = {}
         shared = {}
         for line in self._lines:
@@ -106,8 +105,7 @@ class NetworkTemplate(RmEngineBase):
         return result
 
     def get_parser(self, name):
-        """ get_parsers
-        """
+        """get_parsers"""
         res = [p for p in self._tmplt.PARSERS if p["name"] == name]
         return res[0]
 
@@ -138,8 +136,7 @@ class NetworkTemplate(RmEngineBase):
         return res
 
     def render(self, data, parser_name, negate=False):
-        """ render
-        """
+        """render"""
         if negate:
             tmplt = (
                 self.get_parser(parser_name).get("remval")

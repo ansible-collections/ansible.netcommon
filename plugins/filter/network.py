@@ -393,8 +393,8 @@ def type5_pw(password, salt=None):
             % (type(password).__name__)
         )
 
-    salt_chars = u"".join(
-        (to_text(string.ascii_letters), to_text(string.digits), u"./")
+    salt_chars = "".join(
+        (to_text(string.ascii_letters), to_text(string.digits), "./")
     )
     if salt is not None and not isinstance(salt, string_types):
         raise AnsibleFilterError(
@@ -454,13 +454,13 @@ def vlan_expander(raw_vlan):
 def vlan_parser(vlan_list, first_line_len=48, other_line_len=44):
 
     """
-        Input: Unsorted list of vlan integers
-        Output: Sorted string list of integers according to IOS-like vlan list rules
+    Input: Unsorted list of vlan integers
+    Output: Sorted string list of integers according to IOS-like vlan list rules
 
-        1. Vlans are listed in ascending order
-        2. Runs of 3 or more consecutive vlans are listed with a dash
-        3. The first line of the list can be first_line_len characters long
-        4. Subsequent list lines can be other_line_len characters
+    1. Vlans are listed in ascending order
+    2. Runs of 3 or more consecutive vlans are listed with a dash
+    3. The first line of the list can be first_line_len characters long
+    4. Subsequent list lines can be other_line_len characters
     """
 
     # Sort and remove duplicates

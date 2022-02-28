@@ -32,9 +32,11 @@ class ActionModule(ActionBase):
             else:
                 result["failed"] = False
 
-            result["msg"] = (
-                "Could not find implementation module %s for %s"
-                % (self._task.action, play_context.network_os)
+            result[
+                "msg"
+            ] = "Could not find implementation module %s for %s" % (
+                self._task.action,
+                play_context.network_os,
             )
             return result
 

@@ -22,12 +22,11 @@ __metaclass__ = type
 
 import re
 
-from abc import ABCMeta
+# Needed to satisfy PluginLoader's required_base_class
+from ansible.plugins.terminal import TerminalBase as TerminalBaseBase
 
-from ansible.module_utils.six import with_metaclass
 
-
-class TerminalBase(with_metaclass(ABCMeta, object)):
+class TerminalBase(TerminalBaseBase):
     """
     A base class for implementing cli connections
 
@@ -63,6 +62,7 @@ class TerminalBase(with_metaclass(ABCMeta, object)):
     terminal_inital_prompt_newline = True
 
     def __init__(self, connection):
+        super(TerminalBase, self).__init__(connection)
         self._connection = connection
 
     def _exec_cli_command(self, cmd, check_rc=True):
@@ -129,6 +129,5 @@ class TerminalBase(with_metaclass(ABCMeta, object)):
         return self.on_become(passwd)
 
     def on_deauthorize(self):
-        """Deprecated method for privilege deescalation
-        """
+        """Deprecated method for privilege deescalation"""
         return self.on_unbecome()
