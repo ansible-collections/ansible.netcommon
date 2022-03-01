@@ -716,6 +716,7 @@ class Connection(NetworkConnectionBase):
         newline=True,
         prompt_retry_check=False,
         check_all=False,
+        strip_prompt=True,
     ):
 
         recv = BytesIO()
@@ -805,7 +806,9 @@ class Connection(NetworkConnectionBase):
                     raise AnsibleConnectionFailure(errored_response)
                 self._last_response = recv.getvalue()
                 resp = self._strip(self._last_response)
-                self._command_response = self._sanitize(resp, command)
+                self._command_response = self._sanitize(
+                    resp, command, strip_prompt
+                )
                 if self._buffer_read_timeout == 0.0:
                     # reset socket timeout to global timeout
                     return self._command_response
@@ -820,6 +823,7 @@ class Connection(NetworkConnectionBase):
         newline=True,
         prompt_retry_check=False,
         check_all=False,
+        strip_prompt=True,
     ):
         self._command_response = resp = b""
         command_prompt_matched = False
@@ -886,7 +890,9 @@ class Connection(NetworkConnectionBase):
                 if errored_response:
                     raise AnsibleConnectionFailure(errored_response)
                 self._last_response = data
-                self._command_response += self._sanitize(resp, command)
+                self._command_response += self._sanitize(
+                    resp, command, strip_prompt
+                )
                 command_prompt_matched = True
 
     def receive(
@@ -897,6 +903,7 @@ class Connection(NetworkConnectionBase):
         newline=True,
         prompt_retry_check=False,
         check_all=False,
+        strip_prompt=True,
     ):
         """
         Handles receiving of output from command
@@ -935,6 +942,7 @@ class Connection(NetworkConnectionBase):
                 newline,
                 prompt_retry_check,
                 check_all,
+                strip_prompt,
             )
         else:
             response = self.receive_paramiko(
@@ -944,6 +952,7 @@ class Connection(NetworkConnectionBase):
                 newline,
                 prompt_retry_check,
                 check_all,
+                strip_prompt,
             )
 
         return response
@@ -958,6 +967,7 @@ class Connection(NetworkConnectionBase):
         sendonly=False,
         prompt_retry_check=False,
         check_all=False,
+        strip_prompt=True,
     ):
         """
         Sends the command to the device in the opened shell
@@ -987,7 +997,13 @@ class Connection(NetworkConnectionBase):
             if sendonly:
                 return
             response = self.receive(
-                command, prompt, answer, newline, prompt_retry_check, check_all
+                command,
+                prompt,
+                answer,
+                newline,
+                prompt_retry_check,
+                check_all,
+                strip_prompt,
             )
             response = to_text(response, errors="surrogate_then_replace")
 
@@ -1100,7 +1116,7 @@ class Connection(NetworkConnectionBase):
                 return True
         return False
 
-    def _sanitize(self, resp, command=None):
+    def _sanitize(self, resp, command=None, strip_prompt=True):
         """
         Removes elements from the response before returning to the caller
         """
@@ -1110,10 +1126,11 @@ class Connection(NetworkConnectionBase):
                 continue
 
             for prompt in self._matched_prompt.strip().splitlines():
-                if prompt.strip() in line:
+                if prompt.strip() in line and strip_prompt:
                     break
             else:
                 cleaned.append(line)
+
         return b"\n".join(cleaned).strip()
 
     def _find_error(self, response):
