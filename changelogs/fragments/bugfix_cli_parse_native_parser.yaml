@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Fix issue with cli_parse native_parser plugin when input is empty (https://github.com/ansible-collections/ansible.netcommon/issues/347).

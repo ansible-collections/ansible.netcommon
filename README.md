@@ -36,31 +36,6 @@ Name | Description
 [ansible.netcommon.network_cli](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.network_cli_connection.rst)|Use network_cli to run command on network appliances
 [ansible.netcommon.persistent](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.persistent_connection.rst)|Use a persistent unix socket for connection
 
-### Ipaddr filter plugins
-IP address and network manipulation filters
-
-Detailed documentation available at https://docs.ansible.com/ansible/latest/user_guide/playbooks_filters_ipaddr.html
-
-Name | Description
---- | ---
-ansible.netcommon.cidr_merge|ansible.netcommon cidr_merge filter plugin
-ansible.netcommon.hwaddr|Check if string is a HW/MAC address and filter it
-ansible.netcommon.ip4_hex|Convert an IPv4 address to Hexadecimal notation
-ansible.netcommon.ipaddr|Check if string is an IP address or network and filter it
-ansible.netcommon.ipmath|ansible.netcommon ipmath filter plugin
-ansible.netcommon.ipsubnet|Manipulate IPv4/IPv6 subnets
-ansible.netcommon.ipv4|ansible.netcommon ipv4 filter plugin
-ansible.netcommon.ipv6|ansible.netcommon ipv6 filter plugin
-ansible.netcommon.ipwrap|ansible.netcommon ipwrap filter plugin
-ansible.netcommon.macaddr|ansible.netcommon macaddr filter plugin
-ansible.netcommon.network_in_network|Checks whether the 'test' address or addresses are in 'value', including broadcast and network
-ansible.netcommon.network_in_usable|Checks whether 'test' is a useable address or addresses in 'value'
-ansible.netcommon.next_nth_usable|ansible.netcommon next_nth_usable filter plugin
-ansible.netcommon.nthhost|Get the nth host within a given network
-ansible.netcommon.previous_nth_usable|ansible.netcommon previous_nth_usable filter plugin
-ansible.netcommon.reduce_on_network|Reduces a list of addresses to only the addresses that match a given network.
-ansible.netcommon.slaac|Get the SLAAC address within given network
-
 ### Network filter plugins
 Filters for working with output from network devices
 

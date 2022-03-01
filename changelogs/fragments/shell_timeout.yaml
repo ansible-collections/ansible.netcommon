@@ -1,3 +1,0 @@
----
-bugfixes:
-  - "No activity on the transport's channel was triggering a socket.timeout() after 30 secs, even if persistent_command_timeout is set to a higher value. This patch fixes it."
