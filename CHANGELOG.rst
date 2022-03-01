@@ -5,6 +5,21 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v2.6.0
+======
+
+Minor Changes
+-------------
+
+- Redirected ipaddr filters to ansible.utils (https://github.com/ansible-collections/ansible.netcommon/pull/359).
+- httpapi - new parameter retries in send() method limits the number of times a request is retried when a HTTP error that can be worked around is encountered. The default is to retry indefinitely to maintain old behavior, but this default may change in a later breaking release.
+
+Bugfixes
+--------
+
+- Fix issue with cli_parse native_parser plugin when input is empty (https://github.com/ansible-collections/ansible.netcommon/issues/347).
+- No activity on the transport's channel was triggering a socket.timeout() after 30 secs, even if persistent_command_timeout is set to a higher value. This patch fixes it.
+
 v2.5.1
 ======
 
