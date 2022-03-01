@@ -59,3 +59,89 @@ plugin_routing:
       deprecation:
         removal_date: '2023-01-01'
         warning_text: Use 'ansible.utils.cli_parse' module instead.
+  filter:
+    cidr_merge:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.cidr_merge' module instead.
+      redirect: ansible.utils.cidr_merge
+    ipaddr:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.ipaddr' module instead.
+      redirect: ansible.utils.ipaddr
+    ipmath:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.ipmath' module instead.
+      redirect: ansible.utils.ipmath
+    ipwrap:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.ipwrap' module instead.
+      redirect: ansible.utils.ipwrap
+    ip4_hex:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.ip4_hex' module instead.
+      redirect: ansible.utils.ipv4_hex
+    ipv4:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.ipv4' module instead.
+      redirect: ansible.utils.ipv4
+    ipv6:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.ipv6' module instead.
+      redirect: ansible.utils.ipv6
+    ipsubnet:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.ipsubnet' module instead.
+      redirect: ansible.utils.ipsubnet
+    next_nth_usable:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.next_nth_usable' module instead.
+      redirect: ansible.utils.next_nth_usable
+    network_in_network:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.network_in_network' module instead.
+      redirect: ansible.utils.network_in_network
+    network_in_usable:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.network_in_usable' module instead.
+      redirect: ansible.utils.network_in_usable
+    reduce_on_network:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.reduce_on_network' module instead.
+      redirect: ansible.utils.reduce_on_network
+    nthhost:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.nthhost' module instead.
+      redirect: ansible.utils.nthhost
+    previous_nth_usable:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.previous_nth_usable' module instead.
+      redirect: ansible.utils.previous_nth_usable
+    slaac:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.slaac' module instead.
+      redirect: ansible.utils.slaac
+    hwaddr:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.hwaddr' module instead.
+      redirect: ansible.utils.hwaddr
+    macaddr:
+      deprecation:
+        removal_date: '2024-01-01'
+        warning_text: Use 'ansible.utils.macaddr' module instead.
+      redirect: ansible.utils.macaddr
