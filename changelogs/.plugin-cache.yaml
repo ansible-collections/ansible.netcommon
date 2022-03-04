@@ -1,0 +1,199 @@
+plugins:
+  become:
+    enable:
+      description: Switch to elevated permissions on a network device
+      name: enable
+      version_added: 1.0.0
+  cache:
+    memory:
+      description: RAM backed, non persistent cache.
+      name: memory
+      version_added: 2.0.0
+  callback: {}
+  cliconf: {}
+  connection:
+    httpapi:
+      description: Use httpapi to run command on network appliances
+      name: httpapi
+      version_added: 1.0.0
+    libssh:
+      description: (Tech preview) Run tasks using libssh for ssh connection
+      name: libssh
+      version_added: '2.10'
+    napalm:
+      description: Provides persistent connection using NAPALM
+      name: napalm
+      version_added: 1.0.0
+    netconf:
+      description: Provides a persistent connection using the netconf protocol
+      name: netconf
+      version_added: 1.0.0
+    network_cli:
+      description: Use network_cli to run command on network appliances
+      name: network_cli
+      version_added: 1.0.0
+    persistent:
+      description: Use a persistent unix socket for connection
+      name: persistent
+      version_added: 1.0.0
+  httpapi:
+    restconf:
+      description: HttpApi Plugin for devices supporting Restconf API
+      name: restconf
+      version_added: 1.0.0
+  inventory: {}
+  lookup: {}
+  module:
+    cli_command:
+      description: Run a cli command on cli-based network devices
+      name: cli_command
+      namespace: ''
+      version_added: 1.0.0
+    cli_config:
+      description: Push text based configuration to network devices over network_cli
+      name: cli_config
+      namespace: ''
+      version_added: 1.0.0
+    cli_parse:
+      description: Parse cli output or text using a variety of parsers
+      name: cli_parse
+      namespace: ''
+      version_added: 1.2.0
+    net_banner:
+      description: (deprecated, removed after 2022-06-01) Manage multiline banners
+        on network devices
+      name: net_banner
+      namespace: ''
+      version_added: 1.0.0
+    net_get:
+      description: Copy a file from a network device to Ansible Controller
+      name: net_get
+      namespace: ''
+      version_added: 1.0.0
+    net_interface:
+      description: (deprecated, removed after 2022-06-01) Manage Interface on network
+        devices
+      name: net_interface
+      namespace: ''
+      version_added: 1.0.0
+    net_l2_interface:
+      description: (deprecated, removed after 2022-06-01) Manage Layer-2 interface
+        on network devices
+      name: net_l2_interface
+      namespace: ''
+      version_added: 1.0.0
+    net_l3_interface:
+      description: (deprecated, removed after 2022-06-01) Manage L3 interfaces on
+        network devices
+      name: net_l3_interface
+      namespace: ''
+      version_added: 1.0.0
+    net_linkagg:
+      description: (deprecated, removed after 2022-06-01) Manage link aggregation
+        groups on network devices
+      name: net_linkagg
+      namespace: ''
+      version_added: 1.0.0
+    net_lldp:
+      description: (deprecated, removed after 2022-06-01) Manage LLDP service configuration
+        on network devices
+      name: net_lldp
+      namespace: ''
+      version_added: 1.0.0
+    net_lldp_interface:
+      description: (deprecated, removed after 2022-06-01) Manage LLDP interfaces configuration
+        on network devices
+      name: net_lldp_interface
+      namespace: ''
+      version_added: 1.0.0
+    net_logging:
+      description: (deprecated, removed after 2022-06-01) Manage logging on network
+        devices
+      name: net_logging
+      namespace: ''
+      version_added: 1.0.0
+    net_ping:
+      description: Tests reachability using ping from a network device
+      name: net_ping
+      namespace: ''
+      version_added: 1.0.0
+    net_put:
+      description: Copy a file from Ansible Controller to a network device
+      name: net_put
+      namespace: ''
+      version_added: 1.0.0
+    net_static_route:
+      description: (deprecated, removed after 2022-06-01) Manage static IP routes
+        on network appliances (routers, switches et. al.)
+      name: net_static_route
+      namespace: ''
+      version_added: 1.0.0
+    net_system:
+      description: (deprecated, removed after 2022-06-01) Manage the system attributes
+        on network devices
+      name: net_system
+      namespace: ''
+      version_added: 1.0.0
+    net_user:
+      description: (deprecated, removed after 2022-06-01) Manage the aggregate of
+        local users on network device
+      name: net_user
+      namespace: ''
+      version_added: 1.0.0
+    net_vlan:
+      description: (deprecated, removed after 2022-06-01) Manage VLANs on network
+        devices
+      name: net_vlan
+      namespace: ''
+      version_added: 1.0.0
+    net_vrf:
+      description: (deprecated, removed after 2022-06-01) Manage VRFs on network devices
+      name: net_vrf
+      namespace: ''
+      version_added: 1.0.0
+    netconf_config:
+      description: netconf device configuration
+      name: netconf_config
+      namespace: ''
+      version_added: 1.0.0
+    netconf_get:
+      description: Fetch configuration/state data from NETCONF enabled network devices.
+      name: netconf_get
+      namespace: ''
+      version_added: 1.0.0
+    netconf_rpc:
+      description: Execute operations on NETCONF enabled network devices.
+      name: netconf_rpc
+      namespace: ''
+      version_added: 1.0.0
+    network_resource:
+      description: Manage resource modules
+      name: network_resource
+      namespace: ''
+      version_added: 2.4.0
+    restconf_config:
+      description: Handles create, update, read and delete of configuration data on
+        RESTCONF enabled devices.
+      name: restconf_config
+      namespace: ''
+      version_added: 1.0.0
+    restconf_get:
+      description: Fetch configuration/state data from RESTCONF enabled devices.
+      name: restconf_get
+      namespace: ''
+      version_added: 1.0.0
+    telnet:
+      description: Executes a low-down and dirty telnet command
+      name: telnet
+      namespace: ''
+      version_added: 1.0.0
+  netconf:
+    default:
+      description: Use default netconf plugin to run standard netconf commands as
+        per RFC
+      name: default
+      version_added: 1.0.0
+  shell: {}
+  strategy: {}
+  vars: {}
+version: 2.6.1
