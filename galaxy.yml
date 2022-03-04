@@ -2,7 +2,7 @@
 authors:
   - Ansible Network Community (ansible-network)
 dependencies:
-  "ansible.utils": '>=2.5.0'
+  "ansible.utils": '>=2.5.2'
 license_file: LICENSE
 name: netcommon
 namespace: ansible
