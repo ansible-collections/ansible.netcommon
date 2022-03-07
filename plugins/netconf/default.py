@@ -22,8 +22,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-netconf: default
+author: 
+ - Ansible Networking Team (@network-team)
+name: default
 short_description: Use default netconf plugin to run standard netconf commands as
   per RFC
 description:

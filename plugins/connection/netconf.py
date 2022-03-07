@@ -7,8 +7,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-connection: netconf
+author: 
+ - Ansible Networking Team (@network-team)
+name: netconf
 short_description: Provides a persistent connection using the netconf protocol
 description:
 - This connection plugin provides a connection to remote devices over the SSH NETCONF

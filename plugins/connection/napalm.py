@@ -6,8 +6,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-connection: napalm
+author: 
+ - Ansible Networking Team (@network-team)
+name: napalm
 short_description: Provides persistent connection using NAPALM
 description:
 - This connection plugin provides connectivity to network devices using the NAPALM

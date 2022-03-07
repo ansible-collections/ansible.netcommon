@@ -28,7 +28,9 @@ DOCUMENTATION = """
         - RAM backed cache that is not persistent.
         - Tailored for networking use case.
     version_added: 2.0.0
-    author: Ansible Networking Team
+    author: 
+        - Ansible Networking Team (@network-team)   
+    name: memory
 """
 
 from ansible.plugins import AnsiblePlugin

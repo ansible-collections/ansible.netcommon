@@ -6,8 +6,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-connection: httpapi
+author: 
+ - Ansible Networking Team (@network-team)
+name: httpapi
 short_description: Use httpapi to run command on network appliances
 description:
 - This connection plugin provides a connection to remote devices over a HTTP(S)-based

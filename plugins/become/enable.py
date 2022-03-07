@@ -6,8 +6,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-become: enable
+author: 
+ - Ansible Networking Team (@network-team)
+name: enable
 short_description: Switch to elevated permissions on a network device
 description:
 - This become plugins allows elevated permissions on a remote network device.
