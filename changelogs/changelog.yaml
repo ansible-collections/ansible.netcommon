@@ -505,4 +505,4 @@ releases:
       release_summary: Rereleased 2.6.0 with updated utils dependancy.
     fragments:
     - 2.6.0.yaml
-    release_date: '2022-03-04'
+    release_date: '2022-03-07'
