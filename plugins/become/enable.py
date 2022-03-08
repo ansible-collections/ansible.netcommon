@@ -7,7 +7,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 author:
- - Ansible Networking Team (@network-team)
+ - Ansible Networking Team
 name: enable
 short_description: Switch to elevated permissions on a network device
 description:

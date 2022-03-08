@@ -23,7 +23,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 author:
- - Ansible Networking Team (@network-team)
+ - Ansible Networking Team
 name: default
 short_description: Use default netconf plugin to run standard netconf commands as
   per RFC

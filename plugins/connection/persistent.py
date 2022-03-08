@@ -8,7 +8,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 author:
- - Ansible Networking Team (@network-team)
+ - Ansible Networking Team
 name: persistent
 short_description: Use a persistent unix socket for connection
 description:

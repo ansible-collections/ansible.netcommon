@@ -7,7 +7,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 author:
- - Ansible Networking Team (@network-team)
+ - Ansible Networking Team
 name: napalm
 short_description: Provides persistent connection using NAPALM
 description:

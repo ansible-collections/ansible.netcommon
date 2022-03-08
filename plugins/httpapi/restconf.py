@@ -22,7 +22,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 author:
- - Ansible Networking Team (@network-team)
+ - Ansible Networking Team
 name: restconf
 short_description: HttpApi Plugin for devices supporting Restconf API
 description:

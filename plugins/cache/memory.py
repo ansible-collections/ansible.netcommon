@@ -28,7 +28,7 @@ DOCUMENTATION = """
         - Tailored for networking use case.
     version_added: 2.0.0
     author:
-        - Ansible Networking Team (@network-team)
+        - Ansible Networking Team
     name: memory
 """
 
