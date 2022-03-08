@@ -8,7 +8,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 author:
- - Ansible Networking Team
+ - Ansible Networking Team (@ansible-network)
 name: netconf
 short_description: Provides a persistent connection using the netconf protocol
 description:

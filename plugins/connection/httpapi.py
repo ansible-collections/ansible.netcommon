@@ -7,7 +7,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 author:
- - Ansible Networking Team
+ - Ansible Networking Team (@ansible-network)
 name: httpapi
 short_description: Use httpapi to run command on network appliances
 description:

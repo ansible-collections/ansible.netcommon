@@ -6,7 +6,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
     author:
-      - Ansible Networking Team
+      - Ansible Networking Team (@ansible-network)
     name: libssh
     short_description: (Tech preview) Run tasks using libssh for ssh connection
     description:
