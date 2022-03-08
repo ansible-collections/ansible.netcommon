@@ -21,7 +21,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: 
+author:
  - Ansible Networking Team (@network-team)
 name: restconf
 short_description: HttpApi Plugin for devices supporting Restconf API

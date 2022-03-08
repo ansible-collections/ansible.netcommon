@@ -7,7 +7,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: 
+author:
  - Ansible Networking Team (@network-team)
 name: persistent
 short_description: Use a persistent unix socket for connection

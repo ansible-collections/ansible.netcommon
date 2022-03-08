@@ -7,7 +7,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: 
+author:
  - Ansible Networking Team (@network-team)
 name: network_cli
 short_description: Use network_cli to run command on network appliances
