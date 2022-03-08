@@ -17,7 +17,6 @@ description:
   connection plugin requires C(napalm) to be installed locally on the Ansible controller.
 version_added: 1.0.0
 deprecated:
-  alternative: None. If anyone actually wants to use this plugin, open an issue and we'll rescind the deprecation
   why: I am pretty sure no one has ever tried to use these modules
   removed_at_date: '2022-06-01'
 requirements:

@@ -1,6 +1,11 @@
 ---
 requires_ansible: '>=2.9.10'
 plugin_routing:
+  connection:
+    napalm:
+      deprecation:
+        removal_date: '2022-06-01'
+        warning_text: See the plugin documentation for more details
   modules:
     net_banner:
       deprecation:
