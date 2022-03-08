@@ -17,8 +17,9 @@ description:
   connection plugin requires C(napalm) to be installed locally on the Ansible controller.
 version_added: 1.0.0
 deprecated:
+  alternative: network_cli
   why: I am pretty sure no one has ever tried to use these modules
-  removed_at_date: '2022-06-01'
+  removed_in: '2022-06-01'
 requirements:
 - napalm
 extends_documentation_fragment:
