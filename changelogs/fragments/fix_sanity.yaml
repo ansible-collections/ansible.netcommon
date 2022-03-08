@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - Fix validate-module  sanity test.
+

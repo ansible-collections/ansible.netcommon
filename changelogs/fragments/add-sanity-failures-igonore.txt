@@ -1,3 +1,0 @@
----
-trivial:
-  - Add sanity failures in 2.13 ignore.txt.
