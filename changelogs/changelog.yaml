@@ -502,7 +502,10 @@ releases:
     release_date: '2022-03-01'
   2.6.1:
     changes:
+      bugfixes:
+      - Fix validate-module sanity test.
       release_summary: Rereleased 2.6.0 with updated utils dependancy.
     fragments:
     - 2.6.0.yaml
-    release_date: '2022-03-07'
+    - fix_sanity.yaml
+    release_date: '2022-03-10'
