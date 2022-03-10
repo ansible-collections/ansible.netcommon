@@ -13,7 +13,7 @@ DOCUMENTATION = """
         - Use the ansible-pylibssh python bindings to connect to targets
         - The python bindings use libssh C library (https://www.libssh.org/) to connect to targets
         - This plugin borrows a lot of settings from the ssh plugin as they both cover the same protocol.
-    version_added: 2.6.0
+    version_added: 1.1.0
     options:
       remote_addr:
         description:
