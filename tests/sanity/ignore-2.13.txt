@@ -1,14 +1,3 @@
 plugins/action/net_base.py action-plugin-docs # base class for other net_* action plugins which have a matching module
 plugins/action/netconf.py action-plugin-docs # base class for deprecated network platform modules using `connection: local`
 plugins/action/network.py action-plugin-docs # base class for network action plugins
-plugins/become/enable.py validate-modules:invalid-documentation
-plugins/cache/memory.py validate-modules:invalid-documentation
-plugins/connection/httpapi.py validate-modules:invalid-documentation
-plugins/connection/libssh.py validate-modules:invalid-documentation
-plugins/connection/napalm.py validate-modules:deprecation-mismatch
-plugins/connection/napalm.py validate-modules:invalid-documentation
-plugins/connection/netconf.py validate-modules:invalid-documentation
-plugins/connection/network_cli.py validate-modules:invalid-documentation
-plugins/connection/persistent.py validate-modules:invalid-documentation
-plugins/httpapi/restconf.py validate-modules:invalid-documentation
-plugins/netconf/default.py validate-modules:invalid-documentation
