@@ -7,8 +7,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-connection: network_cli
+author:
+ - Ansible Networking Team (@ansible-network)
+name: network_cli
 short_description: Use network_cli to run command on network appliances
 description:
 - This connection plugin provides a connection to remote devices over the SSH and

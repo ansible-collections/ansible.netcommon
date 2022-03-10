@@ -18,7 +18,7 @@ DEPRECATED
 ----------
 :Removed in collection release after 2022-06-01
 :Why: I am pretty sure no one has ever tried to use these modules
-:Alternative: None. If anyone actually wants to use this plugin, open an issue and we'll rescind the deprecation
+:Alternative: network_cli
 
 
 
@@ -304,7 +304,7 @@ Status
 Authors
 ~~~~~~~
 
-- Ansible Networking Team
+- Ansible Networking Team (@ansible-network)
 
 
 .. hint::

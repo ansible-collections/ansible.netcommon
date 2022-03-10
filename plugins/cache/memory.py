@@ -22,13 +22,14 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-    cache: memory
     short_description: RAM backed, non persistent cache.
     description:
         - RAM backed cache that is not persistent.
         - Tailored for networking use case.
     version_added: 2.0.0
-    author: Ansible Networking Team
+    author:
+        - Ansible Networking Team (@ansible-network)
+    name: memory
 """
 
 from ansible.plugins import AnsiblePlugin
