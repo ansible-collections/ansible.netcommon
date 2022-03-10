@@ -5,6 +5,19 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v2.6.1
+======
+
+Release Summary
+---------------
+
+Rereleased 2.6.0 with updated utils dependancy.
+
+Bugfixes
+--------
+
+- Fix validate-module sanity test.
+
 v2.6.0
 ======
 
