@@ -6,8 +6,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-connection: napalm
+author:
+ - Ansible Networking Team (@ansible-network)
+name: napalm
 short_description: Provides persistent connection using NAPALM
 description:
 - This connection plugin provides connectivity to network devices using the NAPALM
@@ -16,7 +17,7 @@ description:
   connection plugin requires C(napalm) to be installed locally on the Ansible controller.
 version_added: 1.0.0
 deprecated:
-  alternative: None. If anyone actually wants to use this plugin, open an issue and we'll rescind the deprecation
+  alternative: network_cli
   why: I am pretty sure no one has ever tried to use these modules
   removed_at_date: '2022-06-01'
 requirements:

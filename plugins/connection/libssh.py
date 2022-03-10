@@ -5,14 +5,15 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-    author: Ansible Team
-    connection: libssh
+    author:
+      - Ansible Networking Team (@ansible-network)
+    name: libssh
     short_description: (Tech preview) Run tasks using libssh for ssh connection
     description:
         - Use the ansible-pylibssh python bindings to connect to targets
         - The python bindings use libssh C library (https://www.libssh.org/) to connect to targets
         - This plugin borrows a lot of settings from the ssh plugin as they both cover the same protocol.
-    version_added: "2.10"
+    version_added: 1.1.0
     options:
       remote_addr:
         description:
