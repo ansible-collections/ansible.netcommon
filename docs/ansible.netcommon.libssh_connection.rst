@@ -8,7 +8,7 @@ ansible.netcommon.libssh
 **(Tech preview) Run tasks using libssh for ssh connection**
 
 
-Version added: 2.6.0
+Version added: 1.1.0
 
 .. contents::
    :local:
