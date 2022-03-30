@@ -189,11 +189,11 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"no"</div>
+                        <b>Default:</b><br/><div style="color: blue">"yes"</div>
                 </td>
                     <td>
                             <div> ini entries:
-                                    <p>[ansible_network]<br>import_modules = no</p>
+                                    <p>[ansible_network]<br>import_modules = yes</p>
                             </div>
                                 <div>env:ANSIBLE_NETWORK_IMPORT_MODULES</div>
                                 <div>var: ansible_network_import_modules</div>

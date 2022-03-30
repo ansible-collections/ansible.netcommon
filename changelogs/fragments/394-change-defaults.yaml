@@ -1,0 +1,5 @@
+---
+major_changes:
+  - network_cli - Change default value of `import_modules` option from `no` to `yes`
+  - netconf - Change default value of `import_modules` option from `no` to `yes`
+  - httpapi - Change default value of `import_modules` option from `no` to `yes`

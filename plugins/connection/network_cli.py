@@ -132,7 +132,7 @@ options:
       Note- Incompatible with C(asynchronous mode).
       Note- Python 3 and Ansible 2.9.16 or greater required.
       Note- With Ansible 2.9.x fully qualified modules names are required in tasks.
-    default: false
+    default: true
     ini:
     - section: ansible_network
       key: import_modules
