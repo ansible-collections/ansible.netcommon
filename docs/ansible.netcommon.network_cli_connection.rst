@@ -456,11 +456,11 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"paramiko"</div>
+                        <b>Default:</b><br/><div style="color: blue">"libssh"</div>
                 </td>
                     <td>
                             <div> ini entries:
-                                    <p>[persistent_connection]<br>ssh_type = paramiko</p>
+                                    <p>[persistent_connection]<br>ssh_type = libssh</p>
                             </div>
                                 <div>env:ANSIBLE_NETWORK_CLI_SSH_TYPE</div>
                                 <div>var: ansible_network_cli_ssh_type</div>

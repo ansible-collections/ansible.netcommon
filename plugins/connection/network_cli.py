@@ -254,7 +254,7 @@ options:
       - The type of the transport used by C(network_cli) connection plugin to connection to remote host.
         Valid value is either I(paramiko) or I(libssh)
       - In order to use I(libssh), the ansible-pylibssh package needs to be installed
-    default: paramiko
+    default: libssh
     env:
         - name: ANSIBLE_NETWORK_CLI_SSH_TYPE
     ini:

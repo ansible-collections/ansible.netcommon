@@ -1,0 +1,4 @@
+---
+major_changes:
+  - network_cli - Change default value of `ssh_type` option from `paramiko` to
+  `libssh`
