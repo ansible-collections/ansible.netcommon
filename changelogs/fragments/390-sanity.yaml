@@ -1,0 +1,3 @@
+---
+trivial:
+  - Update to fix issues with 2.14 tests and with tox environment
