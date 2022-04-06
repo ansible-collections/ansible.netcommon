@@ -20,7 +20,8 @@ repos:
     hooks:
       - id: black
         args: [-l, "79"]
-  - repo: https://github.com/ansible-network/collection_prep
-    rev: 0.9.4
+  - repo: https://github.com/Qalthos/collection_prep
+    rev: 2d5cdde
     hooks:
       - id: update-docs
+      - id: dev-version
