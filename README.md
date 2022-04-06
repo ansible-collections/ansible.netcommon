@@ -6,6 +6,8 @@
 The Ansible ``ansible.netcommon`` collection includes common content to help automate the management of network, security, and cloud devices.
 This includes  connection plugins, such as ``network_cli``, ``httpapi``, and ``netconf``.
 
+This line change will alter the commit hash and therefore the version string
+
 <!--start requires_ansible-->
 ## Ansible version compatibility
 

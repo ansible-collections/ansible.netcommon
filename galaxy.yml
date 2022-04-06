@@ -11,4 +11,4 @@ readme: README.md
 repository: https://github.com/ansible-collections/ansible.netcommon
 issues: https://github.com/ansible-collections/ansible.netcommon/issues
 tags: [networking, security, cloud, network_cli, netconf, httpapi, grpc]
-version: 2.6.1-2+g6687016
+version: 2.6.1-1+g57bc5aa
