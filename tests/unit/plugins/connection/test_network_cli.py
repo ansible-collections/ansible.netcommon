@@ -25,6 +25,7 @@ import json
 
 from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
     MagicMock,
+    patch,
 )
 from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils._text import to_text
@@ -34,9 +35,11 @@ import pytest
 
 
 @pytest.fixture(name="conn")
-def plugin_fixture():
+@patch("ansible.plugins.loader.terminal_loader")
+def plugin_fixture(mocked_loader):
     pc = PlayContext()
-    pc.network_os = "ios"
+    pc.network_os = "fakeos"
+    mocked_loader.get.return_value = MagicMock()
     conn = connection_loader.get(
         "ansible.netcommon.network_cli", pc, "/dev/null"
     )
