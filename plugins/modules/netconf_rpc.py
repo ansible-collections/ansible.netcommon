@@ -16,7 +16,7 @@ author:
 - Sven Wisotzky (@wisotzky)
 short_description: Execute operations on NETCONF enabled network devices.
 description:
-- NETCONF is a network management protocol developed and standardized by the IETF.
+- NETCONF is a network management protocol developed and standardized by the IETF standards.
   It is documented in RFC 6241.
 - This module allows the user to execute NETCONF RPC requests as defined by IETF RFC
   standards as well as proprietary requests.
