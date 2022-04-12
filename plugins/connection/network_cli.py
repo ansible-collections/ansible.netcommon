@@ -251,9 +251,10 @@ options:
     - name: ansible_network_cli_retries
   ssh_type:
     description:
-      - The type of the transport used by C(network_cli) connection plugin to connection to remote host.
-      - In order to use I(libssh), the ansible-pylibssh package needs to be installed.
-      - The value "auto" will use libssh if the ansible-pylibssh package is installed, otherwise fallback to paramiko.
+      - The python package that will be used by the C(network_cli) connection plugin to create a SSH connection to remote host.
+      - I(libssh) will use the ansible-pylibssh package, which needs to be installed in order to work.
+      - I(paramiko) will instead use the paramiko package to manage the SSH connection.
+      - I(auto) will use ansible-pylibssh if that package is installed, otherwise will fallback to paramiko.
     default: auto
     choices: ["libssh", "paramiko", "auto"]
     env:

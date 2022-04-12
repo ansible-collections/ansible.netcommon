@@ -470,9 +470,10 @@ Parameters
                                 <div>var: ansible_network_cli_ssh_type</div>
                     </td>
                 <td>
-                        <div>The type of the transport used by <code>network_cli</code> connection plugin to connection to remote host.</div>
-                        <div>In order to use <em>libssh</em>, the ansible-pylibssh package needs to be installed.</div>
-                        <div>The value &quot;auto&quot; will use libssh if the ansible-pylibssh package is installed, otherwise fallback to paramiko.</div>
+                        <div>The python package that will be used by the <code>network_cli</code> connection plugin to create a SSH connection to remote host.</div>
+                        <div><em>libssh</em> will use the ansible-pylibssh package, which needs to be installed in order to work.</div>
+                        <div><em>paramiko</em> will instead use the paramiko package to manage the SSH connection.</div>
+                        <div><em>auto</em> will use ansible-pylibssh if that package is installed, otherwise will fallback to paramiko.</div>
                 </td>
             </tr>
             <tr>
