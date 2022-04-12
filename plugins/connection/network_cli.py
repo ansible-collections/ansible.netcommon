@@ -428,6 +428,10 @@ class Connection(NetworkConnectionBase):
                 if HAS_PYLIBSSH:
                     self._ssh_type = "libssh"
                 else:
+                    self.queue_message(
+                        "warning",
+                        "ansible-pylibssh not installed, falling back to paramiko",
+                    )
                     self._ssh_type = "paramiko"
 
             if self._ssh_type not in ["paramiko", "libssh"]:
