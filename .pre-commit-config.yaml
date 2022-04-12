@@ -14,13 +14,12 @@ repos:
         args: [--branch, main]
       - id: trailing-whitespace
   - repo: https://github.com/psf/black
-    # black v22+ drops Python 2 support. We can't update until we do as well.
-    # This hash corresponds to 21.12b0
-    rev: f1d4e742c91dd5179d742b0db9293c4472b765f8
+    rev: 21.12b0
     hooks:
       - id: black
         args: [-l, "79"]
+        additional_dependencies: ["click<8.1"]
   - repo: https://github.com/ansible-network/collection_prep
-    rev: 0.9.4
+    rev: 0.9.6
     hooks:
       - id: update-docs

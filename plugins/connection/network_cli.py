@@ -196,6 +196,7 @@ options:
     - name: ansible_terminal_stderr_re
   terminal_initial_prompt:
     type: list
+    elements: string
     description:
     - A single regex pattern or a sequence of patterns to evaluate the expected prompt
       at the time of initial login to the remote host.
@@ -203,6 +204,7 @@ options:
     - name: ansible_terminal_initial_prompt
   terminal_initial_answer:
     type: list
+    elements: string
     description:
     - The answer to reply with if the C(terminal_initial_prompt) is matched. The value
       can be a single answer or a list of answers for multiple terminal_initial_prompt.
