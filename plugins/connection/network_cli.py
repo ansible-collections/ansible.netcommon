@@ -252,9 +252,10 @@ options:
   ssh_type:
     description:
       - The type of the transport used by C(network_cli) connection plugin to connection to remote host.
-        Valid value is either I(paramiko) or I(libssh)
-      - In order to use I(libssh), the ansible-pylibssh package needs to be installed
-    default: libssh
+      - In order to use I(libssh), the ansible-pylibssh package needs to be installed.
+      - The value "auto" will use libssh if the ansible-pylibssh package is installed, otherwise fallback to paramiko.
+    default: auto
+    choices: ["libssh", "paramiko", "auto"]
     env:
         - name: ANSIBLE_NETWORK_CLI_SSH_TYPE
     ini:
@@ -315,6 +316,9 @@ from ansible.plugins.loader import (
     connection_loader,
 )
 from ansible.plugins.loader import cache_loader
+from ansible_collections.ansible.netcommon.plugins.connection.libssh import (
+    HAS_PYLIBSSH,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     to_list,
 )
@@ -418,6 +422,13 @@ class Connection(NetworkConnectionBase):
     def ssh_type_conn(self):
         self._ssh_type = self.get_option("ssh_type")
         if self._ssh_type_conn is None:
+            # Support autodetection of supported library
+            if self._ssh_type == "auto":
+                if HAS_PYLIBSSH:
+                    self._ssh_type = "libssh"
+                else:
+                    self._ssh_type = "paramiko"
+
             if self._ssh_type not in ["paramiko", "libssh"]:
                 raise AnsibleConnectionFailure(
                     "Invalid value '%s' set for ssh_type option."
@@ -425,13 +436,16 @@ class Connection(NetworkConnectionBase):
                     % self._ssh_type
                 )
 
-            # TODO: Remove this check if/when libssh connection plugin is moved to ansible-base
             if self._ssh_type == "libssh":
-                self._ssh_type = "ansible.netcommon.libssh"
+                # connection_loader needs FQCN
+                self._ssh_type_conn = connection_loader.get(
+                    "ansible.netcommon.libssh", self._play_context, "/dev/null"
+                )
+            else:
+                self._ssh_type_conn = connection_loader.get(
+                    self._ssh_type, self._play_context, "/dev/null"
+                )
 
-            self._ssh_type_conn = connection_loader.get(
-                self._ssh_type, self._play_context, "/dev/null"
-            )
             self.queue_message(
                 "vvvv", "ssh type is set to %s" % self.get_option("ssh_type")
             )

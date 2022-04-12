@@ -456,18 +456,23 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"libssh"</div>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>libssh</li>
+                                    <li>paramiko</li>
+                                    <li><div style="color: blue"><b>auto</b>&nbsp;&larr;</div></li>
+                        </ul>
                 </td>
                     <td>
                             <div> ini entries:
-                                    <p>[persistent_connection]<br>ssh_type = libssh</p>
+                                    <p>[persistent_connection]<br>ssh_type = auto</p>
                             </div>
                                 <div>env:ANSIBLE_NETWORK_CLI_SSH_TYPE</div>
                                 <div>var: ansible_network_cli_ssh_type</div>
                     </td>
                 <td>
-                        <div>The type of the transport used by <code>network_cli</code> connection plugin to connection to remote host. Valid value is either <em>paramiko</em> or <em>libssh</em></div>
-                        <div>In order to use <em>libssh</em>, the ansible-pylibssh package needs to be installed</div>
+                        <div>The type of the transport used by <code>network_cli</code> connection plugin to connection to remote host.</div>
+                        <div>In order to use <em>libssh</em>, the ansible-pylibssh package needs to be installed.</div>
+                        <div>The value &quot;auto&quot; will use libssh if the ansible-pylibssh package is installed, otherwise fallback to paramiko.</div>
                 </td>
             </tr>
             <tr>

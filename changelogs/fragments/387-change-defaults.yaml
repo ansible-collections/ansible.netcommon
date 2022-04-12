@@ -1,4 +1,6 @@
 ---
 major_changes:
-  - network_cli - Change default value of `ssh_type` option from `paramiko` to
-  `libssh`
+  - >
+    network_cli - Change default value of `ssh_type` option from `paramiko` to
+    `auto`. This value will use libssh if the ansible-pylibssh module is
+    installed, otherwise will fallback to paramiko.
