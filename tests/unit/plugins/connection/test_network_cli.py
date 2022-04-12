@@ -155,9 +155,11 @@ def test_network_cli_exec_command(conn, command):
         ),
     ],
 )
-def test_network_cli_send(conn, response):
+@pytest.mark.parametrize("ssh_type", ["paramiko", "libssh"])
+def test_network_cli_send(conn, response, ssh_type):
     conn.set_options(
         direct={
+            "ssh_type": ssh_type,
             "terminal_stderr_re": [{"pattern": "^ERROR"}],
             "terminal_stdout_re": [{"pattern": "device#"}],
         }
@@ -168,7 +170,10 @@ def test_network_cli_send(conn, response):
     conn._ssh_shell = mock__shell
     conn._connected = True
 
-    mock__shell.recv.side_effect = [response, None]
+    if ssh_type == "paramiko":
+        mock__shell.recv.side_effect = [response, None]
+    elif ssh_type == "libssh":
+        mock__shell.read_bulk_response.side_effect = [response, None]
     conn.send(b"command")
 
     mock__shell.sendall.assert_called_with(b"command\r")
