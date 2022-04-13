@@ -1,0 +1,39 @@
+[flake8]
+
+builtins = _
+
+# Print the total number of errors:
+count = true
+
+# Don't even try to analyze these:
+extend-exclude =
+  # project env vars
+  .env,
+  # GitHub configs
+  .github,
+  .mypy_cache
+  # Cache files of pytest
+  .pytest_cache,
+  tests/output/
+  .tox
+  # Occasional virtualenv dirs
+  .venv
+  venv
+  # VS Code
+  .vscode,
+
+# IMPORTANT: avoid using ignore option, always use extend-ignore instead
+# Completely and unconditionally ignore the following errors:
+extend-ignore =
+  E123,  # E123, E125 skipped as they are invalid PEP-8.
+  E125,
+  E203,  # annoy black by allowing white space before : https://github.com/psf/black/issues/315
+  E402,  # ansible requires import after doc strings
+  E501,  # given the ansible_collections this is nearly impossible
+  W503,
+
+# Accessibility/large fonts and PEP8 unfriendly:
+max-line-length = 160
+
+# Count the number of occurrences of each error/warning code and print a report:
+statistics = true
