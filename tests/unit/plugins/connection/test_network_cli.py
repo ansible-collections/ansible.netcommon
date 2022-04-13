@@ -23,7 +23,7 @@ __metaclass__ = type
 
 import json
 
-from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
+from unittest.mock import (
     MagicMock,
     patch,
 )

@@ -25,7 +25,7 @@ __metaclass__ = type
 import pytest
 from copy import deepcopy
 
-from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
+from unittest.mock import (
     MagicMock,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (

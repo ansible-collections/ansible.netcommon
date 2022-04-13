@@ -15,7 +15,7 @@ from ansible.plugins.loader import action_loader
 from ansible.template import Templar
 import pytest
 
-from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
+from unittest.mock import (
     MagicMock,
 )
 from ansible_collections.ansible.netcommon.tests.unit.mock.loader import (
