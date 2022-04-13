@@ -458,9 +458,9 @@ class Connection(NetworkConnectionBase):
                 self._ssh_type_conn = connection_loader.get(
                     "ansible.netcommon.libssh", self._play_context, "/dev/null"
                 )
-            else:
+            elif self.ssh_type == "paramiko":
                 self._ssh_type_conn = connection_loader.get(
-                    self.ssh_type, self._play_context, "/dev/null"
+                    "ansible.builtin.paramiko", self._play_context, "/dev/null"
                 )
 
         return self._ssh_type_conn
@@ -975,7 +975,7 @@ class Connection(NetworkConnectionBase):
                 check_all,
                 strip_prompt,
             )
-        else:
+        elif self.ssh_type == "paramiko":
             response = self.receive_paramiko(
                 command,
                 prompts,
@@ -1252,11 +1252,10 @@ class Connection(NetworkConnectionBase):
                         remote host before triggering timeout exception
         :return: None
         """
-        ssh_type = self.ssh_type
         ssh = self.ssh_type_conn._connect_uncached()
-        if ssh_type == "libssh":
+        if self.ssh_type == "libssh":
             self.ssh_type_conn.put_file(source, destination, proto=proto)
-        elif ssh_type == "paramiko":
+        elif self.ssh_type == "paramiko":
             if proto == "scp":
                 if not HAS_SCP:
                     raise AnsibleError(missing_required_lib("scp"))
@@ -1288,11 +1287,10 @@ class Connection(NetworkConnectionBase):
         :return: None
         """
         """Fetch file over scp/sftp from remote device"""
-        ssh_type = self.ssh_type
         ssh = self.ssh_type_conn._connect_uncached()
-        if ssh_type == "libssh":
+        if self.ssh_type == "libssh":
             self.ssh_type_conn.fetch_file(source, destination, proto=proto)
-        elif ssh_type == "paramiko":
+        elif self.ssh_type == "paramiko":
             if proto == "scp":
                 if not HAS_SCP:
                     raise AnsibleError(missing_required_lib("scp"))
