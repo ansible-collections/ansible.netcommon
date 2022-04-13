@@ -454,14 +454,20 @@ class Connection(NetworkConnectionBase):
     def ssh_type_conn(self):
         if self._ssh_type_conn is None:
             if self.ssh_type == "libssh":
-                # connection_loader needs FQCN
-                self._ssh_type_conn = connection_loader.get(
-                    "ansible.netcommon.libssh", self._play_context, "/dev/null"
-                )
+                connection_plugin = "ansible.netcommon.libssh"
             elif self.ssh_type == "paramiko":
-                self._ssh_type_conn = connection_loader.get(
-                    "ansible.builtin.paramiko", self._play_context, "/dev/null"
+                # NOTE: This MUST be paramiko or things will break
+                connection_plugin = "paramiko"
+            else:
+                raise AnsibleConnectionFailure(
+                    "Invalid value '%s' set for ssh_type option."
+                    " Expected value is either 'libssh' or 'paramiko'"
+                    % self._ssh_type
                 )
+
+            self._ssh_type_conn = connection_loader.get(
+                connection_plugin, self._play_context, "/dev/null"
+            )
 
         return self._ssh_type_conn
 

@@ -58,7 +58,7 @@ def test_network_cli_invalid_os(network_os):
 @pytest.mark.parametrize("look_for_keys", [True, False, None])
 @pytest.mark.parametrize("password", ["password", None])
 @pytest.mark.parametrize("private_key_file", ["/path/to/key/file", None])
-@pytest.mark.parametrize("ssh_type", ["paramiko", "libssh"])
+@pytest.mark.parametrize("ssh_type", ["paramiko", "libssh", "auto"])
 def test_look_for_keys(
     conn, look_for_keys, password, private_key_file, ssh_type
 ):
@@ -84,7 +84,7 @@ def test_look_for_keys(
         assert conn.ssh_type_conn.get_option("look_for_keys") is True
 
 
-@pytest.mark.parametrize("ssh_type", ["paramiko", "libssh"])
+@pytest.mark.parametrize("ssh_type", ["paramiko", "libssh", "auto"])
 def test_options_pass_through(conn, ssh_type):
     conn.set_options(
         direct={
@@ -155,7 +155,7 @@ def test_network_cli_exec_command(conn, command):
         ),
     ],
 )
-@pytest.mark.parametrize("ssh_type", ["paramiko", "libssh"])
+@pytest.mark.parametrize("ssh_type", ["paramiko", "libssh", "auto"])
 def test_network_cli_send(conn, response, ssh_type):
     conn.set_options(
         direct={
@@ -172,7 +172,7 @@ def test_network_cli_send(conn, response, ssh_type):
 
     if ssh_type == "paramiko":
         mock__shell.recv.side_effect = [response, None]
-    elif ssh_type == "libssh":
+    else:
         mock__shell.read_bulk_response.side_effect = [response, None]
     conn.send(b"command")
 
