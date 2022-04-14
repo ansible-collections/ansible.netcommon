@@ -8,8 +8,13 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
 
 jobs:
+  pre-build:
+    uses: Qalthos/github_actions/.github/workflows/build.yml@dependencies
+
   sanity:
-    uses: ansible-network/github_actions/.github/workflows/sanity.yml@main
+    needs: pre-build
+    uses: Qalthos/github_actions/.github/workflows/sanity.yml@dependencies
 
   unit:
-    uses: ansible-network/github_actions/.github/workflows/unit.yml@main
+    needs: pre-build
+    uses: Qalthos/github_actions/.github/workflows/unit.yml@dependencies
