@@ -9,7 +9,11 @@ __metaclass__ = type
 import pytest
 
 from ansible.module_utils._text import to_bytes
-from ansible.errors import AnsibleError, AnsibleFileNotFound
+from ansible.errors import (
+    AnsibleError,
+    AnsibleFileNotFound,
+    AnsibleConnectionFailure,
+)
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
 import unittest
@@ -18,41 +22,105 @@ from unittest.mock import (
     MagicMock,
 )
 
+from ansible_collections.ansible.netcommon.plugins.connection import libssh
+
 pylibsshext = pytest.importorskip("pylibsshext")
 
 
-class TestConnectionClass(unittest.TestCase):
-    @patch("pylibsshext.session.Session")
-    @patch(
-        "ansible_collections.ansible.netcommon.plugins.connection.libssh.Connection._connect"
+def test_libssh_connect(monkeypatch):
+    """Test the libssh connection plugin.
+
+    :param monkeypatch: pytest fixture
+    """
+    pc = PlayContext()
+    pc.remote_addr = "localhost"
+    pc.password = "test"
+    pc.port = 8080
+    pc.timeout = 60
+    pc.remote_user = "user1"
+
+    conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
+    conn.set_options(
+        direct={
+            "host_key_checking": False,
+        }
     )
-    def test_libssh_connect(self, mocked_super, mock_session):
-        pc = PlayContext()
-        pc.remote_addr = "localhost"
-        pc.password = "test"
-        pc.port = 8080
-        pc.timeout = 60
-        pc.remote_user = "user1"
 
-        conn = connection_loader.get(
-            "ansible.netcommon.libssh", pc, "/dev/null"
-        )
+    call_args, call_kwargs = None, None
 
-        conn.ssh = mock_session
-        mock_connect = MagicMock()
-        conn.ssh.connect = mock_connect
+    class Session(libssh.Session):
+        """A session object used to patch libssh.Session"""
+
+        def connect(self, *args, **kwargs):
+            """Stores the arguments and keyword arguments for later use.
+
+            :param args: Positional arguments
+            :param kwargs: Keyword arguments
+            :raises AnsibleConnectionFailure: Always
+            """
+            nonlocal call_args, call_kwargs
+            call_args, call_kwargs = args, kwargs
+            raise AnsibleConnectionFailure
+
+    monkeypatch.setattr(libssh, "Session", Session)
+
+    with pytest.raises(AnsibleConnectionFailure):
         conn._connect()
-        conn.ssh.connect.assert_called_with(
-            host="localhost",
-            host_key_checking=False,
-            look_for_keys=True,
-            password="test",
-            port=8080,
-            timeout=60,
-            user="user1",
-            private_key=None,
-        )
 
+    assert call_kwargs == {
+        "host": "localhost",
+        "host_key_checking": False,
+        "look_for_keys": True,
+        "password": "test",
+        "port": 8080,
+        "timeout": 60,
+        "user": "user1",
+        "private_key": None,
+    }
+
+
+def test_libssh_fetch_file(monkeypatch):
+    pc = PlayContext()
+    pc.remote_addr = "localhost"
+    conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
+
+    class Session(libssh.Session):
+        """A session object used to patch libssh.Session"""
+
+        def connect(self, *args, **kwargs):
+            """Stores the arguments and keyword arguments for later use.
+
+            :param args: Positional arguments
+            :param kwargs: Keyword arguments
+            :return: True indicating a successful connection
+            """
+            return True
+
+    monkeypatch.setattr(libssh, "Session", Session)
+
+    call_args, call_kwargs = None, None
+
+    def fetch_file(*args, **kwargs):
+        """Stores the arguments and keyword arguments for later use.
+
+        :param args: Positional arguments
+        :param kwargs: Keyword arguments
+        :raises AnsibleFileNotFound: Always
+        """
+        nonlocal call_args, call_kwargs
+        call_args, call_kwargs = args, kwargs
+        raise AnsibleFileNotFound
+
+    file_path = "test_libssh.py"
+    monkeypatch.setattr(conn, "fetch_file", fetch_file)
+
+    with pytest.raises(AnsibleFileNotFound):
+        conn.fetch_file(in_path=file_path, out_path=file_path)
+
+    assert call_kwargs == {"in_path": file_path, "out_path": file_path}
+
+
+class TestConnectionClass(unittest.TestCase):
     def test_libssh_close(self):
         pc = PlayContext()
         conn = connection_loader.get(
@@ -117,24 +185,5 @@ class TestConnectionClass(unittest.TestCase):
         file_path = "test_libssh.py"
         conn.put_file(in_path=file_path, out_path=file_path)
         mock_sftp.put.assert_called_with(
-            to_bytes(file_path), to_bytes(file_path)
-        )
-
-    @patch("pylibsshext.session.Session")
-    @patch("ansible.plugins.connection.ConnectionBase.fetch_file")
-    def test_libssh_fetch_file(self, mocked_super, mock_session):
-        pc = PlayContext()
-        pc.remote_addr = "localhost"
-        conn = connection_loader.get(
-            "ansible.netcommon.libssh", pc, "/dev/null"
-        )
-
-        conn.ssh = mock_session
-        mock_connect = MagicMock()
-        conn.ssh.connect = mock_connect
-
-        file_path = "test_libssh.py"
-        conn.fetch_file(in_path=file_path, out_path=file_path)
-        conn.sftp.get.assert_called_with(
             to_bytes(file_path), to_bytes(file_path)
         )
