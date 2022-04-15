@@ -27,6 +27,9 @@ from unittest.mock import (
     MagicMock,
     patch,
 )
+from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+    terminal_loader,
+)
 from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils._text import to_text
 from ansible.playbook.play_context import PlayContext
@@ -43,17 +46,10 @@ def plugin_fixture(monkeypatch):
     def get(*args, **kwargs):
         return True
 
-    monkeypatch.setattr(
-        (
-            "ansible_collections.ansible.netcommon.plugins"
-            ".connection.network_cli.terminal_loader.get"
-        ),
-        get,
-    )
+    monkeypatch.setattr(terminal_loader, "get", get)
     conn = connection_loader.get(
         "ansible.netcommon.network_cli", pc, "/dev/null"
     )
-    assert conn is not None
     return conn
 
 
