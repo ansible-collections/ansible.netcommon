@@ -23,7 +23,9 @@ pylibsshext = pytest.importorskip("pylibsshext")
 
 class TestConnectionClass(unittest.TestCase):
     @patch("pylibsshext.session.Session")
-    @patch("ansible_collections.ansible.netcommon.plugins.connection.libssh.Connection._connect")
+    @patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.libssh.Connection._connect"
+    )
     def test_libssh_connect(self, mocked_super, mock_session):
         pc = PlayContext()
         pc.remote_addr = "localhost"
