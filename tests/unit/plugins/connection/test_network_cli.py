@@ -43,6 +43,7 @@ def plugin_fixture(mocked_loader):
     conn = connection_loader.get(
         "ansible.netcommon.network_cli", pc, "/dev/null"
     )
+    assert conn is not None
     return conn
 
 
