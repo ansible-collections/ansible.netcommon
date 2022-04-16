@@ -158,7 +158,9 @@ from ansible.plugins.connection import ensure_connect
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
-from distutils.version import LooseVersion
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import (
+    Version,
+)
 
 try:
     from ncclient import __version__ as NCCLIENT_VERSION
@@ -282,7 +284,7 @@ class Connection(NetworkConnectionBase):
 
         sock = None
         if proxy_command:
-            if LooseVersion(NCCLIENT_VERSION) < LooseVersion("0.6.10"):
+            if Version(NCCLIENT_VERSION) < "0.6.10":
                 raise AnsibleError(
                     "Configuring jumphost settings through ProxyCommand is unsupported in ncclient version %s. "
                     "Please upgrade to ncclient 0.6.10 or newer."
