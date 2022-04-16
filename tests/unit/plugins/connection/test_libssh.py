@@ -67,7 +67,7 @@ def test_libssh_connect(monkeypatch):
     with pytest.raises(AnsibleConnectionFailure):
         conn._connect()
 
-    assert all_args['call_kwargs'] == {
+    assert all_args["call_kwargs"] == {
         "host": "localhost",
         "host_key_checking": False,
         "look_for_keys": True,
@@ -117,7 +117,10 @@ def test_libssh_fetch_file(monkeypatch):
     with pytest.raises(AnsibleFileNotFound):
         conn.fetch_file(in_path=file_path, out_path=file_path)
 
-    assert all_args["call_kwargs"] == {"in_path": file_path, "out_path": file_path}
+    assert all_args["call_kwargs"] == {
+        "in_path": file_path,
+        "out_path": file_path,
+    }
 
 
 class TestConnectionClass(unittest.TestCase):
