@@ -46,7 +46,7 @@ def test_libssh_connect(monkeypatch):
         }
     )
 
-    call_args, call_kwargs = None, None
+    all_args = {"call_args": {}, "call_kwargs": {}}
 
     class Session(libssh.Session):
         """A session object used to patch libssh.Session"""
@@ -58,8 +58,8 @@ def test_libssh_connect(monkeypatch):
             :param kwargs: Keyword arguments
             :raises AnsibleConnectionFailure: Always
             """
-            nonlocal call_args, call_kwargs
-            call_args, call_kwargs = args, kwargs
+            all_args["call_args"] = args
+            all_args["call_kwargs"] = kwargs
             raise AnsibleConnectionFailure
 
     monkeypatch.setattr(libssh, "Session", Session)
@@ -67,7 +67,7 @@ def test_libssh_connect(monkeypatch):
     with pytest.raises(AnsibleConnectionFailure):
         conn._connect()
 
-    assert call_kwargs == {
+    assert all_args['call_kwargs'] == {
         "host": "localhost",
         "host_key_checking": False,
         "look_for_keys": True,
@@ -98,7 +98,7 @@ def test_libssh_fetch_file(monkeypatch):
 
     monkeypatch.setattr(libssh, "Session", Session)
 
-    call_args, call_kwargs = None, None
+    all_args = {"call_args": {}, "call_kwargs": {}}
 
     def fetch_file(*args, **kwargs):
         """Stores the arguments and keyword arguments for later use.
@@ -107,8 +107,8 @@ def test_libssh_fetch_file(monkeypatch):
         :param kwargs: Keyword arguments
         :raises AnsibleFileNotFound: Always
         """
-        nonlocal call_args, call_kwargs
-        call_args, call_kwargs = args, kwargs
+        all_args["call_args"] = args
+        all_args["call_kwargs"] = kwargs
         raise AnsibleFileNotFound
 
     file_path = "test_libssh.py"
@@ -117,7 +117,7 @@ def test_libssh_fetch_file(monkeypatch):
     with pytest.raises(AnsibleFileNotFound):
         conn.fetch_file(in_path=file_path, out_path=file_path)
 
-    assert call_kwargs == {"in_path": file_path, "out_path": file_path}
+    assert all_args["call_kwargs"] == {"in_path": file_path, "out_path": file_path}
 
 
 class TestConnectionClass(unittest.TestCase):
