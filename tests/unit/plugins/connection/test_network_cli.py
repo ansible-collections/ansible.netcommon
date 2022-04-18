@@ -107,6 +107,26 @@ def test_options_pass_through(conn, ssh_type):
     assert conn.ssh_type_conn.get_option("proxy_command") == "do a proxy"
 
 
+@pytest.mark.parametrize("has_libssh", (True, False))
+def test_network_cli_ssh_type_auto(conn, has_libssh):
+    """Test that ssh_type: auto resolves to the correct option."""
+    from ansible_collections.ansible.netcommon.plugins.connection import (
+        network_cli,
+    )
+
+    network_cli.HAS_PYLIBSSH = has_libssh
+
+    conn.set_options(
+        direct={
+            "ssh_type": "auto",
+        }
+    )
+    if has_libssh:
+        assert conn.ssh_type == "libssh"
+    else:
+        assert conn.ssh_type == "paramiko"
+
+
 @pytest.mark.parametrize(
     "become_method,become_pass", [("enable", "password"), (None, None)]
 )
