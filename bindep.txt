@@ -9,6 +9,7 @@ python3 [test platform:rpm]
 
 # ansible-pylibssh
 gcc [compile test platform:rpm]
+libssh-dev [compile test platform:dpkg]
 libssh-devel [compile test platform:rpm]
 python3-Cython [test platform:fedora-35 platform:rhel-9]
 # 3.9 Cython doesn't seem to be available on our centos-8 images
