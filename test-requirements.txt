@@ -1,6 +1,4 @@
-black==21.12b0 ; python_version > '3.5'
-# pin click until we can update to newer versions of black
-click < 8.1
+black==22.3.0
 coverage==4.5.4
 flake8
 mock ; python_version < '3.5'

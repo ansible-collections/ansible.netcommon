@@ -607,10 +607,14 @@ class Connection(NetworkConnectionBase):
                             to_text(e, errors="surrogate_or_strict")
                         )
                     else:
-                        msg = "network_cli_retry: attempt: %d, caught exception(%s), " "pausing for %d seconds" % (
-                            attempt + 1,
-                            to_text(e, errors="surrogate_or_strict"),
-                            pause,
+                        msg = (
+                            "network_cli_retry: attempt: %d, caught exception(%s), "
+                            "pausing for %d seconds"
+                            % (
+                                attempt + 1,
+                                to_text(e, errors="surrogate_or_strict"),
+                                pause,
+                            )
                         )
 
                         self.queue_message("vv", msg)
@@ -1200,7 +1204,7 @@ class Connection(NetworkConnectionBase):
                         "'pattern' is a required key for option '%s',"
                         " received option value is %s" % (option, item)
                     )
-                pattern = br"%s" % to_bytes(item["pattern"])
+                pattern = rb"%s" % to_bytes(item["pattern"])
                 flag = item.get("flags", 0)
                 if flag:
                     flag = getattr(re, flag.split(".")[1])
