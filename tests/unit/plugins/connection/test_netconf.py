@@ -23,7 +23,7 @@ __metaclass__ = type
 
 import sys
 
-from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
+from unittest.mock import (
     patch,
     MagicMock,
     PropertyMock,

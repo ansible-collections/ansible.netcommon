@@ -10,8 +10,8 @@ import tempfile
 from ansible.playbook.task import Task
 from ansible.template import Templar
 
-from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
-from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
+import unittest
+from unittest.mock import (
     MagicMock,
     patch,
 )

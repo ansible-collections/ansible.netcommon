@@ -1,3 +1,9 @@
+/tests/output/
+/changelogs/.plugin-cache.yaml
+
+# In case a collection directory is present, ignore it
+/collections/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

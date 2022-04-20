@@ -21,7 +21,7 @@ __metaclass__ = type
 import os
 import sys
 
-from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
+import unittest
 from ansible_collections.ansible.netcommon.plugins.filter.network import (
     parse_xml,
     type5_pw,
