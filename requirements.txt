@@ -1,5 +1,6 @@
 ansible-pylibssh >= 0.2.0
 jxmlease
+six==1.16.0
 ncclient
 netaddr
 paramiko==2.8.1
