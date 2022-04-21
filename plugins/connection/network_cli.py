@@ -251,10 +251,12 @@ options:
     - name: ansible_network_cli_retries
   ssh_type:
     description:
-      - The type of the transport used by C(network_cli) connection plugin to connection to remote host.
-        Valid value is either I(paramiko) or I(libssh)
-      - In order to use I(libssh), the ansible-pylibssh package needs to be installed
-    default: paramiko
+      - The python package that will be used by the C(network_cli) connection plugin to create a SSH connection to remote host.
+      - I(libssh) will use the ansible-pylibssh package, which needs to be installed in order to work.
+      - I(paramiko) will instead use the paramiko package to manage the SSH connection.
+      - I(auto) will use ansible-pylibssh if that package is installed, otherwise will fallback to paramiko.
+    default: auto
+    choices: ["libssh", "paramiko", "auto"]
     env:
         - name: ANSIBLE_NETWORK_CLI_SSH_TYPE
     ini:
@@ -312,9 +314,12 @@ from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import (
     cliconf_loader,
     terminal_loader,
+    cache_loader,
     connection_loader,
 )
-from ansible.plugins.loader import cache_loader
+from ansible_collections.ansible.netcommon.plugins.connection.libssh import (
+    HAS_PYLIBSSH,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     to_list,
 )
@@ -415,26 +420,55 @@ class Connection(NetworkConnectionBase):
         self.queue_message("log", "network_os is set to %s" % self._network_os)
 
     @property
+    def ssh_type(self):
+        if self._ssh_type is None:
+            self._ssh_type = self.get_option("ssh_type")
+            self.queue_message(
+                "vvvv", "ssh type is set to %s" % self._ssh_type
+            )
+            # Support autodetection of supported library
+            if self._ssh_type == "auto":
+                self.queue_message("vvvv", "autodetecting ssh_type")
+                if HAS_PYLIBSSH:
+                    self._ssh_type = "libssh"
+                else:
+                    self.queue_message(
+                        "warning",
+                        "ansible-pylibssh not installed, falling back to paramiko",
+                    )
+                    self._ssh_type = "paramiko"
+                self.queue_message(
+                    "vvvv", "ssh type is now set to %s" % self._ssh_type
+                )
+
+        if self._ssh_type not in ["paramiko", "libssh"]:
+            raise AnsibleConnectionFailure(
+                "Invalid value '%s' set for ssh_type option."
+                " Expected value is either 'libssh' or 'paramiko'"
+                % self._ssh_type
+            )
+
+        return self._ssh_type
+
+    @property
     def ssh_type_conn(self):
-        self._ssh_type = self.get_option("ssh_type")
         if self._ssh_type_conn is None:
-            if self._ssh_type not in ["paramiko", "libssh"]:
+            if self.ssh_type == "libssh":
+                connection_plugin = "ansible.netcommon.libssh"
+            elif self.ssh_type == "paramiko":
+                # NOTE: This MUST be paramiko or things will break
+                connection_plugin = "paramiko"
+            else:
                 raise AnsibleConnectionFailure(
                     "Invalid value '%s' set for ssh_type option."
                     " Expected value is either 'libssh' or 'paramiko'"
                     % self._ssh_type
                 )
 
-            # TODO: Remove this check if/when libssh connection plugin is moved to ansible-base
-            if self._ssh_type == "libssh":
-                self._ssh_type = "ansible.netcommon.libssh"
-
             self._ssh_type_conn = connection_loader.get(
-                self._ssh_type, self._play_context, "/dev/null"
+                connection_plugin, self._play_context, "/dev/null"
             )
-            self.queue_message(
-                "vvvv", "ssh type is set to %s" % self.get_option("ssh_type")
-            )
+
         return self._ssh_type_conn
 
     # To maintain backward compatibility
@@ -444,7 +478,7 @@ class Connection(NetworkConnectionBase):
 
     def _get_log_channel(self):
         name = "p=%s u=%s | " % (os.getpid(), getpass.getuser())
-        name += "%s [%s]" % (self._ssh_type, self._play_context.remote_addr)
+        name += "%s [%s]" % (self.ssh_type, self._play_context.remote_addr)
         return name
 
     @ensure_connect
@@ -572,10 +606,10 @@ class Connection(NetworkConnectionBase):
         Connects to the remote device and starts the terminal
         """
         if self._play_context.verbosity > 3:
-            logging.getLogger(self._ssh_type).setLevel(logging.DEBUG)
+            logging.getLogger(self.ssh_type).setLevel(logging.DEBUG)
 
         self.queue_message(
-            "vvvv", "invoked shell using ssh_type: %s" % self._ssh_type
+            "vvvv", "invoked shell using ssh_type: %s" % self.ssh_type
         )
 
         self._single_user_mode = self.get_option("single_user_mode")
@@ -626,7 +660,7 @@ class Connection(NetworkConnectionBase):
             self._connected = True
 
             self._ssh_shell = ssh.ssh.invoke_shell()
-            if self._ssh_type == "paramiko":
+            if self.ssh_type == "paramiko":
                 self._ssh_shell.settimeout(command_timeout)
 
             self.queue_message(
@@ -941,7 +975,7 @@ class Connection(NetworkConnectionBase):
         )
 
         self._log_messages("command: %s" % command)
-        if self._ssh_type == "libssh":
+        if self.ssh_type == "libssh":
             response = self.receive_libssh(
                 command,
                 prompts,
@@ -951,7 +985,7 @@ class Connection(NetworkConnectionBase):
                 check_all,
                 strip_prompt,
             )
-        else:
+        elif self.ssh_type == "paramiko":
             response = self.receive_paramiko(
                 command,
                 prompts,
@@ -1228,11 +1262,10 @@ class Connection(NetworkConnectionBase):
                         remote host before triggering timeout exception
         :return: None
         """
-        ssh_type = self.get_option("ssh_type")
         ssh = self.ssh_type_conn._connect_uncached()
-        if ssh_type == "libssh":
+        if self.ssh_type == "libssh":
             self.ssh_type_conn.put_file(source, destination, proto=proto)
-        elif ssh_type == "paramiko":
+        elif self.ssh_type == "paramiko":
             if proto == "scp":
                 if not HAS_SCP:
                     raise AnsibleError(missing_required_lib("scp"))
@@ -1250,7 +1283,7 @@ class Connection(NetworkConnectionBase):
                 )
         else:
             raise AnsibleError(
-                "Do not know how to do SCP with ssh_type %s" % ssh_type
+                "Do not know how to do SCP with ssh_type %s" % self.ssh_type
             )
 
     def get_file(self, source=None, destination=None, proto="scp", timeout=30):
@@ -1264,11 +1297,10 @@ class Connection(NetworkConnectionBase):
         :return: None
         """
         """Fetch file over scp/sftp from remote device"""
-        ssh_type = self.get_option("ssh_type")
         ssh = self.ssh_type_conn._connect_uncached()
-        if ssh_type == "libssh":
+        if self.ssh_type == "libssh":
             self.ssh_type_conn.fetch_file(source, destination, proto=proto)
-        elif ssh_type == "paramiko":
+        elif self.ssh_type == "paramiko":
             if proto == "scp":
                 if not HAS_SCP:
                     raise AnsibleError(missing_required_lib("scp"))
@@ -1290,7 +1322,7 @@ class Connection(NetworkConnectionBase):
                 )
         else:
             raise AnsibleError(
-                "Do not know how to do SCP with ssh_type %s" % ssh_type
+                "Do not know how to do SCP with ssh_type %s" % self.ssh_type
             )
 
     def get_cache(self):
