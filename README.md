@@ -65,7 +65,6 @@ Name | Description
 --- | ---
 [ansible.netcommon.cli_command](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.cli_command_module.rst)|Run a cli command on cli-based network devices
 [ansible.netcommon.cli_config](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.cli_config_module.rst)|Push text based configuration to network devices over network_cli
-[ansible.netcommon.cli_parse](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.cli_parse_module.rst)|Parse cli output or text using a variety of parsers
 [ansible.netcommon.net_banner](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.net_banner_module.rst)|(deprecated, removed after 2022-06-01) Manage multiline banners on network devices
 [ansible.netcommon.net_get](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.net_get_module.rst)|Copy a file from a network device to Ansible Controller
 [ansible.netcommon.net_interface](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.net_interface_module.rst)|(deprecated, removed after 2022-06-01) Manage Interface on network devices

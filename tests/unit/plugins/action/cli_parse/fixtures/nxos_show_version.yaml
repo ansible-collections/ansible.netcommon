@@ -1,5 +1,0 @@
----
-- example: 'NXOS: version 9.2(2)'
-  getval: '\s+NXOS: version (?P<version>\S+)'
-  result:
-    version: "{{ version }}"
