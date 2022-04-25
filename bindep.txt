@@ -10,18 +10,26 @@ python3 [test platform:rpm]
 # ansible-pylibssh
 gcc [compile test platform:rpm]
 libssh-devel [compile test platform:rpm]
-python3-Cython [test platform:fedora-35]
-python38-Cython [compile platform:centos-8 platform:rhel-8]
+python3-Cython [test platform:fedora-35 platform:rhel-9]
+# 3.9 Cython doesn't seem to be available on our centos-8 images
+# But I'm not sure why we would need it anyway?
+# python39-Cython [compile platform:centos-8 platform:rhel-8]
 
 # ncclient
-python38-six [platform:centos-8 platform:rhel-8]
-python38-lxml [platform:centos-8 platform:rhel-8]
+python3-six [platform:rhel-9]
+python39-six [platform:centos-8 platform:rhel-8]
+python3-lxml [platform:rhel-9]
+python39-lxml [platform:centos-8 platform:rhel-8]
 
 # paramiko
 findutils [compile platform:centos-8 platform:rhel-8]
 gcc [compile platform:centos-8 platform:rhel-8]
 make [compile platform:centos-8 platform:rhel-8]
-python38-devel [compile platform:centos-8 platform:rhel-8]
-python38-cffi [platform:centos-8 platform:rhel-8]
-python38-cryptography [platform:centos-8 platform:rhel-8]
-python38-pycparser [platform:centos-8 platform:rhel-8]
+python3-devel [compile platform:rhel-9]
+python39-devel [compile platform:centos-8 platform:rhel-8]
+python3-cffi [platform:rhel-9]
+python39-cffi [platform:centos-8 platform:rhel-8]
+python3-cryptography [platform:rhel-9]
+python39-cryptography [platform:centos-8 platform:rhel-8]
+python3-pycparser [platform:rhel-9]
+python39-pycparser [platform:centos-8 platform:rhel-8]
