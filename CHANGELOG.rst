@@ -5,6 +5,27 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v3.0.0
+======
+
+Major Changes
+-------------
+
+- cli_parse - this module has been moved to the ansible.utils collection. ``ansible.netcommon.cli_parse`` will continue to work to reference the module in its new location, but this redirect will be removed in a future release
+- network_cli - Change default value of `ssh_type` option from `paramiko` to `auto`. This value will use libssh if the ansible-pylibssh module is installed, otherwise will fallback to paramiko.
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- httpapi - Change default value of ``import_modules`` option from ``no`` to ``yes``
+- netconf - Change default value of ``import_modules`` option from ``no`` to ``yes``
+- network_cli - Change default value of ``import_modules`` option from ``no`` to ``yes``
+
+Known Issues
+------------
+
+- eos - When using eos modules on Ansible 2.9, tasks will occasionally fail with ``import_modules`` enabled. This can be avoided by setting ``import_modules: no``
+
 v2.6.1
 ======
 
@@ -276,11 +297,6 @@ Bugfixes
 
 - cli_config fixes issue when rollback_id = 0 evalutes to False
 - sort_list will sort a list of dicts using the sorted method with key as an argument.
-
-New Modules
------------
-
-- cli_parse - Parse cli output or text using a variety of parsers
 
 v1.1.2
 ======
