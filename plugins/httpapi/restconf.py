@@ -47,7 +47,6 @@ from ansible_collections.ansible.netcommon.plugins.plugin_utils.httpapi_base imp
     HttpApiBase,
 )
 
-
 CONTENT_TYPE = "application/yang-data+json"
 
 

@@ -30,7 +30,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 import sys
 
-from ansible.module_utils._text import to_text, to_bytes
+from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.connection import Connection, ConnectionError
 
 try:
@@ -41,7 +41,7 @@ except (ImportError, AttributeError):
     HAS_NCCLIENT = False
 
 try:
-    from lxml.etree import Element, fromstring, XMLSyntaxError
+    from lxml.etree import Element, XMLSyntaxError, fromstring
 except ImportError:
     from xml.etree.ElementTree import Element, fromstring
 

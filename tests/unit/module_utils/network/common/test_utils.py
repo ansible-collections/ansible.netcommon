@@ -22,23 +22,21 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import pytest
 from copy import deepcopy
+from unittest.mock import MagicMock
 
-from unittest.mock import (
-    MagicMock,
-)
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
-    utils,
-)
+import pytest
 from ansible.module_utils.common.network import (
+    is_masklen,
+    is_netmask,
+    to_ipv6_network,
+    to_ipv6_subnet,
     to_masklen,
     to_netmask,
     to_subnet,
-    to_ipv6_network,
-    to_ipv6_subnet,
-    is_masklen,
-    is_netmask,
+)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
+    utils,
 )
 
 

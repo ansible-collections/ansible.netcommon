@@ -20,21 +20,19 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 import json
-
-from copy import deepcopy
 from contextlib import contextmanager
+from copy import deepcopy
 
 try:
     from lxml.etree import fromstring, tostring
 except ImportError:
     from xml.etree.ElementTree import fromstring, tostring
 
-from ansible.module_utils._text import to_text, to_bytes
+from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.connection import Connection, ConnectionError
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     NetconfConnection,
 )
-
 
 IGNORE_XML_ATTRIBUTE = ()
 

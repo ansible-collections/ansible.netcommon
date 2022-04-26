@@ -7,17 +7,14 @@ __metaclass__ = type
 
 import os
 import tempfile
+from unittest.mock import MagicMock
 
+import pytest
 from ansible.errors import AnsibleError
 from ansible.playbook.role import Role
 from ansible.playbook.task import Task
 from ansible.plugins.loader import action_loader
 from ansible.template import Templar
-import pytest
-
-from unittest.mock import (
-    MagicMock,
-)
 from ansible_collections.ansible.netcommon.tests.unit.mock.loader import (
     DictDataLoader,
 )

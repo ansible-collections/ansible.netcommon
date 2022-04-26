@@ -112,30 +112,29 @@ DOCUMENTATION = """
 # TODO:
 #timeout=self._play_context.timeout,
 """
+import logging
 import os
-import socket
 import re
+import socket
 import sys
-
-from termios import tcflush, TCIFLUSH
+from termios import TCIFLUSH, tcflush
 
 from ansible.errors import (
     AnsibleConnectionFailure,
     AnsibleError,
     AnsibleFileNotFound,
 )
+from ansible.module_utils._text import to_bytes, to_native, to_text
+from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six.moves import input
 from ansible.plugins.connection import ConnectionBase
 from ansible.utils.display import Display
-from ansible.module_utils._text import to_bytes, to_native, to_text
-from ansible.module_utils.basic import missing_required_lib
-import logging
 
 display = Display()
 
 try:
+    from pylibsshext.errors import LibsshSCPException, LibsshSessionException
     from pylibsshext.session import Session
-    from pylibsshext.errors import LibsshSessionException, LibsshSCPException
 
     HAS_PYLIBSSH = True
 except ImportError:

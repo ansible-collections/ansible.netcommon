@@ -26,11 +26,11 @@ import time
 
 from ansible.errors import AnsibleError
 from ansible.module_utils._text import to_text
+from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves.urllib.parse import urlsplit
 from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
-from ansible.module_utils.six import PY3
 
 display = Display()
 
@@ -313,6 +313,7 @@ class ActionModule(_ActionModule):
         :type task_vars: dict
         """
         import copy
+
         from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
 
         # build an AnsibleModule that doesn't load params
@@ -344,8 +345,9 @@ class ActionModule(_ActionModule):
         """
         import io
         import sys
-        from ansible.vars.clean import remove_internal_keys
+
         from ansible.module_utils._text import to_native
+        from ansible.vars.clean import remove_internal_keys
 
         # preserve previous stdout, replace with buffer
         sys_stdout = sys.stdout

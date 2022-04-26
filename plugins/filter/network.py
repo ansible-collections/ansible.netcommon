@@ -21,22 +21,21 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import re
 import os
-import traceback
+import re
 import string
-
+import traceback
 from xml.etree.ElementTree import fromstring
 
+from ansible.errors import AnsibleError, AnsibleFilterError
 from ansible.module_utils._text import to_native, to_text
+from ansible.module_utils.common._collections_compat import Mapping
+from ansible.module_utils.six import iteritems, string_types
+from ansible.utils.display import Display
+from ansible.utils.encrypt import passlib_or_crypt, random_password
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     Template,
 )
-from ansible.module_utils.six import iteritems, string_types
-from ansible.module_utils.common._collections_compat import Mapping
-from ansible.errors import AnsibleError, AnsibleFilterError
-from ansible.utils.display import Display
-from ansible.utils.encrypt import passlib_or_crypt, random_password
 
 try:
     import yaml

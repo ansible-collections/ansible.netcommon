@@ -29,12 +29,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import traceback
 import json
+import traceback
 
-from ansible.module_utils._text import to_text, to_native
-from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.basic import env_fallback
+from ansible.module_utils._text import to_native, to_text
+from ansible.module_utils.basic import AnsibleModule, env_fallback
 from ansible.module_utils.connection import Connection, ConnectionError
 from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
@@ -46,7 +45,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.p
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     to_list,
 )
-
 
 NET_TRANSPORT_ARGS = dict(
     host=dict(required=True),

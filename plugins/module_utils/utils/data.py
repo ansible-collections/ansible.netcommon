@@ -9,17 +9,17 @@ __metaclass__ = type
 """
 Utils functions for handle data formatting
 """
-import sys
 import json
+import sys
 
+from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six import string_types
-from ansible.module_utils._text import to_native
 
 try:
     HAS_LXML = True
-    from lxml.etree import fromstring, XMLSyntaxError
     from lxml import etree
+    from lxml.etree import XMLSyntaxError, fromstring
 
 except ImportError:
     HAS_LXML = False
