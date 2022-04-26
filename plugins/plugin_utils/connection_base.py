@@ -9,9 +9,9 @@ __metaclass__ = type
 import os
 
 from ansible import constants as C
-from ansible.plugins.connection import ConnectionBase
-from ansible.plugins.loader import connection_loader
 from ansible.utils.display import Display
+from ansible.plugins.loader import connection_loader
+from ansible.plugins.connection import ConnectionBase
 from ansible.utils.path import unfrackpath
 
 display = Display()
