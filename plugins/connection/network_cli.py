@@ -301,7 +301,7 @@ options:
         description:
         - The directory where the test fixture files will be/are located.
         required: true
-        type: string   
+        type: string
       mode:
         choices:
         - compare
@@ -1052,7 +1052,8 @@ class Connection(NetworkConnectionBase):
         Sends the command to the device in the opened shell
         """
         # Check for testing
-        if self.get_option("test_parameters").get("test_mode") == "playback":
+
+        if self.get_option("test_parameters").get("mode") == "playback":
             return self._send_playback(command)
 
         # try cache first
@@ -1416,6 +1417,9 @@ class Connection(NetworkConnectionBase):
 
     def _send_playback(self, command):
         """Send the fixture response rather than the actual command."""
+        import q
+
+        q(command)
 
         test_parameters = self.get_option("test_parameters")
 
@@ -1425,6 +1429,9 @@ class Connection(NetworkConnectionBase):
             test_parameters["fixture_directory"],
             "%s.json" % self._send_sequence,
         )
+        import q
+
+        q(fixture_file)
         if not os.path.exists(fixture_file):
             raise AnsibleError(
                 "Fixture file %s does not exist." % fixture_file
@@ -1433,7 +1440,7 @@ class Connection(NetworkConnectionBase):
         with open(fixture_file, "r") as f:
             fixture = json.load(f)
 
-        if fixture["command"] != command:
+        if fixture["command"] != command.decode("utf-8"):
             raise AssertionError(
                 "Fixture command %s does not match command %s."
                 % (fixture["command"], command)
@@ -1443,7 +1450,14 @@ class Connection(NetworkConnectionBase):
     def _send_post(self, command, response):
         """Proxy the response to the send() method"""
         test_parameters = self.get_option("test_parameters")
+        import q
+
+        q(test_parameters)
         if not test_parameters:
+            return response
+
+        # Don't record the terminal commands
+        if command.decode("utf-8").startswith("terminal"):
             return response
 
         self._send_sequence += 1
