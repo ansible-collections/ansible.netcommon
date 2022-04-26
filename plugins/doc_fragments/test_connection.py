@@ -5,7 +5,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-DOCUMENTATION = """
+
+class ModuleDocFragment(object):
+
+    # Standard files documentation fragment
+    DOCUMENTATION = """
 options:
   test_parameters:
     default: {}
@@ -25,9 +29,9 @@ options:
         - record
         description:
         - The mode in which the test fixture files will be used.
-        - I(compare): Compare the fixture to live output from the device.
-        - I(playback): Use the fixtures rather than directly interacting with the device.
-        - I(record): Record the output from the device to the fixture files.
+        - I(compare) Compare the fixture to live output from the device.
+        - I(playback) Use the fixtures rather than directly interacting with the device.
+        - I(record) Record the output from the device to the fixture files.
         required: true
         type: string
       exempted:

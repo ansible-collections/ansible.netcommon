@@ -34,6 +34,7 @@ Name | Description
 [ansible.netcommon.napalm](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.napalm_connection.rst)|Provides persistent connection using NAPALM
 [ansible.netcommon.netconf](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.netconf_connection.rst)|Provides a persistent connection using the netconf protocol
 [ansible.netcommon.network_cli](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.network_cli_connection.rst)|Use network_cli to run command on network appliances
+[ansible.netcommon.network_cli_test](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.network_cli_test_connection.rst)|Use network_cli to run command on network appliances
 [ansible.netcommon.persistent](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.persistent_connection.rst)|Use a persistent unix socket for connection
 
 ### Network filter plugins
