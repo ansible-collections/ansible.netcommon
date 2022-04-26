@@ -337,7 +337,6 @@ import traceback
 from functools import wraps
 from io import BytesIO
 
-import q
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.basic import missing_required_lib
