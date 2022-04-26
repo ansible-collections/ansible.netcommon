@@ -1,7 +1,0 @@
----
-breaking_changes:
-  - network_cli - Change default value of ``import_modules`` option from ``no`` to ``yes``
-  - netconf - Change default value of ``import_modules`` option from ``no`` to ``yes``
-  - httpapi - Change default value of ``import_modules`` option from ``no`` to ``yes``
-known_issues:
-  - "eos - When using eos modules on Ansible 2.9, tasks will occasionally fail with ``import_modules`` enabled. This can be avoided by setting ``import_modules: no``"

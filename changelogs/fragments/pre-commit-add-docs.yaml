@@ -1,3 +1,0 @@
----
-trivial:
-  - update add_docs pre-commit hook and remove config stopping pre-commit.ci from running it

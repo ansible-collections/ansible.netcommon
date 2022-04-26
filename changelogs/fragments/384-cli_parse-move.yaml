@@ -1,5 +1,0 @@
----
-major_changes:
-  - cli_parse - this module has been moved to the ansible.utils collection. ``ansible.netcommon.cli_parse``
-    will continue to work to reference the module in its new location, but this redirect will be removed in
-    a future release

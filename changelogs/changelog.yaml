@@ -187,10 +187,7 @@ releases:
     - 114-sort_list_listofdicts.yaml
     - 118-cli_config.yaml
     - 127-galaxy-fragment.yaml
-    modules:
-    - description: Parse cli output or text using a variety of parsers
-      name: cli_parse
-      namespace: ''
+    modules: []
     release_date: '2020-08-25'
   1.2.1:
     changes:
@@ -509,3 +506,34 @@ releases:
     - 2.6.0.yaml
     - fix_sanity.yaml
     release_date: '2022-03-10'
+  3.0.0:
+    changes:
+      breaking_changes:
+      - httpapi - Change default value of ``import_modules`` option from ``no`` to
+        ``yes``
+      - netconf - Change default value of ``import_modules`` option from ``no`` to
+        ``yes``
+      - network_cli - Change default value of ``import_modules`` option from ``no``
+        to ``yes``
+      known_issues:
+      - 'eos - When using eos modules on Ansible 2.9, tasks will occasionally fail
+        with ``import_modules`` enabled. This can be avoided by setting ``import_modules:
+        no``'
+      major_changes:
+      - cli_parse - this module has been moved to the ansible.utils collection. ``ansible.netcommon.cli_parse``
+        will continue to work to reference the module in its new location, but this
+        redirect will be removed in a future release
+      - 'network_cli - Change default value of `ssh_type` option from `paramiko` to
+        `auto`. This value will use libssh if the ansible-pylibssh module is installed,
+        otherwise will fallback to paramiko.
+
+        '
+    fragments:
+    - 364-pre-commit-ci.yaml
+    - 384-cli_parse-move.yaml
+    - 387-change-defaults.yaml
+    - 390-sanity.yaml
+    - 394-change-defaults.yaml
+    - pre-commit-add-docs.yaml
+    - update-linter-config.yaml
+    release_date: '2022-04-26'
