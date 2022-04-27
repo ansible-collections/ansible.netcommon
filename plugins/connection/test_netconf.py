@@ -152,16 +152,15 @@ from ansible_collections.ansible.netcommon.plugins.plugin_utils.test_connection 
 
 
 class Connection(TestConnection, RealConnection):
-    def exec_command(self, cmd, in_data=None, sudoable=True):
-        """Sends the request to the node and returns the reply
-        The method accepts two forms of request.  The first form is as a byte
-        string that represents xml string be send over netconf session.
-        The second form is a json-rpc (2.0) byte string.
-        """
+    def exec_command(self, command, *args, **kwargs):
         # Check for testing
         if self.get_option("test_parameters").get("mode") == "playback":
             return self._send_playback(command)
-        response = super(Connection, self).exec_command(cmd, in_data, sudoable)
+        response = super(Connection, self).exec_command(
+            command,
+            *args,
+            **kwargs,
+        )
 
         test_parameters = self.get_option("test_parameters")
         if not test_parameters:

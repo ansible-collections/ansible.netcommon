@@ -288,29 +288,14 @@ from ansible_collections.ansible.netcommon.plugins.plugin_utils.test_connection 
 
 
 class Connection(TestConnection, RealConnection):
-    def send(
-        self,
-        command,
-        prompt=None,
-        answer=None,
-        newline=True,
-        sendonly=False,
-        prompt_retry_check=False,
-        check_all=False,
-        strip_prompt=True,
-    ):
+    def send(self, command, *args, **kwarg):
         # Check for testing
         if self.get_option("test_parameters").get("mode") == "playback":
             return self._send_playback(command)
         response = super(Connection, self).send(
             command,
-            prompt=None,
-            answer=None,
-            newline=True,
-            sendonly=False,
-            prompt_retry_check=False,
-            check_all=False,
-            strip_prompt=True,
+            *args,
+            **kwargs,
         )
 
         test_parameters = self.get_option("test_parameters")
