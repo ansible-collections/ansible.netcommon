@@ -1051,6 +1051,9 @@ class Connection(NetworkConnectionBase):
         """
         Sends the command to the device in the opened shell
         """
+        import q
+
+        q(command)
         # Check for testing
 
         if self.get_option("test_parameters").get("mode") == "playback":
@@ -1429,9 +1432,7 @@ class Connection(NetworkConnectionBase):
             test_parameters["fixture_directory"],
             "%s.json" % self._send_sequence,
         )
-        import q
 
-        q(fixture_file)
         if not os.path.exists(fixture_file):
             raise AnsibleError(
                 "Fixture file %s does not exist." % fixture_file
@@ -1445,14 +1446,13 @@ class Connection(NetworkConnectionBase):
                 "Fixture command %s does not match command %s."
                 % (fixture["command"], command)
             )
-        return fixture["response"]
+        if fixture["response_type"] == "json":
+            return json.dumps(fixture["response"])
+        return "\n".join(fixture["response"])
 
     def _send_post(self, command, response):
         """Proxy the response to the send() method"""
         test_parameters = self.get_option("test_parameters")
-        import q
-
-        q(test_parameters)
         if not test_parameters:
             return response
 
@@ -1469,11 +1469,23 @@ class Connection(NetworkConnectionBase):
 
         if test_parameters["mode"] == "record":
             os.makedirs(test_parameters["fixture_directory"], exist_ok=True)
+            try:
+                response_for_fixture = json.loads(response)
+                response_type = "json"
+            except json.decoder.JSONDecodeError:
+                response_for_fixture = response.splitlines()
+                response_type = "text"
 
             with open(fixture_file, "w") as f:
                 json.dump(
-                    {"command": command.decode("utf-8"), "response": response},
+                    {
+                        "command": command.decode("utf-8"),
+                        "response": response_for_fixture,
+                        "response_type": response_type,
+                    },
                     f,
+                    indent=4,
+                    sort_keys=True,
                 )
                 f.write("\n")
         elif test_parameters["mode"] == "compare":
@@ -1487,16 +1499,29 @@ class Connection(NetworkConnectionBase):
                         command.decode("utf-8"),
                     ),
                 )
-            fixture_lines = fixture["response"].splitlines()
-            response_lines = response.splitlines()
-            if len(fixture_lines) != len(response_lines):
-                raise AssertionError(
-                    (
-                        "Response length does not match the recorded response",
-                        len(fixture["response"]),
-                        len(response),
-                    ),
-                )
+            if fixture["response_type"] == "json":
+                try:
+                    response_json = json.loads(response)
+                except json.decoder.JSONDecodeError:
+                    raise AssertionError(
+                        "Response from device is not valid JSON, but fixture is.",
+                        fixture_file,
+                        response,
+                    )
+                response_lines = json.dumps(
+                    response_json,
+                    indent=4,
+                    sort_keys=True,
+                ).splitlines()
+                fixture_lines = json.dumps(
+                    fixture["response"],
+                    indent=4,
+                    sort_keys=True,
+                ).splitlines()
+            else:
+                response_lines = response.splitlines()
+                fixture_lines = fixture["response"]
+
             for idx, line in enumerate(fixture_lines):
                 if line != response_lines[idx]:
                     if any(
@@ -1504,11 +1529,14 @@ class Connection(NetworkConnectionBase):
                         for re_exempt in test_parameters["exempted"]
                     ):
                         continue
+
                     raise AssertionError(
                         (
                             "Response line does not match the recorded response line",
+                            fixture_file,
+                            idx,
                             line,
-                            response[idx],
+                            response_lines[idx],
                         ),
                     )
         return response
