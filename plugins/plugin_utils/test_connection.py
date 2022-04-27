@@ -51,6 +51,23 @@ class TestConnection:
             )
         return fixture["response"]
 
+    def _post_send(self, command, response):
+        test_parameters = self.get_option("test_parameters")
+        if not test_parameters:
+            return response
+
+        self._send_sequence += 1
+
+        fixture_file = os.path.join(
+            test_parameters["fixture_directory"],
+            "%s.json" % self._send_sequence,
+        )
+
+        if test_parameters["mode"] == "record":
+            record_response(command, response, fixture_file, test_parameters)
+        elif test_parameters["mode"] == "compare":
+            compare_response(command, response, fixture_file, test_parameters)
+
 
 def record_response(command, response, fixture_file, test_parameters):
     os.makedirs(test_parameters["fixture_directory"], exist_ok=True)
