@@ -1,5 +1,4 @@
-# (c) 2016 Red Hat Inc.
-# (c) 2017 Ansible Project
+# (c) 2022 Red Hat Inc.
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
@@ -9,7 +8,7 @@ __metaclass__ = type
 DOCUMENTATION = """
 author:
  - Ansible Networking Team (@ansible-network)
-name: network_cli_test
+name: test_network_cli
 short_description: Use network_cli to run command on network appliances
 description:
 - This connection plugin provides a connection to remote devices over the SSH and

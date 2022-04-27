@@ -1,8 +1,8 @@
-.. _ansible.netcommon.network_cli_test_connection:
+.. _ansible.netcommon.test_network_cli_connection:
 
 
 **********************************
-ansible.netcommon.network_cli_test
+ansible.netcommon.test_network_cli
 **********************************
 
 **Use network_cli to run command on network appliances**
