@@ -1051,11 +1051,7 @@ class Connection(NetworkConnectionBase):
         """
         Sends the command to the device in the opened shell
         """
-        import q
-
-        q(command)
         # Check for testing
-
         if self.get_option("test_parameters").get("mode") == "playback":
             return self._send_playback(command)
 
@@ -1420,9 +1416,6 @@ class Connection(NetworkConnectionBase):
 
     def _send_playback(self, command):
         """Send the fixture response rather than the actual command."""
-        import q
-
-        q(command)
 
         test_parameters = self.get_option("test_parameters")
 
@@ -1430,7 +1423,7 @@ class Connection(NetworkConnectionBase):
 
         fixture_file = os.path.join(
             test_parameters["fixture_directory"],
-            "%s.json" % self._send_sequence,
+            "%s.json" % str(self._send_sequence).zfill(5),
         )
 
         if not os.path.exists(fixture_file):
@@ -1464,7 +1457,7 @@ class Connection(NetworkConnectionBase):
 
         fixture_file = os.path.join(
             test_parameters["fixture_directory"],
-            "%s.json" % self._send_sequence,
+            "%s.json" % str(self._send_sequence).zfill(5),
         )
 
         if test_parameters["mode"] == "record":
