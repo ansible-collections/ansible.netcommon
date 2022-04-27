@@ -1457,7 +1457,7 @@ class Connection(NetworkConnectionBase):
 
         fixture_file = os.path.join(
             test_parameters["fixture_directory"],
-            "%s.json" % str(self._send_sequence).zfill(5),
+            "%05d.json" % self._send_sequence,
         )
 
         if test_parameters["mode"] == "record":
