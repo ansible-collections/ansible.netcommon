@@ -30,11 +30,8 @@ pylibsshext = pytest.importorskip("pylibsshext")
 @pytest.fixture(name="conn")
 def plugin_fixture(monkeypatch):
     pc = PlayContext()
-    pc.remote_addr = "localhost"
-    pc.password = "test"
     pc.port = 8080
     pc.timeout = 60
-    pc.remote_user = "user1"
 
     conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
     return conn
@@ -47,41 +44,28 @@ def test_libssh_connect(conn, monkeypatch):
     """
     conn.set_options(
         direct={
+            "remote_addr": "localhost",
+            "remote_user": "user1",
+            "password": "test",
             "host_key_checking": False,
         }
     )
 
-    all_args = {"call_args": {}, "call_kwargs": {}}
-
-    class Session(libssh.Session):
-        """A session object used to patch libssh.Session"""
-
-        def connect(self, *args, **kwargs):
-            """Stores the arguments and keyword arguments for later use.
-
-            :param args: Positional arguments
-            :param kwargs: Keyword arguments
-            :raises AnsibleConnectionFailure: Always
-            """
-            all_args["call_args"] = args
-            all_args["call_kwargs"] = kwargs
-            raise AnsibleConnectionFailure
-
-    monkeypatch.setattr(libssh, "Session", Session)
-
-    with pytest.raises(AnsibleConnectionFailure):
-        conn._connect()
-
-    assert all_args["call_kwargs"] == {
-        "host": "localhost",
-        "host_key_checking": False,
-        "look_for_keys": True,
-        "password": "test",
-        "port": 8080,
-        "timeout": 60,
-        "user": "user1",
-        "private_key": None,
-    }
+    mock_session = MagicMock()
+    mock_ssh = MagicMock()
+    monkeypatch.setattr(libssh, "Session", mock_session)
+    mock_session.return_value = mock_ssh
+    conn._connect()
+    mock_ssh.connect.assert_called_with(
+        host="localhost",
+        host_key_checking=False,
+        look_for_keys=True,
+        password="test",
+        port=8080,
+        timeout=60,
+        user="user1",
+        private_key=None,
+    )
 
 
 def test_libssh_close(conn):
