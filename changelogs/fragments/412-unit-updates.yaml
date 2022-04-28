@@ -1,0 +1,5 @@
+---
+trivial:
+  - Update unit tests to run on bare pytest
+  - netconf - Drop reliance on distutils
+  - libssh - Replace some uses of play_context with get_options
