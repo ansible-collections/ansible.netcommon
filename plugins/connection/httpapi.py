@@ -150,6 +150,40 @@ options:
     - name: ANSIBLE_PLATFORM_TYPE
     vars:
     - name: ansible_platform_type
+  test_parameters:
+    default: {}
+    type: dict
+    description:
+    - This option allows to pass additional parameters for testing purposes.
+    suboptions:
+      fixture_directory:
+        description:
+        - The directory where the test fixture files will be/are located.
+        required: true
+        type: string
+      match_threshold:
+        description:
+        - When comparing the output of the command with the fixture, a min match threshold is used.
+        - The value of this option is the similarity as a float in the range [0, 1].
+        - Note that this is 1.0 if the sequences are identical, and 0.0 if they have nothing in common.
+        required: true
+        type: float
+      mode:
+        choices:
+        - compare
+        - playback
+        - record
+        description:
+        - The mode in which the test fixture files will be used.
+        - I(compare): Compare the fixture to live output from the device.
+        - I(playback): Use the fixtures rather than directly interacting with the device.
+        - I(record): Record the output from the device to the fixture files.
+        required: true
+        type: string
+    env:
+    - name: ANSIBLE_NETWORK_TEST_PARAMETERS
+    vars:
+    - name: ansible_network_test_parameters
 """
 
 from io import BytesIO
@@ -161,8 +195,8 @@ from ansible.module_utils.six.moves import cPickle
 from ansible.module_utils.six.moves.urllib.error import HTTPError, URLError
 from ansible.module_utils.urls import open_url
 from ansible.playbook.play_context import PlayContext
-from ansible.plugins.loader import httpapi_loader
 from ansible.plugins.connection import ensure_connect
+from ansible.plugins.loader import httpapi_loader
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
@@ -276,6 +310,10 @@ class Connection(NetworkConnectionBase):
         """
         Sends the command to the device over api
         """
+        # Check for testing
+        if self.get_option("test_parameters").get("mode") == "playback":
+            return self._playback_httpapi(path=path)
+
         url_kwargs = dict(
             timeout=self.get_option("persistent_command_timeout"),
             validate_certs=self.get_option("validate_certs"),
@@ -321,6 +359,7 @@ class Connection(NetworkConnectionBase):
 
         response_buffer = BytesIO()
         resp_data = response.read()
+
         self._log_messages("received response: '%s'" % resp_data)
         response_buffer.write(resp_data)
 
@@ -328,6 +367,14 @@ class Connection(NetworkConnectionBase):
         self._auth = self.update_auth(response, response_buffer) or self._auth
 
         response_buffer.seek(0)
+
+        if self.get_option("test_parameters").get("mode") in [
+            "compare",
+            "record",
+        ]:
+            self._compare_record_httpapi(
+                path, data, response, resp_data, **kwargs
+            )
 
         return response, response_buffer
 

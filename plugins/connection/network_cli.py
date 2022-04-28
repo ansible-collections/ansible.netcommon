@@ -302,6 +302,13 @@ options:
         - The directory where the test fixture files will be/are located.
         required: true
         type: string
+      match_threshold:
+        description:
+        - When comparing the output of the command with the fixture, a min match threshold is used.
+        - The value of this option is the similarity as a float in the range [0, 1].
+        - Note that this is 1.0 if the sequences are identical, and 0.0 if they have nothing in common.
+        required: true
+        type: float
       mode:
         choices:
         - compare
@@ -314,11 +321,7 @@ options:
         - I(record): Record the output from the device to the fixture files.
         required: true
         type: string
-      exempted:
-        default: []
-        description: A list of regular expressions that will be used to exclude the output from the compare.
-        type: list
-        elements: string
+      
     env:
     - name: ANSIBLE_NETWORK_TEST_PARAMETERS
     vars:
@@ -414,9 +417,6 @@ class Connection(NetworkConnectionBase):
         self._ssh_type = None
 
         self._single_user_mode = False
-
-        # Track the send sequence for testing, increment before send
-        self._send_sequence = -1
 
         if self._network_os:
             self._terminal = terminal_loader.get(self._network_os, self)
@@ -1052,8 +1052,15 @@ class Connection(NetworkConnectionBase):
         Sends the command to the device in the opened shell
         """
         # Check for testing
-        if self.get_option("test_parameters").get("mode") == "playback":
-            return self._send_playback(command)
+        test_parameters = self.get_option("test_parameters")
+        test_mode_playback = test_parameters.get("mode") == "playback"
+        test_mode_compare_record = test_parameters.get("mode") in [
+            "compare",
+            "record",
+        ]
+
+        if test_mode_playback:
+            return self._playback_network_cli(command=command)
 
         # try cache first
         if (not prompt) and (self._single_user_mode):
@@ -1062,7 +1069,12 @@ class Connection(NetworkConnectionBase):
                 self.queue_message(
                     "vvvv", "cache hit for command: %s" % command
                 )
-                return self._send_post(command=command, response=out)
+                if test_mode_compare_record:
+                    self._compare_record_network_cli(
+                        command=command,
+                        response=out,
+                    )
+                return out
 
         if check_all:
             prompt_len = len(to_list(prompt))
@@ -1105,7 +1117,12 @@ class Connection(NetworkConnectionBase):
                     )
                     self.get_cache().populate(command, response)
 
-            return self._send_post(command=command, response=response)
+            if test_mode_compare_record:
+                self._compare_record_network_cli(
+                    command=command,
+                    response=response,
+                )
+            return response
 
         except (socket.timeout, AttributeError):
             self.queue_message("error", traceback.format_exc())
@@ -1413,123 +1430,3 @@ class Connection(NetworkConnectionBase):
         if (self._is_in_config_mode()) or (to_text(command) in cfg_cmds):
             invalidate = True
         return invalidate
-
-    def _send_playback(self, command):
-        """Send the fixture response rather than the actual command."""
-
-        test_parameters = self.get_option("test_parameters")
-
-        self._send_sequence += 1
-
-        fixture_file = os.path.join(
-            test_parameters["fixture_directory"],
-            "%s.json" % str(self._send_sequence).zfill(5),
-        )
-
-        if not os.path.exists(fixture_file):
-            raise AnsibleError(
-                "Fixture file %s does not exist." % fixture_file
-            )
-
-        with open(fixture_file, "r") as f:
-            fixture = json.load(f)
-
-        if fixture["command"] != command.decode("utf-8"):
-            raise AssertionError(
-                "Fixture command %s does not match command %s."
-                % (fixture["command"], command)
-            )
-        if fixture["response_type"] == "json":
-            return json.dumps(fixture["response"])
-        return "\n".join(fixture["response"])
-
-    def _send_post(self, command, response):
-        """Proxy the response to the send() method"""
-        test_parameters = self.get_option("test_parameters")
-        if not test_parameters:
-            return response
-
-        # Don't record the terminal commands
-        if command.decode("utf-8").startswith("terminal"):
-            return response
-
-        self._send_sequence += 1
-
-        fixture_file = os.path.join(
-            test_parameters["fixture_directory"],
-            "%05d.json" % self._send_sequence,
-        )
-
-        if test_parameters["mode"] == "record":
-            os.makedirs(test_parameters["fixture_directory"], exist_ok=True)
-            try:
-                response_for_fixture = json.loads(response)
-                response_type = "json"
-            except json.decoder.JSONDecodeError:
-                response_for_fixture = response.splitlines()
-                response_type = "text"
-
-            with open(fixture_file, "w") as f:
-                json.dump(
-                    {
-                        "command": command.decode("utf-8"),
-                        "response": response_for_fixture,
-                        "response_type": response_type,
-                    },
-                    f,
-                    indent=4,
-                    sort_keys=True,
-                )
-                f.write("\n")
-        elif test_parameters["mode"] == "compare":
-            with open(fixture_file, "r") as f:
-                fixture = json.load(f)
-            if fixture["command"] != command.decode("utf-8"):
-                raise AssertionError(
-                    (
-                        "Command sent to device does not match the recorded command",
-                        fixture["command"],
-                        command.decode("utf-8"),
-                    ),
-                )
-            if fixture["response_type"] == "json":
-                try:
-                    response_json = json.loads(response)
-                except json.decoder.JSONDecodeError:
-                    raise AssertionError(
-                        "Response from device is not valid JSON, but fixture is.",
-                        fixture_file,
-                        response,
-                    )
-                response_lines = json.dumps(
-                    response_json,
-                    indent=4,
-                    sort_keys=True,
-                ).splitlines()
-                fixture_lines = json.dumps(
-                    fixture["response"],
-                    indent=4,
-                    sort_keys=True,
-                ).splitlines()
-            else:
-                response_lines = response.splitlines()
-                fixture_lines = fixture["response"]
-
-            for idx, line in enumerate(fixture_lines):
-                if line != response_lines[idx]:
-                    if any(
-                        re.match(re_exempt, line)
-                        for re_exempt in test_parameters["exempted"]
-                    ):
-                        continue
-
-                    raise AssertionError(
-                        (
-                            "Response line does not match the recorded response line",
-                            fixture_file,
-                            idx,
-                            line,
-                            response_lines[idx],
-                        ),
-                    )
-        return response
