@@ -79,50 +79,6 @@ def test_libssh_connect(monkeypatch):
     }
 
 
-def test_libssh_fetch_file(monkeypatch):
-    pc = PlayContext()
-    pc.remote_addr = "localhost"
-    conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
-
-    class Session(libssh.Session):
-        """A session object used to patch libssh.Session"""
-
-        def connect(self, *args, **kwargs):
-            """Stores the arguments and keyword arguments for later use.
-
-            :param args: Positional arguments
-            :param kwargs: Keyword arguments
-            :return: True indicating a successful connection
-            """
-            return True
-
-    monkeypatch.setattr(libssh, "Session", Session)
-
-    all_args = {"call_args": {}, "call_kwargs": {}}
-
-    def fetch_file(*args, **kwargs):
-        """Stores the arguments and keyword arguments for later use.
-
-        :param args: Positional arguments
-        :param kwargs: Keyword arguments
-        :raises AnsibleFileNotFound: Always
-        """
-        all_args["call_args"] = args
-        all_args["call_kwargs"] = kwargs
-        raise AnsibleFileNotFound
-
-    file_path = "test_libssh.py"
-    monkeypatch.setattr(conn, "fetch_file", fetch_file)
-
-    with pytest.raises(AnsibleFileNotFound):
-        conn.fetch_file(in_path=file_path, out_path=file_path)
-
-    assert all_args["call_kwargs"] == {
-        "in_path": file_path,
-        "out_path": file_path,
-    }
-
-
 class TestConnectionClass(unittest.TestCase):
     def test_libssh_close(self):
         pc = PlayContext()
@@ -190,3 +146,47 @@ class TestConnectionClass(unittest.TestCase):
         mock_sftp.put.assert_called_with(
             to_bytes(file_path), to_bytes(file_path)
         )
+
+
+def test_libssh_fetch_file(monkeypatch):
+    pc = PlayContext()
+    pc.remote_addr = "localhost"
+    conn = connection_loader.get("ansible.netcommon.libssh", pc, "/dev/null")
+
+    class Session(libssh.Session):
+        """A session object used to patch libssh.Session"""
+
+        def connect(self, *args, **kwargs):
+            """Stores the arguments and keyword arguments for later use.
+
+            :param args: Positional arguments
+            :param kwargs: Keyword arguments
+            :return: True indicating a successful connection
+            """
+            return True
+
+    monkeypatch.setattr(libssh, "Session", Session)
+
+    all_args = {"call_args": {}, "call_kwargs": {}}
+
+    def fetch_file(*args, **kwargs):
+        """Stores the arguments and keyword arguments for later use.
+
+        :param args: Positional arguments
+        :param kwargs: Keyword arguments
+        :raises AnsibleFileNotFound: Always
+        """
+        all_args["call_args"] = args
+        all_args["call_kwargs"] = kwargs
+        raise AnsibleFileNotFound
+
+    file_path = "test_libssh.py"
+    monkeypatch.setattr(conn, "fetch_file", fetch_file)
+
+    with pytest.raises(AnsibleFileNotFound):
+        conn.fetch_file(in_path=file_path, out_path=file_path)
+
+    assert all_args["call_kwargs"] == {
+        "in_path": file_path,
+        "out_path": file_path,
+    }
