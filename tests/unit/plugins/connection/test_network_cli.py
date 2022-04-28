@@ -44,7 +44,7 @@ def plugin_fixture(monkeypatch):
     pc.network_os = "fakeos"
 
     def get(*args, **kwargs):
-        return True
+        return MagicMock()
 
     monkeypatch.setattr(terminal_loader, "get", get)
     conn = connection_loader.get(
@@ -197,9 +197,9 @@ def test_network_cli_send(conn, response, ssh_type):
     conn._ssh_shell = mock__shell
     conn._connected = True
 
-    if ssh_type == "paramiko":
+    if conn.ssh_type == "paramiko":
         mock__shell.recv.side_effect = [response, None]
-    else:
+    elif conn.ssh_type == "libssh":
         mock__shell.read_bulk_response.side_effect = [response, None]
     conn.send(b"command")
 
