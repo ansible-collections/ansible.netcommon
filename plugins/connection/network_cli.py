@@ -321,7 +321,7 @@ options:
         - I(record): Record the output from the device to the fixture files.
         required: true
         type: string
-      
+
     env:
     - name: ANSIBLE_NETWORK_TEST_PARAMETERS
     vars:
