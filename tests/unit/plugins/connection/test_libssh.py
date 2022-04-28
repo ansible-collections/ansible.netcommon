@@ -9,14 +9,9 @@ __metaclass__ = type
 import pytest
 
 from ansible.module_utils._text import to_bytes
-from ansible.errors import (
-    AnsibleError,
-    AnsibleFileNotFound,
-    AnsibleConnectionFailure,
-)
+from ansible.errors import AnsibleError, AnsibleFileNotFound
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
-import unittest
 from unittest.mock import (
     patch,
     MagicMock,
@@ -52,8 +47,8 @@ def test_libssh_connect(conn, monkeypatch):
     )
 
     mock_session = MagicMock()
-    mock_ssh = MagicMock()
     monkeypatch.setattr(libssh, "Session", mock_session)
+    mock_ssh = MagicMock()
     mock_session.return_value = mock_ssh
     conn._connect()
     mock_ssh.connect.assert_called_with(
@@ -120,41 +115,17 @@ def test_libssh_put_file(mocked_super, mock_exists, conn):
     mock_sftp.put.assert_called_with(to_bytes(file_path), to_bytes(file_path))
 
 
-def test_libssh_fetch_file(conn, monkeypatch):
-    class Session(libssh.Session):
-        """A session object used to patch libssh.Session"""
-
-        def connect(self, *args, **kwargs):
-            """Stores the arguments and keyword arguments for later use.
-
-            :param args: Positional arguments
-            :param kwargs: Keyword arguments
-            :return: True indicating a successful connection
-            """
-            return True
-
-    monkeypatch.setattr(libssh, "Session", Session)
-
-    all_args = {"call_args": {}, "call_kwargs": {}}
-
-    def fetch_file(*args, **kwargs):
-        """Stores the arguments and keyword arguments for later use.
-
-        :param args: Positional arguments
-        :param kwargs: Keyword arguments
-        :raises AnsibleFileNotFound: Always
-        """
-        all_args["call_args"] = args
-        all_args["call_kwargs"] = kwargs
-        raise AnsibleFileNotFound
+@patch("ansible.plugins.connection.ConnectionBase.fetch_file")
+def test_libssh_fetch_file(mocked_super, conn, monkeypatch):
+    mock_session = MagicMock()
+    monkeypatch.setattr(libssh, "Session", mock_session)
+    mock_ssh = MagicMock()
+    mock_session.return_value = mock_ssh
 
     file_path = "test_libssh.py"
-    monkeypatch.setattr(conn, "fetch_file", fetch_file)
+    conn.fetch_file(in_path=file_path, out_path=file_path)
 
-    with pytest.raises(AnsibleFileNotFound):
-        conn.fetch_file(in_path=file_path, out_path=file_path)
-
-    assert all_args["call_kwargs"] == {
-        "in_path": file_path,
-        "out_path": file_path,
-    }
+    conn.sftp.get.assert_called_with(
+        to_bytes(file_path),
+        to_bytes(file_path),
+    )

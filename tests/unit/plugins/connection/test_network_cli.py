@@ -25,7 +25,6 @@ import json
 
 from unittest.mock import (
     MagicMock,
-    patch,
 )
 from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
     terminal_loader,
