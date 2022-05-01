@@ -25,7 +25,9 @@ import json
 
 from unittest.mock import (
     MagicMock,
-    patch,
+)
+from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+    terminal_loader,
 )
 from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils._text import to_text
@@ -35,11 +37,15 @@ import pytest
 
 
 @pytest.fixture(name="conn")
-@patch("ansible.plugins.loader.terminal_loader")
-def plugin_fixture(mocked_loader):
+def plugin_fixture(monkeypatch):
+
     pc = PlayContext()
     pc.network_os = "fakeos"
-    mocked_loader.get.return_value = MagicMock()
+
+    def get(*args, **kwargs):
+        return MagicMock()
+
+    monkeypatch.setattr(terminal_loader, "get", get)
     conn = connection_loader.get(
         "ansible.netcommon.network_cli", pc, "/dev/null"
     )
@@ -190,9 +196,9 @@ def test_network_cli_send(conn, response, ssh_type):
     conn._ssh_shell = mock__shell
     conn._connected = True
 
-    if ssh_type == "paramiko":
+    if conn.ssh_type == "paramiko":
         mock__shell.recv.side_effect = [response, None]
-    else:
+    elif conn.ssh_type == "libssh":
         mock__shell.read_bulk_response.side_effect = [response, None]
     conn.send(b"command")
 

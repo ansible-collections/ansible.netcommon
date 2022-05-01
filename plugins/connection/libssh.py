@@ -287,15 +287,13 @@ class Connection(ConnectionBase):
 
         ssh_connect_kwargs = {}
 
+        remote_user = self.get_option("remote_user")
+        remote_addr = self.get_option("remote_addr")
         port = self._play_context.port or 22
         display.vvv(
             "ESTABLISH LIBSSH CONNECTION FOR USER: %s on PORT %s TO %s"
-            % (
-                self._play_context.remote_user,
-                port,
-                self._play_context.remote_addr,
-            ),
-            host=self._play_context.remote_addr,
+            % (remote_user, port, remote_addr),
+            host=remote_addr,
         )
 
         self.ssh = Session()
@@ -326,11 +324,11 @@ class Connection(ConnectionBase):
             )
 
             self.ssh.connect(
-                host=self._play_context.remote_addr.lower(),
-                user=self._play_context.remote_user,
+                host=remote_addr.lower(),
+                user=remote_user,
                 look_for_keys=self.get_option("look_for_keys"),
                 host_key_checking=self.get_option("host_key_checking"),
-                password=self._play_context.password,
+                password=self.get_option("password"),
                 private_key=private_key,
                 timeout=self._play_context.timeout,
                 port=port,
