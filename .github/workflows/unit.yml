@@ -10,3 +10,5 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   unit:
     uses: ansible-network/github_actions/.github/workflows/unit.yml@main
+    with:
+      netcommon-versions: '["github"]'
