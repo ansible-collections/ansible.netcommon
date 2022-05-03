@@ -1,5 +1,5 @@
 ---
-name: Units
+name: Test collection
 on:  # yamllint disable-line rule:truthy
   push:
     branches: [main]
@@ -8,7 +8,8 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
 
 jobs:
+  sanity:
+    uses: ansible-network/github_actions/.github/workflows/sanity.yml@main
+
   unit:
     uses: ansible-network/github_actions/.github/workflows/unit.yml@main
-    with:
-      netcommon-versions: '["github"]'
