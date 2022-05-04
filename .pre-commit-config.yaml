@@ -7,14 +7,18 @@ repos:
       - id: debug-statements
       - id: end-of-file-fixer
       - id: no-commit-to-branch
-        args: [--branch, main]
       - id: trailing-whitespace
+
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        args: ["--filter-files"]
 
   - repo: https://github.com/psf/black
     rev: 22.3.0
     hooks:
       - id: black
-        args: [-l, "79"]
 
   - repo: https://github.com/ansible-network/collection_prep
     rev: 1.0.0

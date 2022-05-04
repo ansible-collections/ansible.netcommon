@@ -6,17 +6,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import pytest
+from unittest.mock import MagicMock, patch
 
-from ansible.module_utils._text import to_bytes
+import pytest
 from ansible.errors import AnsibleError, AnsibleFileNotFound
+from ansible.module_utils._text import to_bytes
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
-from unittest.mock import (
-    patch,
-    MagicMock,
-)
-
 from ansible_collections.ansible.netcommon.plugins.connection import libssh
 
 pylibsshext = pytest.importorskip("pylibsshext")

@@ -23,10 +23,10 @@ __metaclass__ = type
 import copy
 import sys
 
+from ansible.utils.display import Display
 from ansible_collections.ansible.netcommon.plugins.action.network import (
     ActionModule as ActionNetworkModule,
 )
-from ansible.utils.display import Display
 
 display = Display()
 

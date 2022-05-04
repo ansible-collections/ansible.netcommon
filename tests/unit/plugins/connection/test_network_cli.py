@@ -22,18 +22,16 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import json
+from unittest.mock import MagicMock
 
-from unittest.mock import (
-    MagicMock,
-)
-from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
-    terminal_loader,
-)
+import pytest
 from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils._text import to_text
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
-import pytest
+from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+    terminal_loader,
+)
 
 
 @pytest.fixture(name="conn")

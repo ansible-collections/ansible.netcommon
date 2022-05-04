@@ -20,15 +20,15 @@ __metaclass__ = type
 
 import os
 import sys
-
 import unittest
+
 from ansible_collections.ansible.netcommon.plugins.filter.network import (
+    comp_type5,
+    hash_salt,
     parse_xml,
     type5_pw,
-    hash_salt,
-    comp_type5,
-    vlan_parser,
     vlan_expander,
+    vlan_parser,
 )
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "network")

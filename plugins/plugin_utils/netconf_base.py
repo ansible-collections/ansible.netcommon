@@ -32,7 +32,7 @@ from ansible.plugins.netconf import NetconfBase as NetconfBaseBase
 
 try:
     from ncclient.operations import RPCError
-    from ncclient.xml_ import to_xml, to_ele, NCElement
+    from ncclient.xml_ import NCElement, to_ele, to_xml
 
     HAS_NCCLIENT = True
     NCCLIENT_IMP_ERR = None

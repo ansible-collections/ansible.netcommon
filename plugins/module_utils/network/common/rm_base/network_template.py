@@ -32,13 +32,15 @@ __metaclass__ = type
 import re
 from copy import deepcopy
 
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
+    RmEngineBase,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     Template,
     dict_merge,
-    validate_config as _validate_config,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
-    RmEngineBase,
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    validate_config as _validate_config,
 )
 
 try:

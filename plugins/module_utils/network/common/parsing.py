@@ -33,8 +33,8 @@ import shlex
 import time
 
 from ansible.module_utils.parsing.convert_bool import (
-    BOOLEANS_TRUE,
     BOOLEANS_FALSE,
+    BOOLEANS_TRUE,
 )
 from ansible.module_utils.six import string_types, text_type
 from ansible.module_utils.six.moves import zip

@@ -393,20 +393,20 @@ diff:
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection, ConnectionError
-from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
-    validate_and_normalize_data,
-    dict_to_xml,
-)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
     get_capabilities,
     get_config,
     sanitize_xml,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
+    dict_to_xml,
+    validate_and_normalize_data,
+)
 
 try:
-    from lxml.etree import tostring, fromstring
+    from lxml.etree import fromstring, tostring
 except ImportError:
-    from xml.etree.ElementTree import tostring, fromstring
+    from xml.etree.ElementTree import fromstring, tostring
 
 
 def validate_config(module, config, format="xml"):

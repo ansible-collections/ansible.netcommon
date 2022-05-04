@@ -38,7 +38,6 @@ EXAMPLES = r"""
 """
 
 from ansible.module_utils._text import to_native
-
 from ansible.module_utils.basic import missing_required_lib
 from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
     CliParserBase,

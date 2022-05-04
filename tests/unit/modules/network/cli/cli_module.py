@@ -29,7 +29,6 @@ from ansible_collections.ansible.netcommon.tests.unit.modules.utils import (
     ModuleTestCase,
 )
 
-
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures")
 fixture_data = {}
 

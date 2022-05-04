@@ -22,14 +22,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import sys
+from unittest.mock import MagicMock, PropertyMock, patch
 
-from unittest.mock import (
-    patch,
-    MagicMock,
-    PropertyMock,
-)
-from ansible.playbook.play_context import PlayContext
 import pytest
+from ansible.playbook.play_context import PlayContext
 
 pytest.importorskip("ncclient")
 
@@ -48,16 +44,16 @@ def import_mock(name, *args):
 PY3 = sys.version_info[0] == 3
 if PY3:
     with patch("builtins.__import__", side_effect=import_mock):
+        from ansible.plugins.loader import connection_loader
         from ansible_collections.ansible.netcommon.plugins.connection import (
             netconf,
         )
-        from ansible.plugins.loader import connection_loader
 else:
     with patch("__builtin__.__import__", side_effect=import_mock):
+        from ansible.plugins.loader import connection_loader
         from ansible_collections.ansible.netcommon.plugins.connection import (
             netconf,
         )
-        from ansible.plugins.loader import connection_loader
 
 
 def test_netconf_init():
