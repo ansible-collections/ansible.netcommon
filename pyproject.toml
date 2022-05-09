@@ -3,9 +3,5 @@ line-length = 79
 
 [tool.pytest.ini_options]
 addopts = "-n auto"
-testpaths = [
-    "tests",
-]
-filterwarnings = [
-    'ignore:AnsibleCollectionFinder has already been configured',
-]
+testpaths = ["tests"]
+filterwarnings = ['ignore:AnsibleCollectionFinder has already been configured']

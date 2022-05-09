@@ -48,7 +48,6 @@
   tags:
     - ttp
 
-
 - include_tasks: "{{ os|lower }}_xml.yaml"
   vars:
     parser: "({{ os }}/textfsm)"

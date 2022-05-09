@@ -1,6 +1,6 @@
 ---
 - name: Determine the python version of the control node
-  command: 'python --version'
+  command: "python --version"
   delegate_to: localhost
   register: pyver
   changed_when: false
