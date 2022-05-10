@@ -19,7 +19,7 @@ pylibsshext = pytest.importorskip("pylibsshext")
 
 
 @pytest.fixture(name="conn")
-def plugin_fixture(monkeypatch):
+def plugin_fixture():
     pc = PlayContext()
     pc.port = 8080
     pc.timeout = 60
@@ -68,7 +68,7 @@ def test_libssh_close(conn):
 
     conn.sftp.close.assert_called_with()
     conn.chan.close.assert_called_with()
-    conn.sftp.close.assert_called_with()
+    conn.ssh.close.assert_called_with()
 
 
 @patch("ansible.plugins.connection.ConnectionBase.exec_command")
