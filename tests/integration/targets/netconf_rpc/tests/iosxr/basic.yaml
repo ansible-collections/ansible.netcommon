@@ -1,5 +1,6 @@
 ---
-- debug: msg="START netconf_rpc iosxr/basic.yaml on connection={{ ansible_connection
+- debug:
+    msg="START netconf_rpc iosxr/basic.yaml on connection={{ ansible_connection
     }}"
 
 - name: get schema list with xml output
@@ -22,5 +23,6 @@
   ansible.netcommon.netconf_rpc:
     rpc: discard-changes
 
-- debug: msg="END netconf_rpc iosxr/basic.yaml on connection={{ ansible_connection
+- debug:
+    msg="END netconf_rpc iosxr/basic.yaml on connection={{ ansible_connection
     }}"

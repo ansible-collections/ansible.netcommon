@@ -1,5 +1,6 @@
 ---
-- debug: msg="START netconf_get sros/basic.yaml on connection={{ ansible_connection
+- debug:
+    msg="START netconf_get sros/basic.yaml on connection={{ ansible_connection
     }}"
 
 - name: Get complete configuration data (SROS)
@@ -54,5 +55,6 @@
       - "'urn:nokia.com:sros:ns:yang:sr:conf' in result.stdout"
       - "'urn:nokia.com:sros:ns:yang:sr:state' in result.stdout"
 
-- debug: msg="END netconf_get sros/basic.yaml on connection={{ ansible_connection
+- debug:
+    msg="END netconf_get sros/basic.yaml on connection={{ ansible_connection
     }}"

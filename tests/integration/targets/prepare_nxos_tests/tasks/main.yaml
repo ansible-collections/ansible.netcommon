@@ -1,5 +1,4 @@
 ---
-
 - name: Setup - Enable feature netconf
   cisco.nxos.nxos_feature:
     feature: netconf

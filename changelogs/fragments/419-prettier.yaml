@@ -1,0 +1,3 @@
+---
+trivial:
+  - Added prettier to pre-commit
