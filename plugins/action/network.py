@@ -239,12 +239,27 @@ class ActionModule(_ActionModule):
 
         # log early about dexec
         if dexec:
-            display.vvvv(
-                "{prefix} enabled via connection option".format(
-                    prefix=DEXEC_PREFIX
-                ),
-                host=host,
-            )
+            display.vvvv("{prefix} enabled".format(prefix=DEXEC_PREFIX), host)
+
+            # disable dexec when not PY3
+            if not PY3:
+                dexec = False
+                display.vvvv(
+                    "{prefix} disabled for when not Python 3".format(
+                        prefix=DEXEC_PREFIX
+                    ),
+                    host=host,
+                )
+
+            # disable dexec when running async
+            if self._task.async_val:
+                dexec = False
+                display.vvvv(
+                    "{prefix} disabled for a task using async".format(
+                        prefix=DEXEC_PREFIX
+                    ),
+                    host=host,
+                )
         else:
             display.vvvv("{prefix} disabled".format(prefix=DEXEC_PREFIX), host)
             display.vvvv(
@@ -254,25 +269,6 @@ class ActionModule(_ActionModule):
                 host,
             )
 
-        # disable dexec when running async
-        if self._task.async_val and dexec:
-            dexec = False
-            display.vvvv(
-                "{prefix} disabled for a task using async".format(
-                    prefix=DEXEC_PREFIX
-                ),
-                host=host,
-            )
-
-        # disable dexec when not PY3
-        if not PY3:
-            dexec = False
-            display.vvvv(
-                "{prefix} disabled for when not Python 3".format(
-                    prefix=DEXEC_PREFIX
-                ),
-                host=host,
-            )
         return dexec
 
     def _find_load_module(self):

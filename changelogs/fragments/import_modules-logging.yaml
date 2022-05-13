@@ -1,0 +1,3 @@
+---
+trivial:
+  - Change logging for IMPORT_MODULES now that the option is on by default
