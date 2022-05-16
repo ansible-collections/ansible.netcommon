@@ -75,9 +75,10 @@ class HttpApi(HttpApiBase):
 
 def handle_response(response, response_data):
     try:
-        response_data = json.loads(response_data.read())
+        res = response_data.read().strip()
+        response_data = json.loads(res)
     except ValueError:
-        response_data = response_data.read()
+        response_data = res
 
     if isinstance(response, HTTPError):
         if response_data:
