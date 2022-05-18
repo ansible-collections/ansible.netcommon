@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - restconf - When non-JSON data is encountered, return the bytes found instead of nothing.

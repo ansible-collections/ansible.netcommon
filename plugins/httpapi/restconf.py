@@ -77,6 +77,7 @@ def handle_response(response, response_data):
     try:
         response_data = json.loads(response_data.read())
     except ValueError:
+        response_data.seek(0)
         response_data = response_data.read()
 
     if isinstance(response, HTTPError):
