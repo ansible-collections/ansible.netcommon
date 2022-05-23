@@ -1,6 +1,6 @@
 ---
 name: Test collection
-on:
+on:  # yamllint disable-line rule:truthy
   pull_request:
     branches: [main]
   workflow_dispatch:
