@@ -1,0 +1,3 @@
+---
+trivial:
+  - Enable concurrency check for PRs & GHA
