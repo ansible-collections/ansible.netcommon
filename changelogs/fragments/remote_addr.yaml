@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - libssh - Fix for improperly set hostname in url
+  - httpapi - Fix for improperly set hostname in connect
