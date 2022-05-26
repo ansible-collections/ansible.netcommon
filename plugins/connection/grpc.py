@@ -3,7 +3,6 @@
 from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
-import q
 
 DOCUMENTATION = """
 author: Ansible Team
@@ -214,7 +213,6 @@ class Connection(NetworkConnectionBase):
                 **cref
             )
             grpccls = getattr(import_module(grpclib), "Grpc")
-            q(grpccls)
             grpc_obj = grpccls(self)
 
             if grpc_obj:
@@ -237,7 +235,6 @@ class Connection(NetworkConnectionBase):
             raise AnsibleError(
                 "grpcio is required to use the gRPC connection type. Please run 'pip install grpcio'"
             )
-        q("INNNN")
         host = self.get_option('host')
         if self.connected:
             self.queue_message('log', 'gRPC connection to host %s already exist' % host)
@@ -277,7 +274,6 @@ class Connection(NetworkConnectionBase):
         else:
             channel = insecure_channel(self._target, options=self._channel_options)
 
-        q(channel)
 
         self.queue_message('vvv', "ESTABLISH GRPC CONNECTION FOR USER: %s on PORT %s TO %s" %
                            (self.get_option('remote_user'), port, host))

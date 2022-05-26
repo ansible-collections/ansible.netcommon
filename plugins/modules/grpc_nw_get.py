@@ -14,6 +14,7 @@ module: grpc_nw_get
 version_added: ""
 author:
     - "Ganesh Nalawade (@ganeshrn)"
+    - "Gomathi Selvi S (@GomathiselviS)
 short_description: Fetch configuration/state data from gRPC enabled target hosts.
 description:
     - gRPC is a high performance, open-source universal RPC framework.
