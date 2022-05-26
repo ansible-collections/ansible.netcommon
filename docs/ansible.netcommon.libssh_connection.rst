@@ -133,6 +133,26 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>password_prompt</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.1.0</div>
+                </td>
+                <td>
+                </td>
+                    <td>
+                                <div>var: ansible_libssh_password_prompt</div>
+                    </td>
+                <td>
+                        <div>Text to match when using keyboard-interactive authentication to determine if the prompt is for the password.</div>
+                        <div>Requires ansible-pylibssh version &gt;= 1.0.0</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>proxy_command</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">

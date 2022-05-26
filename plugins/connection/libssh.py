@@ -50,6 +50,14 @@ DOCUMENTATION = """
             - name: ansible_ssh_password
             - name: ansible_libssh_pass
             - name: ansible_libssh_password
+      password_prompt:
+        description:
+          - Text to match when using keyboard-interactive authentication to determine if the prompt is
+            for the password.
+          - Requires ansible-pylibssh version >= 1.0.0
+        vars:
+          - name: ansible_libssh_password_prompt
+        version_added: 3.1.0
       host_key_auto_add:
         description: 'TODO: write it'
         env: [{name: ANSIBLE_LIBSSH_HOST_KEY_AUTO_ADD}]
@@ -329,6 +337,7 @@ class Connection(ConnectionBase):
                 look_for_keys=self.get_option("look_for_keys"),
                 host_key_checking=self.get_option("host_key_checking"),
                 password=self.get_option("password"),
+                password_prompt=self.get_option("password_prompt"),
                 private_key=private_key,
                 timeout=self._play_context.timeout,
                 port=port,
