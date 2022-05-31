@@ -201,7 +201,6 @@ releases:
       - 114-sort_list_listofdicts.yaml
       - 118-cli_config.yaml
       - 127-galaxy-fragment.yaml
-    modules: []
     release_date: "2020-08-25"
   1.2.1:
     changes:
@@ -552,3 +551,22 @@ releases:
       - pre-commit-add-docs.yaml
       - update-linter-config.yaml
     release_date: "2022-04-26"
+  3.0.1:
+    changes:
+      bugfixes:
+        - httpapi - Fix for improperly set hostname in connect
+        - libssh - Fix for improperly set hostname in url
+        - restconf - When non-JSON data is encountered, return the bytes found instead
+          of nothing.
+    fragments:
+      - 412-unit-updates.yaml
+      - 419-prettier.yaml
+      - 428.yaml
+      - 432.yaml
+      - fix-changelog-location.yaml
+      - import_modules-logging.yaml
+      - libssh-tests.yaml
+      - remote_addr.yaml
+      - restconf-not-json.yaml
+      - update-pre-commit.yaml
+    release_date: "2022-05-31"
