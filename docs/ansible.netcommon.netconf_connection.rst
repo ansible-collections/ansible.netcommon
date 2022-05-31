@@ -54,6 +54,7 @@ Parameters
                         <b>Default:</b><br/><div style="color: blue">"inventory_hostname"</div>
                 </td>
                     <td>
+                                <div>var: inventory_hostname</div>
                                 <div>var: ansible_host</div>
                     </td>
                 <td>
