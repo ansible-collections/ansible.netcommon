@@ -11,8 +11,8 @@ v3.0.1
 Bugfixes
 --------
 
-- httpapi - Fix for improperly set hostname in connect
-- libssh - Fix for improperly set hostname in url
+- httpapi - Fix for improperly set hostname in url
+- libssh - Fix for improperly set hostname in connect
 - restconf - When non-JSON data is encountered, return the bytes found instead of nothing.
 
 v3.0.0
