@@ -273,10 +273,7 @@ class Connection(NetworkConnectionBase):
         super(Connection, self).close()
 
     @ensure_connect
-    def send(self, path, data, retries=None, **kwargs):
-        """
-        Sends the command to the device over api
-        """
+    def _open_url(self, path, data, retries=None, **kwargs):
         url_kwargs = dict(
             timeout=self.get_option("persistent_command_timeout"),
             validate_certs=self.get_option("validate_certs"),
@@ -307,13 +304,13 @@ class Connection(NetworkConnectionBase):
             url_kwargs["url_username"] = self.get_option("remote_user")
             url_kwargs["url_password"] = self.get_option("password")
 
+        url = self._url + path
+        self._log_messages(
+            "send url '%s' with data '%s' and kwargs '%s'"
+            % (url, data, url_kwargs)
+        )
         try:
-            url = self._url + path
-            self._log_messages(
-                "send url '%s' with data '%s' and kwargs '%s'"
-                % (url, data, url_kwargs)
-            )
-            response = open_url(url, data=data, **url_kwargs)
+            return open_url(url, data=data, **url_kwargs)
         except HTTPError as exc:
             is_handled = self.handle_httperror(exc)
             if is_handled is True:
@@ -325,13 +322,20 @@ class Connection(NetworkConnectionBase):
                 raise
             if is_handled is False:
                 raise
-            response = is_handled
+            return is_handled
         except URLError as exc:
             raise AnsibleConnectionFailure(
                 "Could not connect to {0}: {1}".format(
                     self._url + path, exc.reason
                 )
             )
+
+    @ensure_connect
+    def send(self, path, data, retries=None, **kwargs):
+        """
+        Sends the command to the device over api
+        """
+        response = self._open_url(path, data, **kwargs)
 
         response_buffer = BytesIO()
         resp_data = response.read()
@@ -344,6 +348,18 @@ class Connection(NetworkConnectionBase):
         response_buffer.seek(0)
 
         return response, response_buffer
+
+    def get_file(self, path, dest, **kwargs):
+        """Download the contents of path to dest"""
+        response = self._open_url(path, **kwargs)
+        self._log_messages("writing response to '%s'" % dest)
+
+        buffer_size = 65536
+        data = response.read(buffer_size)
+        with open(dest, "wb") as output_file:
+            while data:
+                output_file.write(data)
+                data = response.read(buffer_size)
 
     def transport_test(self, connect_timeout):
         """This method enables wait_for_connection to work.
