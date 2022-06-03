@@ -240,7 +240,7 @@ class Connection(NetworkConnectionBase):
                 self._auth = self.get_option("session_key")
             else:
                 self.httpapi.login(
-                    self.get_option("remote_user"), self.get_option("password")
+                    self.get_option("remote_user"), self._play_context.password
                 )
 
     def close(self):
@@ -274,7 +274,7 @@ class Connection(NetworkConnectionBase):
         else:
             url_kwargs["force_basic_auth"] = True
             url_kwargs["url_username"] = self.get_option("remote_user")
-            url_kwargs["url_password"] = self.get_option("password")
+            url_kwargs["url_password"] = self._play_context.password
 
         try:
             url = self._url + path
