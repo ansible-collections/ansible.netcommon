@@ -273,7 +273,7 @@ class Connection(NetworkConnectionBase):
         super(Connection, self).close()
 
     @ensure_connect
-    def _open_url(self, path, data, retries=None, **kwargs):
+    def _open_url(self, path, data=None, retries=None, **kwargs):
         url_kwargs = dict(
             timeout=self.get_option("persistent_command_timeout"),
             validate_certs=self.get_option("validate_certs"),
@@ -335,7 +335,7 @@ class Connection(NetworkConnectionBase):
         """
         Sends the command to the device over api
         """
-        response = self._open_url(path, data, **kwargs)
+        response = self._open_url(path, data, retries, **kwargs)
 
         response_buffer = BytesIO()
         resp_data = response.read()
