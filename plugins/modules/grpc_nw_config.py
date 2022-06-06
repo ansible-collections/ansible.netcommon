@@ -27,6 +27,8 @@ options:
         configuration or state data is returned in response provided it is supported by target host.
   path:
     description: path of the file that has the config in json format.
+  state:
+    description: action to be performed
    
 requirements:
   - grpcio
@@ -43,6 +45,7 @@ EXAMPLES = """
 - name: Merge bgp configuration data
   grpc_nw_config:
     path:  'bgp_merge.json'
+    state: merged
 """
 
 RETURN = """
@@ -63,7 +66,7 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
 from ansible.module_utils.network.common.utils import to_list
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import get_capabilities, merge_config
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import get_capabilities, merge_config, replace_config
 
 
 def main():
@@ -91,7 +94,10 @@ def main():
     try:
         if path:
             config = open(path).read()
-        response = merge_config(module, config)
+        if state == "merged":
+            response = merge_config(module, config)
+        elif state == "replaced":
+            response = replace_config(module, config)
     except ConnectionError as exc:
         module.fail_json(msg=to_text(exc, errors='surrogate_then_replace'), code=exc.code)
 

@@ -72,6 +72,35 @@ def merge_config(module, section, check_rc=True):
         return err
     return
 
+def replace_config(module, section, check_rc=True):
+    conn = get_connection(module)
+    try:
+        out = conn.replace_config(section)
+        if out and out.errors:
+            err = json.loads(out.errors)
+            res = json.dumps(err, indent=4, separators=(',', ': '))
+    except ValueError as err:
+        if check_rc:
+            module.fail_json(msg=to_text(out['error'], errors='surrogate_then_replace'))
+        else:
+            module.warn(to_text(out['error'], errors='surrogate_then_replace'))
+        return err
+    return
+
+def delete_config(module, section, check_rc=True):
+    conn = get_connection(module)
+    try:
+        out = conn.delete_config(section)
+        if out and out.errors:
+            err = json.loads(out.errors)
+            res = json.dumps(err, indent=4, separators=(',', ': '))
+    except ValueError as err:
+        if check_rc:
+            module.fail_json(msg=to_text(out['error'], errors='surrogate_then_replace'))
+        else:
+            module.warn(to_text(out['error'], errors='surrogate_then_replace'))
+        return err
+    return
 def run_cli(module, command, display, check_rc=True):
     conn = get_connection(module)
     out = conn.run_cli(command, display)
