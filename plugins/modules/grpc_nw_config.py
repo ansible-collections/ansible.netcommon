@@ -75,6 +75,7 @@ def main():
     argument_spec = dict(
         config=dict(),
         path=dict(),
+        state=dict(),
     )
 
     mutually_exclusive = [['config', 'path']]
@@ -89,6 +90,7 @@ def main():
 
     config = module.params['config']
     path = module.params['path']
+    state = module.params['state']
 
     result = {'changed': False}
     try:

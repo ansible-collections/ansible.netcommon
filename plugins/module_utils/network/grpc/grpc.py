@@ -18,6 +18,7 @@
 
 from ansible.module_utils._text import to_text
 from ansible.module_utils.connection import Connection
+import json
 
 def get_connection(module):
     if hasattr(module, '_grpc_connection'):
@@ -61,8 +62,8 @@ def merge_config(module, section, check_rc=True):
     conn = get_connection(module)
     try:
         out = conn.merge_config(section)
-        if out and out.errors:
-            err = json.loads(out.errors)
+        if out:
+            err = json.loads(out)
             res = json.dumps(err, indent=4, separators=(',', ': '))
     except ValueError as err:
         if check_rc:
@@ -76,23 +77,24 @@ def replace_config(module, section, check_rc=True):
     conn = get_connection(module)
     try:
         out = conn.replace_config(section)
-        if out and out.errors:
-            err = json.loads(out.errors)
+        import q
+        q(out, type(out))
+        if out:
+            q("err")
+            err = json.loads(out)
+            q(err)
             res = json.dumps(err, indent=4, separators=(',', ': '))
-    except ValueError as err:
-        if check_rc:
-            module.fail_json(msg=to_text(out['error'], errors='surrogate_then_replace'))
-        else:
-            module.warn(to_text(out['error'], errors='surrogate_then_replace'))
-        return err
+            module.fail_json(msg=to_text(res, errors='surrogate_then_replace'))
+    except AbortionError:
+        module.fail_json(msg=to_text("Unable to connect to grpc destination", errors='surrogate_then_replace'))
     return
 
 def delete_config(module, section, check_rc=True):
     conn = get_connection(module)
     try:
         out = conn.delete_config(section)
-        if out and out.errors:
-            err = json.loads(out.errors)
+        if out and out:
+            err = json.loads(out)
             res = json.dumps(err, indent=4, separators=(',', ': '))
     except ValueError as err:
         if check_rc:
