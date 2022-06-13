@@ -120,6 +120,7 @@ output:
             }
         }]
 """
+import yaml, json, pprint
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
@@ -147,10 +148,13 @@ def main():
 
     operations = capabilities['server_capabilities']
 
-    section = module.params['section']
+    
+    section = json.dumps(yaml.safe_load(module.params['section']))
     command = module.params['command']
     display = module.params['display']
     data_type = module.params['data_type']
+    #section = yaml.safe_load(section)
+    #section = json.dumps(section)
 
     if display and display not in operations.get('display', []):
         module.fail_json(msg="display option '%s' is not supported on this target host" % display)
@@ -162,20 +166,28 @@ def main():
         module.fail_json(msg="data_type option '%s' is not supported on this target host" % data_type)
 
     result = {'changed': False}
+    import q
+    output = []
 
     try:
         if command:
             response, err = run_cli(module, command, display)
         else:
             response, err = get(module, section, data_type)
+            q(json.loads(response))
 
         try:
-            output = module.from_json(response)
+            res = json.loads(response)
+            val = to_text(yaml.dump(res, allow_unicode=True, default_flow_style=False)).split("\n")
+            output_str = ''. join(val)
+            output.append( output_str )
         except ValueError:
             output = None
     except ConnectionError as exc:
         module.fail_json(msg=to_text(exc, errors='surrogate_then_replace'), code=exc.code)
+    
 
+    #result['stdout'] = yaml.safe_dump(response)
     result['stdout'] = response
 
     if output:
