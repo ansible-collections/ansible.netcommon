@@ -77,12 +77,8 @@ def replace_config(module, section, check_rc=True):
     conn = get_connection(module)
     try:
         out = conn.replace_config(section)
-        import q
-        q(out, type(out))
         if out:
-            q("err")
             err = json.loads(out)
-            q(err)
             res = json.dumps(err, indent=4, separators=(',', ': '))
             module.fail_json(msg=to_text(res, errors='surrogate_then_replace'))
     except AbortionError:

@@ -67,7 +67,8 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
 from ansible.module_utils.network.common.utils import to_list
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import get_capabilities, merge_config, replace_config
-
+import json
+import yaml
 
 def main():
     """entry point for module execution
@@ -88,14 +89,17 @@ def main():
 
     operations = capabilities['server_capabilities']
 
-    config = module.params['config']
-    path = module.params['path']
+    if module.params['config']:
+        config = json.dumps(yaml.safe_load(module.params['config']))
+        config = json.loads(config)
+    if module.params['path']:
+        config = open(module.params['path']).read()
+        config = json.dumps(yaml.safe_load(config))
+        config = json.loads(config)
     state = module.params['state']
 
     result = {'changed': False}
     try:
-        if path:
-            config = open(path).read()
         if state == "merged":
             response = merge_config(module, config)
         elif state == "replaced":
@@ -103,6 +107,7 @@ def main():
     except ConnectionError as exc:
         module.fail_json(msg=to_text(exc, errors='surrogate_then_replace'), code=exc.code)
 
+    
     result['stdout'] = response
 
     module.exit_json(**result)
