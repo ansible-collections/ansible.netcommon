@@ -1,4 +1,4 @@
-# (c) 2020 Ansible Project
+# (c) 2022 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 from __future__ import absolute_import, division, print_function
 
@@ -18,6 +18,8 @@ version_added: "3.0.0"
 requirements:
   - grpcio
   - protobuf
+extends_documentation_fragment:
+  - ansible.netcommon.connection_persistent
 options:
   host:
     description:
@@ -113,55 +115,10 @@ options:
       - name: ANSIBLE_GPRC_SSL_TARGET_NAME_OVERRIDE
     vars:
       - name: ansible_grpc_ssl_target_name_override
-  persistent_connect_timeout:
-    type: int
-    description:
-      - Configures, in seconds, the amount of time to wait when trying to
-        initially establish a persistent connection. If this value expires
-        before the connection to the remote device is completed, the connection
-        will fail.
-    default: 30
-    ini:
-      - section: persistent_connection
-        key: connect_timeout
-    env:
-      - name: ANSIBLE_PERSISTENT_CONNECT_TIMEOUT
-    vars:
-      - name: ansible_connect_timeout
-  persistent_command_timeout:
-    type: int
-    description:
-      - Configures, in seconds, the default timeout
-        value when awaiting a response after issuing a call to a RPC. If the RPC
-        does not return in timeout seconds, an error is generated and the connection is
-        closed.
-    default: 30
-    ini:
-      - section: persistent_connection
-        key: command_timeout
-    env:
-      - name: ANSIBLE_PERSISTENT_COMMAND_TIMEOUT
-    vars:
-      - name: ansible_command_timeout
-  persistent_log_messages:
-    type: boolean
-    description:
-      - This flag will enable logging the command executed and response received from
-        target device in the ansible log file. For this option to work the 'log_path' ansible
-        configuration option is required to be set to a file path with write access.
-      - Be sure to fully understand the security implications of enabling this
-        option as it could create a security vulnerability by logging sensitive information in log file.
-    default: False
-    ini:
-      - section: persistent_connection
-        key: log_messages
-    env:
-      - name: ANSIBLE_PERSISTENT_LOG_MESSAGES
-    vars:
-      - name: ansible_persistent_log_messages
   grpc_type:
     type: str
-    description: grpc type
+    description: This option indicated the grpc type and it can be used
+                 in place of network_os. eg: cisco.iosxr.grpc
     default: False
     ini:
       - section: grpc_connection
@@ -179,12 +136,14 @@ from importlib import import_module
 try:
     from grpc import ssl_channel_credentials, secure_channel, insecure_channel
     from grpc.beta import implementations
+
     HAS_GRPC = True
 except ImportError:
     HAS_GRPC = False
 
 try:
-    from google import protobuf
+    from google import protobuf  # noqa: F401
+
     HAS_PROTOBUF = True
 except ImportError:
     HAS_PROTOBUF = False
@@ -193,21 +152,30 @@ except ImportError:
 class Connection(NetworkConnectionBase):
     """GRPC connections"""
 
-    transport = 'grpc'
+    transport = "grpc"
     has_pipelining = False
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
+        super(Connection, self).__init__(
+            play_context, new_stdin, *args, **kwargs
+        )
 
         # TODO: Need to add support to make grpc connection work with non-network target host.
         # Currently this works only with network target host.
-        if self._network_os:
+        grpc_type = self._network_os or self.get_option("grpc_type")
+        if grpc_type:
             if not HAS_PROTOBUF:
                 raise AnsibleError(
                     "protobuf is required to use the grpc connection type. Please run 'pip install protobuf'"
                 )
-            os_split = self._network_os.split(".")
-            grpc_type = os_split[0] + "." + os_split[1] + ".grpc"
+            if self._network_os:
+                os_split = self._network_os.split(".")
+                grpc_type = os_split[0] + "." + os_split[1] + ".grpc"
+            else:
+                os_split = grpc_type.split(".")
+                self._network_os = (
+                    os_split[0] + "." + os_split[1] + "." + os_split[1]
+                )
             cref = dict(zip(["corg", "cname", "plugin"], grpc_type.split(".")))
             grpclib = "ansible_collections.{corg}.{cname}.plugins.sub_plugins.grpc.{plugin}".format(
                 **cref
@@ -216,15 +184,27 @@ class Connection(NetworkConnectionBase):
             grpc_obj = grpccls(self)
 
             if grpc_obj:
-                self._sub_plugin = {'type': 'grpc', 'name': grpc_type, 'obj': grpc_obj}
-                self.queue_message('log', 'loaded gRPC plugin for network_os %s' % self._network_os)
-                self.queue_message('log', 'network_os is set to %s' % self._network_os)
+                self._sub_plugin = {
+                    "type": "grpc",
+                    "name": grpc_type,
+                    "obj": grpc_obj,
+                }
+                self.queue_message(
+                    "log", "loaded gRPC plugin for type %s" % grpc_type
+                )
+                self.queue_message("log", "grpc type is set to %s" % grpc_type)
             else:
-                raise AnsibleConnectionFailure('unable to load API plugin for network_os %s' % self._network_os)
+                raise AnsibleConnectionFailure(
+                    "unable to load API plugin for network_os %s"
+                    % self._network_os
+                )
         else:
-            self._sub_plugin['type'] = 'external'
-            self.queue_message('warning', 'Unable to automatically determine gRPC implementation type.'
-                                          ' Please manually configure ansible_network_os value for this host')
+            self._sub_plugin["type"] = "external"
+            self.queue_message(
+                "warning",
+                "Unable to automatically determine gRPC implementation type."
+                " Please manually configure ansible_network_os value or grpc_type configuration for this host",
+            )
 
     def _connect(self):
         """
@@ -235,50 +215,67 @@ class Connection(NetworkConnectionBase):
             raise AnsibleError(
                 "grpcio is required to use the gRPC connection type. Please run 'pip install grpcio'"
             )
-        host = self.get_option('host')
+        host = self.get_option("host")
         if self.connected:
-            self.queue_message('log', 'gRPC connection to host %s already exist' % host)
+            self.queue_message(
+                "log", "gRPC connection to host %s already exist" % host
+            )
             return
 
-        port = self.get_option('port')
-        self._target = host if port is None else '%s:%d' % (host, port)
-        self._timeout = self.get_option('persistent_command_timeout')
-        self._login_credentials = [('username', self.get_option('remote_user')), ('password', self.get_option('password'))]
-        ssl_target_name_override = self.get_option('ssl_target_name_override')
+        port = self.get_option("port")
+        self._target = host if port is None else "%s:%d" % (host, port)
+        self._timeout = self.get_option("persistent_command_timeout")
+        self._login_credentials = [
+            ("username", self.get_option("remote_user")),
+            ("password", self.get_option("password")),
+        ]
+        ssl_target_name_override = self.get_option("ssl_target_name_override")
         if ssl_target_name_override:
-            self._channel_options = [('grpc.ssl_target_name_override', ssl_target_name_override), ]
+            self._channel_options = [
+                ("grpc.ssl_target_name_override", ssl_target_name_override),
+            ]
         else:
             self._channel_options = None
 
         certs = {}
-        private_key_file = self.get_option('private_key_file')
-        root_certificates_file = self.get_option('root_certificates_file')
-        certificate_chain_file = self.get_option('certificate_chain_file')
+        private_key_file = self.get_option("private_key_file")
+        root_certificates_file = self.get_option("root_certificates_file")
+        certificate_chain_file = self.get_option("certificate_chain_file")
 
         try:
             if root_certificates_file:
-                with open(root_certificates_file, 'rb') as f:
-                    certs['root_certificates'] = f.read()
+                with open(root_certificates_file, "rb") as f:
+                    certs["root_certificates"] = f.read()
             if private_key_file:
-                with open(private_key_file, 'rb') as f:
-                    certs['private_key'] = f.read()
+                with open(private_key_file, "rb") as f:
+                    certs["private_key"] = f.read()
             if certificate_chain_file:
-                with open(certificate_chain_file, 'rb') as f:
-                    certs['certificate_chain'] = f.read()
+                with open(certificate_chain_file, "rb") as f:
+                    certs["certificate_chain"] = f.read()
         except Exception as e:
-            raise AnsibleConnectionFailure('Failed to read certificate keys: %s' % e)
+            raise AnsibleConnectionFailure(
+                "Failed to read certificate keys: %s" % e
+            )
 
         if certs:
             creds = ssl_channel_credentials(**certs)
-            channel = secure_channel(self._target, creds, options=self._channel_options)
+            channel = secure_channel(
+                self._target, creds, options=self._channel_options
+            )
         else:
-            channel = insecure_channel(self._target, options=self._channel_options)
+            channel = insecure_channel(
+                self._target, options=self._channel_options
+            )
 
-
-        self.queue_message('vvv', "ESTABLISH GRPC CONNECTION FOR USER: %s on PORT %s TO %s" %
-                           (self.get_option('remote_user'), port, host))
+        self.queue_message(
+            "vvv",
+            "ESTABLISH GRPC CONNECTION FOR USER: %s on PORT %s TO %s"
+            % (self.get_option("remote_user"), port, host),
+        )
         self._channel = implementations.Channel(channel)
-        self.queue_message('vvvv', 'grpc connection has completed successfully')
+        self.queue_message(
+            "vvvv", "grpc connection has completed successfully"
+        )
         self._connected = True
 
     def close(self):
@@ -287,6 +284,8 @@ class Connection(NetworkConnectionBase):
         :return: None
         """
         if self._connected:
-            self.queue_message('vvvv', "closing gRPC connection to target host")
+            self.queue_message(
+                "vvvv", "closing gRPC connection to target host"
+            )
             self._channel.close()
         super(Connection, self).close()

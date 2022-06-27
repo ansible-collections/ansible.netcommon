@@ -1,8 +1,9 @@
-# (c) 2019 Ansible Project
+# (c) 2022 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 #
 
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 from functools import wraps
@@ -16,6 +17,7 @@ def ensure_connect(func):
         if not self._connection._connected:
             self._connection._connect()
         return func(self, *args, **kwargs)
+
     return wrapped
 
 
@@ -24,7 +26,7 @@ class GrpcBase(AnsiblePlugin):
     A base class for implementing gRPC abstraction layer
     """
 
-    __rpc__ = ['channel', 'get_config', 'edit_config', 'get']
+    __rpc__ = ["channel", "get_config", "edit_config", "get"]
 
     def __init__(self, connection):
         super(GrpcBase, self).__init__()

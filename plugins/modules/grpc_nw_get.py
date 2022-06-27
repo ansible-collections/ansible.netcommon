@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright 2020 Red Hat
+# Copyright 2022 Red Hat
 # GNU General Public License v3.0+
 # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -26,6 +26,8 @@ options:
       - This option specifies the string which acts as a filter to restrict the portions of
         the data to be retrieved from the target host device. If this option is not specified the entire
         configuration or state data is returned in response provided it is supported by target host.
+    aliases:
+    - filter
   command:
     description:
       - The option specifies the command to be executed on the target host and return the response
@@ -48,8 +50,9 @@ requirements:
 notes:
   - This module requires the gRPC system service be enabled on
     the target host being managed.
-  - This module supports the use of connection=grpc.
-  - This module requires the value of 'ansible_network_os' be defined as an inventory variable.
+  - This module supports the use of connection=ansible.netcommon.grpc.
+  - This module requires the value of 'ansible_network_os' configuration option (referansible.netcommon.grpc
+    connection plugin documentation) be defined as an inventory variable.
   - Tested against iosxrv 9k version 6.1.2.
 """
 
@@ -120,52 +123,69 @@ output:
             }
         }]
 """
-import yaml, json, pprint
+import yaml
+import json
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
 from ansible.module_utils.network.common.utils import to_list
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import get_capabilities, get, run_cli
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import (
+    get_capabilities,
+    get,
+    run_cli,
+)
 
 
 def main():
-    """entry point for module execution
-    """
+    """entry point for module execution"""
     argument_spec = dict(
-        section=dict(),
+        section=dict(aliases=["filter"]),
         command=dict(),
         display=dict(),
-        data_type=dict()
+        data_type=dict(),
     )
 
-    mutually_exclusive = [['section', 'command']]
+    mutually_exclusive = [["section", "command"]]
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           mutually_exclusive=mutually_exclusive,
-                           supports_check_mode=True)
+    module = AnsibleModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=mutually_exclusive,
+        supports_check_mode=True,
+    )
 
     capabilities = get_capabilities(module)
 
-    operations = capabilities['server_capabilities']
+    operations = capabilities["server_capabilities"]
 
-    if module.params['section']:
-        section = json.dumps(yaml.safe_load(module.params['section']))
+    if module.params["section"]:
+        section = json.dumps(yaml.safe_load(module.params["section"]))
     else:
         section = None
-    command = module.params['command']
-    display = module.params['display']
-    data_type = module.params['data_type']
+    command = module.params["command"]
+    display = module.params["display"]
+    data_type = module.params["data_type"]
 
-    if display and display not in operations.get('display', []):
-        module.fail_json(msg="display option '%s' is not supported on this target host" % display)
+    supported_display = operations.get("display", [])
+    if display and display not in supported_display:
+        module.fail_json(
+            msg="display option '%s' is not supported on this target host. Valid value is one of '%s'"
+            % (display, supported_display.join(", "))
+        )
 
-    if command and not operations.get('supports_cli_command', False):
-        module.fail_json(msg="command option '%s' is not supported on this target host" % command)
+    if command and not operations.get("supports_cli_command", False):
+        module.fail_json(
+            msg="command option '%s' is not supported on this target host"
+            % command
+        )
 
-    if data_type and data_type not in operations.get('data_type', []):
-        module.fail_json(msg="data_type option '%s' is not supported on this target host" % data_type)
+    supported_data_type = operations.get("data_type", [])
+    if data_type and data_type not in supported_data_type:
+        module.fail_json(
+            msg="data_type option '%s' is not supported on this target host. Valid value is one of %s"
+            % (data_type, supported_data_type.join(","))
+        )
 
-    result = {'changed': False}
+    result = {"changed": False}
     output = []
 
     try:
@@ -177,19 +197,21 @@ def main():
         try:
             output = json.loads(response)
         except ValueError:
-            output = None
-    except ConnectionError as exc:
-        module.fail_json(msg=to_text(exc, errors='surrogate_then_replace'), code=exc.code)
-    
+            module.warn(to_text(err, errors="surrogate_then_replace"))
+            return err
 
-    #result['stdout'] = yaml.safe_dump(response)
-    result['stdout'] = response
+    except ConnectionError as exc:
+        module.fail_json(
+            msg=to_text(exc, errors="surrogate_then_replace"), code=exc.code
+        )
+
+    result["stdout"] = response
 
     if output:
-        result['output'] = to_list(output)
+        result["output"] = to_list(output)
 
     module.exit_json(**result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
