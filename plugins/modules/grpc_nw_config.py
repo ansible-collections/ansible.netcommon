@@ -191,8 +191,6 @@ def main():
             after = sanitize_content(after)
         if before != after:
             result["changed"] = True
-            import q
-            q(before, after)
             if module._diff:
                 result["diff"] = {
                     "before": before,
