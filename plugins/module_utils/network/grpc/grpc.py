@@ -19,7 +19,7 @@
 from ansible.module_utils._text import to_text
 from ansible.module_utils.connection import Connection
 import json
-
+import re
 
 def get_connection(module):
     if hasattr(module, "_grpc_connection"):
@@ -132,3 +132,7 @@ def run_cli(module, command, display, check_rc=True):
             module.warn(to_text(out["error"], errors="surrogate_then_replace"))
 
     return response.strip(), error.strip()
+
+def sanitize_content(data):
+    out = re.sub(".*Last configuration change.*\n?","",data)
+    return out

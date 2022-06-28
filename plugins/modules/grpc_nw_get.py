@@ -135,7 +135,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grp
     run_cli,
 )
 
-
 def main():
     """entry point for module execution"""
     argument_spec = dict(
@@ -146,13 +145,11 @@ def main():
     )
 
     mutually_exclusive = [["section", "command"]]
-
     module = AnsibleModule(
         argument_spec=argument_spec,
         mutually_exclusive=mutually_exclusive,
         supports_check_mode=True,
     )
-
     capabilities = get_capabilities(module)
 
     operations = capabilities["server_capabilities"]

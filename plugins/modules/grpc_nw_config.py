@@ -27,6 +27,38 @@ options:
         configuration or state data is returned in response provided it is supported by target host.
   state:
     description: action to be performed
+  backup:
+    description:
+    - This argument will cause the module to create a full backup of the current C(running-config)
+      from the remote device before any changes are made. If the C(backup_options)
+      value is not given, the backup file is written to the C(backup) folder in the
+      playbook root directory or role root directory, if playbook is part of an ansible
+      role. If the directory does not exist, it is created.
+    type: bool
+    default: no
+  backup_options:
+    description:
+    - This is a dict object containing configurable options related to backup file
+      path. The value of this option is read only when C(backup) is set to I(yes),
+      if C(backup) is set to I(no) this option will be silently ignored.
+    suboptions:
+      filename:
+        description:
+        - The filename to be used to store the backup configuration. If the filename
+          is not given it will be generated based on the hostname, current time and
+          date in format defined by <hostname>_config.<current-date>@<current-time>
+        type: str
+      dir_path:
+        description:
+        - This option provides the path ending with directory name in which the backup
+          configuration file will be stored. If the directory does not exist it will
+          be first created and the filename is either the value of C(filename) or
+          default filename as described in C(filename) options description. If the
+          path value is not given in that case a I(backup) directory will be created
+          in the current working directory and backup configuration will be copied
+          in C(filename) within I(backup) directory.
+        type: path
+    type: dict
 
 requirements:
   - grpcio
@@ -82,15 +114,23 @@ stdout_lines:
   returned: always apart from low-level errors (such as action plugin)
   type: list
   sample: ['...', '...']
-output:
+backup_path:
+  description: The full path to the backup file
+  returned: when backup is yes
+  type: str
+  sample: /playbooks/ansible/backup/config.2022-07-16@22:28:34
 """
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.connection import ConnectionError
+from ansible.module_utils.connection import Connection, ConnectionError
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import (
     merge_config,
     replace_config,
     delete_config,
+    get_capabilities,
+    get,
+    run_cli,
+    sanitize_content,
 )
 import json
 import yaml
@@ -98,9 +138,13 @@ import yaml
 
 def main():
     """entry point for module execution"""
+    _config_module = True
+    backup_spec = dict(filename=dict(), dir_path=dict(type="path"))
     argument_spec = dict(
         config=dict(),
         state=dict(),
+        backup=dict(type="bool", default=False),
+        backup_options=dict(type="dict", options=backup_spec),
     )
 
     module = AnsibleModule(
@@ -108,24 +152,58 @@ def main():
         supports_check_mode=True,
     )
 
-    config = json.dumps(yaml.safe_load(module.params["config"]))
-    config = json.loads(config)
+    if module.params["config"]:
+        config = json.dumps(yaml.safe_load(module.params["config"]))
+        config = json.loads(config)
     state = module.params["state"]
 
-    result = {"changed": False}
+    capabilities = get_capabilities(module)
+    #operations = capabilities["device_operations"]
+
+    result = {
+        "changed": False,
+    }
+    before = None
+    after = None
+    output = ""
     try:
+        if module.params["backup"] or state in ["merged", "replaced", "deleted"]:
+            response, err = run_cli(module, "show running-config", "text")
+            before = to_text(
+                response, errors="surrogate_then_replace"
+            ).strip()
+        if module.params["backup"]:
+            result["__backup__"] = before.strip()
         if state == "merged":
-            response = merge_config(module, config)
+            output = merge_config(module, config)
         elif state == "replaced":
-            response = replace_config(module, config)
+            output = replace_config(module, config)
         elif state == "deleted":
-            response = delete_config(module, config)
+            output = delete_config(module, config)
+        if state:
+            response, err = run_cli(module, "show running-config", "text")
+            after = to_text(
+                response, errors="surrogate_then_replace"
+            ).strip()
+        if before:
+            before = sanitize_content(before)
+        if after:
+            after = sanitize_content(after)
+        if before != after:
+            result["changed"] = True
+            import q
+            q(before, after)
+            if module._diff:
+                result["diff"] = {
+                    "before": before,
+                    "after": after,
+                }
     except ConnectionError as exc:
         module.fail_json(
             msg=to_text(exc, errors="surrogate_then_replace"), code=exc.code
         )
 
-    result["stdout"] = response
+    result["stdout"] = output
 
     module.exit_json(**result)
 

@@ -116,9 +116,9 @@ options:
     vars:
       - name: ansible_grpc_ssl_target_name_override
   grpc_type:
-    type: str
-    description: This option indicated the grpc type and it can be used
-                 in place of network_os. eg: cisco.iosxr.grpc
+    description:
+        - This option indicated the grpc type and it can be used
+          in place of network_os.
     default: False
     ini:
       - section: grpc_connection
