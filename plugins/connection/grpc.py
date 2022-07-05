@@ -5,8 +5,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Team
-connection: grpc
+author:
+  - Ansible Networking Team (@ansible-network)
+name: grpc
 short_description: Provides a persistent connection using the gRPC protocol
 description:
   - This connection plugin provides a connection to remote devices over gRPC and

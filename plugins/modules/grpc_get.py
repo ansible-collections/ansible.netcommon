@@ -10,11 +10,11 @@ __metaclass__ = type
 
 
 DOCUMENTATION = """
-module: grpc_nw_get
-version_added: ""
+module: grpc_get
+version_added: "3.0.0"
 author:
     - "Ganesh Nalawade (@ganeshrn)"
-    - "Gomathi Selvi S (@GomathiselviS)
+    - "Gomathi Selvi S (@GomathiselviS)"
 short_description: Fetch configuration/state data from gRPC enabled target hosts.
 description:
     - gRPC is a high performance, open-source universal RPC framework.
@@ -28,22 +28,26 @@ options:
         configuration or state data is returned in response provided it is supported by target host.
     aliases:
     - filter
+    type: str
   command:
     description:
       - The option specifies the command to be executed on the target host and return the response
         in result. This option is supported if the gRPC target host supports executing CLI command
         over the gRPC connection.
+    type: str
   display:
     description:
       - Encoding scheme to use when serializing output from the device. The encoding scheme
         value depends on the capability of the gRPC server running on the target host.
         The values can be I(json), I(text) etc.
+    type: str
   data_type:
     description:
       - The type of data that should be fetched from the target host. The value depends on the
         capability of the gRPC server running on target host. The values can be I(config), I(oper)
         etc. based on what is supported by the gRPC server. By default it will return both configuration
         and operational state data in response.
+    type: str
 requirements:
   - grpcio
   - protobuf
@@ -57,21 +61,21 @@ notes:
 """
 
 EXAMPLES = """
-- name: Get bgp configuration data
-  grpc_nw_get:
-    section:  '{"Cisco-IOS-XR-ipv4-bgp-cfg:bgp": [null]}'
-- name: Get configuration JSON format over secure TLS channel
-  grpc_nw_get:
-    display: json
-    data: config
-  vars:
-    ansible_root_certificates_file: /home/username/ems.pem
-    ansible_grpc_channel_options:
-      'grpc.ssl_target_name_override': 'ems.cisco.com'
-- name: run cli command
-  grpc_nw_get:
-    command: 'show version'
-    display: text
+    - name: Get bgp configuration data
+      grpc_get:
+        section:  '{"Cisco-IOS-XR-ipv4-bgp-cfg:bgp": [null]}'
+    - name: Get configuration JSON format over secure TLS channel
+      grpc_get:
+        display: json
+        data: config
+      vars:
+        ansible_root_certificates_file: /home/username/ems.pem
+        ansible_grpc_channel_options:
+          'grpc.ssl_target_name_override': 'ems.cisco.com'
+    - name: run cli command
+      grpc_get:
+        command: 'show version'
+        display: text
 """
 
 RETURN = """
@@ -123,26 +127,36 @@ output:
             }
         }]
 """
-import yaml
 import json
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
-from ansible.module_utils.network.common.utils import to_list
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import (
     get_capabilities,
     get,
     run_cli,
 )
+try:
+    import yaml
+
+    try:
+        # use C version if possible for speedup
+        from yaml import CSafeLoader as SafeLoader
+    except ImportError:
+        from yaml import SafeLoader
+    HAS_YAML = True
+except ImportError:
+    HAS_YAML = False
 
 
 def main():
     """entry point for module execution"""
     argument_spec = dict(
-        section=dict(aliases=["filter"]),
-        command=dict(),
-        display=dict(),
-        data_type=dict(),
+        section=dict(type="str", aliases=["filter"]),
+        command=dict(type="str"),
+        display=dict(type="str"),
+        data_type=dict(type="str"),
     )
 
     mutually_exclusive = [["section", "command"]]
