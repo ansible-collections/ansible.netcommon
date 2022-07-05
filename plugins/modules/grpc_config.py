@@ -150,14 +150,10 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     dict_diff,
 )
 import json
+
 try:
     import yaml
 
-    try:
-        # use C version if possible for speedup
-        from yaml import CSafeLoader as SafeLoader
-    except ImportError:
-        from yaml import SafeLoader
     HAS_YAML = True
 except ImportError:
     HAS_YAML = False

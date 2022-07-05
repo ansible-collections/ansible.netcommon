@@ -1,5 +1,5 @@
 #
-# Copyright 2018 Red Hat Inc.
+# Copyright 2022 Red Hat Inc.
 #
 # This file is part of Ansible
 #
@@ -20,66 +20,24 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import copy
-import sys
-
-from ansible.utils.display import Display
 from ansible_collections.ansible.netcommon.plugins.action.network import (
     ActionModule as ActionNetworkModule,
 )
-
-display = Display()
 
 
 class ActionModule(ActionNetworkModule):
     def run(self, tmp=None, task_vars=None):
         del tmp  # tmp no longer has any effect
 
-        module_name = self._task.action.split(".")[-1]
-        self._config_module = (
-            True if module_name == "grpc_nw_config" else False
-        )
-        persistent_connection = self._play_context.connection.split(".")[-1]
+        self._config_module = True
         warnings = []
-
-        if persistent_connection != "grpc" and module_name == "grpc_nw_config":
+        if self._play_context.connection.split(".")[-1] != "grpc":
             return {
                 "failed": True,
                 "msg": "Connection type %s is not valid for netconf_config module. "
                 "Valid connection type is grpc"
                 % self._play_context.connection,
             }
-        if module_name == "grpc_nw_config":
-            args = self._task.args
-            pc = copy.deepcopy(self._play_context)
-            pc.connection = "ansible.netcommon.grpc"
-            pc.port = int(args.get("port") or self._play_context.port or 57777)
-
-            pc.remote_user = (
-                args.get("username") or self._play_context.connection_user
-            )
-            pc.password = args.get("password") or self._play_context.password
-            pc.private_key_file = (
-                args.get("ssh_keyfile") or self._play_context.private_key_file
-            )
-
-            connection = self._shared_loader_obj.connection_loader.get(
-                "ansible.netcommon.persistent",
-                pc,
-                sys.stdin,
-                task_uuid=self._task._uuid,
-            )
-
-            socket_path = connection.run()
-            display.vvvv("socket_path: %s" % socket_path, pc.remote_addr)
-            if not socket_path:
-                return {
-                    "failed": True,
-                    "msg": "unable to open shell. Please see: "
-                    + "https://docs.ansible.com/ansible/network_debug_troubleshooting.html#unable-to-open-shell",
-                }
-
-            task_vars["ansible_socket"] = socket_path
 
         result = super(ActionModule, self).run(task_vars=task_vars)
         if warnings:

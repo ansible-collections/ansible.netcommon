@@ -131,20 +131,18 @@ import json
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    to_list,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import (
     get_capabilities,
     get,
     run_cli,
 )
+
 try:
     import yaml
 
-    try:
-        # use C version if possible for speedup
-        from yaml import CSafeLoader as SafeLoader
-    except ImportError:
-        from yaml import SafeLoader
     HAS_YAML = True
 except ImportError:
     HAS_YAML = False
