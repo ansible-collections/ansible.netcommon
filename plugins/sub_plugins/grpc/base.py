@@ -10,6 +10,7 @@ from functools import wraps
 
 from ansible.plugins import AnsiblePlugin
 
+
 def ensure_connect(func):
     @wraps(func)
     def wrapped(self, *args, **kwargs):
@@ -30,7 +31,6 @@ class GrpcBase(AnsiblePlugin):
     def __init__(self, connection):
         super(GrpcBase, self).__init__()
         self._connection = connection
-
 
     @property
     def channel(self):

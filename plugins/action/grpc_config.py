@@ -42,19 +42,14 @@ class ActionModule(ActionNetworkModule):
         persistent_connection = self._play_context.connection.split(".")[-1]
         warnings = []
 
-        if (
-            persistent_connection != "grpc"
-            and module_name == "grpc_nw_config"
-        ):
+        if persistent_connection != "grpc" and module_name == "grpc_nw_config":
             return {
                 "failed": True,
                 "msg": "Connection type %s is not valid for netconf_config module. "
                 "Valid connection type is grpc"
                 % self._play_context.connection,
             }
-        if (
-            module_name == "grpc_nw_config"
-        ):
+        if module_name == "grpc_nw_config":
             args = self._task.args
             pc = copy.deepcopy(self._play_context)
             pc.connection = "ansible.netcommon.grpc"
@@ -73,14 +68,6 @@ class ActionModule(ActionNetworkModule):
                 pc,
                 sys.stdin,
                 task_uuid=self._task._uuid,
-            )
-
-
-            timeout = args.get("timeout")
-            command_timeout = (
-                int(timeout)
-                if timeout
-                else connection.get_option("persistent_command_timeout")
             )
 
             socket_path = connection.run()

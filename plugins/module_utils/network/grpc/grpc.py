@@ -21,6 +21,7 @@ from ansible.module_utils.connection import Connection
 import json
 import re
 
+
 def get_connection(module):
     if hasattr(module, "_grpc_connection"):
         return module._grpc_connection
@@ -133,14 +134,16 @@ def run_cli(module, command, display, check_rc=True):
 
     return response.strip(), error.strip()
 
+
 def sanitize_content(data):
-    out = re.sub(".*Last configuration change.*\n?","",data)
+    out = re.sub(".*Last configuration change.*\n?", "", data)
     return out
+
 
 def validate_config(module, config):
     params = list(config.keys())[0]
     if params:
-        val = "{" + "\"" + params + "\": [null]}"
+        val = "{" + '"' + params + '": [null]}'
     response, err = get(module, val, "text")
     output = json.loads(response)
     return output

@@ -117,8 +117,8 @@ EXAMPLES = """
 #            "global-afs": {
 #             "global-af": [
 #              {
-# 
-# changed: [10.0.150.231] => changed=true 
+#
+# changed: [10.0.150.231] => changed=true
 #   diff:
 #     after: |-
 #       {
@@ -301,7 +301,7 @@ EXAMPLES = """
 #                             -
 #                             next-hop-self: true
 #       state: merged
-# 
+#
  - name: Backup running config
     ansible.netcommon.grpc_nw_config:
       backup: yes
@@ -326,7 +326,7 @@ EXAMPLES = """
      config: "{{ lookup('file', 'bgp_start.yml')  }}"
      state: merged
 # Module Execution
-# changed: [10.0.150.231] => changed=true 
+# changed: [10.0.150.231] => changed=true
 #   diff:
 #     Cisco-IOS-XR-ipv4-bgp-cfg:bgp:
 #       instance:
@@ -403,7 +403,7 @@ EXAMPLES = """
 #                             -
 #                             next-hop-self: true
 #       state: merged
-# 
+#
 """
 
 RETURN = """
@@ -427,13 +427,11 @@ backup_path:
 """
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.connection import Connection, ConnectionError
+from ansible.module_utils.connection import ConnectionError
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import (
     merge_config,
     replace_config,
     delete_config,
-    get_capabilities,
-    get,
     run_cli,
     sanitize_content,
     validate_config,
@@ -447,7 +445,6 @@ import yaml
 
 def main():
     """entry point for module execution"""
-    _config_module = True
     backup_spec = dict(filename=dict(), dir_path=dict(type="path"))
     argument_spec = dict(
         config=dict(),
@@ -467,9 +464,6 @@ def main():
         config = json.loads(config)
     state = module.params["state"]
 
-    capabilities = get_capabilities(module)
-    #operations = capabilities["device_operations"]
-
     result = {
         "changed": False,
     }
@@ -479,13 +473,17 @@ def main():
     after_diff = None
     output = ""
     try:
-        if module.params["backup"] or state in ["merged", "replaced", "deleted"]:
+        if module.params["backup"] or state in [
+            "merged",
+            "replaced",
+            "deleted",
+        ]:
             if not module.check_mode:
                 response, err = run_cli(module, "show running-config", "text")
                 before = to_text(
                     response, errors="surrogate_then_replace"
                 ).strip()
-        
+
         if module._diff or module.check_mode:
             before_diff = validate_config(module, config)
         if module.check_mode:
