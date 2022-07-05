@@ -156,6 +156,7 @@ class Connection(NetworkConnectionBase):
     has_pipelining = False
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
+
         super(Connection, self).__init__(
             play_context, new_stdin, *args, **kwargs
         )
@@ -216,6 +217,7 @@ class Connection(NetworkConnectionBase):
                 "grpcio is required to use the gRPC connection type. Please run 'pip install grpcio'"
             )
         host = self.get_option("host")
+        host = self._play_context.remote_addr
         if self.connected:
             self.queue_message(
                 "log", "gRPC connection to host %s already exist" % host
@@ -256,7 +258,6 @@ class Connection(NetworkConnectionBase):
             raise AnsibleConnectionFailure(
                 "Failed to read certificate keys: %s" % e
             )
-
         if certs:
             creds = ssl_channel_credentials(**certs)
             channel = secure_channel(

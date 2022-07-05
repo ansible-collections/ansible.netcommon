@@ -136,3 +136,11 @@ def run_cli(module, command, display, check_rc=True):
 def sanitize_content(data):
     out = re.sub(".*Last configuration change.*\n?","",data)
     return out
+
+def validate_config(module, config):
+    params = list(config.keys())[0]
+    if params:
+        val = "{" + "\"" + params + "\": [null]}"
+    response, err = get(module, val, "text")
+    output = json.loads(response)
+    return output

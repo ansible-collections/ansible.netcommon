@@ -184,28 +184,26 @@ def main():
 
     result = {"changed": False}
     output = []
-
     try:
         if command:
             response, err = run_cli(module, command, display)
         else:
             response, err = get(module, section, data_type)
-
         try:
             output = json.loads(response)
         except ValueError:
             module.warn(to_text(err, errors="surrogate_then_replace"))
-            return err
 
     except ConnectionError as exc:
         module.fail_json(
             msg=to_text(exc, errors="surrogate_then_replace"), code=exc.code
         )
-
     result["stdout"] = response
 
     if output:
         result["output"] = to_list(output)
+    else:
+        result["output"] = to_list(response)
 
     module.exit_json(**result)
 
