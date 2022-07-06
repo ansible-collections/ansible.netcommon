@@ -1,0 +1,37 @@
+---
+before:
+  Cisco-IOS-XR-ip-static-cfg:router-static:
+    default-vrf:
+      address-family:
+        vrfipv4:
+          vrf-unicast:
+            vrf-prefixes:
+              vrf-prefix:
+                - prefix: "0.0.0.0"
+                  prefix-length: 0
+                  vrf-route:
+                    vrf-next-hop-table:
+                      vrf-next-hop-interface-name-next-hop-address:
+                        - interface-name: "MgmtEth0/RP0/CPU0/0"
+                          next-hop-address: "10.0.151.254"
+after:
+  Cisco-IOS-XR-ip-static-cfg:router-static:
+    default-vrf:
+      address-family:
+        vrfipv4:
+          vrf-unicast:
+            vrf-prefixes:
+              vrf-prefix:
+                - prefix: "0.0.0.0"
+                  prefix-length: 0
+                  vrf-route:
+                    vrf-next-hop-table:
+                      vrf-next-hop-interface-name-next-hop-address:
+                        - interface-name: "MgmtEth0/RP0/CPU0/0"
+                          next-hop-address: "10.0.151.254"
+                - prefix: "1.2.3.6"
+                  prefix-length: 32
+                  vrf-route:
+                    vrf-next-hop-table:
+                      vrf-next-hop-next-hop-address:
+                        - next-hop-address: "10.0.2.2"

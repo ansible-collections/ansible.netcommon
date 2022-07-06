@@ -118,7 +118,7 @@ options:
       - name: ansible_grpc_ssl_target_name_override
   grpc_type:
     description:
-        - This option indicated the grpc type and it can be used
+        - This option indicates the grpc type and it can be used
           in place of network_os.
     default: False
     ini:
@@ -153,7 +153,10 @@ except ImportError:
 class Connection(NetworkConnectionBase):
     """GRPC connections"""
 
-    transport = "grpc"
+    import q
+
+    q("innn")
+    transport = "ansible.netcommon.grpc"
     has_pipelining = False
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):

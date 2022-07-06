@@ -1,0 +1,8 @@
+---
+Cisco-IOS-XR-ipv4-bgp-cfg:bgp:
+  instance:
+    - instance-name: default
+      instance-as:
+        - as: 0
+          four-byte-as:
+            - as: 65400

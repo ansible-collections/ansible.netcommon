@@ -12,5 +12,11 @@
     netconf_vrf: default
     state: present
 
+- name: Enable gRPC
+  connection: ansible.netcommon.network_cli
+  tags: grpc
+  cisco.iosxr.iosxr_config:
+    src: config_grpc.j2
+
 - set_fact:
     shorter_hostname: '{{ inventory_hostname_short| truncate(10, True, "") }}'
