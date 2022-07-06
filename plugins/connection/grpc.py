@@ -153,9 +153,6 @@ except ImportError:
 class Connection(NetworkConnectionBase):
     """GRPC connections"""
 
-    import q
-
-    q("innn")
     transport = "ansible.netcommon.grpc"
     has_pipelining = False
 
