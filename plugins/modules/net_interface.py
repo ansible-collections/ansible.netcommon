@@ -131,6 +131,7 @@ EXAMPLES = """
     rx_rate: le(0)
 
 - name: Config + intent
+
   ansible.netcommon.net_interface:
     name: fxp0
     enabled: false
