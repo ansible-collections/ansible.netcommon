@@ -12,6 +12,6 @@ ntc_templates
 # 21.4 changed the output of an error message we check in tests
 pyats >= 21.4 ; python_version >= '3.6'
 genie >= 21.4 ; python_version >= '3.6'
-textfsm
+textfsm >= 1.1.2
 ttp
 xmltodict
