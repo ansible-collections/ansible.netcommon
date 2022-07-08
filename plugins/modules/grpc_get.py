@@ -55,7 +55,7 @@ notes:
   - This module requires the gRPC system service be enabled on
     the target host being managed.
   - This module supports the use of connection=ansible.netcommon.grpc.
-  - This module requires the value of 'ansible_network_os' configuration option (referansible.netcommon.grpc
+  - This module requires the value of 'ansible_network_os or grpc_type' configuration option (refer ansible.netcommon.grpc
     connection plugin documentation) be defined as an inventory variable.
   - Tested against iosxrv 9k version 6.1.2.
 """

@@ -34,7 +34,7 @@ class ActionModule(ActionNetworkModule):
         if self._play_context.connection.split(".")[-1] != "grpc":
             return {
                 "failed": True,
-                "msg": "Connection type %s is not valid for netconf_config module. "
+                "msg": "Connection type %s is not valid for grpc_config module. "
                 "Valid connection type is grpc"
                 % self._play_context.connection,
             }
