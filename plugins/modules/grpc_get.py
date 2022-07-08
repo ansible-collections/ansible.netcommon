@@ -63,15 +63,9 @@ notes:
 EXAMPLES = """
     - name: Get bgp configuration data
       grpc_get:
-        section:  '{"Cisco-IOS-XR-ipv4-bgp-cfg:bgp": [null]}'
-    - name: Get configuration JSON format over secure TLS channel
-      grpc_get:
-        display: json
-        data: config
-      vars:
-        ansible_root_certificates_file: /home/username/ems.pem
-        ansible_grpc_channel_options:
-          'grpc.ssl_target_name_override': 'ems.cisco.com'
+        section:
+          Cisco-IOS-XR-ip-static-cfg:router-static:
+            - null
     - name: run cli command
       grpc_get:
         command: 'show version'
