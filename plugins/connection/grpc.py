@@ -130,12 +130,13 @@ options:
       - name: ansible_grpc_connection_type
 """
 
-from ansible.errors import AnsibleConnectionFailure, AnsibleError
-from ansible.plugins.connection import NetworkConnectionBase
 from importlib import import_module
 
+from ansible.errors import AnsibleConnectionFailure, AnsibleError
+from ansible.plugins.connection import NetworkConnectionBase
+
 try:
-    from grpc import ssl_channel_credentials, secure_channel, insecure_channel
+    from grpc import insecure_channel, secure_channel, ssl_channel_credentials
     from grpc.beta import implementations
 
     HAS_GRPC = True

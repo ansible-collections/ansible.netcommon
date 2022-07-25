@@ -29,6 +29,7 @@ Name | Description
 ### Connection plugins
 Name | Description
 --- | ---
+[ansible.netcommon.grpc](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.grpc_connection.rst)|Provides a persistent connection using the gRPC protocol
 [ansible.netcommon.httpapi](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.httpapi_connection.rst)|Use httpapi to run command on network appliances
 [ansible.netcommon.libssh](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.libssh_connection.rst)|(Tech preview) Run tasks using libssh for ssh connection
 [ansible.netcommon.napalm](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.napalm_connection.rst)|Provides persistent connection using NAPALM
@@ -65,6 +66,8 @@ Name | Description
 --- | ---
 [ansible.netcommon.cli_command](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.cli_command_module.rst)|Run a cli command on cli-based network devices
 [ansible.netcommon.cli_config](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.cli_config_module.rst)|Push text based configuration to network devices over network_cli
+[ansible.netcommon.grpc_config](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.grpc_config_module.rst)|Fetch configuration/state data from gRPC enabled target hosts.
+[ansible.netcommon.grpc_get](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.grpc_get_module.rst)|Fetch configuration/state data from gRPC enabled target hosts.
 [ansible.netcommon.net_banner](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.net_banner_module.rst)|(deprecated, removed after 2022-06-01) Manage multiline banners on network devices
 [ansible.netcommon.net_get](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.net_get_module.rst)|Copy a file from a network device to Ansible Controller
 [ansible.netcommon.net_interface](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.net_interface_module.rst)|(deprecated, removed after 2022-06-01) Manage Interface on network devices

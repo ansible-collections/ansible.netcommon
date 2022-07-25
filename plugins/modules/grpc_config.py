@@ -135,21 +135,22 @@ diff:
   returned: when diff is enabled
   type: dict
 """
+import json
+
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    dict_diff,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import (
+    delete_config,
     merge_config,
     replace_config,
-    delete_config,
     run_cli,
     sanitize_content,
     validate_config,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    dict_diff,
-)
-import json
 
 try:
     import yaml

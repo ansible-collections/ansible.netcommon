@@ -1,6 +1,5 @@
 ---
-- debug:
-    msg="START grpc_get iosxr/basic.yaml on connection=ansible.netcommon.grpc"
+- debug: msg="START grpc_get iosxr/basic.yaml on connection=ansible.netcommon.grpc"
 
 - name: setup interface
   connection: ansible.netcommon.network_cli
@@ -54,6 +53,5 @@
       - interface Loopback999
     match: none
 
-- debug:
-    msg="END grpc_get iosxr/basic.yaml on connection={{ ansible_connection
+- debug: msg="END grpc_get iosxr/basic.yaml on connection={{ ansible_connection
     }}"

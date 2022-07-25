@@ -141,5 +141,4 @@
       - router static
     match: none
 
-- debug:
-    msg="END grpc_config iosxr/basic.yaml on connection=ansible.netcommon.grpc"
+- debug: msg="END grpc_config iosxr/basic.yaml on connection=ansible.netcommon.grpc"
