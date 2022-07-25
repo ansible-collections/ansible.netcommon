@@ -146,9 +146,11 @@ def sanitize_content(data):
 
 
 def validate_config(module, config):
+    output = ''
     params = list(config.keys())[0]
     if params:
         val = "{" + '"' + params + '": [null]}'
-    response, err = get(module, val, "text")
-    output = json.loads(response)
+    response, err = get(module, val, "config")
+    if response:
+        output = json.loads(response)
     return output
