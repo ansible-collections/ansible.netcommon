@@ -163,8 +163,6 @@ class Connection(NetworkConnectionBase):
             play_context, new_stdin, *args, **kwargs
         )
 
-        # TODO: Need to add support to make grpc connection work with non-network target host.
-        # Currently this works only with network target host.
         grpc_type = self._network_os or self.get_option("grpc_type")
         if grpc_type:
             if not HAS_PROTOBUF:

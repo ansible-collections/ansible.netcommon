@@ -27,8 +27,6 @@ from ansible_collections.ansible.netcommon.plugins.action.network import (
 
 class ActionModule(ActionNetworkModule):
     def run(self, tmp=None, task_vars=None):
-        import q
-        q("innnn backup")
         del tmp  # tmp no longer has any effect
 
         self._config_module = True
