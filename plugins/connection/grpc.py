@@ -119,7 +119,7 @@ options:
   grpc_type:
     description:
         - This option indicates the grpc type and it can be used
-          in place of network_os. eg: cisco.iosxr.iosxr
+          in place of network_os. (example cisco.iosxr.iosxr)
     default: False
     ini:
       - section: grpc_connection
