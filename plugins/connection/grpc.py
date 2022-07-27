@@ -15,7 +15,7 @@ description:
     over gRPC framework.
   - Note this connection plugin requires the grpcio python library to be installed on the
     local Ansible controller.
-version_added: "3.0.0"
+version_added: "3.1.0"
 requirements:
   - grpcio
   - protobuf
