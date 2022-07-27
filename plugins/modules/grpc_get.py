@@ -11,7 +11,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 module: grpc_get
-version_added: "3.0.0"
+version_added: "3.1.0"
 author:
     - "Ganesh Nalawade (@ganeshrn)"
     - "Gomathi Selvi S (@GomathiselviS)"
