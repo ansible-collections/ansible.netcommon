@@ -11,7 +11,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 module: grpc_config
-version_added: "3.0.0"
+version_added: "3.1.0"
 author:
     - "Gomathi Selvi S (@GomathiselviS)"
 short_description: Fetch configuration/state data from gRPC enabled target hosts.
