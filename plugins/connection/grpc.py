@@ -190,8 +190,7 @@ class Connection(NetworkConnectionBase):
                 self.queue_message("log", "grpc type is set to %s" % grpc_type)
             else:
                 raise AnsibleConnectionFailure(
-                    "unable to load API plugin for network_os %s"
-                    % grpc_type 
+                    "unable to load API plugin for network_os %s" % grpc_type
                 )
         else:
             raise AnsibleConnectionFailure(
