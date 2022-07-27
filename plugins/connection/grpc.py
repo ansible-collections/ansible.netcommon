@@ -119,7 +119,7 @@ options:
   grpc_type:
     description:
         - This option indicates the grpc type and it can be used
-          in place of network_os.
+          in place of network_os. eg: cisco.iosxr.iosxr
     default: False
     ini:
       - section: grpc_connection
@@ -169,14 +169,8 @@ class Connection(NetworkConnectionBase):
                 raise AnsibleError(
                     "protobuf is required to use the grpc connection type. Please run 'pip install protobuf'"
                 )
-            if self._network_os:
-                os_split = self._network_os.split(".")
-                grpc_type = os_split[0] + "." + os_split[1] + ".grpc"
-            else:
-                os_split = grpc_type.split(".")
-                self._network_os = (
-                    os_split[0] + "." + os_split[1] + "." + os_split[1]
-                )
+            if not self._network_os:
+                self._network_os = grpc_type
             cref = dict(zip(["corg", "cname", "plugin"], grpc_type.split(".")))
             grpclib = "ansible_collections.{corg}.{cname}.plugins.sub_plugins.grpc.{plugin}".format(
                 **cref
@@ -197,7 +191,7 @@ class Connection(NetworkConnectionBase):
             else:
                 raise AnsibleConnectionFailure(
                     "unable to load API plugin for network_os %s"
-                    % self._network_os
+                    % grpc_type 
                 )
         else:
             raise AnsibleConnectionFailure(
