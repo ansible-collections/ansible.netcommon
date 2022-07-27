@@ -33,6 +33,7 @@ class GrpcBase(AnsiblePlugin):
         self._connection = connection
 
     @property
+    @ensure_connect
     def channel(self):
         return self._connection._channel
 
