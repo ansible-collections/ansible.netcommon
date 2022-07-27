@@ -200,9 +200,7 @@ class Connection(NetworkConnectionBase):
                     % self._network_os
                 )
         else:
-            self._sub_plugin["type"] = "external"
-            self.queue_message(
-                "warning",
+            raise AnsibleConnectionFailure(
                 "Unable to automatically determine gRPC implementation type."
                 " Please manually configure ansible_network_os value or grpc_type configuration for this host",
             )
