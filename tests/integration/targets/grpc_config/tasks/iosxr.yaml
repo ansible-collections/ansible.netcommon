@@ -1,5 +1,5 @@
 ---
-- name: collect all netconf test cases
+- name: collect all grpc test cases
   find:
     paths: "{{ role_path }}/tests/iosxr"
     patterns: "{{ testcase }}.yaml"
