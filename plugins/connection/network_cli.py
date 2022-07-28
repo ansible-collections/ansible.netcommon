@@ -110,6 +110,18 @@ options:
     - name: ansible_network_become_errors
     default: fail
     choices: ["ignore", "warn", "fail"]
+  terminal_errors:
+    type: str
+    description:
+    - This option determines how failures while setting terminal parameters 
+      are handled.    
+    - When set to C(ignore), the errors are silently ignored.
+      When set to C(warn), a warning message is displayed.
+      The default option C(fail), triggers a failure and halts execution.
+    vars:
+    - name: ansible_network_terminal_errors
+    default: fail
+    choices: ["ignore", "warn", "fail"]
   become_method:
     description:
     - This option allows the become method to be specified in for handling privilege
@@ -680,7 +692,7 @@ class Connection(NetworkConnectionBase):
                 self._on_become(become_pass=auth_pass)
 
             self.queue_message("vvvv", "firing event: on_open_shell()")
-            self._terminal.on_open_shell()
+            self._on_open_shell()
 
             self.queue_message(
                 "vvvv", "ssh connection has completed successfully"
@@ -702,6 +714,24 @@ class Connection(NetworkConnectionBase):
             elif on_become_error == "warn":
                 self.queue_message(
                     "warning", "on_become: privilege escalation failed"
+                )
+            else:
+                raise
+    
+    def _on_open_shell(self):
+        """
+        Wraps terminal.on_open_shell() to handle
+        terminal setting failures based on user preference
+        """
+        on_terminal_error = self.get_option("terminal_errors")
+        try:
+            self._terminal.on_open_shell()
+        except AnsibleConnectionFailure:
+            if on_terminal_error == "ignore":
+                pass
+            elif on_terminal_error == "warn":
+                self.queue_message(
+                    "warning", "on_open_shell: failed to set terminal parameters"
                 )
             else:
                 raise
