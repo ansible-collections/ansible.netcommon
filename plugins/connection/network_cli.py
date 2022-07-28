@@ -113,8 +113,8 @@ options:
   terminal_errors:
     type: str
     description:
-    - This option determines how failures while setting terminal parameters 
-      are handled.    
+    - This option determines how failures while setting terminal parameters
+      are handled.
     - When set to C(ignore), the errors are silently ignored.
       When set to C(warn), a warning message is displayed.
       The default option C(fail), triggers a failure and halts execution.
@@ -717,7 +717,7 @@ class Connection(NetworkConnectionBase):
                 )
             else:
                 raise
-    
+
     def _on_open_shell(self):
         """
         Wraps terminal.on_open_shell() to handle
@@ -731,7 +731,8 @@ class Connection(NetworkConnectionBase):
                 pass
             elif on_terminal_error == "warn":
                 self.queue_message(
-                    "warning", "on_open_shell: failed to set terminal parameters"
+                    "warning",
+                    "on_open_shell: failed to set terminal parameters",
                 )
             else:
                 raise

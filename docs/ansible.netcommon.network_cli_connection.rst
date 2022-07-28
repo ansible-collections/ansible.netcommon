@@ -480,6 +480,30 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>terminal_errors</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>ignore</li>
+                                    <li>warn</li>
+                                    <li><div style="color: blue"><b>fail</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                    <td>
+                                <div>var: ansible_network_terminal_errors</div>
+                    </td>
+                <td>
+                        <div>This option determines how failures while setting terminal parameters are handled.</div>
+                        <div>When set to <code>ignore</code>, the errors are silently ignored. When set to <code>warn</code>, a warning message is displayed. The default option <code>fail</code>, triggers a failure and halts execution.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>terminal_inital_prompt_newline</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
