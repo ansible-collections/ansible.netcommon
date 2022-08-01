@@ -112,7 +112,10 @@ DOCUMENTATION = """
             key: use_persistent_connections
       ssh_args:
           version_added: 3.1.0
-          description: Arguments to pass to all ssh cli tools
+          description:
+           - Arguments to pass to all ssh CLI tools.
+           - ProxyCommand is the only supported argument.
+           - This option is deprecated in favor of I(proxy_command).
           ini:
               - section: 'ssh_connection'
                 key: 'ssh_args'
@@ -124,7 +127,10 @@ DOCUMENTATION = """
               - name: ssh_args
       ssh_common_args:
           version_added: 3.1.0
-          description: Common extra args for all ssh CLI tools
+          description:
+           - Common extra arguments for all ssh CLI tools.
+           - ProxyCommand is the only supported argument.
+           - This option is deprecated in favor of I(proxy_command).
           ini:
               - section: 'ssh_connection'
                 key: 'ssh_common_args'
@@ -136,7 +142,10 @@ DOCUMENTATION = """
               - name: ssh_common_args
       ssh_extra_args:
           version_added: 3.1.0
-          description: Extra exclusive to the 'ssh' CLI
+          description:
+           - Extra arguments exclusive to the 'ssh' CLI tool.
+           - ProxyCommand is the only supported argument.
+           - This option is deprecated in favor of I(proxy_command).
           vars:
               - name: ansible_ssh_extra_args
           env:

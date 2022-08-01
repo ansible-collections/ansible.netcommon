@@ -246,7 +246,9 @@ Parameters
                                 <div>var: ansible_ssh_args</div>
                     </td>
                 <td>
-                        <div>Arguments to pass to all ssh cli tools</div>
+                        <div>Arguments to pass to all ssh CLI tools.</div>
+                        <div>ProxyCommand is the only supported argument.</div>
+                        <div>This option is deprecated in favor of <em>proxy_command</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -269,7 +271,9 @@ Parameters
                                 <div>var: ansible_ssh_common_args</div>
                     </td>
                 <td>
-                        <div>Common extra args for all ssh CLI tools</div>
+                        <div>Common extra arguments for all ssh CLI tools.</div>
+                        <div>ProxyCommand is the only supported argument.</div>
+                        <div>This option is deprecated in favor of <em>proxy_command</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -292,7 +296,9 @@ Parameters
                                 <div>var: ansible_ssh_extra_args</div>
                     </td>
                 <td>
-                        <div>Extra exclusive to the &#x27;ssh&#x27; CLI</div>
+                        <div>Extra arguments exclusive to the &#x27;ssh&#x27; CLI tool.</div>
+                        <div>ProxyCommand is the only supported argument.</div>
+                        <div>This option is deprecated in favor of <em>proxy_command</em>.</div>
                 </td>
             </tr>
             <tr>
