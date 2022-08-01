@@ -110,6 +110,42 @@ DOCUMENTATION = """
         ini:
           - section: defaults
             key: use_persistent_connections
+      ssh_args:
+          version_added: 3.1.0
+          description: Arguments to pass to all ssh cli tools
+          ini:
+              - section: 'ssh_connection'
+                key: 'ssh_args'
+          env:
+              - name: ANSIBLE_SSH_ARGS
+          vars:
+              - name: ansible_ssh_args
+          cli:
+              - name: ssh_args
+      ssh_common_args:
+          version_added: 3.1.0
+          description: Common extra args for all ssh CLI tools
+          ini:
+              - section: 'ssh_connection'
+                key: 'ssh_common_args'
+          env:
+              - name: ANSIBLE_SSH_COMMON_ARGS
+          vars:
+              - name: ansible_ssh_common_args
+          cli:
+              - name: ssh_common_args
+      ssh_extra_args:
+          version_added: 3.1.0
+          description: Extra exclusive to the 'ssh' CLI
+          vars:
+              - name: ansible_ssh_extra_args
+          env:
+            - name: ANSIBLE_SSH_EXTRA_ARGS
+          ini:
+            - key: ssh_extra_args
+              section: ssh_connection
+          cli:
+            - name: ssh_extra_args
 # TODO:
 #timeout=self._play_context.timeout,
 """
@@ -245,12 +281,12 @@ class Connection(ConnectionBase):
         proxy_command = None
         # Parse ansible_ssh_common_args, specifically looking for ProxyCommand
         ssh_args = [
-            getattr(self._play_context, "ssh_extra_args", "") or "",
-            getattr(self._play_context, "ssh_common_args", "") or "",
-            getattr(self._play_context, "ssh_args", "") or "",
+            self.get_option("ssh_extra_args") or "",
+            self.get_option("ssh_common_args") or "",
+            self.get_option("ssh_args") or "",
         ]
 
-        if ssh_args is not None:
+        if any(ssh_args):
             args = self._split_ssh_args(" ".join(ssh_args))
             for i, arg in enumerate(args):
                 if arg.lower() == "proxycommand":
