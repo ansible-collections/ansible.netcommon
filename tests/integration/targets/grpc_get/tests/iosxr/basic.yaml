@@ -1,0 +1,57 @@
+---
+- debug: msg="START grpc_get iosxr/basic.yaml on connection=ansible.netcommon.grpc"
+
+- name: setup interface
+  connection: ansible.netcommon.network_cli
+  cisco.iosxr.iosxr_config:
+    commands:
+      - description this is test interface Loopback999
+      - no shutdown
+    parents:
+      - interface Loopback999
+    match: none
+
+- name: get running interface confiugration
+  register: result
+  connection: ansible.netcommon.grpc
+  vars:
+    ansible_grpc_connection_type: cisco.iosxr.grpc
+    ansible_port: 57777
+  ansible.netcommon.grpc_get:
+    command: "show running-config"
+    display: "text"
+
+- assert:
+    that:
+      - "'description this is test interface Loopback999' in result.stdout"
+
+- name: get interface details using section
+  register: result
+  connection: ansible.netcommon.grpc
+  vars:
+    ansible_grpc_connection_type: cisco.iosxr.grpc
+    ansible_port: 57777
+  ansible.netcommon.grpc_get:
+    section:
+      Cisco-IOS-XR-ifmgr-cfg:interface-configurations:
+        - null
+
+- name: Assert interface config
+  assert:
+    that:
+      - "item['description'] == 'this is test interface Loopback999'"
+  loop: "{{ result.output[0]['Cisco-IOS-XR-ifmgr-cfg:interface-configurations']['interface-configuration'] }}"
+  when: item['interface-name'] == "Loopback999"
+
+- name: setup - teardown
+  connection: ansible.netcommon.network_cli
+  cisco.iosxr.iosxr_config:
+    commands:
+      - no description
+      - shutdown
+    parents:
+      - interface Loopback999
+    match: none
+
+- debug: msg="END grpc_get iosxr/basic.yaml on connection={{ ansible_connection
+    }}"

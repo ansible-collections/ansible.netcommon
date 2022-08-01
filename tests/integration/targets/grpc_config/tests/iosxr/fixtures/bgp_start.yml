@@ -1,0 +1,35 @@
+---
+Cisco-IOS-XR-ipv4-bgp-cfg:bgp:
+  instance:
+    - instance-name: default
+      instance-as:
+        - as: 0
+          four-byte-as:
+            - as: 65400
+              bgp-running:
+                -
+              default-vrf:
+                global:
+                  router-id: 12.1.1.10
+                  global-afs:
+                    global-af:
+                      - af-name: ipv4-unicast
+                        enable:
+                          -
+                        sourced-networks:
+                          sourced-network:
+                            - network-addr: 11.1.1.0
+                              network-prefix: 24
+                bgp-entity:
+                  neighbors:
+                    neighbor:
+                      - neighbor-address: 11.1.1.20
+                        remote-as:
+                          as-xx: 0
+                          as-yy: 65450
+                        neighbor-afs:
+                          neighbor-af:
+                            - af-name: ipv4-unicast
+                              activate:
+                                -
+                              next-hop-self: true

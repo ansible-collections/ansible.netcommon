@@ -1,0 +1,15 @@
+---
+- include: junos.yaml
+  when: ansible_network_os == 'junipernetworks.junos.junos'
+  tags:
+    - grpc
+
+- include: iosxr.yaml
+  when: ansible_network_os == 'cisco.iosxr.iosxr'
+  tags:
+    - grpc
+
+- include: nxos.yaml
+  when: ansible_network_os == 'cisco.nxos.nxos'
+  tags:
+    - grpc

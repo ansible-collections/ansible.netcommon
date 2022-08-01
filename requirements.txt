@@ -4,3 +4,5 @@ ncclient
 netaddr
 paramiko
 xmltodict
+grpcio
+protobuf

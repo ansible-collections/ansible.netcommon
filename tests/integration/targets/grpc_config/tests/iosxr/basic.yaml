@@ -1,0 +1,144 @@
+---
+- debug: msg="START grpc_config iosxr/basic.yaml on connection=ansible.netcommon.grpc"
+
+- name: setup
+  connection: ansible.netcommon.network_cli
+  cisco.iosxr.iosxr_config:
+    commands:
+      - no router bgp
+      - no router static address-family ipv4 unicast 1.2.3.6/32 10.0.2.2
+
+- name: Sleep for 30 seconds and continue with play
+  wait_for:
+    timeout: 30
+  connection: local
+
+- name: save config test
+  register: result
+  connection: ansible.netcommon.grpc
+  vars:
+    ansible_grpc_connection_type: cisco.iosxr.grpc
+    ansible_port: 57777
+  ansible.netcommon.grpc_config:
+    backup: true
+
+- assert:
+    that:
+      - "'backup_path' in result"
+
+- name: Merge static route config
+  register: result
+  connection: ansible.netcommon.grpc
+  diff: true
+  vars:
+    ansible_grpc_connection_type: cisco.iosxr.grpc
+    ansible_port: 57777
+  ansible.netcommon.grpc_config:
+    config:
+      Cisco-IOS-XR-ip-static-cfg:router-static:
+        default-vrf:
+          address-family:
+            vrfipv4:
+              vrf-unicast:
+                vrf-prefixes:
+                  vrf-prefix:
+                    - prefix: "1.2.3.6"
+                      prefix-length: 32
+                      vrf-route:
+                        vrf-next-hop-table:
+                          vrf-next-hop-next-hop-address:
+                            - next-hop-address: "10.0.2.2"
+
+    state: merged
+
+- assert:
+    that:
+      - result.changed == true
+
+- name: Assert that diff dicts are correctly generated
+  assert:
+    that:
+      - result.diff['before'] == before
+      - result.diff['after'] == after
+
+- name: get running interface confiugration
+  register: result
+  connection: ansible.netcommon.grpc
+  vars:
+    ansible_grpc_connection_type: cisco.iosxr.grpc
+    ansible_port: 57777
+  ansible.netcommon.grpc_get:
+    command: "show running-config"
+    display: "text"
+
+- assert:
+    that:
+      - "'router static' in result.stdout"
+      - "'1.2.3.6/32 10.0.2.2' in result.stdout"
+
+- name: Replace bgp config
+  register: result
+  connection: ansible.netcommon.grpc
+  vars:
+    ansible_grpc_connection_type: cisco.iosxr.grpc
+    ansible_port: 57777
+  ansible.netcommon.grpc_config:
+    config: "{{ lookup('file', './fixtures/bgp_start.yml')  }}"
+    state: replaced
+
+- assert:
+    that:
+      - result.changed == true
+
+- name: get running interface confiugration
+  register: result
+  connection: ansible.netcommon.grpc
+  vars:
+    ansible_grpc_connection_type: cisco.iosxr.grpc
+    ansible_port: 57777
+  ansible.netcommon.grpc_get:
+    command: "show running-config router bgp"
+    display: "text"
+
+- assert:
+    that:
+      - "'router bgp 65400' in result.stdout"
+
+- name: Delete bgp config
+  register: result
+  connection: ansible.netcommon.grpc
+  vars:
+    ansible_grpc_connection_type: cisco.iosxr.grpc
+    ansible_port: 57777
+  ansible.netcommon.grpc_config:
+    config: "{{ lookup('file', './fixtures/bgp_delete.yml')  }}"
+    state: deleted
+
+- assert:
+    that:
+      - result.changed == true
+
+- name: get running interface confiugration
+  register: result
+  connection: ansible.netcommon.grpc
+  vars:
+    ansible_grpc_connection_type: cisco.iosxr.grpc
+    ansible_port: 57777
+  ansible.netcommon.grpc_get:
+    command: "show running-config router bgp"
+    display: "text"
+
+- assert:
+    that:
+      - "'router bgp 65400' not in result.stdout"
+
+- name: setup - teardown
+  connection: ansible.netcommon.network_cli
+  cisco.iosxr.iosxr_config:
+    commands:
+      - no address-family ipv4 unicast 1.2.3.6/32 10.0.2.2
+    parents:
+      - router static
+    match: none
+
+- debug: msg="END grpc_config iosxr/basic.yaml on connection=ansible.netcommon.grpc"
