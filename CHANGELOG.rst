@@ -5,6 +5,30 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v3.1.0
+======
+
+Minor Changes
+-------------
+
+- Add grpc connection plugin support.
+- Adds a new option `terminal_errors` in network_cli, that determines how terminal setting failures are handled.
+- libssh - Added `password_prompt` option to override default "password:" prompt used by pylibssh
+
+New Plugins
+-----------
+
+Connection
+~~~~~~~~~~
+
+- grpc - Provides a persistent connection using the gRPC protocol
+
+New Modules
+-----------
+
+- grpc_config - Fetch configuration/state data from gRPC enabled target hosts.
+- grpc_get - Fetch configuration/state data from gRPC enabled target hosts.
+
 v3.0.1
 ======
 

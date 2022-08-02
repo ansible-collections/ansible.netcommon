@@ -570,3 +570,28 @@ releases:
       - restconf-not-json.yaml
       - update-pre-commit.yaml
     release_date: "2022-05-31"
+  3.1.0:
+    changes:
+      minor_changes:
+        - Add grpc connection plugin support.
+        - Adds a new option `terminal_errors` in network_cli, that determines how terminal
+          setting failures are handled.
+        - libssh - Added `password_prompt` option to override default "password:" prompt
+          used by pylibssh
+    fragments:
+      - add-grpc-connection-plugin.yaml
+      - libssh-password-prompt.yaml
+      - terminal_errors.yaml
+    modules:
+      - description: Fetch configuration/state data from gRPC enabled target hosts.
+        name: grpc_config
+        namespace: ""
+      - description: Fetch configuration/state data from gRPC enabled target hosts.
+        name: grpc_get
+        namespace: ""
+    plugins:
+      connection:
+        - description: Provides a persistent connection using the gRPC protocol
+          name: grpc
+          namespace: null
+    release_date: "2022-08-02"

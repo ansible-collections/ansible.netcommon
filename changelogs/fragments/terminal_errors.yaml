@@ -1,3 +1,0 @@
----
-minor_changes:
-  - "Adds a new option `terminal_errors` in network_cli, that determines how terminal setting failures are handled."
