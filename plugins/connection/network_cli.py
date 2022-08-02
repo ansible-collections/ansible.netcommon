@@ -122,6 +122,7 @@ options:
     - name: ansible_network_terminal_errors
     default: fail
     choices: ["ignore", "warn", "fail"]
+    version_added: 3.1.0
   become_method:
     description:
     - This option allows the become method to be specified in for handling privilege
