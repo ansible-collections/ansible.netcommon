@@ -8,7 +8,7 @@ DOCUMENTATION = """
     author:
       - Ansible Networking Team (@ansible-network)
     name: libssh
-    short_description: (Tech preview) Run tasks using libssh for ssh connection
+    short_description: Run tasks using libssh for ssh connection
     description:
         - Use the ansible-pylibssh python bindings to connect to targets
         - The python bindings use libssh C library (https://www.libssh.org/) to connect to targets
