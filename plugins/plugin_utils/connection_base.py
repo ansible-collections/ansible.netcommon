@@ -108,6 +108,24 @@ class NetworkConnectionBase(ConnectionBase):
         if self._connected:
             self._connected = False
 
+    def get_options(self, hostvars=None):
+        options = super(NetworkConnectionBase, self).get_options(
+            hostvars=hostvars
+        )
+
+        if (
+            self._sub_plugin.get("obj")
+            and self._sub_plugin.get("type") != "external"
+        ):
+            try:
+                options.update(
+                    self._sub_plugin["obj"].get_options(hostvars=hostvars)
+                )
+            except AttributeError:
+                pass
+
+        return options
+
     def set_options(self, task_keys=None, var_options=None, direct=None):
         super(NetworkConnectionBase, self).set_options(
             task_keys=task_keys, var_options=var_options, direct=direct
