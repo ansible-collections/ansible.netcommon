@@ -119,7 +119,7 @@ DOCUMENTATION = """
           - section: defaults
             key: use_persistent_connections
       ssh_args:
-          version_added: 3.1.0
+          version_added: 3.2.0
           description:
            - Arguments to pass to all ssh CLI tools.
            - ProxyCommand is the only supported argument.
@@ -134,7 +134,7 @@ DOCUMENTATION = """
           cli:
               - name: ssh_args
       ssh_common_args:
-          version_added: 3.1.0
+          version_added: 3.2.0
           description:
            - Common extra arguments for all ssh CLI tools.
            - ProxyCommand is the only supported argument.
@@ -149,7 +149,7 @@ DOCUMENTATION = """
           cli:
               - name: ssh_common_args
       ssh_extra_args:
-          version_added: 3.1.0
+          version_added: 3.2.0
           description:
            - Extra arguments exclusive to the 'ssh' CLI tool.
            - ProxyCommand is the only supported argument.
