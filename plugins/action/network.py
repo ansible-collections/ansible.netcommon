@@ -38,7 +38,7 @@ DEXEC_PREFIX = "ANSIBLE_NETWORK_IMPORT_MODULES:"
 
 
 class ActionModule(_ActionModule):
-    def run(self, task_vars=None):
+    def run(self, tmp=None, task_vars=None):
         config_module = hasattr(self, "_config_module") and self._config_module
         if config_module and self._task.args.get("src"):
             try:
@@ -349,17 +349,17 @@ class ActionModule(_ActionModule):
         sys_stdout = sys.stdout
         sys.stdout = io.StringIO()
 
+        stdout = ""
+        stderr = ""
         # run the module, catch the SystemExit so we continue
         try:
             module.main()
         except SystemExit:
             # module exited cleanly
             stdout = sys.stdout.getvalue()
-            stderr = ""
         except Exception as exc:
             # dirty module or connection traceback
             stderr = to_native(exc)
-            stdout = ""
 
         # restore stdout & stderr
         sys.stdout = sys_stdout

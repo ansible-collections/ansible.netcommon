@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fix a small number of potential use-before-assignment issues.
