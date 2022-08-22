@@ -81,8 +81,9 @@ def locked_config(module, target=None):
 
 def get_config(module, source, filter=None, lock=False):
     conn = get_connection(module)
+    locked = False
+
     try:
-        locked = False
         if lock:
             conn.lock(target=source)
             locked = True
@@ -102,8 +103,9 @@ def get_config(module, source, filter=None, lock=False):
 
 def get(module, filter, lock=False):
     conn = get_connection(module)
+    locked = False
+
     try:
-        locked = False
         if lock:
             conn.lock(target="running")
             locked = True
