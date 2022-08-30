@@ -1,0 +1,3 @@
+---
+trivial:
+  - Address inactive but legacy print calls found with code checking
