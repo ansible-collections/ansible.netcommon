@@ -5,7 +5,7 @@
 ansible.netcommon.libssh
 ************************
 
-**(Tech preview) Run tasks using libssh for ssh connection**
+**Run tasks using libssh for ssh connection**
 
 
 Version added: 1.1.0
