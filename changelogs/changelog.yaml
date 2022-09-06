@@ -595,3 +595,20 @@ releases:
           name: grpc
           namespace: null
     release_date: "2022-08-02"
+  3.1.1:
+    changes:
+      bugfixes:
+        - Fix a small number of potential use-before-assignment issues.
+        - Fix to set connection plugin options correctly.
+        - libssh - Removed the wording "Tech preview". From version 3.0.0 the default
+          if installed.
+        - libssh - add ssh_args, ssh_common_args, and ssh_extra_args options. These
+          options are exclusively for collecting proxy information from as an alternative
+          to the proxy_command option.
+    fragments:
+      - 441-pre-commit.yaml
+      - 448-set_options.yaml
+      - 451-libssh-remove-tech-preview.yaml
+      - 454-legacy_cleanup.yaml
+      - pylint.yaml
+    release_date: "2022-09-06"

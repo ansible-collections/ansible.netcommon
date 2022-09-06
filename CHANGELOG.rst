@@ -5,6 +5,17 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v3.1.1
+======
+
+Bugfixes
+--------
+
+- Fix a small number of potential use-before-assignment issues.
+- Fix to set connection plugin options correctly.
+- libssh - Removed the wording "Tech preview". From version 3.0.0 the default if installed.
+- libssh - add ssh_args, ssh_common_args, and ssh_extra_args options. These options are exclusively for collecting proxy information from as an alternative to the proxy_command option.
+
 v3.1.0
 ======
 

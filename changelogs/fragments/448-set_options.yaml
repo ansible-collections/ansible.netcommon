@@ -1,5 +1,0 @@
----
-bugfixes:
-  - Fix to set connection plugin options correctly.
-  - libssh - add ssh_args, ssh_common_args, and ssh_extra_args options. These options are exclusively
-    for collecting proxy information from as an alternative to the proxy_command option.

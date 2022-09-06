@@ -1,3 +1,0 @@
----
-bugfixes:
-  - libssh - Removed the wording "Tech preview". From version 3.0.0 the default if installed.
