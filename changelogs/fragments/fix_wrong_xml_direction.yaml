@@ -1,0 +1,2 @@
+bugfixes:
+  - restconf_get - fix direction of XML deserialization when ``output == 'xml'``
