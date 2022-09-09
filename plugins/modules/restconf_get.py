@@ -88,9 +88,8 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.restconf
     restconf,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import (
-    dict_to_xml,
+    xml_to_dict,
 )
-
 
 def main():
     """entry point for module execution"""
@@ -113,7 +112,10 @@ def main():
 
     if module.params["output"] == "xml":
         try:
-            response = dict_to_xml(response)
+            if response == "":
+                response = {}
+            else:
+                response = xml_to_dict(response)
         except Exception as exc:
             module.fail_json(msg=to_text(exc))
 
