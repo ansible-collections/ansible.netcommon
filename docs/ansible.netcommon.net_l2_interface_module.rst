@@ -5,7 +5,7 @@
 ansible.netcommon.net_l2_interface
 **********************************
 
-**(deprecated, removed after 2022-06-01) Manage Layer-2 interface on network devices**
+**(deprecated, removed after 2022-06-01) Manage Layer-2 DNM interface on network devices**
 
 
 Version added: 1.0.0
