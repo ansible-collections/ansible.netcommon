@@ -12,7 +12,7 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_l2_interface
 author: Ganesh Nalawade (@ganeshrn)
-short_description: (deprecated, removed after 2022-06-01) Manage Layer-2 interface
+short_description: (deprecated, removed after 2022-06-01) Manage Layer-2 DNM interface
   on network devices
 description:
 - This module provides declarative management of Layer-2 interface on network devices.
