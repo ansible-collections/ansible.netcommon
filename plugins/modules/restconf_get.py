@@ -113,10 +113,7 @@ def main():
 
     if module.params["output"] == "xml":
         try:
-            if response == "":
-                response = {}
-            else:
-                response = xml_to_dict(response)
+            response = xml_to_dict(response)
         except Exception as exc:
             module.fail_json(msg=to_text(exc))
 
