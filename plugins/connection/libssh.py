@@ -341,6 +341,10 @@ class Connection(ConnectionBase):
 
         if not HAS_PYLIBSSH:
             raise AnsibleError(missing_required_lib("ansible-pylibssh"))
+        display.vvv(
+            "USING PYLIBSSH VERSION %s" % PYLIBSSH_VERSION,
+            host=self._play_context.remote_addr,
+        )
 
         ssh_connect_kwargs = {}
 
@@ -376,7 +380,6 @@ class Connection(ConnectionBase):
             if proxy_command:
                 ssh_connect_kwargs["proxycommand"] = proxy_command
 
-            display.vvv("USING PYLIBSSH VERSION %s" % PYLIBSSH_VERSION)
             if self.get_option("password_prompt") and (
                 Version(PYLIBSSH_VERSION) < "1.0.0"
             ):
