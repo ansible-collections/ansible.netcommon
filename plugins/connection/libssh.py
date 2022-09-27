@@ -183,10 +183,14 @@ from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six.moves import input
 from ansible.plugins.connection import ConnectionBase
 from ansible.utils.display import Display
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import (
+    Version,
+)
 
 display = Display()
 
 try:
+    from pylibsshext import __version__ as PYLIBSSH_VERSION
     from pylibsshext.errors import LibsshSCPException, LibsshSessionException
     from pylibsshext.session import Session
 
@@ -337,6 +341,10 @@ class Connection(ConnectionBase):
 
         if not HAS_PYLIBSSH:
             raise AnsibleError(missing_required_lib("ansible-pylibssh"))
+        display.vvv(
+            "USING PYLIBSSH VERSION %s" % PYLIBSSH_VERSION,
+            host=self._play_context.remote_addr,
+        )
 
         ssh_connect_kwargs = {}
 
@@ -371,6 +379,15 @@ class Connection(ConnectionBase):
 
             if proxy_command:
                 ssh_connect_kwargs["proxycommand"] = proxy_command
+
+            if self.get_option("password_prompt") and (
+                Version(PYLIBSSH_VERSION) < "1.0.0"
+            ):
+                raise AnsibleError(
+                    "Configuring password prompt is not supported in ansible-pylibssh version %s. "
+                    "Please upgrade to ansible-pylibssh 1.0.0 or newer."
+                    % PYLIBSSH_VERSION
+                )
 
             self.ssh.set_missing_host_key_policy(
                 MyAddPolicy(self._new_stdin, self)
