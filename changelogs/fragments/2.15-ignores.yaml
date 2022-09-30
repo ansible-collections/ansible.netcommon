@@ -1,3 +1,0 @@
----
-trivial:
-  - Copy ignore-2.15.txt from ignore-2.14.txt. (https://github.com/ansible-collections/ansible.netcommon/pull/468)

@@ -612,3 +612,12 @@ releases:
       - 454-legacy_cleanup.yaml
       - pylint.yaml
     release_date: "2022-09-06"
+  3.1.2:
+    changes:
+      bugfixes:
+        - libssh - check for minimum ansible-pylibssh version before using password_prompt
+          option. (https://github.com/ansible-collections/ansible.netcommon/pull/467)
+    fragments:
+      - 2.15-ignores.yaml
+      - libssh_check.yaml
+    release_date: "2022-09-30"
