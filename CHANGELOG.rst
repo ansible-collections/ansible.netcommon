@@ -5,6 +5,14 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v3.1.3
+======
+
+Release Summary
+---------------
+
+The v3.1.2 is unavailable on Ansible Automation Hub because a technical issue. Please download and use v3.1.3 from Automation Hub.
+
 v3.1.2
 ======
 
