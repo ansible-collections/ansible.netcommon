@@ -1,3 +1,0 @@
----
-trivial:
-  - Unify license headers in collection and add BSD license text. (https://github.com/ansible-collections/ansible.netcommon/pull/462)
