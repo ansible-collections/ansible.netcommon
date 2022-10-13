@@ -629,3 +629,24 @@ releases:
     fragments:
       - prepare_312.yaml
     release_date: "2022-10-04"
+  4.0.0:
+    changes:
+      removed_features:
+        - napalm - Removed unused connection plugin.
+        - net_banner - Use <network_os>_banner instead.
+        - net_interface - Use <network_os>_interfaces instead.
+        - net_l2_interface - Use <network_os>_l2_interfaces instead.
+        - net_l3_interface - Use <network_os>_l3_interfaces instead.
+        - net_linkagg - Use <network_os>_lag_interfaces instead.
+        - net_lldp - Use <network_os>_lldp_global instead.
+        - net_lldp_interface - Use <network_os>_lldp_interfaces instead.
+        - net_logging - Use <network_os>_logging_global instead.
+        - net_static_route - Use <network_os>_static_routes instead.
+        - net_system - Use <network_os>_system instead.
+        - net_user - Use <network_os>_user instead.
+        - net_vlan - Use <network_os>_vlans instead.
+        - net_vrf - Use <network_os>_vrf instead.
+    fragments:
+      - 2H22_removal.yaml
+      - license.yaml
+    release_date: "2022-10-13"
