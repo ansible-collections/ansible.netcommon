@@ -20,7 +20,7 @@ DOCUMENTATION = """
     version_added: 1.0.0
 """
 
-EXAMPLES = r"""
+EXAMPLES = """
 - name: "Run command and parse with native"
   ansible.utils.cli_parse:
     command: "show bgp summary"
@@ -37,7 +37,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_p
 from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
     CliParserBase,
 )
-import re
 
 class CliParser(CliParserBase):
     """The native parser class
