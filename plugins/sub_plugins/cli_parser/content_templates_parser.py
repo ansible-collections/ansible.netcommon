@@ -38,6 +38,7 @@ from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser impo
     CliParserBase,
 )
 
+
 class CliParser(CliParserBase):
     """The native parser class
     Convert raw text to structured data using the resource module parser
