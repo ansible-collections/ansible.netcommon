@@ -12,7 +12,7 @@ __metaclass__ = type
 DOCUMENTATION = """
     author: Rohit Thakur (@rohitthakur2590)
     name: content_templates
-    short_description: Define configurable options for C(native) sub-plugin of C(cli_parse) module
+    short_description: Define configurable options for C(content) sub-plugin of C(cli_parse) module
     description:
     - This plugin documentation provides the configurable options that can be passed
       to the I(ansible.utils.cli_parse) plugins when I(ansible.netcommon.content_templates) is used as a value for
@@ -37,18 +37,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_p
 from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
     CliParserBase,
 )
-
-try:
-    import yaml
-
-    try:
-        from yaml import CSafeLoader as SafeLoader
-    except ImportError:
-        from yaml import SafeLoader
-    HAS_YAML = True
-except ImportError:
-    HAS_YAML = False
-
+import re
 
 class CliParser(CliParserBase):
     """The native parser class
