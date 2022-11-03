@@ -5,6 +5,19 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v4.1.0
+======
+
+Minor Changes
+-------------
+
+- Add implementation for content_templates_parser.
+
+Bugfixes
+--------
+
+- restconf_get - fix direction of XML deserialization when ``output == 'xml'``
+
 v4.0.0
 ======
 

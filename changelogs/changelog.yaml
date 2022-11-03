@@ -650,3 +650,13 @@ releases:
       - 2H22_removal.yaml
       - license.yaml
     release_date: "2022-10-13"
+  4.1.0:
+    changes:
+      bugfixes:
+        - restconf_get - fix direction of XML deserialization when ``output == 'xml'``
+      minor_changes:
+        - Add implementation for content_templates_parser.
+    fragments:
+      - add_content_template_parser.yaml
+      - fix_wrong_xml_direction.yaml
+    release_date: "2022-11-02"
