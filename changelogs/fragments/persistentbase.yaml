@@ -1,0 +1,5 @@
+---
+breaking_changes:
+  - NetworkConnectionBase now inherits from PersistentConnectionBase
+    in ansible.utils. As a result, the minimum ansible.utils version
+    has increased to 2.7.0.
