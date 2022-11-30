@@ -1,0 +1,3 @@
+---
+trivial:
+  - Fix flake8 configuration erroring as of 6.0.0
