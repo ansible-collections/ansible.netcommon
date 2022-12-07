@@ -1,0 +1,36 @@
+DOCUMENTATION:
+  name: vlan_expander
+  author: Akira Yokochi (@akira6592)
+  version_added: 2.3.0
+  short_description: Expand shorthand VLAN list
+  description:
+    - Expand shorthand list of VLANs to list all VLANs. Inverse of vlan_parser
+  positional: _input
+  options:
+    _input:
+      description: The list of VLANs
+      type: string
+      required: true
+
+EXAMPLES: |
+  - name: Expand VLAN list
+    debug:
+      msg: "{{ '1,10-12,15,20-22' | ansible.netcommon.vlan_expander }}"
+
+  # ok: [localhost] => {
+  #     "msg": [
+  #         1,
+  #         10,
+  #         11,
+  #         12,
+  #         15,
+  #         20,
+  #         21,
+  #         22
+  #     ]
+  # }
+RETURN:
+  _value:
+    description: a sorted list of all VLANs described
+    type: list
+    elements: int
