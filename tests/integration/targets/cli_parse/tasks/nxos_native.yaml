@@ -1,5 +1,5 @@
 ---
-- name: "{{ parser }} Run command and parse with native"
+- name: "Run command and parse with {{ parser }}"
   ansible.utils.cli_parse:
     command: "show interface"
     parser:
@@ -7,7 +7,7 @@
     set_fact: POpqMQoJWTiDpEW
   register: nxos_native_command
 
-- name: "{{ parser }} Pass text and template_path"
+- name: "Pass text and template_path to {{ parser }}"
   ansible.utils.cli_parse:
     text: "{{ nxos_native_command['stdout'] }}"
     parser:
@@ -15,8 +15,8 @@
       template_path: "{{ role_path }}/templates/nxos_show_interface.yaml"
   register: nxos_native_text
 
-- name: "{{ parser }} Confirm response"
-  assert:
+- name: "Check output"
+  ansible.builtin.assert:
     that: "{{ item }}"
   with_items:
     - "{{ POpqMQoJWTiDpEW is defined }}"
@@ -25,7 +25,7 @@
     - "{{ nxos_native_command['stdout_lines'] is defined }}"
     - "{{ nxos_native_command['parsed'] == nxos_native_text['parsed'] }}"
 
-- name: "{{ parser }} Pass text and command"
+- name: "Pass text and command to {{ parser }}"
   ansible.utils.cli_parse:
     text: "{{ nxos_native_command['stdout'] }}"
     parser:
@@ -33,13 +33,13 @@
       command: show interface
   register: output
 
-- name: "{{ parser }} Confirm response"
-  assert:
+- name: "Check output"
+  anssible.builtin.assert:
     that: "{{ item }}"
   with_items:
     - "{{ output['parsed']['mgmt0'] is defined }}"
 
-- name: "{{ parser }} Run command and parse with native"
+- name: "Run command and parse with {{ parser }}"
   ansible.utils.cli_parse:
     command: "sho int"
     parser:
@@ -47,8 +47,8 @@
       command: show interface
   register: output
 
-- name: "{{ parser }} Confirm response"
-  assert:
+- name: "Check output"
+  ansible.builtin.assert:
     that: "{{ item }}"
   with_items:
     - "{{ output['parsed']['mgmt0'] is defined }}"
