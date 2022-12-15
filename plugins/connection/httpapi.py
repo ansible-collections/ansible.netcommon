@@ -106,7 +106,6 @@ options:
       - The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions
     type: list
     elements: string
-    version_added: '2.15'
     vars:
     - name: ansible_httpapi_ciphers
   become:
