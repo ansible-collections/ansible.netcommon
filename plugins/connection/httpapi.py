@@ -97,6 +97,18 @@ options:
     default: true
     vars:
     - name: ansible_httpapi_use_proxy
+  ciphers:
+    description:
+      - SSL/TLS Ciphers to use for requests
+      - 'When a list is provided, all ciphers are joined in order with C(:)'
+      - See the L(OpenSSL Cipher List Format,https://www.openssl.org/docs/manmaster/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT)
+        for more details.
+      - The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions
+    type: list
+    elements: string
+    version_added: '2.15'
+    vars:
+    - name: ansible_httpapi_ciphers
   become:
     type: boolean
     description:
@@ -264,6 +276,7 @@ class Connection(NetworkConnectionBase):
             timeout=self.get_option("persistent_command_timeout"),
             validate_certs=self.get_option("validate_certs"),
             use_proxy=self.get_option("use_proxy"),
+            ciphers=self.get_option("ciphers"),
             headers={},
         )
         url_kwargs.update(kwargs)
