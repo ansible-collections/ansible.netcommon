@@ -104,7 +104,7 @@ options:
       - See the L(OpenSSL Cipher List Format,https://www.openssl.org/docs/manmaster/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT)
         for more details.
       - The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions.
-      - This option will have no effect on ansible-core<2.14.
+      - This option will have no effect on ansible-core<2.14 but a warning will be emitted.
     type: list
     elements: string
     vars:
@@ -152,7 +152,6 @@ from io import BytesIO
 
 from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils._text import to_bytes
-from ansible.module_utils.compat.version import StrictVersion
 from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
 from ansible.module_utils.six.moves.urllib.error import HTTPError, URLError
@@ -164,6 +163,7 @@ from ansible.release import __version__ as ANSIBLE_CORE_VERSION
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
 
 
 class Connection(NetworkConnectionBase):
@@ -280,11 +280,18 @@ class Connection(NetworkConnectionBase):
             use_proxy=self.get_option("use_proxy"),
             headers={},
         )
-        # Only insert ciphers kwarg for ansible-core versions >= 2.14.0
-        if StrictVersion(ANSIBLE_CORE_VERSION) >= StrictVersion("2.14.0"):
-            url_kwargs["ciphers"] = self.get_option("ciphers")
+        ciphers = self.get_option("ciphers")
+        if ciphers:
+            if Version(ANSIBLE_CORE_VERSION) < Version("2.14.0"):
+                # Only insert "ciphers" kwarg for ansible-core versions >= 2.14.0.
+                url_kwargs["ciphers"] = ciphers
+            else:
+                # Emit warning when "ansible_httpapi_ciphers" is set but not supported
+                self.queue_message(
+                    "warning",
+                    "'ansible_httpapi_ciphers' option is unavailable on ansible-core<2.14",
+                )
 
-        url_kwargs.update(kwargs)
         if self._auth:
             # Avoid modifying passed-in headers
             headers = dict(kwargs.get("headers", {}))
