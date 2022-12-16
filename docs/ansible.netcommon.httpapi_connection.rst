@@ -101,7 +101,7 @@ Parameters
                         <div>When a list is provided, all ciphers are joined in order with <code>:</code></div>
                         <div>See the <a href='https://www.openssl.org/docs/manmaster/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT'>OpenSSL Cipher List Format</a> for more details.</div>
                         <div>The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions.</div>
-                        <div>This option will have no effect on ansible-core&lt;2.14.</div>
+                        <div>This option will have no effect on ansible-core&lt;2.14 but a warning will be emitted.</div>
                 </td>
             </tr>
             <tr>

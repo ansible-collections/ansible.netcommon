@@ -163,7 +163,9 @@ from ansible.release import __version__ as ANSIBLE_CORE_VERSION
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import (
+    Version,
+)
 
 
 class Connection(NetworkConnectionBase):
