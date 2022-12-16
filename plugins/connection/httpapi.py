@@ -149,6 +149,7 @@ options:
 """
 
 from io import BytesIO
+
 from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils._text import to_bytes
 from ansible.module_utils.compat.version import StrictVersion
