@@ -284,7 +284,7 @@ class Connection(NetworkConnectionBase):
         )
         ciphers = self.get_option("ciphers")
         if ciphers:
-            if Version(ANSIBLE_CORE_VERSION) < Version("2.14.0"):
+            if Version(ANSIBLE_CORE_VERSION) >= Version("2.14.0"):
                 # Only insert "ciphers" kwarg for ansible-core versions >= 2.14.0.
                 url_kwargs["ciphers"] = ciphers
             else:
