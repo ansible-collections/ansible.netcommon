@@ -103,7 +103,8 @@ options:
       - 'When a list is provided, all ciphers are joined in order with C(:)'
       - See the L(OpenSSL Cipher List Format,https://www.openssl.org/docs/manmaster/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT)
         for more details.
-      - The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions
+      - The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions.
+      - This option will have no effect on ansible-core<2.14.
     type: list
     elements: string
     vars:
@@ -148,9 +149,9 @@ options:
 """
 
 from io import BytesIO
-
 from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils._text import to_bytes
+from ansible.module_utils.compat.version import StrictVersion
 from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
 from ansible.module_utils.six.moves.urllib.error import HTTPError, URLError
@@ -158,6 +159,7 @@ from ansible.module_utils.urls import open_url
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.connection import ensure_connect
 from ansible.plugins.loader import httpapi_loader
+from ansible.release import __version__ as ANSIBLE_CORE_VERSION
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
@@ -275,9 +277,12 @@ class Connection(NetworkConnectionBase):
             timeout=self.get_option("persistent_command_timeout"),
             validate_certs=self.get_option("validate_certs"),
             use_proxy=self.get_option("use_proxy"),
-            ciphers=self.get_option("ciphers"),
             headers={},
         )
+        # Only insert ciphers kwarg for ansible-core versions >= 2.14.0
+        if StrictVersion(ANSIBLE_CORE_VERSION) >= StrictVersion("2.14.0"):
+            url_kwargs["ciphers"] = self.get_option("ciphers")
+
         url_kwargs.update(kwargs)
         if self._auth:
             # Avoid modifying passed-in headers
