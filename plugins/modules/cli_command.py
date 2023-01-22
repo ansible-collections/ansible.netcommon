@@ -110,8 +110,8 @@ EXAMPLES = """
     - y
     - <password>
     - y
-    
-- name: Simple regexp match for multiple prompt, multiple answer(mandatory check for all prompts) 
+
+- name: Simple regexp match for multiple prompt, multiple answer(mandatory check for all prompts)
    ansible.netcommon.cli_command:
      command: reload in 5
      check_all: true
