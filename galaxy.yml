@@ -6,7 +6,9 @@ dependencies:
 license_file: LICENSE
 name: netcommon
 namespace: ansible
-description: Ansible Collection with common content to help automate the management of network, security, and cloud devices.
+description:
+  Ansible Collection with common content to help automate the management
+  of network, security, and cloud devices.
 readme: README.md
 repository: https://github.com/ansible-collections/ansible.netcommon
 issues: https://github.com/ansible-collections/ansible.netcommon/issues
