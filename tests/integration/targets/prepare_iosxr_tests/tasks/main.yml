@@ -18,5 +18,6 @@
   cisco.iosxr.iosxr_config:
     src: config_grpc.j2
 
-- set_fact:
-    shorter_hostname: '{{ inventory_hostname_short| truncate(10, True, "") }}'
+- name: Save truncated hostname
+  ansible.builtin.set_fact:
+    shorter_hostname: '{{ inventory_hostname_short | truncate(10, True, "") }}'

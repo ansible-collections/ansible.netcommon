@@ -34,7 +34,7 @@
   register: output
 
 - name: "Check output"
-  anssible.builtin.assert:
+  ansible.builtin.assert:
     that: "{{ item }}"
   with_items:
     - "{{ output['parsed']['mgmt0'] is defined }}"
