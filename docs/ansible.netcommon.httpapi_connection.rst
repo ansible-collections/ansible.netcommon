@@ -90,7 +90,7 @@ Parameters
                         <span style="color: purple">list</span>
                          / <span style="color: purple">elements=string</span>
                     </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 5.0.0 - See the L(OpenSSL Cipher List Format,https://www.openssl.org/docs/manmaster/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT) for more details. - The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions. - This option will have no effect on ansible-core<2.14 but a warning will be emitted.</div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 5.0.0</div>
                 </td>
                 <td>
                 </td>
@@ -100,6 +100,9 @@ Parameters
                 <td>
                         <div>SSL/TLS Ciphers to use for requests</div>
                         <div>When a list is provided, all ciphers are joined in order with <code>:</code></div>
+                        <div>See the <a href='https://www.openssl.org/docs/manmaster/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT'>OpenSSL Cipher List Format</a> for more details.</div>
+                        <div>The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions.</div>
+                        <div>This option will have no effect on ansible-core&lt;2.14 but a warning will be emitted.</div>
                 </td>
             </tr>
             <tr>
