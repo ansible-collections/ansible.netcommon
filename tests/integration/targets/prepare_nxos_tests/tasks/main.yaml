@@ -11,5 +11,5 @@
 
 - name: Show failure
   ansible.builtin.debug:
-    msg: 'Netconf feature is not supported on this platform!'
+    msg: "Netconf feature is not supported on this platform!"
   when: result.failed
