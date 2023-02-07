@@ -259,7 +259,6 @@ def parse_cli_textfsm(value, template):
 
 
 def _extract_param(template, root, attrs, value):
-
     key = None
     when = attrs.get("when")
     conditional = "{%% if %s %%}True{%% else %%}False{%% endif %%}" % when
@@ -401,7 +400,6 @@ def type5_pw(password, salt=None):
 
 
 def hash_salt(password):
-
     split_password = password.split("$")
     if len(split_password) != 4:
         raise AnsibleFilterError(
@@ -416,7 +414,6 @@ def hash_salt(password):
 def comp_type5(
     unencrypted_password, encrypted_password, return_original=False
 ):
-
     salt = hash_salt(encrypted_password)
     if type5_pw(unencrypted_password, salt) == encrypted_password:
         if return_original is True:
@@ -438,7 +435,6 @@ def vlan_expander(raw_vlan):
 
 
 def vlan_parser(vlan_list, first_line_len=48, other_line_len=44):
-
     """
     Input: Unsorted list of vlan integers
     Output: Sorted string list of integers according to IOS-like vlan list rules

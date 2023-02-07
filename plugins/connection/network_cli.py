@@ -775,7 +775,6 @@ class Connection(NetworkConnectionBase):
         check_all=False,
         strip_prompt=True,
     ):
-
         recv = BytesIO()
         cache_socket_timeout = self.get_option("persistent_command_timeout")
         self._ssh_shell.settimeout(cache_socket_timeout)
@@ -888,7 +887,6 @@ class Connection(NetworkConnectionBase):
         errored_response = None
 
         while True:
-
             if command_prompt_matched:
                 data = self._read_post_command_prompt_match()
                 if data:

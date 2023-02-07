@@ -100,7 +100,6 @@ class Command(object):
     def __init__(
         self, command, output=None, prompt=None, response=None, **kwargs
     ):
-
         self.command = command
         self.output = output
         self.command_string = command

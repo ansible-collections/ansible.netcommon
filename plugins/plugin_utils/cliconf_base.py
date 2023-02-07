@@ -496,7 +496,6 @@ class CliconfBase(CliconfBaseBase):
         replace=None,
         comment=None,
     ):
-
         if not candidate and not replace:
             raise ValueError(
                 "must provide a candidate or replace to load configuration"

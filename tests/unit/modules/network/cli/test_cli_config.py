@@ -18,7 +18,6 @@ from .cli_module import TestCliModule
 
 
 class TestCliConfigModule(TestCliModule):
-
     module = cli_config
 
     def setUp(self):

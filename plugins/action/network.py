@@ -92,7 +92,6 @@ class ActionModule(_ActionModule):
         return result
 
     def _handle_backup_option(self, result, task_vars):
-
         filename = None
         backup_path = None
         try:

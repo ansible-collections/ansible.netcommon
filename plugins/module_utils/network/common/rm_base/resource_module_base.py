@@ -24,7 +24,6 @@ class RmEngineBase(object):  # pylint: disable=R0902
     ACTION_STATES = ["merged", "replaced", "overridden", "deleted", "purged"]
 
     def __init__(self, *_args, **kwargs):
-
         self._connection = None
         self._module = kwargs.get("module", None)
         self.state = None

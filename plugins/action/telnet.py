@@ -22,7 +22,6 @@ class ActionModule(ActionBase):
     TRANSFERS_FILES = False
 
     def run(self, tmp=None, task_vars=None):
-
         if self._task.environment and any(self._task.environment):
             self._display.warning(
                 "The telnet task does not support the environment keyword"
@@ -71,7 +70,6 @@ class ActionModule(ActionBase):
                 commands = commands.split(",")
 
             if isinstance(commands, list) and commands:
-
                 tn = telnetlib.Telnet(host, port, timeout)
 
                 output = []
