@@ -97,6 +97,19 @@ options:
     default: true
     vars:
     - name: ansible_httpapi_use_proxy
+  ciphers:
+    description:
+      - SSL/TLS Ciphers to use for requests
+      - 'When a list is provided, all ciphers are joined in order with C(:)'
+      - See the L(OpenSSL Cipher List Format,https://www.openssl.org/docs/manmaster/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT)
+        for more details.
+      - The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions.
+      - This option will have no effect on ansible-core<2.14 but a warning will be emitted.
+    version_added: 5.0.0
+    type: list
+    elements: string
+    vars:
+    - name: ansible_httpapi_ciphers
   become:
     type: boolean
     description:
@@ -147,8 +160,12 @@ from ansible.module_utils.urls import open_url
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.connection import ensure_connect
 from ansible.plugins.loader import httpapi_loader
+from ansible.release import __version__ as ANSIBLE_CORE_VERSION
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
+)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import (
+    Version,
 )
 
 
@@ -266,7 +283,18 @@ class Connection(NetworkConnectionBase):
             use_proxy=self.get_option("use_proxy"),
             headers={},
         )
-        url_kwargs.update(kwargs)
+        ciphers = self.get_option("ciphers")
+        if ciphers:
+            if Version(ANSIBLE_CORE_VERSION) >= Version("2.14.0"):
+                # Only insert "ciphers" kwarg for ansible-core versions >= 2.14.0.
+                url_kwargs["ciphers"] = ciphers
+            else:
+                # Emit warning when "ansible_httpapi_ciphers" is set but not supported
+                self.queue_message(
+                    "warning",
+                    "'ansible_httpapi_ciphers' option is unavailable on ansible-core<2.14",
+                )
+
         if self._auth:
             # Avoid modifying passed-in headers
             headers = dict(kwargs.get("headers", {}))

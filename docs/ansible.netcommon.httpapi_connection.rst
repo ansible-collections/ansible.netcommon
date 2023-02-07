@@ -84,6 +84,30 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>ciphers</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 5.0.0</div>
+                </td>
+                <td>
+                </td>
+                    <td>
+                                <div>var: ansible_httpapi_ciphers</div>
+                    </td>
+                <td>
+                        <div>SSL/TLS Ciphers to use for requests</div>
+                        <div>When a list is provided, all ciphers are joined in order with <code>:</code></div>
+                        <div>See the <a href='https://www.openssl.org/docs/manmaster/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT'>OpenSSL Cipher List Format</a> for more details.</div>
+                        <div>The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions.</div>
+                        <div>This option will have no effect on ansible-core&lt;2.14 but a warning will be emitted.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>host</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
