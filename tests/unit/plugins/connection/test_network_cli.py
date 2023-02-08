@@ -23,7 +23,6 @@ from ansible_collections.ansible.netcommon.plugins.connection.network_cli import
 
 @pytest.fixture(name="conn")
 def plugin_fixture(monkeypatch):
-
     pc = PlayContext()
     pc.network_os = "fakeos"
 

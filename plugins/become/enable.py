@@ -39,7 +39,6 @@ from ansible.plugins.become import BecomeBase
 
 
 class BecomeModule(BecomeBase):
-
     name = "ansible.netcommon.enable"
 
     def build_become_command(self, cmd, shell):

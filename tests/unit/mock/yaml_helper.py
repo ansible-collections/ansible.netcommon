@@ -15,7 +15,8 @@ class YamlTestUtils(object):
     def _loader(self, stream):
         """Vault related tests will want to override this.
 
-        Vault cases should setup a AnsibleLoader that has the vault password."""
+        Vault cases should setup a AnsibleLoader that has the vault password.
+        """
         return AnsibleLoader(stream)
 
     def _dump_stream(self, obj, stream, dumper=None):

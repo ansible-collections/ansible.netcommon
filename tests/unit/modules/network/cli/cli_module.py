@@ -42,7 +42,6 @@ class TestCliModule(ModuleTestCase):
     def execute_module(
         self, failed=False, changed=False, commands=None, sort=True
     ):
-
         self.load_fixtures(commands)
 
         if failed:

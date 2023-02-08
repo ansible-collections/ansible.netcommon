@@ -229,14 +229,12 @@ class MyAddPolicy(object):
     def missing_host_key(
         self, session, hostname, username, key_type, fingerprint, message
     ):
-
         if all(
             (
                 self._options["host_key_checking"],
                 not self._options["host_key_auto_add"],
             )
         ):
-
             if (
                 self.connection.get_option("use_persistent_connections")
                 or self.connection.force_persistence

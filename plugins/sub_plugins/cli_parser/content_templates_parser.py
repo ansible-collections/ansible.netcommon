@@ -48,7 +48,6 @@ class CliParser(CliParserBase):
     PROVIDE_TEMPLATE_CONTENTS = True
 
     def parse(self, *_args, **kwargs):
-
         """Std entry point for a cli_parse parse execution
 
         :return: Errors or parsed text as structured data

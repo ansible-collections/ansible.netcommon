@@ -212,7 +212,6 @@ class TestNetworkType5(unittest.TestCase):
         self.assertEqual(len(parsed), 30)
 
     def test_wrong_data_type(self):
-
         with self.assertRaises(Exception) as e:
             type5_pw([])
         self.assertEqual(
@@ -242,7 +241,6 @@ class TestNetworkType5(unittest.TestCase):
         )
 
     def test_bad_salt_char(self):
-
         with self.assertRaises(Exception) as e:
             type5_pw("password", "*()")
         self.assertEqual(
