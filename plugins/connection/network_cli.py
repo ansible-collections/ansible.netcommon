@@ -474,7 +474,15 @@ class Connection(NetworkConnectionBase):
         return self.ssh_type_conn
 
     def _get_log_channel(self):
-        name = "p=%s u=%s | " % (os.getpid(), getpass.getuser())
+        user = ""
+        try:
+            user = getpass.getuser()
+        except KeyError:
+            self.queue_message(
+                "vv",
+                "Current user (uid=%s) does not seem to exist on this system, leaving user empty." % os.getuid()
+            )
+        name = "p=%s u=%s | " % (os.getpid(), user)
         name += "%s [%s]" % (self.ssh_type, self._play_context.remote_addr)
         return name
 
