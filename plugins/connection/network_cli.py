@@ -480,7 +480,8 @@ class Connection(NetworkConnectionBase):
         except KeyError:
             self.queue_message(
                 "vv",
-                "Current user (uid=%s) does not seem to exist on this system, leaving user empty." % os.getuid()
+                "Current user (uid=%s) does not seem to exist on this system, leaving user empty."
+                % os.getuid(),
             )
         name = "p=%s u=%s | " % (os.getpid(), user)
         name += "%s [%s]" % (self.ssh_type, self._play_context.remote_addr)
