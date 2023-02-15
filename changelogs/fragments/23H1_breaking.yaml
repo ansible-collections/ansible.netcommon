@@ -1,0 +1,17 @@
+---
+breaking_changes:
+  - NetworkTemplate is no longer importable from
+    ansible_collections.ansible.netcommon.plugins.module_utils.network.common
+    and should now be found at its proper location
+    ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template
+  - ResourceModule is no longer importable from
+    ansible_collections.ansible.netcommon.plugins.module_utils.network.common
+    and should now be found at its proper location
+    ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module
+  - VALID_MASKS, is_masklen, is_netmask, to_bits, to_ipv6_network, to_masklen,
+    to_netmask, and to_subnet are no longer importable from
+    ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils
+    and should now be found at their proper location
+    ansible.module_utils.common.network
+removed_features:
+  - cli_parse - This plugin was moved to ansible.utils in version 1.0.0, and the redirect to that collection has now been removed.
