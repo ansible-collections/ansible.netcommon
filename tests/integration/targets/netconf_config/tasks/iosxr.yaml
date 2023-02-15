@@ -13,5 +13,7 @@
 - name: Run test case (connection=ansible.netcommon.netconf)
   ansible.builtin.include_tasks: "{{ test_case_to_run }}"
   with_items: "{{ test_items }}"
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   loop_control:
     loop_var: test_case_to_run
