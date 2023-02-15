@@ -146,7 +146,7 @@ except ImportError:
     HAS_GRPC = False
 
 try:
-    from google import protobuf  # noqa: F401
+    from google import protobuf  # noqa: F401  # pylint: disable=unused-import
 
     HAS_PROTOBUF = True
 except ImportError:

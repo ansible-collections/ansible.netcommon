@@ -1,18 +1,7 @@
 ---
 requires_ansible: ">=2.9.10"
 plugin_routing:
-  modules:
-    cli_parse:
-      deprecation:
-        removal_date: "2023-01-01"
-        warning_text: Use 'ansible.utils.cli_parse' module instead.
-      redirect: ansible.utils.cli_parse
   action:
-    cli_parse:
-      deprecation:
-        removal_date: "2023-01-01"
-        warning_text: Use 'ansible.utils.cli_parse' module instead.
-      redirect: ansible.utils.cli_parse
     grpc_config:
       redirect: ansible.netcommon.grpc
     grpc_get:
