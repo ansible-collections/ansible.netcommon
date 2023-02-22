@@ -238,6 +238,7 @@ class ActionModule(ActionNetworkModule):
 
             for module_path in module_paths:
                 module_name = os.path.basename(module_path).split(".")[0]
+                docs = None
                 try:
                     display.vvvv(
                         "reading 'DOCUMENTATION' from path %s" % (module_path)
