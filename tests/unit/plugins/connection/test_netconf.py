@@ -8,7 +8,6 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import sys
 from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
@@ -28,19 +27,11 @@ def import_mock(name, *args):
     return builtin_import(name, *args)
 
 
-PY3 = sys.version_info[0] == 3
-if PY3:
-    with patch("builtins.__import__", side_effect=import_mock):
-        from ansible.plugins.loader import connection_loader
-        from ansible_collections.ansible.netcommon.plugins.connection import (
-            netconf,
-        )
-else:
-    with patch("__builtin__.__import__", side_effect=import_mock):
-        from ansible.plugins.loader import connection_loader
-        from ansible_collections.ansible.netcommon.plugins.connection import (
-            netconf,
-        )
+with patch("builtins.__import__", side_effect=import_mock):
+    from ansible.plugins.loader import connection_loader
+    from ansible_collections.ansible.netcommon.plugins.connection import (
+        netconf,
+    )
 
 
 def test_netconf_init():
