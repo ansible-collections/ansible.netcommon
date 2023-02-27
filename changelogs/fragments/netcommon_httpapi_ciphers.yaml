@@ -1,3 +1,0 @@
----
-minor_changes:
-  - httpapi - Add option netcommon_httpapi_ciphers to allow overriding default SSL/TLS ciphers. (https://github.com/ansible-collections/ansible.netcommon/pull/494)
