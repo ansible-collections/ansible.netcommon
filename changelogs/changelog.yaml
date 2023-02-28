@@ -8,77 +8,14 @@ releases:
       - description: Push text based configuration to network devices over network_cli
         name: cli_config
         namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage multiline banners
-          on network devices
-        name: net_banner
-        namespace: ""
       - description: Copy a file from a network device to Ansible Controller
         name: net_get
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage Interface on network
-          devices
-        name: net_interface
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage Layer-2 interface
-          on network devices
-        name: net_l2_interface
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage L3 interfaces on
-          network devices
-        name: net_l3_interface
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage link aggregation
-          groups on network devices
-        name: net_linkagg
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage LLDP service configuration
-          on network devices
-        name: net_lldp
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage LLDP interfaces configuration
-          on network devices
-        name: net_lldp_interface
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage logging on network
-          devices
-        name: net_logging
         namespace: ""
       - description: Tests reachability using ping from a network device
         name: net_ping
         namespace: ""
       - description: Copy a file from Ansible Controller to a network device
         name: net_put
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage static IP routes
-          on network appliances (routers, switches et. al.)
-        name: net_static_route
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage the system attributes
-          on network devices
-        name: net_system
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage the aggregate of
-          local users on network device
-        name: net_user
-        namespace: ""
-      - description:
-          (deprecated, removed after 2022-06-01) Manage VLANs on network
-          devices
-        name: net_vlan
-        namespace: ""
-      - description: (deprecated, removed after 2022-06-01) Manage VRFs on network devices
-        name: net_vrf
         namespace: ""
       - description: netconf device configuration
         name: netconf_config
@@ -108,9 +45,6 @@ releases:
       connection:
         - description: Use httpapi to run command on network appliances
           name: httpapi
-          namespace: null
-        - description: Provides persistent connection using NAPALM
-          name: napalm
           namespace: null
         - description: Provides a persistent connection using the netconf protocol
           name: netconf
@@ -660,3 +594,28 @@ releases:
       - add_content_template_parser.yaml
       - fix_wrong_xml_direction.yaml
     release_date: "2022-11-02"
+  5.0.0:
+    changes:
+      breaking_changes:
+        - NetworkConnectionBase now inherits from PersistentConnectionBase in ansible.utils.
+          As a result, the minimum ansible.utils version has increased to 2.7.0.
+        - NetworkTemplate is no longer importable from ansible_collections.ansible.netcommon.plugins.module_utils.network.common
+          and should now be found at its proper location ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.network_template
+        - ResourceModule is no longer importable from ansible_collections.ansible.netcommon.plugins.module_utils.network.common
+          and should now be found at its proper location ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module
+        - VALID_MASKS, is_masklen, is_netmask, to_bits, to_ipv6_network, to_masklen,
+          to_netmask, and to_subnet are no longer importable from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils
+          and should now be found at their proper location ansible.module_utils.common.network
+      minor_changes:
+        - httpapi - Add option netcommon_httpapi_ciphers to allow overriding default
+          SSL/TLS ciphers. (https://github.com/ansible-collections/ansible.netcommon/pull/494)
+      removed_features:
+        - cli_parse - This plugin was moved to ansible.utils in version 1.0.0, and the
+          redirect to that collection has now been removed.
+    fragments:
+      - 23H1_breaking.yaml
+      - flake8.yaml
+      - netcommon_httpapi_ciphers.yaml
+      - persistentbase.yaml
+      - telnet.yaml
+    release_date: "2023-02-27"
