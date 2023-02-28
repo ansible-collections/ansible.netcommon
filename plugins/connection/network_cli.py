@@ -948,6 +948,7 @@ class Connection(NetworkConnectionBase):
                 self._command_response += self._sanitize(
                     resp, command, strip_prompt
                 )
+                resp = b""
                 command_prompt_matched = True
 
     def receive(

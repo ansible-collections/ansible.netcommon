@@ -1,0 +1,2 @@
+bugfixes:
+  - "network_cli connection plugin - when receiving longer responses from libssh, parts of the response were sometimes added multiple times (https://github.com/ansible-collections/ansible.netcommon/pull/517)."
