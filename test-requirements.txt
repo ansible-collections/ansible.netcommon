@@ -1,11 +1,13 @@
-black==22.6.0
-coverage==4.5.4
 git+https://github.com/ansible-community/pytest-ansible-units.git
-flake8
+coverage
 pytest-xdist
+
+# Needed for tox -e linters
+black==23.1.0 ; python_version > '3.6'
+flake8
 yamllint
 
-# The follow are 3rd party libs for cli_parse
+# The following are 3rd party libs for cli_parse
 ntc_templates
 # 21.4 changed the output of an error message we check in tests
 pyats >= 21.4 ; python_version < '3.11'
