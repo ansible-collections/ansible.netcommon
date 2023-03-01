@@ -1,4 +1,0 @@
----
-bugfixes:
-  - Cast AnsibleUnsafeText to str in convert_doc_to_ansible_module_kwargs() to keep CSafeLoader happy.
-    This fixes issues with content scaffolding tools.
