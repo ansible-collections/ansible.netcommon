@@ -745,7 +745,7 @@ def extract_argspec(doc_obj, argpsec):
 
 # TODO: Support extends_documentation_fragment
 def convert_doc_to_ansible_module_kwargs(doc):
-    doc_obj = yaml.load(doc, SafeLoader)
+    doc_obj = yaml.load(str(doc), SafeLoader)
     argspec = {}
     spec = {}
     extract_argspec(doc_obj, argspec)
