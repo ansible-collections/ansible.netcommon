@@ -42,7 +42,6 @@ EXAMPLES = r"""
 
 from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
-from ansible.module_utils.six import PY3
 from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
     CliParserBase,
 )
@@ -77,8 +76,6 @@ class CliParser(CliParserBase):
         :return dict: A dict with a list of errors
         """
         errors = []
-        if not PY3:
-            errors.append("Pyats and Genie require Python 3")
         if not HAS_GENIE:
             errors.append(missing_required_lib("genie"))
         if not HAS_PYATS:
