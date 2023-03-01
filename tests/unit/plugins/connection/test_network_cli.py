@@ -158,9 +158,10 @@ def test_network_cli_exec_command(conn, command):
 @pytest.mark.parametrize(
     "response",
     [
-        b"device#command\ncommand response\n\ndevice#",
+        [b"device#command\ncommand response\n\ndevice#"],
+        [b"device#command\ncommand ", b"response\n\ndevice#"],
         pytest.param(
-            b"ERROR: error message device#",
+            [b"ERROR: error message device#"],
             marks=pytest.mark.xfail(raises=AnsibleConnectionFailure),
         ),
     ],
@@ -181,9 +182,9 @@ def test_network_cli_send(conn, response, ssh_type):
     conn._connected = True
 
     if conn.ssh_type == "paramiko":
-        mock__shell.recv.side_effect = [response, None]
+        mock__shell.recv.side_effect = [*response, None]
     elif conn.ssh_type == "libssh":
-        mock__shell.read_bulk_response.side_effect = [response, None]
+        mock__shell.read_bulk_response.side_effect = [*response, None]
     conn.send(b"command")
 
     mock__shell.sendall.assert_called_with(b"command\r")

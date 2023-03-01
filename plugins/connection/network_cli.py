@@ -945,7 +945,7 @@ class Connection(NetworkConnectionBase):
                 if errored_response:
                     raise AnsibleConnectionFailure(errored_response)
                 self._last_response = data
-                self._command_response += self._sanitize(
+                self._command_response = self._sanitize(
                     resp, command, strip_prompt
                 )
                 command_prompt_matched = True
