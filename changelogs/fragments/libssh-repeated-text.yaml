@@ -1,0 +1,5 @@
+---
+bugfixes:
+  - network_cli - when receiving longer responses with libssh, parts of the
+    response were sometimes repeated. The response is now returned as it is
+    received (https://github.com/ansible-collections/community.routeros/issues/132).
