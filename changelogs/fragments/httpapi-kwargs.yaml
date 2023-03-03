@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - httpapi - ``send()`` method no longer applied leftover kwargs to ``open_url()``. Fix applies those
+    arguments as intended (https://github.com/ansible-collections/ansible.netcommon/pull/524).
