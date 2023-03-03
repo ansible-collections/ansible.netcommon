@@ -283,6 +283,8 @@ class Connection(NetworkConnectionBase):
             use_proxy=self.get_option("use_proxy"),
             headers={},
         )
+        url_kwargs.update(kwargs)
+
         ciphers = self.get_option("ciphers")
         if ciphers:
             if Version(ANSIBLE_CORE_VERSION) >= Version("2.14.0"):
