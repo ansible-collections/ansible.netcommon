@@ -77,21 +77,31 @@ class ActionModule(ActionBase):
                     if send_newline:
                         tn.write(b"\n")
 
-                    tn.read_until(to_bytes(login_prompt))
+                    index, match, out = tn.expect(
+                        [to_bytes(login_prompt)], timeout=timeout
+                    )
+                    if not match:
+                        raise TimeoutError(login_prompt)
+
                     tn.write(to_bytes(user + "\n"))
 
                     if password:
-                        tn.read_until(to_bytes(password_prompt))
-                        tn.write(to_bytes(password + "\n"))
+                        index, match, out = tn.expect(
+                            [to_bytes(password_prompt)], timeout=timeout
+                        )
+                        if not match:
+                            raise TimeoutError(password_prompt)
 
-                    tn.expect(list(map(to_bytes, prompts)))
+                        tn.write(to_bytes(password + "\n"))
 
                     for cmd in commands:
                         display.vvvvv(">>> %s" % cmd)
-                        tn.write(to_bytes(cmd + "\n"))
                         index, match, out = tn.expect(
                             list(map(to_bytes, prompts)), timeout=timeout
                         )
+                        if not match:
+                            raise TimeoutError(prompts)
+                        tn.write(to_bytes(cmd + "\n"))
                         display.vvvvv("<<< %s" % cmd)
                         output.append(out)
                         sleep(pause)
@@ -101,6 +111,12 @@ class ActionModule(ActionBase):
                 except EOFError as e:
                     result["failed"] = True
                     result["msg"] = "Telnet action failed: %s" % to_text(e)
+                except TimeoutError as e:
+                    result["failed"] = True
+                    result["msg"] = (
+                        "Telnet timed out trying to find prompt(s): '%s'"
+                        % to_text(e)
+                    )
                 finally:
                     if tn:
                         tn.close()
