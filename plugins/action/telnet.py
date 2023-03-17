@@ -70,43 +70,29 @@ class ActionModule(ActionBase):
                 commands = commands.split(",")
 
             if isinstance(commands, list) and commands:
-                tn = telnetlib.Telnet(host, port, timeout)
+                self.tn = telnetlib.Telnet(host, port, timeout)
 
-                output = []
+                self.output = bytes()
                 try:
                     if send_newline:
-                        tn.write(b"\n")
+                        self.tn.write(b"\n")
 
-                    index, match, out = tn.expect(
-                        [to_bytes(login_prompt)], timeout=timeout
-                    )
-                    if not match:
-                        raise TimeoutError(login_prompt)
-
-                    tn.write(to_bytes(user + "\n"))
+                    self.await_prompts([login_prompt], timeout)
+                    self.tn.write(to_bytes(user + "\n"))
 
                     if password:
-                        index, match, out = tn.expect(
-                            [to_bytes(password_prompt)], timeout=timeout
-                        )
-                        if not match:
-                            raise TimeoutError(password_prompt)
-
-                        tn.write(to_bytes(password + "\n"))
+                        self.await_prompts([password_prompt], timeout)
+                        self.tn.write(to_bytes(password + "\n"))
 
                     for cmd in commands:
                         display.vvvvv(">>> %s" % cmd)
-                        index, match, out = tn.expect(
-                            list(map(to_bytes, prompts)), timeout=timeout
-                        )
-                        if not match:
-                            raise TimeoutError(prompts)
-                        tn.write(to_bytes(cmd + "\n"))
+                        self.await_prompts(prompts, timeout)
+                        self.tn.write(to_bytes(cmd + "\n"))
                         display.vvvvv("<<< %s" % cmd)
-                        output.append(out)
                         sleep(pause)
 
-                    tn.write(b"exit\n")
+                    self.await_prompts(prompts, timeout)
+                    self.tn.write(b"exit\n")
 
                 except EOFError as e:
                     result["failed"] = True
@@ -118,11 +104,22 @@ class ActionModule(ActionBase):
                         % to_text(e)
                     )
                 finally:
-                    if tn:
-                        tn.close()
-                    result["output"] = output
+                    if self.tn:
+                        self.tn.close()
+                    result["output"] = to_text(self.output)
+                    result["output_lines"] = result["output"].splitlines(True)
             else:
                 result["failed"] = True
                 result["msg"] = "Telnet requires a command to execute"
 
         return result
+
+    def await_prompts(self, prompts, timeout):
+        index, match, out = self.tn.expect(
+            list(map(to_bytes, prompts)), timeout=timeout
+        )
+        self.output += out
+        if not match:
+            raise TimeoutError(prompts)
+
+        return index
