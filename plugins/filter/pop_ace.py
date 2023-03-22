@@ -20,12 +20,12 @@ version_added: "4.4.0"
 short_description: Remove ace entries from a acl source of truth.
 description:
     - This plugin removes specific keys from a provided acl data.
-    - Using the parameters below - C(acls_data | cisco.ios.pop_ace(filter_options=filter_options, match_criteria=match_criteria))
+    - Using the parameters below - C(acls_data | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria))
 options:
   data:
     description:
     - This option represents a list of dictionaries of acls facts.
-    - For example C(acls_data | cisco.ios.pop_ace(filter_options=filter_options, match_criteria=match_criteria)),
+    - For example C(acls_data | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria)),
       in this case C(acls_data) represents this option.
     type: raw
     required: True
@@ -214,7 +214,7 @@ vars:
 tasks:
   - name: Remove ace entries from a provided data
     ansible.builtin.debug:
-      msg: "{{ acls_data | cisco.ios.pop_ace(filter_options=filter_options, match_criteria=match_criteria) }}"
+      msg: "{{ acls_data | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria) }}"
 
 ##Output
 # PLAY [Filter plugin example pop_ace] ******************************************************************************************************************
@@ -369,7 +369,7 @@ tasks:
 
   - name: Invoke pop_ace filter plugin
     ansible.builtin.set_fact:
-      clean_acls: "{{ acls_facts | cisco.ios.pop_ace(filter_options=filter_options, match_criteria=match_criteria) }}"
+      clean_acls: "{{ acls_facts | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria) }}"
 
   - name: Override ACLs config with device existing ACLs config
     cisco.ios.ios_acls:
