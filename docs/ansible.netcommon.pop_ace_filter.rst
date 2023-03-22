@@ -18,7 +18,7 @@ Version added: 4.4.0
 Synopsis
 --------
 - This plugin removes specific keys from a provided acl data.
-- Using the parameters below - ``acls_data | cisco.ios.pop_ace(filter_options=filter_options, match_criteria=match_criteria``)
+- Using the parameters below - ``acls_data | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria``)
 
 
 
@@ -51,7 +51,7 @@ Parameters
                     </td>
                 <td>
                         <div>This option represents a list of dictionaries of acls facts.</div>
-                        <div>For example <code>acls_data | cisco.ios.pop_ace(filter_options=filter_options, match_criteria=match_criteria</code>), in this case <code>acls_data</code> represents this option.</div>
+                        <div>For example <code>acls_data | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria</code>), in this case <code>acls_data</code> represents this option.</div>
                 </td>
             </tr>
             <tr>
@@ -430,7 +430,7 @@ Examples
     tasks:
       - name: Remove ace entries from a provided data
         ansible.builtin.debug:
-          msg: "{{ acls_data | cisco.ios.pop_ace(filter_options=filter_options, match_criteria=match_criteria) }}"
+          msg: "{{ acls_data | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria) }}"
 
     ##Output
     # PLAY [Filter plugin example pop_ace] ******************************************************************************************************************
@@ -585,7 +585,7 @@ Examples
 
       - name: Invoke pop_ace filter plugin
         ansible.builtin.set_fact:
-          clean_acls: "{{ acls_facts | cisco.ios.pop_ace(filter_options=filter_options, match_criteria=match_criteria) }}"
+          clean_acls: "{{ acls_facts | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria) }}"
 
       - name: Override ACLs config with device existing ACLs config
         cisco.ios.ios_acls:

@@ -5,14 +5,15 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 import unittest
 
 from ansible.errors import AnsibleFilterError
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import (
+    pop_ace,
+)
 
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import pop_ace
 
 class TestPopAce(unittest.TestCase):
     def setUp(self):
@@ -38,7 +39,9 @@ class TestPopAce(unittest.TestCase):
                                 "dscp": "ef",
                                 "grant": "deny",
                                 "protocol": "icmp",
-                                "protocol_options": {"icmp": {"traceroute": True}},
+                                "protocol_options": {
+                                    "icmp": {"traceroute": True}
+                                },
                                 "sequence": 10,
                                 "source": {
                                     "address": "192.0.2.0",
@@ -159,7 +162,10 @@ class TestPopAce(unittest.TestCase):
                                 "protocol": "tcp",
                                 "protocol_options": {"tcp": {"ack": True}},
                                 "sequence": 10,
-                                "source": {"any": True, "port_protocol": {"eq": "www"}},
+                                "source": {
+                                    "any": True,
+                                    "port_protocol": {"eq": "www"},
+                                },
                             },
                         ],
                         "name": "R1_TRAFFIC",
@@ -254,13 +260,19 @@ class TestPopAce(unittest.TestCase):
                             "name": "R1_TRAFFIC",
                             "aces": [
                                 {
-                                    "destination": {"any": True, "port_protocol": {"eq": "telnet"}},
+                                    "destination": {
+                                        "any": True,
+                                        "port_protocol": {"eq": "telnet"},
+                                    },
                                     "dscp": "af11",
                                     "grant": "deny",
                                     "protocol": "tcp",
                                     "protocol_options": {"tcp": {"ack": True}},
                                     "sequence": 10,
-                                    "source": {"any": True, "port_protocol": {"eq": "www"}},
+                                    "source": {
+                                        "any": True,
+                                        "port_protocol": {"eq": "www"},
+                                    },
                                 },
                             ],
                         },
@@ -284,7 +296,9 @@ class TestPopAce(unittest.TestCase):
                                     "dscp": "ef",
                                     "grant": "deny",
                                     "protocol": "icmp",
-                                    "protocol_options": {"icmp": {"traceroute": True}},
+                                    "protocol_options": {
+                                        "icmp": {"traceroute": True}
+                                    },
                                     "sequence": 10,
                                     "source": {
                                         "address": "192.0.2.0",
@@ -405,7 +419,10 @@ class TestPopAce(unittest.TestCase):
                                 "grant": "permit",
                                 "protocol": "tcp",
                                 "sequence": 70,
-                                "source": {"address": "10.1.1.0", "wildcard_bits": "0.0.0.255"},
+                                "source": {
+                                    "address": "10.1.1.0",
+                                    "wildcard_bits": "0.0.0.255",
+                                },
                                 "time_range": "EVERYOTHERDAY",
                             },
                         ],
@@ -414,9 +431,21 @@ class TestPopAce(unittest.TestCase):
                     },
                     {
                         "aces": [
-                            {"grant": "permit", "sequence": 30, "source": {"host": "172.16.1.11"}},
-                            {"grant": "permit", "sequence": 20, "source": {"host": "172.16.1.10"}},
-                            {"grant": "permit", "sequence": 10, "source": {"host": "172.16.1.2"}},
+                            {
+                                "grant": "permit",
+                                "sequence": 30,
+                                "source": {"host": "172.16.1.11"},
+                            },
+                            {
+                                "grant": "permit",
+                                "sequence": 20,
+                                "source": {"host": "172.16.1.10"},
+                            },
+                            {
+                                "grant": "permit",
+                                "sequence": 10,
+                                "source": {"host": "172.16.1.2"},
+                            },
                         ],
                         "acl_type": "standard",
                         "name": "2",
@@ -431,7 +460,10 @@ class TestPopAce(unittest.TestCase):
                                 "grant": "permit",
                                 "protocol": "icmp",
                                 "sequence": 10,
-                                "source": {"address": "10.1.1.0", "wildcard_bits": "0.0.0.255"},
+                                "source": {
+                                    "address": "10.1.1.0",
+                                    "wildcard_bits": "0.0.0.255",
+                                },
                             },
                         ],
                         "acl_type": "extended",
@@ -447,7 +479,10 @@ class TestPopAce(unittest.TestCase):
                                 "source": {"host": "10.2.2.2"},
                             },
                             {
-                                "destination": {"host": "10.5.5.5", "port_protocol": {"eq": "www"}},
+                                "destination": {
+                                    "host": "10.5.5.5",
+                                    "port_protocol": {"eq": "www"},
+                                },
                                 "grant": "permit",
                                 "protocol": "tcp",
                                 "sequence": 20,
@@ -491,13 +526,19 @@ class TestPopAce(unittest.TestCase):
                                     "grant": "permit",
                                     "protocol": "tcp",
                                     "sequence": 15,
-                                    "source": {"any": True, "host": "172.16.2.9"},
+                                    "source": {
+                                        "any": True,
+                                        "host": "172.16.2.9",
+                                    },
                                 },
                                 {
                                     "grant": "permit",
                                     "protocol": "tcp",
                                     "sequence": 18,
-                                    "source": {"any": True, "host": "172.16.2.11"},
+                                    "source": {
+                                        "any": True,
+                                        "host": "172.16.2.11",
+                                    },
                                 },
                                 {
                                     "destination": {"any": True},
@@ -509,7 +550,9 @@ class TestPopAce(unittest.TestCase):
                                 {
                                     "grant": "deny",
                                     "protocol": "icmp",
-                                    "protocol_options": {"icmp": {"echo": True}},
+                                    "protocol_options": {
+                                        "icmp": {"echo": True}
+                                    },
                                     "sequence": 40,
                                     "source": {
                                         "address": "10.1.1.0",
@@ -546,7 +589,10 @@ class TestPopAce(unittest.TestCase):
                                     "grant": "permit",
                                     "protocol": "tcp",
                                     "sequence": 70,
-                                    "source": {"address": "10.1.1.0", "wildcard_bits": "0.0.0.255"},
+                                    "source": {
+                                        "address": "10.1.1.0",
+                                        "wildcard_bits": "0.0.0.255",
+                                    },
                                     "time_range": "EVERYOTHERDAY",
                                 },
                             ],
@@ -582,7 +628,10 @@ class TestPopAce(unittest.TestCase):
                                     "grant": "permit",
                                     "protocol": "icmp",
                                     "sequence": 10,
-                                    "source": {"address": "10.1.1.0", "wildcard_bits": "0.0.0.255"},
+                                    "source": {
+                                        "address": "10.1.1.0",
+                                        "wildcard_bits": "0.0.0.255",
+                                    },
                                 },
                             ],
                         },
@@ -683,7 +732,9 @@ class TestPopAce(unittest.TestCase):
                                 "dscp": "ef",
                                 "grant": "deny",
                                 "protocol": "icmp",
-                                "protocol_options": {"icmp": {"traceroute": True}},
+                                "protocol_options": {
+                                    "icmp": {"traceroute": True}
+                                },
                                 "sequence": 10,
                                 "source": {
                                     "address": "192.0.2.0",
@@ -804,7 +855,10 @@ class TestPopAce(unittest.TestCase):
                                 "protocol": "tcp",
                                 "protocol_options": {"tcp": {"ack": True}},
                                 "sequence": 10,
-                                "source": {"any": True, "port_protocol": {"eq": "www"}},
+                                "source": {
+                                    "any": True,
+                                    "port_protocol": {"eq": "www"},
+                                },
                             },
                         ],
                         "name": "R1_TRAFFIC",
@@ -915,7 +969,10 @@ class TestPopAce(unittest.TestCase):
                                 "grant": "permit",
                                 "protocol": "tcp",
                                 "sequence": 70,
-                                "source": {"address": "10.1.1.0", "wildcard_bits": "0.0.0.255"},
+                                "source": {
+                                    "address": "10.1.1.0",
+                                    "wildcard_bits": "0.0.0.255",
+                                },
                                 "time_range": "EVERYOTHERDAY",
                             },
                         ],
@@ -938,7 +995,10 @@ class TestPopAce(unittest.TestCase):
                                     "grant": "permit",
                                     "protocol": "tcp",
                                     "sequence": 18,
-                                    "source": {"any": True, "host": "172.16.2.11"},
+                                    "source": {
+                                        "any": True,
+                                        "host": "172.16.2.11",
+                                    },
                                 },
                                 {
                                     "destination": {"any": True},
@@ -957,7 +1017,9 @@ class TestPopAce(unittest.TestCase):
                                 {
                                     "grant": "deny",
                                     "protocol": "icmp",
-                                    "protocol_options": {"icmp": {"echo": True}},
+                                    "protocol_options": {
+                                        "icmp": {"echo": True}
+                                    },
                                     "sequence": 40,
                                     "source": {
                                         "address": "10.1.1.0",
@@ -994,7 +1056,10 @@ class TestPopAce(unittest.TestCase):
                                     "grant": "permit",
                                     "protocol": "tcp",
                                     "sequence": 70,
-                                    "source": {"address": "10.1.1.0", "wildcard_bits": "0.0.0.255"},
+                                    "source": {
+                                        "address": "10.1.1.0",
+                                        "wildcard_bits": "0.0.0.255",
+                                    },
                                     "time_range": "EVERYOTHERDAY",
                                 },
                             ],
@@ -1016,7 +1081,10 @@ class TestPopAce(unittest.TestCase):
                                     "grant": "permit",
                                     "protocol": "tcp",
                                     "sequence": 15,
-                                    "source": {"any": True, "host": "172.16.2.9"},
+                                    "source": {
+                                        "any": True,
+                                        "host": "172.16.2.9",
+                                    },
                                 },
                             ],
                         },
@@ -1107,7 +1175,10 @@ class TestPopAce(unittest.TestCase):
                                 "grant": "permit",
                                 "protocol": "tcp",
                                 "sequence": 70,
-                                "source": {"address": "10.1.1.0", "wildcard_bits": "0.0.0.255"},
+                                "source": {
+                                    "address": "10.1.1.0",
+                                    "wildcard_bits": "0.0.0.255",
+                                },
                                 "time_range": "EVERYOTHERDAY",
                             },
                         ],
@@ -1130,7 +1201,10 @@ class TestPopAce(unittest.TestCase):
                                     "grant": "permit",
                                     "protocol": "tcp",
                                     "sequence": 18,
-                                    "source": {"any": True, "host": "172.16.2.11"},
+                                    "source": {
+                                        "any": True,
+                                        "host": "172.16.2.11",
+                                    },
                                 },
                                 {
                                     "destination": {"any": True},
@@ -1149,7 +1223,9 @@ class TestPopAce(unittest.TestCase):
                                 {
                                     "grant": "deny",
                                     "protocol": "icmp",
-                                    "protocol_options": {"icmp": {"echo": True}},
+                                    "protocol_options": {
+                                        "icmp": {"echo": True}
+                                    },
                                     "sequence": 40,
                                     "source": {
                                         "address": "10.1.1.0",
@@ -1186,7 +1262,10 @@ class TestPopAce(unittest.TestCase):
                                     "grant": "permit",
                                     "protocol": "tcp",
                                     "sequence": 70,
-                                    "source": {"address": "10.1.1.0", "wildcard_bits": "0.0.0.255"},
+                                    "source": {
+                                        "address": "10.1.1.0",
+                                        "wildcard_bits": "0.0.0.255",
+                                    },
                                     "time_range": "EVERYOTHERDAY",
                                 },
                             ],
@@ -1208,7 +1287,10 @@ class TestPopAce(unittest.TestCase):
                                     "grant": "permit",
                                     "protocol": "tcp",
                                     "sequence": 15,
-                                    "source": {"any": True, "host": "172.16.2.9"},
+                                    "source": {
+                                        "any": True,
+                                        "host": "172.16.2.9",
+                                    },
                                 },
                             ],
                         },
