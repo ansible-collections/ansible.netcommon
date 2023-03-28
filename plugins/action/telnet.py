@@ -84,14 +84,15 @@ class ActionModule(ActionBase):
                         self.await_prompts([password_prompt], timeout)
                         self.tn.write(to_bytes(password + "\n"))
 
+                    self.await_prompts(prompts, timeout)
+
                     for cmd in commands:
                         display.vvvvv(">>> %s" % cmd)
-                        self.await_prompts(prompts, timeout)
                         self.tn.write(to_bytes(cmd + "\n"))
+                        self.await_prompts(prompts, timeout)
                         display.vvvvv("<<< %s" % cmd)
                         sleep(pause)
 
-                    self.await_prompts(prompts, timeout)
                     self.tn.write(b"exit\n")
 
                 except EOFError as e:
@@ -106,8 +107,8 @@ class ActionModule(ActionBase):
                 finally:
                     if self.tn:
                         self.tn.close()
-                    result["output"] = to_text(self.output)
-                    result["output_lines"] = result["output"].splitlines(True)
+                    result["stdout"] = to_text(self.output)
+                    result["stdout_lines"] = self.output.splitlines(True)
             else:
                 result["failed"] = True
                 result["msg"] = "Telnet requires a command to execute"
