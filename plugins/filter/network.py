@@ -65,6 +65,7 @@ def re_search(regex, value):
                 obj[name] = items[index - 1]
     return obj
 
+
 def re_finditer(regex, value):
     iter_obj = re.finditer(regex, value)
     values = None
@@ -84,6 +85,7 @@ def re_finditer(regex, value):
                 values["match_all"][group] = list()
             values["match_all"][group].append(groups[group])
     return values
+
 
 def parse_cli(output, tmpl):
     if not isinstance(output, string_types):
