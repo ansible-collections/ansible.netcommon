@@ -1,15 +1,18 @@
 ---
-- include: junos.yaml
+- name: Run junos gRPC tests
+  ansible.builtin.include_tasks: junos.yaml
   when: ansible_network_os == 'junipernetworks.junos.junos'
   tags:
     - grpc
 
-- include: iosxr.yaml
+- name: Run iosxr gRPC tests
+  ansible.builtin.include_tasks: iosxr.yaml
   when: ansible_network_os == 'cisco.iosxr.iosxr'
   tags:
     - grpc
 
-- include: nxos.yaml
+- name: Run nxos gRPC tests
+  ansible.builtin.include_tasks: nxos.yaml
   when: ansible_network_os == 'cisco.nxos.nxos'
   tags:
     - grpc

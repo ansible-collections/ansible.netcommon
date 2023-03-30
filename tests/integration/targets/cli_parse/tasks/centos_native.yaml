@@ -1,12 +1,12 @@
 ---
-- name: "{{ parser }} Run command and parse with native"
+- name: "Run command and parse with {{ parser }}"
   ansible.utils.cli_parse:
     command: "ps -ef"
     parser:
       name: ansible.netcommon.native
     set_fact: myfact
 
-- name: "{{ parser }} Run command which output nothing and parse with native"
+- name: "Run command which output nothing and parse with {{ parser }}"
   ansible.utils.cli_parse:
     command: "touch test_output"
     parser:
@@ -14,7 +14,8 @@
     set_fact: myfact
   register: result
 
-- assert:
+- name: "Check output"
+  ansible.builtin.assert:
     that:
       - result.ansible_facts.myfact == {}
       - result.changed == false
