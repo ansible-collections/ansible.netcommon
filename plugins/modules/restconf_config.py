@@ -193,7 +193,6 @@ def main():
                 result["candidate"] = candidate
                 result["running"] = running
             else:
-                method = "POST"
                 diff = candidate
 
             if diff:
