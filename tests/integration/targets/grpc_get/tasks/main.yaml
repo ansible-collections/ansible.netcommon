@@ -1,5 +1,6 @@
 ---
-- include: iosxr.yaml
+- name: Run iosxr gRPC tests
+  ansible.builtin.include_tasks: iosxr.yaml
   when: ansible_network_os == 'cisco.iosxr.iosxr'
   tags:
     - grpc

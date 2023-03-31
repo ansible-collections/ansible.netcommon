@@ -9,5 +9,7 @@
   register: result
   ignore_errors: true
 
-- debug: msg='Netconf feature is not supported on this platform!'
+- name: Show failure
+  ansible.builtin.debug:
+    msg: "Netconf feature is not supported on this platform!"
   when: result.failed
