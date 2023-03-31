@@ -290,6 +290,12 @@ Parameters
     <br/>
 
 
+Notes
+-----
+
+.. note::
+   - The filter plugin has been tested with facts collected for acls resource module on Cisco IOSXE, IOSXR and NXOS.
+
 
 
 Examples

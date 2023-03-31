@@ -20,6 +20,9 @@ short_description: Remove ace entries from a acl source of truth.
 description:
     - This plugin removes specific keys from a provided acl data.
     - Using the parameters below - C(acls_data | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria))
+notes:
+  - The filter plugin has been tested with facts collected for acls resource module on
+    Cisco IOSXE, IOSXR and NXOS.
 options:
   data:
     description:

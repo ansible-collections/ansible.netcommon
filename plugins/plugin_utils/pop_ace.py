@@ -104,14 +104,14 @@ def _pop_ace(raw_acl, filter_options, match_criteria):
             )  # filter by acl_name ignores whole acl entries i.e all aces
 
             for ace in aces:  # iterate on ace entries
-                jude = check_match(
+                judge = check_match(
                     ace=ace,
                     match_criteria=match_criteria,
                     match_all=match_all,
                     name=name,
                     afi=afi,
                 )
-                if jude:  # check matching criteria and remove from final dict
+                if judge:  # check matching criteria and remove from final dict
                     if (
                         remove_first_ace_only and _rstop
                     ):  # removes one ace entry per acl
