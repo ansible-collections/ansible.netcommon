@@ -70,43 +70,57 @@ class ActionModule(ActionBase):
                 commands = commands.split(",")
 
             if isinstance(commands, list) and commands:
-                tn = telnetlib.Telnet(host, port, timeout)
+                self.tn = telnetlib.Telnet(host, port, timeout)
 
-                output = []
+                self.output = bytes()
                 try:
                     if send_newline:
-                        tn.write(b"\n")
+                        self.tn.write(b"\n")
 
-                    tn.read_until(to_bytes(login_prompt))
-                    tn.write(to_bytes(user + "\n"))
+                    self.await_prompts([login_prompt], timeout)
+                    self.tn.write(to_bytes(user + "\n"))
 
                     if password:
-                        tn.read_until(to_bytes(password_prompt))
-                        tn.write(to_bytes(password + "\n"))
+                        self.await_prompts([password_prompt], timeout)
+                        self.tn.write(to_bytes(password + "\n"))
 
-                    tn.expect(list(map(to_bytes, prompts)))
+                    self.await_prompts(prompts, timeout)
 
                     for cmd in commands:
                         display.vvvvv(">>> %s" % cmd)
-                        tn.write(to_bytes(cmd + "\n"))
-                        index, match, out = tn.expect(
-                            list(map(to_bytes, prompts)), timeout=timeout
-                        )
+                        self.tn.write(to_bytes(cmd + "\n"))
+                        self.await_prompts(prompts, timeout)
                         display.vvvvv("<<< %s" % cmd)
-                        output.append(out)
                         sleep(pause)
 
-                    tn.write(b"exit\n")
+                    self.tn.write(b"exit\n")
 
                 except EOFError as e:
                     result["failed"] = True
                     result["msg"] = "Telnet action failed: %s" % to_text(e)
+                except TimeoutError as e:
+                    result["failed"] = True
+                    result["msg"] = (
+                        "Telnet timed out trying to find prompt(s): '%s'"
+                        % to_text(e)
+                    )
                 finally:
-                    if tn:
-                        tn.close()
-                    result["output"] = output
+                    if self.tn:
+                        self.tn.close()
+                    result["stdout"] = to_text(self.output)
+                    result["stdout_lines"] = self.output.splitlines(True)
             else:
                 result["failed"] = True
                 result["msg"] = "Telnet requires a command to execute"
 
         return result
+
+    def await_prompts(self, prompts, timeout):
+        index, match, out = self.tn.expect(
+            list(map(to_bytes, prompts)), timeout=timeout
+        )
+        self.output += out
+        if not match:
+            raise TimeoutError(prompts)
+
+        return index

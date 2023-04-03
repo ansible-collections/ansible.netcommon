@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - telnet - apply ``timeout`` to command prompts.
+  - telnet - add support for regexes to ``login_prompt`` and ``password_prompt``.
+  - telnet - add ``stdout`` and ``stdout_lines`` to module output.
