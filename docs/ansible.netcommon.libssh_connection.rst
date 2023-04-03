@@ -44,6 +44,7 @@ Parameters
                     <div style="font-size: small">
                         <span style="color: purple">path</span>
                     </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 5.1.0</div>
                 </td>
                 <td>
                 </td>
@@ -55,7 +56,7 @@ Parameters
                                 <div>var: ansible_libssh_config_file</div>
                     </td>
                 <td>
-                        <div>Settings for libssh</div>
+                        <div>Alternate SSH config file location</div>
                 </td>
             </tr>
             <tr>
