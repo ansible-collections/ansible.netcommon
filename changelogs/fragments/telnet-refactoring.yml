@@ -1,6 +1,5 @@
 ---
 minor_changes:
-  - Introduce timeouts for blocking commands and output corresponding errors.
-  - Allow regex prompts for login_prompt and password_prompt.
-  - Provides stdout and stdout_lines similar to other modules.
-  - Refactored prompt handling.
+  - telnet - apply ``timeout`` to command prompts.
+  - telnet - add support for regexes to ``login_prompt`` and ``password_prompt``.
+  - telnet - add ``stdout`` and ``stdout_lines`` to module output.
