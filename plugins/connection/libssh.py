@@ -166,7 +166,8 @@ DOCUMENTATION = """
           cli:
             - name: ssh_extra_args
       config_file:
-        description: 'Settings for libssh'
+        version_added: 5.1.0
+        description: Alternate SSH config file location
         type: path
         env:
           - name: ANSIBLE_LIBSSH_CONFIG_FILE

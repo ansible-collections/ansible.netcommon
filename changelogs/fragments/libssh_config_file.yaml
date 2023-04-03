@@ -1,2 +1,2 @@
 minor_changes:
-  - libssh - Hand over configuration files for libssh to solve connection problems
+  - libssh - add ``config_file`` option to specify an alternate SSH config file to use.
