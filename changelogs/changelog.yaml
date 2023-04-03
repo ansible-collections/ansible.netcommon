@@ -607,8 +607,8 @@ releases:
           to_netmask, and to_subnet are no longer importable from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils
           and should now be found at their proper location ansible.module_utils.common.network
       bugfixes:
-        - Cast AnsibleUnsafeText to str in convert_doc_to_ansible_module_kwargs() to keep CSafeLoader happy.
-          This fixes issues with content scaffolding tools.
+        - Cast AnsibleUnsafeText to str in convert_doc_to_ansible_module_kwargs() to
+          keep CSafeLoader happy. This fixes issues with content scaffolding tools.
       minor_changes:
         - httpapi - Add option netcommon_httpapi_ciphers to allow overriding default
           SSL/TLS ciphers. (https://github.com/ansible-collections/ansible.netcommon/pull/494)
@@ -622,3 +622,34 @@ releases:
       - persistentbase.yaml
       - telnet.yaml
     release_date: "2023-02-27"
+  5.1.0:
+    changes:
+      bugfixes:
+        - httpapi - ``send()`` method no longer applied leftover kwargs to ``open_url()``.
+          Fix applies those arguments as intended (https://github.com/ansible-collections/ansible.netcommon/pull/524).
+        - network_cli - network cli connection avoids traceback when using invalid user
+        - network_cli - when receiving longer responses with libssh, parts of the response
+          were sometimes repeated. The response is now returned as it is received (https://github.com/ansible-collections/community.routeros/issues/132).
+        - network_resource - fix a potential UnboundLocalError if the module fails to
+          import a Resource Module. (https://github.com/ansible-collections/ansible.netcommon/pull/513)
+        - restconf - creation of new resources is no longer erroneously forced to use
+          POST. (https://github.com/ansible-collections/ansible.netcommon/issues/502)
+      minor_changes:
+        - libssh - add ``config_file`` option to specify an alternate SSH config file
+          to use.
+        - parse_cli - add support for multiple matches inside a block by adding new
+          dictionary key to result
+        - telnet - add ``stdout`` and ``stdout_lines`` to module output.
+        - telnet - add support for regexes to ``login_prompt`` and ``password_prompt``.
+        - telnet - apply ``timeout`` to command prompts.
+    fragments:
+      - 530-parse_cli.yaml
+      - httpapi-kwargs.yaml
+      - libssh-repeated-text.yaml
+      - libssh_config_file.yaml
+      - lint.yaml
+      - network_cli_bad_user.yaml
+      - restconf_put.yaml
+      - telnet-refactoring.yml
+      - ule-docs.yaml
+    release_date: "2023-04-03"

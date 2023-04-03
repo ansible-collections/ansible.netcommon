@@ -1,2 +1,0 @@
-minor_changes:
-  - parse_cli - add support for multiple matches inside a block by adding new dictionary key to result

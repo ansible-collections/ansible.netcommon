@@ -5,6 +5,27 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v5.1.0
+======
+
+Minor Changes
+-------------
+
+- libssh - add ``config_file`` option to specify an alternate SSH config file to use.
+- parse_cli - add support for multiple matches inside a block by adding new dictionary key to result
+- telnet - add ``stdout`` and ``stdout_lines`` to module output.
+- telnet - add support for regexes to ``login_prompt`` and ``password_prompt``.
+- telnet - apply ``timeout`` to command prompts.
+
+Bugfixes
+--------
+
+- httpapi - ``send()`` method no longer applied leftover kwargs to ``open_url()``. Fix applies those arguments as intended (https://github.com/ansible-collections/ansible.netcommon/pull/524).
+- network_cli - network cli connection avoids traceback when using invalid user
+- network_cli - when receiving longer responses with libssh, parts of the response were sometimes repeated. The response is now returned as it is received (https://github.com/ansible-collections/community.routeros/issues/132).
+- network_resource - fix a potential UnboundLocalError if the module fails to import a Resource Module. (https://github.com/ansible-collections/ansible.netcommon/pull/513)
+- restconf - creation of new resources is no longer erroneously forced to use POST. (https://github.com/ansible-collections/ansible.netcommon/issues/502)
+
 v5.0.0
 ======
 
@@ -12,11 +33,6 @@ Minor Changes
 -------------
 
 - httpapi - Add option netcommon_httpapi_ciphers to allow overriding default SSL/TLS ciphers. (https://github.com/ansible-collections/ansible.netcommon/pull/494)
-
-Bugfixes
---------
-
-- Cast AnsibleUnsafeText to str in convert_doc_to_ansible_module_kwargs() to keep CSafeLoader happy. This fixes issues with content scaffolding tools.
 
 Breaking Changes / Porting Guide
 --------------------------------
@@ -26,11 +42,15 @@ Breaking Changes / Porting Guide
 - ResourceModule is no longer importable from ansible_collections.ansible.netcommon.plugins.module_utils.network.common and should now be found at its proper location ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module
 - VALID_MASKS, is_masklen, is_netmask, to_bits, to_ipv6_network, to_masklen, to_netmask, and to_subnet are no longer importable from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils and should now be found at their proper location ansible.module_utils.common.network
 
-
 Removed Features (previously deprecated)
 ----------------------------------------
 
 - cli_parse - This plugin was moved to ansible.utils in version 1.0.0, and the redirect to that collection has now been removed.
+
+Bugfixes
+--------
+
+- Cast AnsibleUnsafeText to str in convert_doc_to_ansible_module_kwargs() to keep CSafeLoader happy. This fixes issues with content scaffolding tools.
 
 v4.1.0
 ======
