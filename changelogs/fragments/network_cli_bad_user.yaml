@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - network_cli - network cli connection avoids traceback when using invalid user
