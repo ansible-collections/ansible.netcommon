@@ -66,6 +66,27 @@ def re_search(regex, value):
     return obj
 
 
+def re_finditer(regex, value):
+    iter_obj = re.finditer(regex, value)
+    values = None
+    for each in iter_obj:
+        if not values:
+            values = each.groupdict()
+        else:
+            # for backward compatibility
+            values.update(each.groupdict())
+        # for backward compatibility
+        values["match"] = list(each.groups())
+        groups = each.groupdict()
+        for group in groups:
+            if not values.get("match_all"):
+                values["match_all"] = dict()
+            if not values["match_all"].get(group):
+                values["match_all"][group] = list()
+            values["match_all"][group].append(groups[group])
+    return values
+
+
 def parse_cli(output, tmpl):
     if not isinstance(output, string_types):
         raise AnsibleError(
@@ -131,13 +152,7 @@ def parse_cli(output, tmpl):
                 if isinstance(value, Mapping) and "key" not in value:
                     items = list()
                     for regex in regex_items:
-                        match = regex.search(block)
-                        if match:
-                            item_values = match.groupdict()
-                            item_values["match"] = list(match.groups())
-                            items.append(item_values)
-                        else:
-                            items.append(None)
+                        items.append(re_finditer(regex, block))
 
                     obj = {}
                     for k, v in iteritems(value):
@@ -152,13 +167,7 @@ def parse_cli(output, tmpl):
                 elif isinstance(value, Mapping):
                     items = list()
                     for regex in regex_items:
-                        match = regex.search(block)
-                        if match:
-                            item_values = match.groupdict()
-                            item_values["match"] = list(match.groups())
-                            items.append(item_values)
-                        else:
-                            items.append(None)
+                        items.append(re_finditer(regex, block))
 
                     key = template(value["key"], {"item": items})
                     values = dict(
