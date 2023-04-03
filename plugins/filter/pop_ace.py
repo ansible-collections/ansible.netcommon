@@ -15,7 +15,7 @@ __metaclass__ = type
 DOCUMENTATION = """
 name: pop_ace
 author: Sagar Paul (@KB-perByte)
-version_added: "4.4.0"
+version_added: "5.1.0"
 short_description: Remove ace entries from a acl source of truth.
 description:
     - This plugin removes specific keys from a provided acl data.
