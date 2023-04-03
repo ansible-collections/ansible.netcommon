@@ -165,6 +165,17 @@ DOCUMENTATION = """
               section: ssh_connection
           cli:
             - name: ssh_extra_args
+      config_file:
+        version_added: 5.1.0
+        description: Alternate SSH config file location
+        type: path
+        env:
+          - name: ANSIBLE_LIBSSH_CONFIG_FILE
+        ini:
+          - section: libssh_connection
+            key: config_file
+        vars:
+          - name: ansible_libssh_config_file
 # TODO:
 #timeout=self._play_context.timeout,
 """
@@ -379,6 +390,11 @@ class Connection(ConnectionBase):
 
             if proxy_command:
                 ssh_connect_kwargs["proxycommand"] = proxy_command
+
+            if self.get_option("config_file"):
+                ssh_connect_kwargs["config_file"] = self.get_option(
+                    "config_file"
+                )
 
             if self.get_option("password_prompt") and (
                 Version(PYLIBSSH_VERSION) < "1.0.0"

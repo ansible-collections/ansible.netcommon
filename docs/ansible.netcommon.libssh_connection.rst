@@ -39,6 +39,29 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>config_file</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">path</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 5.1.0</div>
+                </td>
+                <td>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[libssh_connection]<br>config_file = VALUE</p>
+                            </div>
+                                <div>env:ANSIBLE_LIBSSH_CONFIG_FILE</div>
+                                <div>var: ansible_libssh_config_file</div>
+                    </td>
+                <td>
+                        <div>Alternate SSH config file location</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>host_key_auto_add</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
