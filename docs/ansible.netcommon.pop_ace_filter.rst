@@ -8,7 +8,7 @@ ansible.netcommon.pop_ace
 **Remove ace entries from a acl source of truth.**
 
 
-Version added: 4.4.0
+Version added: 5.1.0
 
 .. contents::
    :local:
