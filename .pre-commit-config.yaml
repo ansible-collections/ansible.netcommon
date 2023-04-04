@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/ansible-network/collection_prep
-    rev: 1.1.0
+    rev: 1.1.1
     hooks:
       - id: autoversion
       - id: update-docs
@@ -30,6 +30,6 @@ repos:
         args: ["--filter-files"]
 
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 23.3.0
     hooks:
       - id: black
