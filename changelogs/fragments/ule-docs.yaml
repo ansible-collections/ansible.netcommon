@@ -1,4 +1,0 @@
----
-bugfixes:
-  - network_resource - fix a potential UnboundLocalError if the module fails to import a
-    Resource Module. (https://github.com/ansible-collections/ansible.netcommon/pull/513)

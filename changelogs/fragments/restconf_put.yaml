@@ -1,5 +1,0 @@
----
-bugfixes:
-  - restconf - creation of new resources is no longer erroneously
-    forced to use POST.
-    (https://github.com/ansible-collections/ansible.netcommon/issues/502)

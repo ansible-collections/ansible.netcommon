@@ -1,3 +1,0 @@
----
-trivial:
-  - Add ansible-lint to workflows and fix playbook lint issues

@@ -1,2 +1,0 @@
-minor_changes:
-  - libssh - add ``config_file`` option to specify an alternate SSH config file to use.
