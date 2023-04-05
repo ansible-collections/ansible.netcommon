@@ -1,0 +1,4 @@
+plugins/action/netconf.py action-plugin-docs # base class for deprecated network platform modules using `connection: local`
+plugins/action/network.py action-plugin-docs # base class for network action plugins
+plugins/action/grpc.py action-plugin-docs # base class for grpc action plugins
+plugins/action/telnet.py import-3.11  # telnetlib to be removed in Python 3.13
