@@ -700,10 +700,10 @@ class Connection(NetworkConnectionBase):
             )
             if self.get_option("coax_prompt"):
                 self.queue_message(
-                    "vvvv",
-                    "coaxing prompt by waiting and sending a newline"
+                    "vvvv", "coaxing prompt by waiting and sending a newline"
                 )
                 from time import sleep
+
                 sleep(2)
                 self._ssh_shell.sendall(b"\r")
 
