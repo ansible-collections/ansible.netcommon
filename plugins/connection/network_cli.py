@@ -212,6 +212,15 @@ options:
       matched.
     vars:
     - name: ansible_terminal_initial_answer
+  coax_prompt:
+    type: boolean
+    description:
+    - When connecting to a device that does not provide any terminal response on login,
+      usually a console server, this option will wait 2 seconds then send a newline to
+      coax the device into sending a response
+    default: false
+    vars:
+    - name: ansible_coax_prompt
   terminal_initial_prompt_checkall:
     type: boolean
     description:
@@ -689,6 +698,14 @@ class Connection(NetworkConnectionBase):
             check_all = (
                 self.get_option("terminal_initial_prompt_checkall") or False
             )
+            if self.get_option("coax_prompt"):
+                self.queue_message(
+                    "vvvv",
+                    "coaxing prompt by waiting and sending a newline"
+                )
+                from time import sleep
+                sleep(2)
+                self._ssh_shell.sendall(b"\r")
 
             self.receive(
                 prompts=terminal_initial_prompt,
