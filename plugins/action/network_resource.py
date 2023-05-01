@@ -251,13 +251,13 @@ class ActionModule(ActionNetworkModule):
                     display.vvvv("'%s' is not defined" % (fact_modulelib))
                 except AttributeError:
                     display.vvvv(
-                        "'FACT_RESOURCE_SUBSETS is not defined in '%s'"
+                        "'DOCUMENTATION is not defined in '%s'"
                         % (fact_modulelib)
                     )
 
                 if docs:
                     if self._is_resource_module(docs):
-                        resource_modules.append(module_name)
+                        resource_modules.append(module_name.split("_", 1)[1])
                     else:
                         display.vvvvv(
                             "module in path '%s' is not a resource module"
