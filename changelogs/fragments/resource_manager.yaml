@@ -1,4 +1,0 @@
----
-bugfixes:
-  - "network_resource - do not append network_os to module names when building supported resources list.
-    This fix is only valid for cases where FACTS_RESOURCE_SUBSETS is undefined."

@@ -653,3 +653,12 @@ releases:
       - telnet-refactoring.yml
       - ule-docs.yaml
     release_date: "2023-04-03"
+  5.1.1:
+    changes:
+      bugfixes:
+        - network_resource - do not append network_os to module names when building
+          supported resources list. This fix is only valid for cases where FACTS_RESOURCE_SUBSETS
+          is undefined.
+    fragments:
+      - resource_manager.yaml
+    release_date: "2023-05-09"
