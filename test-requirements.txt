@@ -1,11 +1,12 @@
-git+https://github.com/ansible-community/pytest-ansible-units.git
-coverage
-pytest-xdist
-
-# Needed for tox -e linters
-black==23.1.0 ; python_version > '3.6'
+# For ansible-tox-linters
+black==23.3.0 ; python_version > '3.7'
 flake8
 yamllint
+
+# Unit test runner
+pytest-ansible ; python_version >= '3.9'
+git+https://github.com/ansible-community/pytest-ansible-units.git ; python_version < '3.9'
+pytest-xdist
 
 # The following are 3rd party libs for cli_parse
 ntc_templates
