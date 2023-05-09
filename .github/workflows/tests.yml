@@ -28,6 +28,7 @@ jobs:
   all_green:
     if: ${{ always() }}
     needs:
+      - ansible-lint
       - changelog
       - sanity
       - unit-galaxy
@@ -36,6 +37,7 @@ jobs:
     steps:
       - run: >-
           python -c "assert set([
+          '${{ needs.ansible-lint.result }}',
           '${{ needs.changelog.result }}',
           '${{ needs.sanity.result }}',
           '${{ needs.unit-galaxy.result }}',
