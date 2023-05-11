@@ -26,5 +26,7 @@ sections:
     - Bugfixes
   - - known_issues
     - Known Issues
+  - - doc_changes
+    - Documentation Changes
 title: Ansible Netcommon Collection
 trivial_section_name: trivial
