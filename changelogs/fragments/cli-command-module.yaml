@@ -1,4 +1,4 @@
 ---
-trvial:
+doc_changes:
   - Add a simple regexp match example for multiple prompt with multiple answers.
     This example could be used to for restarting a network device with a delay.
