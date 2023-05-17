@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - httpapi - New method `get_file()` to download large files from the remote API.
