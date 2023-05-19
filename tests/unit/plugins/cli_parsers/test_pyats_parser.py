@@ -77,9 +77,7 @@ class TestPyatsParser(unittest.TestCase):
         self._debug_msgs.append(msg)
 
     def _load_fixture(self, filename):
-        cfg_path = os.path.join(
-            os.path.dirname(__file__), "fixtures", filename
-        )
+        cfg_path = os.path.join(os.path.dirname(__file__), "fixtures", filename)
 
         with open(cfg_path) as f:
             return f.read()
@@ -110,9 +108,7 @@ class TestPyatsParser(unittest.TestCase):
             debug=self._debug,
         )
         result = parser.parse()
-        error = {
-            "errors": ["The pyats parser requires parser/command be provided."]
-        }
+        error = {"errors": ["The pyats parser requires parser/command be provided."]}
         self.assertEqual(result, error)
 
     def test_pyats_parser_ano_shortname(self):

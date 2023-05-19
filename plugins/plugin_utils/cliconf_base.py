@@ -28,11 +28,7 @@ def enable_mode(func):
     @wraps(func)
     def wrapped(self, *args, **kwargs):
         prompt = self._connection.get_prompt()
-        if (
-            not to_text(prompt, errors="surrogate_or_strict")
-            .strip()
-            .endswith("#")
-        ):
+        if not to_text(prompt, errors="surrogate_or_strict").strip().endswith("#"):
             raise AnsibleError("operation requires privilege escalation")
         return func(self, *args, **kwargs)
 
@@ -343,8 +339,7 @@ class CliconfBase(CliconfBaseBase):
         :return: None
         """
         return self._connection.method_not_found(
-            "commit is not supported by network_os %s"
-            % self._play_context.network_os
+            "commit is not supported by network_os %s" % self._play_context.network_os
         )
 
     def discard_changes(self):
@@ -357,8 +352,7 @@ class CliconfBase(CliconfBaseBase):
         :returns: None
         """
         return self._connection.method_not_found(
-            "discard_changes is not supported by network_os %s"
-            % self._play_context.network_os
+            "discard_changes is not supported by network_os %s" % self._play_context.network_os
         )
 
     def rollback(self, rollback_id, commit=True):
@@ -370,9 +364,7 @@ class CliconfBase(CliconfBaseBase):
         """
         pass
 
-    def copy_file(
-        self, source=None, destination=None, proto="scp", timeout=30
-    ):
+    def copy_file(self, source=None, destination=None, proto="scp", timeout=30):
         """Copies file over scp/sftp to remote device
 
         :param source: Source file path
@@ -413,9 +405,7 @@ class CliconfBase(CliconfBaseBase):
                     "Required library scp is not installed.  Please install it using `pip install scp`"
                 )
             try:
-                with SCPClient(
-                    ssh.get_transport(), socket_timeout=timeout
-                ) as scp:
+                with SCPClient(ssh.get_transport(), socket_timeout=timeout) as scp:
                     scp.get(source, destination)
             except EOFError:
                 # This appears to be benign.
@@ -497,9 +487,7 @@ class CliconfBase(CliconfBaseBase):
         comment=None,
     ):
         if not candidate and not replace:
-            raise ValueError(
-                "must provide a candidate or replace to load configuration"
-            )
+            raise ValueError("must provide a candidate or replace to load configuration")
 
         if commit not in (True, False):
             raise ValueError("'commit' must be a bool, got %s" % commit)
@@ -520,9 +508,7 @@ class CliconfBase(CliconfBaseBase):
         """
         pass
 
-    def _update_cli_prompt_context(
-        self, config_context=None, exit_command="exit"
-    ):
+    def _update_cli_prompt_context(self, config_context=None, exit_command="exit"):
         """
         Update the cli prompt context to ensure it is in operational mode
         :param config_context: It is string value to identify if the current cli prompt ends with config mode prompt
@@ -539,9 +525,7 @@ class CliconfBase(CliconfBaseBase):
         while True:
             out = to_text(out, errors="surrogate_then_replace").strip()
             if config_context and out.endswith(config_context):
-                self._connection.queue_message(
-                    "vvvv", "wrong context, sending exit to device"
-                )
+                self._connection.queue_message("vvvv", "wrong context, sending exit to device")
                 self.send_command(exit_command)
                 out = self._connection.get_prompt()
             else:

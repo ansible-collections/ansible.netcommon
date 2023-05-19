@@ -437,9 +437,7 @@ def main():
         ),
         source_datastore=dict(aliases=["source"]),
         format=dict(choices=["xml", "text", "json"]),
-        lock=dict(
-            choices=["never", "always", "if-supported"], default="always"
-        ),
+        lock=dict(choices=["never", "always", "if-supported"], default="always"),
         default_operation=dict(choices=["merge", "replace", "none"]),
         confirm=dict(type="int", default=0),
         confirm_commit=dict(type="bool", default=False),
@@ -460,12 +458,8 @@ def main():
         get_filter=dict(type="raw"),
     )
 
-    mutually_exclusive = [
-        ("content", "source_datastore", "delete", "confirm_commit")
-    ]
-    required_one_of = [
-        ("content", "source_datastore", "delete", "confirm_commit")
-    ]
+    mutually_exclusive = [("content", "source_datastore", "delete", "confirm_commit")]
+    required_one_of = [("content", "source_datastore", "delete", "confirm_commit")]
 
     module = AnsibleModule(
         argument_spec=argument_spec,
@@ -513,8 +507,7 @@ def main():
             pass
     else:
         module.fail_json(
-            msg="Invalid filter type detected %s for get_filter value %s"
-            % (filter_type, filter)
+            msg="Invalid filter type detected %s for get_filter value %s" % (filter_type, filter)
         )
 
     conn = Connection(module._socket_path)
@@ -522,20 +515,14 @@ def main():
     operations = capabilities["device_operations"]
 
     supports_commit = operations.get("supports_commit", False)
-    supports_writable_running = operations.get(
-        "supports_writable_running", False
-    )
+    supports_writable_running = operations.get("supports_writable_running", False)
     supports_startup = operations.get("supports_startup", False)
 
     # identify target datastore
     if target == "candidate" and not supports_commit:
-        module.fail_json(
-            msg=":candidate is not supported by this netconf server"
-        )
+        module.fail_json(msg=":candidate is not supported by this netconf server")
     elif target == "running" and not supports_writable_running:
-        module.fail_json(
-            msg=":writable-running is not supported by this netconf server"
-        )
+        module.fail_json(msg=":writable-running is not supported by this netconf server")
     elif target == "auto":
         if supports_commit:
             target = "candidate"
@@ -549,14 +536,11 @@ def main():
     # Netconf server capability validation against input options
     if save and not supports_startup:
         module.fail_json(
-            msg="cannot copy <%s/> to <startup/>, while :startup is not supported"
-            % target
+            msg="cannot copy <%s/> to <startup/>, while :startup is not supported" % target
         )
 
     if confirm_commit and not operations.get("supports_confirm_commit", False):
-        module.fail_json(
-            msg="confirm commit is not supported by Netconf server"
-        )
+        module.fail_json(msg="confirm commit is not supported by Netconf server")
 
     if (confirm > 0) and not operations.get("supports_confirm_commit", False):
         module.fail_json(
@@ -565,14 +549,11 @@ def main():
         )
 
     if validate and not operations.get("supports_validate", False):
-        module.fail_json(
-            msg="validate is not supported by this netconf server"
-        )
+        module.fail_json(msg="validate is not supported by this netconf server")
 
     if filter_type == "xpath" and not operations.get("supports_xpath", False):
         module.fail_json(
-            msg="filter value '%s' of type xpath is not supported on this device"
-            % filter
+            msg="filter value '%s' of type xpath is not supported on this device" % filter
         )
 
     filter_spec = (filter_type, filter) if filter_type else None
@@ -584,10 +565,7 @@ def main():
         execute_lock = True
     else:
         # lock is requested (always/if-supported) but not supported => issue warning
-        module.warn(
-            "lock operation on '%s' source is not supported on this device"
-            % target
-        )
+        module.warn("lock operation on '%s' source is not supported on this device" % target)
         execute_lock = lock == "always"
 
     result = {
@@ -599,12 +577,8 @@ def main():
     locked = False
     try:
         if module.params["backup"]:
-            response = get_config(
-                module, target, filter_spec, lock=execute_lock
-            )
-            before = to_text(
-                tostring(response), errors="surrogate_then_replace"
-            ).strip()
+            response = get_config(module, target, filter_spec, lock=execute_lock)
+            before = to_text(tostring(response), errors="surrogate_then_replace").strip()
             result["__backup__"] = before.strip()
         if validate:
             conn.validate(target)
@@ -640,9 +614,7 @@ def main():
             if format != "text":
                 # check for format of type json/xml/xpath
                 try:
-                    config_obj, config_format = validate_and_normalize_data(
-                        config, format
-                    )
+                    config_obj, config_format = validate_and_normalize_data(config, format)
                 except Exception as exc:
                     module.fail_json(msg=to_text(exc))
 
@@ -680,9 +652,7 @@ def main():
                 if not module.check_mode:
                     confirm_timeout = confirm if confirm > 0 else None
                     confirmed_commit = True if confirm_timeout else False
-                    conn.commit(
-                        confirmed=confirmed_commit, timeout=confirm_timeout
-                    )
+                    conn.commit(confirmed=confirmed_commit, timeout=confirm_timeout)
                 else:
                     conn.discard_changes()
 
@@ -707,9 +677,7 @@ def main():
                     }
 
     except ConnectionError as e:
-        module.fail_json(
-            msg=to_text(e, errors="surrogate_then_replace").strip()
-        )
+        module.fail_json(msg=to_text(e, errors="surrogate_then_replace").strip())
     finally:
         if locked:
             conn.unlock(target=target)

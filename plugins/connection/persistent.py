@@ -34,9 +34,7 @@ class Connection(ConnectionBase):
     has_pipelining = False
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(Connection, self).__init__(
-            play_context, new_stdin, *args, **kwargs
-        )
+        super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
         self._task_uuid = to_text(kwargs.get("task_uuid", ""))
 
     def _connect(self):
@@ -72,14 +70,8 @@ class Connection(ConnectionBase):
             "starting connection from persistent connection plugin",
             host=self._play_context.remote_addr,
         )
-        variables = {
-            "ansible_command_timeout": self.get_option(
-                "persistent_command_timeout"
-            )
-        }
-        socket_path = start_connection(
-            self._play_context, variables, self._task_uuid
-        )
+        variables = {"ansible_command_timeout": self.get_option("persistent_command_timeout")}
+        socket_path = start_connection(self._play_context, variables, self._task_uuid)
         display.vvvv(
             "local domain socket path is %s" % socket_path,
             host=self._play_context.remote_addr,

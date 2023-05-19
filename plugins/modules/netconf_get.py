@@ -298,14 +298,10 @@ def main():
         source=dict(choices=["running", "candidate", "startup"]),
         filter=dict(type="raw"),
         display=dict(choices=["json", "pretty", "xml", "native"]),
-        lock=dict(
-            default="never", choices=["never", "always", "if-supported"]
-        ),
+        lock=dict(default="never", choices=["never", "always", "if-supported"]),
     )
 
-    module = AnsibleModule(
-        argument_spec=argument_spec, supports_check_mode=True
-    )
+    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
 
     capabilities = get_capabilities(module)
     operations = capabilities["device_operations"]
@@ -340,25 +336,21 @@ def main():
             pass
     elif filter_type:
         module.fail_json(
-            msg="Invalid filter type detected %s for filter value %s"
-            % (filter_type, filter)
+            msg="Invalid filter type detected %s for filter value %s" % (filter_type, filter)
         )
 
     lock = module.params["lock"]
     display = module.params["display"]
 
     if source == "candidate" and not operations.get("supports_commit", False):
-        module.fail_json(
-            msg="candidate source is not supported on this device"
-        )
+        module.fail_json(msg="candidate source is not supported on this device")
 
     if source == "startup" and not operations.get("supports_startup", False):
         module.fail_json(msg="startup source is not supported on this device")
 
     if filter_type == "xpath" and not operations.get("supports_xpath", False):
         module.fail_json(
-            msg="filter value '%s' of type xpath is not supported on this device"
-            % filter
+            msg="filter value '%s' of type xpath is not supported on this device" % filter
         )
 
     # If source is None, NETCONF <get> operation is issued, reading config/state data
@@ -373,8 +365,7 @@ def main():
     else:
         # lock is requested (always/if-supported) but not supported => issue warning
         module.warn(
-            "lock operation on '%s' source is not supported on this device"
-            % (source or "running")
+            "lock operation on '%s' source is not supported on this device" % (source or "running")
         )
         execute_lock = lock == "always"
 

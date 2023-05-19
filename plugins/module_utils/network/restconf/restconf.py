@@ -29,9 +29,7 @@ def get(module, path=None, content=None, fields=None, output="json"):
         accept = "application/yang-data+xml"
 
     connection = Connection(module._socket_path)
-    return connection.send_request(
-        None, path=path, method="GET", accept=accept
-    )
+    return connection.send_request(None, path=path, method="GET", accept=accept)
 
 
 def edit_config(module, path=None, content=None, method="GET", format="json"):
@@ -43,6 +41,4 @@ def edit_config(module, path=None, content=None, method="GET", format="json"):
         content_type = "application/yang-data+xml"
 
     connection = Connection(module._socket_path)
-    return connection.send_request(
-        content, path=path, method=method, content_type=content_type
-    )
+    return connection.send_request(content, path=path, method=method, content_type=content_type)

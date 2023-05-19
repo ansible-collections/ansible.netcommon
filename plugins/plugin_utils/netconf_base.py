@@ -238,9 +238,7 @@ class NetconfBase(NetconfBaseBase):
         if rpc_command is None:
             raise ValueError("rpc_command value must be provided")
 
-        resp = self.m.dispatch(
-            fromstring(rpc_command), source=source, filter=filter
-        )
+        resp = self.m.dispatch(fromstring(rpc_command), source=source, filter=filter)
 
         if isinstance(resp, NCElement):
             # In case xml reply is transformed or namespace is removed in
@@ -300,9 +298,7 @@ class NetconfBase(NetconfBaseBase):
                         and set a token on the ongoing confirmed commit
         :return: Returns xml string containing the RPC response received from remote host
         """
-        resp = self.m.commit(
-            confirmed=confirmed, timeout=timeout, persist=persist
-        )
+        resp = self.m.commit(confirmed=confirmed, timeout=timeout, persist=persist)
         return resp.data_xml if hasattr(resp, "data_xml") else resp.xml
 
     def get_schema(self, identifier=None, version=None, format=None):
@@ -382,14 +378,10 @@ class NetconfBase(NetconfBaseBase):
         capabilities = "\n".join(server_capabilities)
         operations["supports_commit"] = ":candidate" in capabilities
         operations["supports_defaults"] = ":with-defaults" in capabilities
-        operations["supports_confirm_commit"] = (
-            ":confirmed-commit" in capabilities
-        )
+        operations["supports_confirm_commit"] = ":confirmed-commit" in capabilities
         operations["supports_startup"] = ":startup" in capabilities
         operations["supports_xpath"] = ":xpath" in capabilities
-        operations["supports_writable_running"] = (
-            ":writable-running" in capabilities
-        )
+        operations["supports_writable_running"] = ":writable-running" in capabilities
         operations["supports_validate"] = ":validate" in capabilities
 
         operations["lock_datastore"] = []

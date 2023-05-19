@@ -992,9 +992,7 @@ tasks:
 """
 
 from ansible.errors import AnsibleFilterError
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import (
-    pop_ace,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import pop_ace
 from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (
     AnsibleArgSpecValidator,
 )
@@ -1012,9 +1010,7 @@ def _pop_ace(*args, **kwargs):
     keys = ["data", "filter_options", "match_criteria"]
     data = dict(zip(keys, args[1:]))
     data.update(kwargs)
-    aav = AnsibleArgSpecValidator(
-        data=data, schema=DOCUMENTATION, name="pop_ace"
-    )
+    aav = AnsibleArgSpecValidator(data=data, schema=DOCUMENTATION, name="pop_ace")
     valid, errors, updated_data = aav.validate()
     if not valid:
         raise AnsibleFilterError(errors)

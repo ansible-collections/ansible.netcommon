@@ -16,9 +16,7 @@ from ansible.playbook.role import Role
 from ansible.playbook.task import Task
 from ansible.plugins.loader import action_loader
 from ansible.template import Templar
-from ansible_collections.ansible.netcommon.tests.unit.mock.loader import (
-    DictDataLoader,
-)
+from ansible_collections.ansible.netcommon.tests.unit.mock.loader import DictDataLoader
 
 
 @pytest.fixture
@@ -97,9 +95,7 @@ def test_backup_options(plugin, backup_dir, backup_file, role_path):
         else:
             backup_path = os.path.join(
                 backup_path,
-                "example.com_config.{0}@{1}".format(
-                    result["date"], result["time"]
-                ),
+                "example.com_config.{0}@{1}".format(result["date"], result["time"]),
             )
 
         # check that expected and returned backup paths match
@@ -120,9 +116,7 @@ def test_backup_options(plugin, backup_dir, backup_file, role_path):
 def test_backup_no_content(plugin):
     result = {}
     task_vars = {}
-    with pytest.raises(
-        AnsibleError, match="Failed while reading configuration backup"
-    ):
+    with pytest.raises(AnsibleError, match="Failed while reading configuration backup"):
         plugin._handle_backup_option(result, task_vars)
 
 

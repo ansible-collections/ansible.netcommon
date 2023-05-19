@@ -39,9 +39,7 @@ def load_fixture(name):
 
 
 class TestCliModule(ModuleTestCase):
-    def execute_module(
-        self, failed=False, changed=False, commands=None, sort=True
-    ):
+    def execute_module(self, failed=False, changed=False, commands=None, sort=True):
         self.load_fixtures(commands)
 
         if failed:
@@ -59,9 +57,7 @@ class TestCliModule(ModuleTestCase):
                     result["commands"],
                 )
             else:
-                self.assertEqual(
-                    commands, result["commands"], result["commands"]
-                )
+                self.assertEqual(commands, result["commands"], result["commands"])
 
         return result
 

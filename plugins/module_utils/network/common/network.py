@@ -23,31 +23,21 @@ from ansible.module_utils.six import iteritems
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     NetconfConnection,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.parsing import (
-    Cli,
-)
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    to_list,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.parsing import Cli
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 
 NET_TRANSPORT_ARGS = dict(
     host=dict(required=True),
     port=dict(type="int"),
     username=dict(fallback=(env_fallback, ["ANSIBLE_NET_USERNAME"])),
-    password=dict(
-        no_log=True, fallback=(env_fallback, ["ANSIBLE_NET_PASSWORD"])
-    ),
-    ssh_keyfile=dict(
-        fallback=(env_fallback, ["ANSIBLE_NET_SSH_KEYFILE"]), type="path"
-    ),
+    password=dict(no_log=True, fallback=(env_fallback, ["ANSIBLE_NET_PASSWORD"])),
+    ssh_keyfile=dict(fallback=(env_fallback, ["ANSIBLE_NET_SSH_KEYFILE"]), type="path"),
     authorize=dict(
         default=False,
         fallback=(env_fallback, ["ANSIBLE_NET_AUTHORIZE"]),
         type="bool",
     ),
-    auth_pass=dict(
-        no_log=True, fallback=(env_fallback, ["ANSIBLE_NET_AUTH_PASS"])
-    ),
+    auth_pass=dict(no_log=True, fallback=(env_fallback, ["ANSIBLE_NET_AUTH_PASS"])),
     provider=dict(type="dict", no_log=True),
     transport=dict(choices=list()),
     timeout=dict(default=10, type="int"),
@@ -122,13 +112,9 @@ class NetworkModule(AnsibleModule):
             cls = NET_CONNECTIONS[transport]
             self.connection = cls()
         except KeyError:
-            self.fail_json(
-                msg="Unknown transport or no default transport specified"
-            )
+            self.fail_json(msg="Unknown transport or no default transport specified")
         except (TypeError, NetworkError) as exc:
-            self.fail_json(
-                msg=to_native(exc), exception=traceback.format_exc()
-            )
+            self.fail_json(msg=to_native(exc), exception=traceback.format_exc())
 
         if connect_on_load:
             self.connect()
@@ -179,9 +165,7 @@ class NetworkModule(AnsibleModule):
                     )
                 )
         except NetworkError as exc:
-            self.fail_json(
-                msg=to_native(exc), exception=traceback.format_exc()
-            )
+            self.fail_json(msg=to_native(exc), exception=traceback.format_exc())
 
     def disconnect(self):
         try:
@@ -189,9 +173,7 @@ class NetworkModule(AnsibleModule):
                 self.connection.disconnect()
             self.log("disconnected from %s" % self.params["host"])
         except NetworkError as exc:
-            self.fail_json(
-                msg=to_native(exc), exception=traceback.format_exc()
-            )
+            self.fail_json(msg=to_native(exc), exception=traceback.format_exc())
 
 
 def register_transport(transport, default=False):
@@ -246,6 +228,4 @@ class LocalResourceConnection:
         self.module = module
 
     def get(self, *args, **kwargs):
-        self.module.fail_json(
-            msg="Network resource modules not supported over local connection."
-        )
+        self.module.fail_json(msg="Network resource modules not supported over local connection.")

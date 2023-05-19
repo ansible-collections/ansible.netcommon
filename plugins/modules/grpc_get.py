@@ -127,9 +127,7 @@ import json
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    to_list,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import (
     get,
     get_capabilities,
@@ -179,10 +177,7 @@ def main():
         )
 
     if command and not operations.get("supports_cli_command", False):
-        module.fail_json(
-            msg="command option '%s' is not supported on this target host"
-            % command
-        )
+        module.fail_json(msg="command option '%s' is not supported on this target host" % command)
 
     supported_data_type = operations.get("data_type", [])
     if data_type and data_type not in supported_data_type:
@@ -204,9 +199,7 @@ def main():
             module.warn(to_text(err, errors="surrogate_then_replace"))
 
     except ConnectionError as exc:
-        module.fail_json(
-            msg=to_text(exc, errors="surrogate_then_replace"), code=exc.code
-        )
+        module.fail_json(msg=to_text(exc, errors="surrogate_then_replace"), code=exc.code)
     result["stdout"] = response
 
     if output:

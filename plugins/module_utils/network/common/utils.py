@@ -51,9 +51,7 @@ except ImportError:
     HAS_YAML = False
 
 OPERATORS = frozenset(["ge", "gt", "eq", "neq", "lt", "le"])
-ALIASES = frozenset(
-    [("min", "ge"), ("max", "le"), ("exactly", "eq"), ("neq", "ne")]
-)
+ALIASES = frozenset([("min", "ge"), ("max", "le"), ("exactly", "eq"), ("neq", "ne")])
 
 OPTION_METADATA = (
     "type",
@@ -125,9 +123,7 @@ def sort_list(val):
             if len(set(sorted_keys)) != 1:
                 raise ValueError("dictionaries do not match")
 
-            return sorted(
-                val, key=lambda d: tuple(d[k] for k in sorted_keys[0])
-            )
+            return sorted(val, key=lambda d: tuple(d[k] for k in sorted_keys[0]))
         return sorted(val)
     return val
 
@@ -162,9 +158,7 @@ class Entity(object):
         * default - default value
     """
 
-    def __init__(
-        self, module, attrs=None, args=None, keys=None, from_argspec=False
-    ):
+    def __init__(self, module, attrs=None, args=None, keys=None, from_argspec=False):
         args = [] if args is None else args
 
         self._attributes = attrs or {}
@@ -184,9 +178,7 @@ class Entity(object):
         for name, attr in iteritems(self._attributes):
             if attr.get("read_from"):
                 if attr["read_from"] not in self._module.argument_spec:
-                    module.fail_json(
-                        msg="argument %s does not exist" % attr["read_from"]
-                    )
+                    module.fail_json(msg="argument %s does not exist" % attr["read_from"])
                 spec = self._module.argument_spec.get(attr["read_from"])
                 for key, value in iteritems(spec):
                     if key not in attr:
@@ -217,9 +209,7 @@ class Entity(object):
         if strict:
             unknown = set(value).difference(self.attr_names)
             if unknown:
-                self._module.fail_json(
-                    msg="invalid keys: %s" % ",".join(unknown)
-                )
+                self._module.fail_json(msg="invalid keys: %s" % ",".join(unknown))
 
         for name, attr in iteritems(self._attributes):
             if value.get(name) is None:
@@ -237,16 +227,12 @@ class Entity(object):
                         else:
                             fallback_args = item
                     try:
-                        value[name] = fallback_strategy(
-                            *fallback_args, **fallback_kwargs
-                        )
+                        value[name] = fallback_strategy(*fallback_args, **fallback_kwargs)
                     except basic.AnsibleFallbackNotFound:
                         continue
 
             if attr.get("required") and value.get(name) is None:
-                self._module.fail_json(
-                    msg="missing required attribute %s" % name
-                )
+                self._module.fail_json(msg="missing required attribute %s" % name)
 
             if "choices" in attr:
                 if value[name] not in attr["choices"]:
@@ -257,9 +243,7 @@ class Entity(object):
 
             if value[name] is not None:
                 value_type = attr.get("type", "str")
-                type_checker = self._module._CHECK_ARGUMENT_TYPES_DISPATCHER[
-                    value_type
-                ]
+                type_checker = self._module._CHECK_ARGUMENT_TYPES_DISPATCHER[value_type]
                 type_checker(value[name])
             elif value.get(name):
                 value[name] = self._module.params[name]
@@ -272,19 +256,12 @@ class EntityCollection(Entity):
 
     def __call__(self, iterable, strict=True):
         if iterable is None:
-            iterable = [
-                super(EntityCollection, self).__call__(
-                    self._module.params, strict
-                )
-            ]
+            iterable = [super(EntityCollection, self).__call__(self._module.params, strict)]
 
         if not isinstance(iterable, (list, tuple)):
             self._module.fail_json(msg="value must be an iterable")
 
-        return [
-            (super(EntityCollection, self).__call__(i, strict))
-            for i in iterable
-        ]
+        return [(super(EntityCollection, self).__call__(i, strict)) for i in iterable]
 
 
 class ComplexList(EntityCollection):
@@ -621,11 +598,7 @@ def remove_empties(cfg_dict):
             child_val = remove_empties(val)
             if child_val:
                 dct = {key: child_val}
-        elif (
-            isinstance(val, list)
-            and val
-            and all(isinstance(x, dict) for x in val)
-        ):
+        elif isinstance(val, list) and val and all(isinstance(x, dict) for x in val):
             child_val = [remove_empties(x) for x in val]
             if child_val:
                 dct = {key: child_val}

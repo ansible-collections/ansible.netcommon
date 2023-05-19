@@ -30,9 +30,7 @@ def get_capabilities(module):
     if hasattr(module, "_grpc_capabilities"):
         return module._grpc_capabilities
 
-    module._grpc_capabilities = Connection(
-        module._socket_path
-    ).get_capabilities()
+    module._grpc_capabilities = Connection(module._socket_path).get_capabilities()
     return module._grpc_capabilities
 
 
@@ -47,9 +45,7 @@ def get(module, section, data_type, check_rc=True):
     error = out.get("error")
     if error:
         if check_rc:
-            module.fail_json(
-                msg=to_text(out["error"], errors="surrogate_then_replace")
-            )
+            module.fail_json(msg=to_text(out["error"], errors="surrogate_then_replace"))
         else:
             module.warn(to_text(out["error"], errors="surrogate_then_replace"))
 
@@ -66,9 +62,7 @@ def merge_config(module, section, check_rc=True):
             module.fail_json(msg=to_text(res, errors="surrogate_then_replace"))
     except ValueError as err:
         if check_rc:
-            module.fail_json(
-                msg=to_text(out["error"], errors="surrogate_then_replace")
-            )
+            module.fail_json(msg=to_text(out["error"], errors="surrogate_then_replace"))
         else:
             module.warn(to_text(out["error"], errors="surrogate_then_replace"))
         return err
@@ -84,9 +78,7 @@ def replace_config(module, section, check_rc=True):
             module.fail_json(msg=to_text(res, errors="surrogate_then_replace"))
     except ValueError as err:
         if check_rc:
-            module.fail_json(
-                msg=to_text(out["error"], errors="surrogate_then_replace")
-            )
+            module.fail_json(msg=to_text(out["error"], errors="surrogate_then_replace"))
         else:
             module.warn(to_text(out["error"], errors="surrogate_then_replace"))
         return err
@@ -102,9 +94,7 @@ def delete_config(module, section, check_rc=True):
             module.fail_json(msg=to_text(res, errors="surrogate_then_replace"))
     except ValueError as err:
         if check_rc:
-            module.fail_json(
-                msg=to_text(out["error"], errors="surrogate_then_replace")
-            )
+            module.fail_json(msg=to_text(out["error"], errors="surrogate_then_replace"))
         else:
             module.warn(to_text(out["error"], errors="surrogate_then_replace"))
         return err
@@ -117,9 +107,7 @@ def run_cli(module, command, display, check_rc=True):
     error = out.get("error")
     if error:
         if check_rc:
-            module.fail_json(
-                msg=to_text(out["error"], errors="surrogate_then_replace")
-            )
+            module.fail_json(msg=to_text(out["error"], errors="surrogate_then_replace"))
         else:
             module.warn(to_text(out["error"], errors="surrogate_then_replace"))
 

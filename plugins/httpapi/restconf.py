@@ -29,9 +29,7 @@ import json
 from ansible.module_utils._text import to_text
 from ansible.module_utils.connection import ConnectionError
 from ansible.module_utils.six.moves.urllib.error import HTTPError
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.httpapi_base import (
-    HttpApiBase,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.httpapi_base import HttpApiBase
 
 CONTENT_TYPE = "application/yang-data+json"
 
@@ -70,9 +68,7 @@ def handle_response(response, response_data):
         if response_data:
             if "errors" in response_data:
                 errors = response_data["errors"]["error"]
-                error_text = "\n".join(
-                    (error["error-message"] for error in errors)
-                )
+                error_text = "\n".join((error["error-message"] for error in errors))
             else:
                 error_text = response_data
 
