@@ -160,9 +160,7 @@ class Connection(NetworkConnectionBase):
     has_pipelining = False
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(Connection, self).__init__(
-            play_context, new_stdin, *args, **kwargs
-        )
+        super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
 
         grpc_type = self._network_os or self.get_option("grpc_type")
         if grpc_type:
@@ -185,9 +183,7 @@ class Connection(NetworkConnectionBase):
                     "name": grpc_type,
                     "obj": grpc_obj,
                 }
-                self.queue_message(
-                    "log", "loaded gRPC plugin for type %s" % grpc_type
-                )
+                self.queue_message("log", "loaded gRPC plugin for type %s" % grpc_type)
                 self.queue_message("log", "grpc type is set to %s" % grpc_type)
             else:
                 raise AnsibleConnectionFailure(
@@ -211,9 +207,7 @@ class Connection(NetworkConnectionBase):
         host = self.get_option("host")
         host = self._play_context.remote_addr
         if self.connected:
-            self.queue_message(
-                "log", "gRPC connection to host %s already exist" % host
-            )
+            self.queue_message("log", "gRPC connection to host %s already exist" % host)
             return
 
         port = self.get_option("port")
@@ -247,18 +241,12 @@ class Connection(NetworkConnectionBase):
                 with open(certificate_chain_file, "rb") as f:
                     certs["certificate_chain"] = f.read()
         except Exception as e:
-            raise AnsibleConnectionFailure(
-                "Failed to read certificate keys: %s" % e
-            )
+            raise AnsibleConnectionFailure("Failed to read certificate keys: %s" % e)
         if certs:
             creds = ssl_channel_credentials(**certs)
-            channel = secure_channel(
-                self._target, creds, options=self._channel_options
-            )
+            channel = secure_channel(self._target, creds, options=self._channel_options)
         else:
-            channel = insecure_channel(
-                self._target, options=self._channel_options
-            )
+            channel = insecure_channel(self._target, options=self._channel_options)
 
         self.queue_message(
             "vvv",
@@ -266,9 +254,7 @@ class Connection(NetworkConnectionBase):
             % (self.get_option("remote_user"), port, host),
         )
         self._channel = implementations.Channel(channel)
-        self.queue_message(
-            "vvvv", "grpc connection has completed successfully"
-        )
+        self.queue_message("vvvv", "grpc connection has completed successfully")
         self._connected = True
 
     def close(self):
@@ -277,8 +263,6 @@ class Connection(NetworkConnectionBase):
         :return: None
         """
         if self._connected:
-            self.queue_message(
-                "vvvv", "closing gRPC connection to target host"
-            )
+            self.queue_message("vvvv", "closing gRPC connection to target host")
             self._channel.close()
         super(Connection, self).close()

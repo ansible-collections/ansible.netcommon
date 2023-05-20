@@ -22,8 +22,7 @@ class ActionModule(ActionNetworkModule):
             return {
                 "failed": True,
                 "msg": "Connection type %s is not valid for grpc module. "
-                "Valid connection type is grpc"
-                % self._play_context.connection,
+                "Valid connection type is grpc" % self._play_context.connection,
             }
 
         result = super(ActionModule, self).run(task_vars=task_vars)

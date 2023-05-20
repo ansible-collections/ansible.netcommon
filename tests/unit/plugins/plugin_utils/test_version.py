@@ -7,9 +7,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import pytest
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import (
-    Version,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
 
 
 @pytest.mark.parametrize("left", ["6.0.0", 6, 6.0])

@@ -164,9 +164,7 @@ from ansible.release import __version__ as ANSIBLE_CORE_VERSION
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import (
-    Version,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
 
 
 class Connection(NetworkConnectionBase):
@@ -176,9 +174,7 @@ class Connection(NetworkConnectionBase):
     has_pipelining = True
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(Connection, self).__init__(
-            play_context, new_stdin, *args, **kwargs
-        )
+        super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
 
         self._auth = None
         if self._network_os:
@@ -206,8 +202,7 @@ class Connection(NetworkConnectionBase):
                 )
             else:
                 raise AnsibleConnectionFailure(
-                    "unable to load API plugin for platform type %s"
-                    % platform_type
+                    "unable to load API plugin for platform type %s" % platform_type
                 )
 
         else:
@@ -257,9 +252,7 @@ class Connection(NetworkConnectionBase):
             if self.get_option("session_key"):
                 self._auth = self.get_option("session_key")
             else:
-                self.httpapi.login(
-                    self.get_option("remote_user"), self.get_option("password")
-                )
+                self.httpapi.login(self.get_option("remote_user"), self.get_option("password"))
 
     def close(self):
         """
@@ -310,8 +303,7 @@ class Connection(NetworkConnectionBase):
         try:
             url = self._url + path
             self._log_messages(
-                "send url '%s' with data '%s' and kwargs '%s'"
-                % (url, data, url_kwargs)
+                "send url '%s' with data '%s' and kwargs '%s'" % (url, data, url_kwargs)
             )
             response = open_url(url, data=data, **url_kwargs)
         except HTTPError as exc:
@@ -328,9 +320,7 @@ class Connection(NetworkConnectionBase):
             response = is_handled
         except URLError as exc:
             raise AnsibleConnectionFailure(
-                "Could not connect to {0}: {1}".format(
-                    self._url + path, exc.reason
-                )
+                "Could not connect to {0}: {1}".format(self._url + path, exc.reason)
             )
 
         response_buffer = BytesIO()

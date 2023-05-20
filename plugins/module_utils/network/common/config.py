@@ -151,9 +151,7 @@ def dumps(objects, output="block", comments=False):
 
 
 class NetworkConfig(object):
-    def __init__(
-        self, indent=1, contents=None, comment_tokens=None, ignore_lines=None
-    ):
+    def __init__(self, indent=1, contents=None, comment_tokens=None, ignore_lines=None):
         self._indent = indent
         self._items = list()
         self._config_text = None
@@ -215,9 +213,7 @@ class NetworkConfig(object):
 
         indents = [0]
 
-        for linenum, line in enumerate(
-            to_native(lines, errors="surrogate_or_strict").split("\n")
-        ):
+        for linenum, line in enumerate(to_native(lines, errors="surrogate_or_strict").split("\n")):
             text = entry_reg.sub("", line).strip()
 
             cfg = ConfigLine(line)
@@ -379,10 +375,7 @@ class NetworkConfig(object):
                     add_parents = True
                 # check if parent of current line is already added, if added don't
                 # add again
-                if (
-                    last_elem.has_children
-                    and last_elem.children[0] != curr_elem.text
-                ):
+                if last_elem.has_children and last_elem.children[0] != curr_elem.text:
                     add_parents = True
             for p in curr_elem._parents:
                 if p.line not in visited or add_parents:

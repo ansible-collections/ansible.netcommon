@@ -198,9 +198,7 @@ def main():
         ]:
             if not module.check_mode:
                 response, err = run_cli(module, "show running-config", "text")
-                before = to_text(
-                    response, errors="surrogate_then_replace"
-                ).strip()
+                before = to_text(response, errors="surrogate_then_replace").strip()
 
         if module._diff or module.check_mode:
             before_diff = validate_config(module, config)
@@ -220,9 +218,7 @@ def main():
                 output = delete_config(module, config)
             if state:
                 response, err = run_cli(module, "show running-config", "text")
-                after = to_text(
-                    response, errors="surrogate_then_replace"
-                ).strip()
+                after = to_text(response, errors="surrogate_then_replace").strip()
             if before:
                 before = sanitize_content(before)
             if after:
@@ -236,9 +232,7 @@ def main():
                         "after": after_diff,
                     }
     except ConnectionError as exc:
-        module.fail_json(
-            msg=to_text(exc, errors="surrogate_then_replace"), code=exc.code
-        )
+        module.fail_json(msg=to_text(exc, errors="surrogate_then_replace"), code=exc.code)
 
     result["stdout"] = output
 

@@ -12,9 +12,7 @@ __metaclass__ = type
 import re
 
 import pytest
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
-    config,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import config
 
 RUNNING = """interface Ethernet1
    speed auto
@@ -94,9 +92,7 @@ def test_config_items():
     net_config = config.NetworkConfig(indent=3, contents=RUNNING)
     assert len(net_config.items) == 10
 
-    net_config = config.NetworkConfig(
-        indent=3, contents=RUNNING, ignore_lines=[r"\s*no .*"]
-    )
+    net_config = config.NetworkConfig(indent=3, contents=RUNNING, ignore_lines=[r"\s*no .*"])
     assert len(net_config.items) == 6
 
     net_config = config.NetworkConfig(
@@ -111,9 +107,7 @@ def test_config_items():
 def test_config_get_block():
     net_config = config.NetworkConfig(indent=3, contents=RUNNING)
 
-    with pytest.raises(
-        AssertionError, match="path argument must be a list object"
-    ):
+    with pytest.raises(AssertionError, match="path argument must be a list object"):
         net_config.get_block("interface Ethernet2")
 
     with pytest.raises(ValueError, match="path does not exist in config"):
@@ -142,9 +136,7 @@ def test_updates_repeat_lines():
     configdiffobjs = candidate_obj.difference(running_obj)
     diff_list = config.dumps(configdiffobjs, "commands").split("\n")
     want_src_list = WANT_SRC_1.strip().split("\n")
-    for generated_diff_line, candidate_diff_line in zip(
-        diff_list, want_src_list
-    ):
+    for generated_diff_line, candidate_diff_line in zip(diff_list, want_src_list):
         assert generated_diff_line == candidate_diff_line.strip()
 
 
@@ -174,8 +166,6 @@ def test_updates_repeat_parents():
     configdiffobjs = candidate_obj.difference(running_obj)
     diff_list = config.dumps(configdiffobjs, "commands").split("\n")
 
-    for generated_diff_line, candidate_diff_line in zip(
-        diff_list, expected_diff
-    ):
+    for generated_diff_line, candidate_diff_line in zip(diff_list, expected_diff):
         print(generated_diff_line, candidate_diff_line)
         assert generated_diff_line == candidate_diff_line.strip()

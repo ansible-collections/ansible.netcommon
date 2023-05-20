@@ -48,9 +48,7 @@ class ActionModule(ActionNetworkModule):
         self._rm_play_context = copy.deepcopy(self._play_context)
         self._os_name = self._task.args.get("os_name") or self._get_os_name()
         if not self._os_name:
-            return {
-                "error": "either value of 'os_name' or 'ansible_network_os' should be set"
-            }
+            return {"error": "either value of 'os_name' or 'ansible_network_os' should be set"}
 
         if len(self._os_name.split(".")) != 3:
             msg = (
@@ -83,12 +81,8 @@ class ActionModule(ActionNetworkModule):
 
         result.update(
             {
-                "ansible_network_os": self._task_vars.get(
-                    "ansible_network_os"
-                ),
-                "ansible_connection": self._task_vars.get(
-                    "ansible_connection"
-                ),
+                "ansible_network_os": self._task_vars.get("ansible_network_os"),
+                "ansible_connection": self._task_vars.get("ansible_connection"),
             }
         )
         return result
@@ -138,9 +132,7 @@ class ActionModule(ActionNetworkModule):
             else:
                 module_name = self._name
 
-            fqcn_module_name = ".".join(
-                self._os_name.split(".")[:2] + [module_name]
-            )
+            fqcn_module_name = ".".join(self._os_name.split(".")[:2] + [module_name])
 
         return fqcn_module_name
 
@@ -195,9 +187,7 @@ class ActionModule(ActionNetworkModule):
         result = {}
         resource_modules = []
 
-        self._cref = dict(
-            zip(["corg", "cname", "plugin"], self._os_name.split("."))
-        )
+        self._cref = dict(zip(["corg", "cname", "plugin"], self._os_name.split(".")))
 
         fact_modulelib = "ansible_collections.{corg}.{cname}.plugins.module_utils.network.{plugin}.facts.facts".format(
             corg=self._cref["corg"],
@@ -207,42 +197,29 @@ class ActionModule(ActionNetworkModule):
 
         try:
             display.vvvv("fetching facts list from path %s" % (fact_modulelib))
-            facts_resource_subset = getattr(
-                import_module(fact_modulelib), "FACT_RESOURCE_SUBSETS"
-            )
+            facts_resource_subset = getattr(import_module(fact_modulelib), "FACT_RESOURCE_SUBSETS")
             resource_modules = sorted(facts_resource_subset.keys())
         except ModuleNotFoundError:
             display.vvvv("'%s' is not defined" % (fact_modulelib))
         except AttributeError:
-            display.vvvv(
-                "'FACT_RESOURCE_SUBSETS is not defined in '%s'"
-                % (fact_modulelib)
-            )
+            display.vvvv("'FACT_RESOURCE_SUBSETS is not defined in '%s'" % (fact_modulelib))
 
         # parse module docs to check for 'config' and 'state' options to identify it as resource module
         if not resource_modules:
-            modulelib = (
-                "ansible_collections.{corg}.{cname}.plugins.modules".format(
-                    corg=self._cref["corg"], cname=self._cref["cname"]
-                )
+            modulelib = "ansible_collections.{corg}.{cname}.plugins.modules".format(
+                corg=self._cref["corg"], cname=self._cref["cname"]
             )
 
-            module_dir_path = os.path.dirname(
-                import_module(modulelib).__file__
-            )
+            module_dir_path = os.path.dirname(import_module(modulelib).__file__)
             module_paths = glob.glob(
-                "{module_dir_path}/[!_]*.py".format(
-                    module_dir_path=module_dir_path
-                )
+                "{module_dir_path}/[!_]*.py".format(module_dir_path=module_dir_path)
             )
 
             for module_path in module_paths:
                 module_name = os.path.basename(module_path).split(".")[0]
                 docs = None
                 try:
-                    display.vvvv(
-                        "reading 'DOCUMENTATION' from path %s" % (module_path)
-                    )
+                    display.vvvv("reading 'DOCUMENTATION' from path %s" % (module_path))
                     docs = getattr(
                         import_module("%s.%s" % (modulelib, module_name)),
                         "DOCUMENTATION",
@@ -250,18 +227,14 @@ class ActionModule(ActionNetworkModule):
                 except ModuleNotFoundError:
                     display.vvvv("'%s' is not defined" % (fact_modulelib))
                 except AttributeError:
-                    display.vvvv(
-                        "'DOCUMENTATION is not defined in '%s'"
-                        % (fact_modulelib)
-                    )
+                    display.vvvv("'DOCUMENTATION is not defined in '%s'" % (fact_modulelib))
 
                 if docs:
                     if self._is_resource_module(docs):
                         resource_modules.append(module_name.split("_", 1)[1])
                     else:
                         display.vvvvv(
-                            "module in path '%s' is not a resource module"
-                            % (module_path)
+                            "module in path '%s' is not a resource module" % (module_path)
                         )
 
         result.update({"modules": sorted(resource_modules)})

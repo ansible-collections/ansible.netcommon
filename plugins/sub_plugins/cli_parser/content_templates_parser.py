@@ -34,9 +34,7 @@ from ansible.module_utils._text import to_native
 from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parsertemplate import (
     CliParserTemplate,
 )
-from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
-    CliParserBase,
-)
+from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
 
 
 class CliParser(CliParserBase):
@@ -62,9 +60,7 @@ class CliParser(CliParserBase):
         """
 
         template_contents = kwargs["template_contents"]
-        parser = CliParserTemplate(
-            lines=self._task_args.get("text", "").splitlines()
-        )
+        parser = CliParserTemplate(lines=self._task_args.get("text", "").splitlines())
         try:
             template_obj = list(eval(template_contents))
         except Exception as exc:

@@ -16,9 +16,7 @@ from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils._text import to_text
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
-from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
-    terminal_loader,
-)
+from ansible_collections.ansible.netcommon.plugins.connection.network_cli import terminal_loader
 
 
 @pytest.fixture(name="conn")
@@ -30,9 +28,7 @@ def plugin_fixture(monkeypatch):
         return MagicMock()
 
     monkeypatch.setattr(terminal_loader, "get", get)
-    conn = connection_loader.get(
-        "ansible.netcommon.network_cli", pc, "/dev/null"
-    )
+    conn = connection_loader.get("ansible.netcommon.network_cli", pc, "/dev/null")
     return conn
 
 
@@ -49,9 +45,7 @@ def test_network_cli_invalid_os(network_os):
 @pytest.mark.parametrize("password", ["password", None])
 @pytest.mark.parametrize("private_key_file", ["/path/to/key/file", None])
 @pytest.mark.parametrize("ssh_type", ["paramiko", "libssh", "auto"])
-def test_look_for_keys(
-    conn, look_for_keys, password, private_key_file, ssh_type
-):
+def test_look_for_keys(conn, look_for_keys, password, private_key_file, ssh_type):
     conn.set_options(
         direct={
             "ssh_type": ssh_type,
@@ -100,9 +94,7 @@ def test_options_pass_through(conn, ssh_type):
 @pytest.mark.parametrize("has_libssh", (True, False))
 def test_network_cli_ssh_type_auto(conn, has_libssh):
     """Test that ssh_type: auto resolves to the correct option."""
-    from ansible_collections.ansible.netcommon.plugins.connection import (
-        network_cli,
-    )
+    from ansible_collections.ansible.netcommon.plugins.connection import network_cli
 
     network_cli.HAS_PYLIBSSH = has_libssh
 
@@ -117,9 +109,7 @@ def test_network_cli_ssh_type_auto(conn, has_libssh):
         assert conn.ssh_type == "paramiko"
 
 
-@pytest.mark.parametrize(
-    "become_method,become_pass", [("enable", "password"), (None, None)]
-)
+@pytest.mark.parametrize("become_method,become_pass", [("enable", "password"), (None, None)])
 def test_network_cli__connect(conn, become_method, become_pass):
     conn.ssh = MagicMock()
     conn.receive = MagicMock()
@@ -140,9 +130,7 @@ def test_network_cli__connect(conn, become_method, become_pass):
         assert conn._terminal.on_become.called is False
 
 
-@pytest.mark.parametrize(
-    "command", ["command", json.dumps({"command": "command"})]
-)
+@pytest.mark.parametrize("command", ["command", json.dumps({"command": "command"})])
 def test_network_cli_exec_command(conn, command):
     mock_send = MagicMock(return_value=b"command response")
     conn.send = mock_send

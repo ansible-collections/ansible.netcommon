@@ -22,9 +22,7 @@ from ansible.module_utils.common.network import (
     to_netmask,
     to_subnet,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
-    utils,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 
 
 def test_to_list():
@@ -165,9 +163,7 @@ def test_dict_diff():
     with pytest.raises(AssertionError, match="`base` must be of type <dict>"):
         utils.dict_diff(None, {})
 
-    with pytest.raises(
-        AssertionError, match="`comparable` must be of type <dict>"
-    ):
+    with pytest.raises(AssertionError, match="`comparable` must be of type <dict>"):
         utils.dict_diff({}, object())
 
     # But None is okay
@@ -321,9 +317,7 @@ def test_param_list_to_dict():
         dict(vlan_id=10, name="voice"),
         dict(vlan_id=99, name="guest"),
     ]
-    assert utils.param_list_to_dict(
-        params, unique_key="vlan_id", remove_key=False
-    ) == {
+    assert utils.param_list_to_dict(params, unique_key="vlan_id", remove_key=False) == {
         1: dict(vlan_id=1, name="management"),
         10: dict(vlan_id=10, name="voice"),
         99: dict(vlan_id=99, name="guest"),
@@ -369,9 +363,7 @@ def test_conditional():
     assert utils.conditional("max(1)", 1)
     assert utils.conditional("exactly(1)", 1)
     assert utils.conditional("gt(5)", "7", int)
-    with pytest.raises(
-        AssertionError, match="invalid expression: cannot contain spaces"
-    ):
+    with pytest.raises(AssertionError, match="invalid expression: cannot contain spaces"):
         utils.conditional("1 ", 1)
     with pytest.raises(ValueError, match="unknown operator: floop"):
         utils.conditional("floop(4)", 4)
@@ -455,19 +447,11 @@ def test_is_netmask():
 
 def test_to_ipv6_network():
     assert "2001:db8::" == to_ipv6_network("2001:db8::")
-    assert "2001:0db8:85a3::" == to_ipv6_network(
-        "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
-    )
-    assert "2001:0db8:85a3::" == to_ipv6_network(
-        "2001:0db8:85a3:0:0:8a2e:0370:7334"
-    )
+    assert "2001:0db8:85a3::" == to_ipv6_network("2001:0db8:85a3:0000:0000:8a2e:0370:7334")
+    assert "2001:0db8:85a3::" == to_ipv6_network("2001:0db8:85a3:0:0:8a2e:0370:7334")
 
 
 def test_to_ipv6_subnet():
     assert "2001:db8::" == to_ipv6_subnet("2001:db8::")
-    assert "2001:0db8:85a3:4242::" == to_ipv6_subnet(
-        "2001:0db8:85a3:4242:0000:8a2e:0370:7334"
-    )
-    assert "2001:0db8:85a3:4242::" == to_ipv6_subnet(
-        "2001:0db8:85a3:4242:0:8a2e:0370:7334"
-    )
+    assert "2001:0db8:85a3:4242::" == to_ipv6_subnet("2001:0db8:85a3:4242:0000:8a2e:0370:7334")
+    assert "2001:0db8:85a3:4242::" == to_ipv6_subnet("2001:0db8:85a3:4242:0:8a2e:0370:7334")

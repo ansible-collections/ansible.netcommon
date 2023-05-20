@@ -96,9 +96,7 @@ class TestNetworkParseFilter(unittest.TestCase):
         "XPath expression not supported in this version",
     )
     def test_parse_xml_to_dict(self):
-        spec_file_path = os.path.join(
-            fixture_path, "show_vlans_xml_with_key_spec.yml"
-        )
+        spec_file_path = os.path.join(fixture_path, "show_vlans_xml_with_key_spec.yml")
         parsed = parse_xml(output_xml, spec_file_path)
         expected = {
             "vlans": {
@@ -151,9 +149,7 @@ class TestNetworkParseFilter(unittest.TestCase):
         "XPath expression not supported in this version",
     )
     def test_parse_xml_with_condition_spec(self):
-        spec_file_path = os.path.join(
-            fixture_path, "show_vlans_xml_with_condition_spec.yml"
-        )
+        spec_file_path = os.path.join(fixture_path, "show_vlans_xml_with_condition_spec.yml")
         parsed = parse_xml(output_xml, spec_file_path)
         expected = {
             "vlans": [
@@ -170,13 +166,9 @@ class TestNetworkParseFilter(unittest.TestCase):
         self.assertEqual(parsed, expected)
 
     def test_parse_xml_with_single_value_spec(self):
-        spec_file_path = os.path.join(
-            fixture_path, "show_vlans_xml_single_value_spec.yml"
-        )
+        spec_file_path = os.path.join(fixture_path, "show_vlans_xml_single_value_spec.yml")
         parsed = parse_xml(output_xml, spec_file_path)
-        expected = {
-            "vlans": ["test-1", "test-2", "test-3", "test-4", "test-5"]
-        }
+        expected = {"vlans": ["test-1", "test-2", "test-3", "test-4", "test-5"]}
         self.assertEqual(parsed, expected)
 
     def test_parse_xml_validate_input(self):
@@ -185,15 +177,12 @@ class TestNetworkParseFilter(unittest.TestCase):
 
         with self.assertRaises(Exception) as e:
             parse_xml(output_xml, "junk_path")
-        self.assertEqual(
-            "unable to locate parse_xml template: junk_path", str(e.exception)
-        )
+        self.assertEqual("unable to locate parse_xml template: junk_path", str(e.exception))
 
         with self.assertRaises(Exception) as e:
             parse_xml(output, spec_file_path)
         self.assertEqual(
-            "parse_xml works on string input, but given input of : %s"
-            % type(output),
+            "parse_xml works on string input, but given input of : %s" % type(output),
             str(e.exception),
         )
 

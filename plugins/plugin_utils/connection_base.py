@@ -30,9 +30,7 @@ class NetworkConnectionBase(PersistentConnectionBase):
     """
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(NetworkConnectionBase, self).__init__(
-            play_context, new_stdin, *args, **kwargs
-        )
+        super(NetworkConnectionBase, self).__init__(play_context, new_stdin, *args, **kwargs)
         self._network_os = self._play_context.network_os
         self._sub_plugin = {}
         self._cached_variables = (None, None, None)
@@ -48,23 +46,15 @@ class NetworkConnectionBase(PersistentConnectionBase):
                     if method is not None:
                         return method
             raise AttributeError(
-                "'%s' object has no attribute '%s'"
-                % (self.__class__.__name__, name)
+                "'%s' object has no attribute '%s'" % (self.__class__.__name__, name)
             )
 
     def get_options(self, hostvars=None):
-        options = super(NetworkConnectionBase, self).get_options(
-            hostvars=hostvars
-        )
+        options = super(NetworkConnectionBase, self).get_options(hostvars=hostvars)
 
-        if (
-            self._sub_plugin.get("obj")
-            and self._sub_plugin.get("type") != "external"
-        ):
+        if self._sub_plugin.get("obj") and self._sub_plugin.get("type") != "external":
             try:
-                options.update(
-                    self._sub_plugin["obj"].get_options(hostvars=hostvars)
-                )
+                options.update(self._sub_plugin["obj"].get_options(hostvars=hostvars))
             except AttributeError:
                 pass
 
@@ -88,10 +78,7 @@ class NetworkConnectionBase(PersistentConnectionBase):
                 % warning,
             )
 
-        if (
-            self._sub_plugin.get("obj")
-            and self._sub_plugin.get("type") != "external"
-        ):
+        if self._sub_plugin.get("obj") and self._sub_plugin.get("type") != "external":
             try:
                 self._sub_plugin["obj"].set_options(
                     task_keys=task_keys, var_options=var_options, direct=direct

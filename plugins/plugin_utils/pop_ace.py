@@ -35,9 +35,9 @@ def check_match(ace, match_criteria, match_all, name, afi):
     for k, v in match_criteria.items():
         if v:
             if k not in ["source", "destination", "acl_name", "afi"]:
-                check_arr.append(True) if ace.get(
-                    k, "NA"
-                ) == match_criteria.get(k,) else check_arr.append(False)
+                check_arr.append(True) if ace.get(k, "NA") == match_criteria.get(
+                    k,
+                ) else check_arr.append(False)
             elif k == "acl_name":
                 check_arr.append(True) if name == match_criteria.get(
                     k,
@@ -49,12 +49,12 @@ def check_match(ace, match_criteria, match_all, name, afi):
             else:  # for source and destination address
                 _sub = "source" if "source" in k else "destination"
                 _valid = []
-                _valid.append(True) if ace.get(_sub, {}).get(
-                    "address", "NA"
-                ) == match_criteria.get(k,) else _valid.append(False)
-                _valid.append(True) if ace.get(_sub, {}).get(
-                    "host", "NA"
-                ) == match_criteria.get(k,) else _valid.append(False)
+                _valid.append(True) if ace.get(_sub, {}).get("address", "NA") == match_criteria.get(
+                    k,
+                ) else _valid.append(False)
+                _valid.append(True) if ace.get(_sub, {}).get("host", "NA") == match_criteria.get(
+                    k,
+                ) else _valid.append(False)
                 _valid.append(True) if ace.get(_sub, {}).get("any", "NA") == (
                     match_criteria.get(k) == "any"
                 ) else _valid.append(False)
@@ -70,12 +70,8 @@ def _pop_ace(raw_acl, filter_options, match_criteria):
     acls_v4, acls_v6 = [], []
     racls_v4, racls_v6 = [], []
 
-    remove_first_ace_only = (
-        True if filter_options.get("remove") == "first" else False
-    )
-    fail_if_no_match = (
-        True if filter_options.get("failed_when") == "missing" else False
-    )
+    remove_first_ace_only = True if filter_options.get("remove") == "first" else False
+    fail_if_no_match = True if filter_options.get("failed_when") == "missing" else False
     match_all = True if filter_options.get("match_all") is True else False
 
     final_acl = {
@@ -99,9 +95,7 @@ def _pop_ace(raw_acl, filter_options, match_criteria):
             _races, _racl, _rstop = [], {}, True
 
             aces = acl.get("aces", {})
-            name = acl.get(
-                "name", ""
-            )  # filter by acl_name ignores whole acl entries i.e all aces
+            name = acl.get("name", "")  # filter by acl_name ignores whole acl entries i.e all aces
 
             for ace in aces:  # iterate on ace entries
                 judge = check_match(
@@ -112,9 +106,7 @@ def _pop_ace(raw_acl, filter_options, match_criteria):
                     afi=afi,
                 )
                 if judge:  # check matching criteria and remove from final dict
-                    if (
-                        remove_first_ace_only and _rstop
-                    ):  # removes one ace entry per acl
+                    if remove_first_ace_only and _rstop:  # removes one ace entry per acl
                         _races.append(ace)
                         _rstop = False
                         continue
@@ -132,9 +124,7 @@ def _pop_ace(raw_acl, filter_options, match_criteria):
 
             if _races:  # store removed aces
                 _racl["name"], _racl["aces"] = name, _races
-                racls_v4.append(_racl) if afi == "ipv4" else racls_v6.append(
-                    _racl
-                )
+                racls_v4.append(_racl) if afi == "ipv4" else racls_v6.append(_racl)
 
     fail_missing(racls_v4 + racls_v6, fail_if_no_match)
 

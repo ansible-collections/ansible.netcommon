@@ -37,7 +37,7 @@ extend-ignore =
   W503,
 
 # Accessibility/large fonts and PEP8 unfriendly:
-max-line-length = 160
+max-line-length = 100
 
 # Count the number of occurrences of each error/warning code and print a report:
 statistics = true

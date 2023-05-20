@@ -20,9 +20,7 @@ from ansible.module_utils.common._collections_compat import Mapping
 from ansible.module_utils.six import iteritems, string_types
 from ansible.utils.display import Display
 from ansible.utils.encrypt import passlib_or_crypt, random_password
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    Template,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import Template
 
 try:
     import yaml
@@ -90,8 +88,7 @@ def re_finditer(regex, value):
 def parse_cli(output, tmpl):
     if not isinstance(output, string_types):
         raise AnsibleError(
-            "parse_cli input should be a string, but was given a input of %s"
-            % (type(output))
+            "parse_cli input should be a string, but was given a input of %s" % (type(output))
         )
 
     if not os.path.exists(tmpl):
@@ -157,9 +154,7 @@ def parse_cli(output, tmpl):
                     obj = {}
                     for k, v in iteritems(value):
                         try:
-                            obj[k] = template(
-                                v, {"item": items}, fail_on_undefined=False
-                            )
+                            obj[k] = template(v, {"item": items}, fail_on_undefined=False)
                         except Exception:
                             obj[k] = None
                     objects.append(obj)
@@ -171,10 +166,7 @@ def parse_cli(output, tmpl):
 
                     key = template(value["key"], {"item": items})
                     values = dict(
-                        [
-                            (k, template(v, {"item": items}))
-                            for k, v in iteritems(value["values"])
-                        ]
+                        [(k, template(v, {"item": items})) for k, v in iteritems(value["values"])]
                     )
                     objects.append({key: values})
 
@@ -183,9 +175,7 @@ def parse_cli(output, tmpl):
         elif "items" in attrs:
             regexp = re.compile(attrs["items"])
             when = attrs.get("when")
-            conditional = (
-                "{%% if %s %%}True{%% else %%}False{%% endif %%}" % when
-            )
+            conditional = "{%% if %s %%}True{%% else %%}False{%% endif %%}" % when
 
             if isinstance(value, Mapping) and "key" not in value:
                 values = list()
@@ -216,9 +206,7 @@ def parse_cli(output, tmpl):
                     key = template(value["key"], {"item": item})
 
                     if when:
-                        if template(
-                            conditional, {"item": {"key": key, "value": entry}}
-                        ):
+                        if template(conditional, {"item": {"key": key, "value": entry}}):
                             values[key] = entry
                     else:
                         values[key] = entry
@@ -237,9 +225,7 @@ def parse_cli(output, tmpl):
 
 def parse_cli_textfsm(value, template):
     if not HAS_TEXTFSM:
-        raise AnsibleError(
-            "parse_cli_textfsm filter requires TextFSM library to be installed"
-        )
+        raise AnsibleError("parse_cli_textfsm filter requires TextFSM library to be installed")
 
     if not isinstance(value, string_types):
         raise AnsibleError(
@@ -248,9 +234,7 @@ def parse_cli_textfsm(value, template):
         )
 
     if not os.path.exists(template):
-        raise AnsibleError(
-            "unable to locate parse_cli_textfsm template: %s" % template
-        )
+        raise AnsibleError("unable to locate parse_cli_textfsm template: %s" % template)
 
     try:
         template = open(template)
@@ -347,8 +331,7 @@ def parse_xml(output, tmpl):
 
     if not isinstance(output, string_types):
         raise AnsibleError(
-            "parse_xml works on string input, but given input of : %s"
-            % type(output)
+            "parse_xml works on string input, but given input of : %s" % type(output)
         )
 
     root = fromstring(output)
@@ -387,9 +370,7 @@ def type5_pw(password, salt=None):
             % (type(password).__name__)
         )
 
-    salt_chars = "".join(
-        (to_text(string.ascii_letters), to_text(string.digits), "./")
-    )
+    salt_chars = "".join((to_text(string.ascii_letters), to_text(string.digits), "./"))
     if salt is not None and not isinstance(salt, string_types):
         raise AnsibleFilterError(
             "type5_pw salt input should be a string, but was given a input of %s"
@@ -399,8 +380,7 @@ def type5_pw(password, salt=None):
         salt = random_password(length=4, chars=salt_chars)
     elif not set(salt) <= set(salt_chars):
         raise AnsibleFilterError(
-            "type5_pw salt used inproper characters, must be one of %s"
-            % (salt_chars)
+            "type5_pw salt used inproper characters, must be one of %s" % (salt_chars)
         )
 
     encrypted_password = passlib_or_crypt(password, "md5_crypt", salt=salt)
@@ -412,17 +392,13 @@ def hash_salt(password):
     split_password = password.split("$")
     if len(split_password) != 4:
         raise AnsibleFilterError(
-            "Could not parse salt out password correctly from {0}".format(
-                password
-            )
+            "Could not parse salt out password correctly from {0}".format(password)
         )
     else:
         return split_password[2]
 
 
-def comp_type5(
-    unencrypted_password, encrypted_password, return_original=False
-):
+def comp_type5(unencrypted_password, encrypted_password, return_original=False):
     salt = hash_salt(encrypted_password)
     if type5_pw(unencrypted_password, salt) == encrypted_password:
         if return_original is True:
@@ -480,9 +456,7 @@ def vlan_parser(vlan_list, first_line_len=48, other_line_len=44):
             parse_list.append(str(sorted_list[end]))
         else:
             # Run of 3 or more VLANs
-            parse_list.append(
-                str(sorted_list[start]) + "-" + str(sorted_list[end])
-            )
+            parse_list.append(str(sorted_list[start]) + "-" + str(sorted_list[end]))
         idx = end + 1
 
     line_count = 0

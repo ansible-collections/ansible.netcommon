@@ -29,17 +29,13 @@ options:
 import json
 
 from ansible.module_utils._text import to_text
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.netconf_base import (
-    NetconfBase,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.netconf_base import NetconfBase
 
 
 class Netconf(NetconfBase):
     def get_text(self, ele, tag):
         try:
-            return to_text(
-                ele.find(tag).text, errors="surrogate_then_replace"
-            ).strip()
+            return to_text(ele.find(tag).text, errors="surrogate_then_replace").strip()
         except AttributeError:
             pass
 
@@ -56,7 +52,5 @@ class Netconf(NetconfBase):
         result["server_capabilities"] = list(self.m.server_capabilities)
         result["client_capabilities"] = list(self.m.client_capabilities)
         result["session_id"] = self.m.session_id
-        result["device_operations"] = self.get_device_operations(
-            result["server_capabilities"]
-        )
+        result["device_operations"] = self.get_device_operations(result["server_capabilities"])
         return json.dumps(result)

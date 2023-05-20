@@ -17,15 +17,10 @@ import re
 import shlex
 import time
 
-from ansible.module_utils.parsing.convert_bool import (
-    BOOLEANS_FALSE,
-    BOOLEANS_TRUE,
-)
+from ansible.module_utils.parsing.convert_bool import BOOLEANS_FALSE, BOOLEANS_TRUE
 from ansible.module_utils.six import string_types, text_type
 from ansible.module_utils.six.moves import zip
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    to_list,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 
 
 class FailedConditionsError(Exception):
@@ -68,17 +63,13 @@ class Cli(object):
             objects.append(self.to_command(cmd, output))
         return self.connection.run_commands(objects)
 
-    def to_command(
-        self, command, output=None, prompt=None, response=None, **kwargs
-    ):
+    def to_command(self, command, output=None, prompt=None, response=None, **kwargs):
         output = output or self.default_output
         if isinstance(command, Command):
             return command
         if isinstance(prompt, string_types):
             prompt = re.compile(re.escape(prompt))
-        return Command(
-            command, output, prompt=prompt, response=response, **kwargs
-        )
+        return Command(command, output, prompt=prompt, response=response, **kwargs)
 
     def add_commands(self, commands, output=None, **kwargs):
         for cmd in commands:
@@ -97,9 +88,7 @@ class Cli(object):
 
 
 class Command(object):
-    def __init__(
-        self, command, output=None, prompt=None, response=None, **kwargs
-    ):
+    def __init__(self, command, output=None, prompt=None, response=None, **kwargs):
         self.command = command
         self.output = output
         self.command_string = command
@@ -129,13 +118,9 @@ class CommandRunner(object):
 
         self._default_output = module.connection.default_output
 
-    def add_command(
-        self, command, output=None, prompt=None, response=None, **kwargs
-    ):
+    def add_command(self, command, output=None, prompt=None, response=None, **kwargs):
         if command in [str(c) for c in self.commands]:
-            raise AddCommandError(
-                "duplicated command detected", command=command
-            )
+            raise AddCommandError("duplicated command detected", command=command)
         cmd = self.module.cli.to_command(
             command, output=output, prompt=prompt, response=response, **kwargs
         )
@@ -174,9 +159,7 @@ class CommandRunner(object):
             self.retries -= 1
         else:
             failed_conditions = [item.raw for item in self.conditionals]
-            errmsg = (
-                "One or more conditional statements have not been satisfied"
-            )
+            errmsg = "One or more conditional statements have not been satisfied"
             raise FailedConditionsError(errmsg, failed_conditions)
 
 

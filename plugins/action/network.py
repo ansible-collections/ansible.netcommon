@@ -60,13 +60,9 @@ class ActionModule(_ActionModule):
                 )
                 # execute the module, collect result
                 result = self._exec_module(module)
-                display.vvvv(
-                    "{prefix} complete".format(prefix=DEXEC_PREFIX), host
-                )
+                display.vvvv("{prefix} complete".format(prefix=DEXEC_PREFIX), host)
                 display.vvvvv(
-                    "{prefix} Result: {result}".format(
-                        prefix=DEXEC_PREFIX, result=result
-                    ),
+                    "{prefix} Result: {result}".format(prefix=DEXEC_PREFIX, result=result),
                     host,
                 )
 
@@ -82,11 +78,7 @@ class ActionModule(_ActionModule):
         if not dexec_eligible:
             result = super(ActionModule, self).run(task_vars=task_vars)
 
-        if (
-            config_module
-            and self._task.args.get("backup")
-            and not result.get("failed")
-        ):
+        if config_module and self._task.args.get("backup") and not result.get("failed"):
             self._handle_backup_option(result, task_vars)
 
         return result
@@ -95,9 +87,7 @@ class ActionModule(_ActionModule):
         filename = None
         backup_path = None
         try:
-            non_config_regexes = self._connection.cliconf.get_option(
-                "non_config_lines", task_vars
-            )
+            non_config_regexes = self._connection.cliconf.get_option("non_config_lines", task_vars)
         except (AttributeError, KeyError):
             non_config_regexes = []
         try:
@@ -112,9 +102,7 @@ class ActionModule(_ActionModule):
             filename = backup_options.get("filename")
             backup_path = backup_options.get("dir_path")
 
-        tstamp = time.strftime(
-            "%Y-%m-%d@%H:%M:%S", time.localtime(time.time())
-        )
+        tstamp = time.strftime("%Y-%m-%d@%H:%M:%S", time.localtime(time.time()))
         if not backup_path:
             cwd = self._get_working_path()
             backup_path = os.path.join(cwd, "backup")
@@ -136,9 +124,7 @@ class ActionModule(_ActionModule):
                     output_file.write(content)
             except Exception as exc:
                 result["failed"] = True
-                result[
-                    "msg"
-                ] = "Could not write to destination file %s: %s" % (
+                result["msg"] = "Could not write to destination file %s: %s" % (
                     dest,
                     to_text(exc),
                 )
@@ -166,9 +152,7 @@ class ActionModule(_ActionModule):
         if os.path.isabs(src) or urlsplit("src").scheme:
             source = src
         else:
-            source = self._loader.path_dwim_relative(
-                working_path, "templates", src
-            )
+            source = self._loader.path_dwim_relative(working_path, "templates", src)
             if not source:
                 source = self._loader.path_dwim_relative(working_path, src)
 
@@ -213,9 +197,7 @@ class ActionModule(_ActionModule):
             display.vvvv("Getting network OS from fact")
             network_os = task_vars["ansible_facts"]["network_os"]
         else:
-            raise AnsibleError(
-                "ansible_network_os must be specified on this host"
-            )
+            raise AnsibleError("ansible_network_os must be specified on this host")
 
         return network_os
 
@@ -231,9 +213,7 @@ class ActionModule(_ActionModule):
             if not PY3:
                 dexec = False
                 display.vvvv(
-                    "{prefix} disabled for when not Python 3".format(
-                        prefix=DEXEC_PREFIX
-                    ),
+                    "{prefix} disabled for when not Python 3".format(prefix=DEXEC_PREFIX),
                     host=host,
                 )
 
@@ -241,17 +221,13 @@ class ActionModule(_ActionModule):
             if self._task.async_val:
                 dexec = False
                 display.vvvv(
-                    "{prefix} disabled for a task using async".format(
-                        prefix=DEXEC_PREFIX
-                    ),
+                    "{prefix} disabled for a task using async".format(prefix=DEXEC_PREFIX),
                     host=host,
                 )
         else:
             display.vvvv("{prefix} disabled".format(prefix=DEXEC_PREFIX), host)
             display.vvvv(
-                "{prefix} module execution time may be extended".format(
-                    prefix=DEXEC_PREFIX
-                ),
+                "{prefix} module execution time may be extended".format(prefix=DEXEC_PREFIX),
                 host,
             )
 
