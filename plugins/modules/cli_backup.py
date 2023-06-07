@@ -62,9 +62,6 @@ backup_path:
   sample: /playbooks/ansible/backup/hostname_config.2016-07-16@22:28:34
 """
 
-import json
-
-from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection
 
