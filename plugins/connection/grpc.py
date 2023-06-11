@@ -29,6 +29,7 @@ options:
       - Specifies the remote device FQDN or IP address to establish the gRPC
         connection to.
     default: inventory_hostname
+    type: string
     vars:
       - name: ansible_host
   port:
@@ -49,6 +50,7 @@ options:
       - Configures the device platform network operating system. This value is
         used to load a device specific grpc plugin to communicate with the remote
         device.
+    type: string
     vars:
       - name: ansible_network_os
   remote_user:
@@ -57,6 +59,7 @@ options:
         connection is first established.  If the remote_user is not specified,
         the connection will use the username of the logged in user.
       - Can be configured from the CLI via the C(--user) or C(-u) options.
+    type: string
     ini:
       - section: defaults
         key: remote_user
@@ -68,6 +71,7 @@ options:
     description:
       - Configures the user password used to authenticate to the remote device
         when first establishing the gRPC connection.
+    type: string
     vars:
       - name: ansible_password
       - name: ansible_ssh_pass
@@ -75,6 +79,7 @@ options:
     description:
       - The PEM encoded private key file used to authenticate to the
         remote device when first establishing the grpc connection.
+    type: string
     ini:
       - section: grpc_connection
         key: private_key_file
@@ -87,6 +92,7 @@ options:
       - The PEM encoded root certificate file used to create a SSL-enabled
         channel, if the value is None it reads the root certificates from
         a default location chosen by gRPC at runtime.
+    type: string
     ini:
       - section: grpc_connection
         key: root_certificates_file
@@ -98,6 +104,7 @@ options:
     description:
       - The PEM encoded certificate chain file used to create a SSL-enabled
         channel. If the value is None, no certificate chain is used.
+    type: string
     ini:
       - section: grpc_connection
         key: certificate_chain_file
@@ -111,6 +118,7 @@ options:
         The name used for SSL host name checking will be the target parameter
         (assuming that the secure channel is an SSL channel). If this parameter is
         specified and the underlying is not an SSL channel, it will just be ignored.
+    type: string
     ini:
       - section: grpc_connection
         key: ssl_target_name_override
