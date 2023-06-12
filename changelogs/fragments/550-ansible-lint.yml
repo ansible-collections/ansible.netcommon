@@ -1,0 +1,2 @@
+trivial:
+  - "Ignore ``sanity[cannot-ignore]`` ansible-lint rule (https://github.com/ansible-collections/ansible.netcommon/pull/550)."
