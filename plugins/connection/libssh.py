@@ -20,6 +20,7 @@ DOCUMENTATION = """
       remote_addr:
         description:
             - Address of the remote target
+        type: string
         default: inventory_hostname
         vars:
             - name: inventory_hostname
@@ -30,6 +31,7 @@ DOCUMENTATION = """
         description:
             - User to login/authenticate as
             - Can be set from the CLI via the C(--user) or C(-u) options.
+        type: string
         vars:
             - name: ansible_user
             - name: ansible_ssh_user
@@ -46,6 +48,7 @@ DOCUMENTATION = """
         description:
           - Secret used to either login the ssh server or as a passphrase for ssh keys that require it
           - Can be set from the CLI via the C(--ask-pass) option.
+        type: string
         vars:
             - name: ansible_password
             - name: ansible_ssh_pass
@@ -57,6 +60,7 @@ DOCUMENTATION = """
           - Text to match when using keyboard-interactive authentication to determine if the prompt is
             for the password.
           - Requires ansible-pylibssh version >= 1.0.0
+        type: string
         vars:
           - name: ansible_libssh_password_prompt
         version_added: 3.1.0
@@ -78,6 +82,7 @@ DOCUMENTATION = """
         description:
             - Proxy information for running the connection via a jumphost.
             - Also this plugin will scan 'ssh_args', 'ssh_extra_args' and 'ssh_common_args' from the 'ssh' plugin settings for proxy information if set.
+        type: string
         env:
           - name: ANSIBLE_LIBSSH_PROXY_COMMAND
         ini:
@@ -126,6 +131,7 @@ DOCUMENTATION = """
            - Arguments to pass to all ssh CLI tools.
            - ProxyCommand is the only supported argument.
            - This option is deprecated in favor of I(proxy_command).
+          type: string
           ini:
               - section: 'ssh_connection'
                 key: 'ssh_args'
@@ -141,6 +147,7 @@ DOCUMENTATION = """
            - Common extra arguments for all ssh CLI tools.
            - ProxyCommand is the only supported argument.
            - This option is deprecated in favor of I(proxy_command).
+          type: string
           ini:
               - section: 'ssh_connection'
                 key: 'ssh_common_args'
@@ -156,6 +163,7 @@ DOCUMENTATION = """
            - Extra arguments exclusive to the 'ssh' CLI tool.
            - ProxyCommand is the only supported argument.
            - This option is deprecated in favor of I(proxy_command).
+          type: string
           vars:
               - name: ansible_ssh_extra_args
           env:
