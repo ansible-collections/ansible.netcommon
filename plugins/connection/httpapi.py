@@ -23,6 +23,7 @@ options:
     - Specifies the remote device FQDN or IP address to establish the HTTP(S) connection
       to.
     default: inventory_hostname
+    type: string
     vars:
     - name: inventory_hostname
     - name: ansible_host
@@ -43,6 +44,7 @@ options:
     description:
     - Configures the device platform network operating system.  This value is used
       to load the correct httpapi plugin to communicate with the remote device
+    type: string
     vars:
     - name: ansible_network_os
   remote_user:
@@ -51,6 +53,7 @@ options:
       is first established.  If the remote_user is not specified, the connection will
       use the username of the logged in user.
     - Can be configured from the CLI via the C(--user) or C(-u) options.
+    type: string
     ini:
     - section: defaults
       key: remote_user
@@ -62,6 +65,7 @@ options:
     description:
     - Configures the user password used to authenticate to the remote device when
       needed for the device API.
+    type: string
     vars:
     - name: ansible_password
     - name: ansible_httpapi_pass
@@ -133,6 +137,7 @@ options:
       escalation.  Typically the become_method value is set to C(enable) but could
       be defined as other values.
     default: sudo
+    type: string
     ini:
     - section: privilege_escalation
       key: become_method
@@ -143,6 +148,7 @@ options:
   platform_type:
     description:
     - Set type of platform.
+    type: string
     env:
     - name: ANSIBLE_PLATFORM_TYPE
     vars:

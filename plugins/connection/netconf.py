@@ -29,6 +29,7 @@ options:
     - Specifies the remote device FQDN or IP address to establish the SSH connection
       to.
     default: inventory_hostname
+    type: string
     vars:
     - name: inventory_hostname
     - name: ansible_host
@@ -51,6 +52,7 @@ options:
       to load a device specific netconf plugin.  If this option is not configured
       (or set to C(auto)), then Ansible will attempt to guess the correct network_os
       to use. If it can not guess a network_os correctly it will use C(default).
+    type: string
     vars:
     - name: ansible_network_os
   remote_user:
@@ -59,6 +61,7 @@ options:
       is first established.  If the remote_user is not specified, the connection will
       use the username of the logged in user.
     - Can be configured from the CLI via the C(--user) or C(-u) options.
+    type: string
     ini:
     - section: defaults
       key: remote_user
@@ -70,6 +73,7 @@ options:
     description:
     - Configures the user password used to authenticate to the remote device when
       first establishing the SSH connection.
+    type: string
     vars:
     - name: ansible_password
     - name: ansible_ssh_pass
@@ -79,6 +83,7 @@ options:
     description:
     - The private SSH key or certificate file used to authenticate to the remote device
       when first establishing the SSH connection.
+    type: string
     ini:
     - section: defaults
       key: private_key_file
@@ -119,6 +124,7 @@ options:
     description:
       - Proxy information for running the connection via a jumphost.
       - This requires ncclient >= 0.6.10 to be installed on the controller.
+    type: string
     env:
       - name: ANSIBLE_NETCONF_PROXY_COMMAND
     ini:
@@ -132,6 +138,7 @@ options:
       set to True the bastion/jump host ssh settings should be present in ~/.ssh/config
       file, alternatively it can be set to custom ssh configuration file path to read
       the bastion/jump host settings.
+    type: string
     ini:
     - section: netconf_connection
       key: ssh_config
