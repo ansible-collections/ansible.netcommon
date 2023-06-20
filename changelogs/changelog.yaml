@@ -281,6 +281,8 @@ releases:
         - Allow setting `host_key_checking` through a play/task var for `network_cli`.
         - Ensure passed-in terminal_initial_prompt and terminal_initial_answer values
           are cast to bytes before using
+        - Ensure that all connection plugin options that should be strings are actually
+          strings (https://github.com/ansible-collections/ansible.netcommon/pull/549).
         - Update valid documentation for net_ping module.
         - ncclient - catch and handle exception to prevent stack trace when running
           in FIPS mode
@@ -298,7 +300,11 @@ releases:
       - 231-unit-tests.yaml
       - 235-fix-net-put-issue.yaml
       - 240-document-libssh-requirement.yaml
+      - 549-connection-strings.yml
+      - 550-ansible-lint.yml
       - fips-ncclient-import-error.yaml
+      - gha_release.yaml
+      - line-length.yaml
       - new_action_state.yaml
       - no_log_fix.yaml
       - set_host_key_checking.yaml
