@@ -3,7 +3,6 @@ repos:
   - repo: https://github.com/ansible-network/collection_prep
     rev: 1.1.1
     hooks:
-      - id: autoversion
       - id: update-docs
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
