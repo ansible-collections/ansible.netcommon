@@ -1,16 +1,21 @@
----
 authors:
   - Ansible Network Community (ansible-network)
 dependencies:
-  "ansible.utils": ">=2.7.0"
+  ansible.utils: '>=2.7.0'
 license_file: LICENSE
 name: netcommon
 namespace: ansible
-description:
-  Ansible Collection with common content to help automate the management
+description: Ansible Collection with common content to help automate the management
   of network, security, and cloud devices.
 readme: README.md
 repository: https://github.com/ansible-collections/ansible.netcommon
 issues: https://github.com/ansible-collections/ansible.netcommon/issues
-tags: [networking, security, cloud, network_cli, netconf, httpapi, grpc]
-version: 5.1.2-dev
+tags:
+  - networking
+  - security
+  - cloud
+  - network_cli
+  - netconf
+  - httpapi
+  - grpc
+version: 2.0.1

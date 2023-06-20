@@ -313,6 +313,7 @@ Bugfixes
 
 - Allow setting `host_key_checking` through a play/task var for `network_cli`.
 - Ensure passed-in terminal_initial_prompt and terminal_initial_answer values are cast to bytes before using
+- Ensure that all connection plugin options that should be strings are actually strings (https://github.com/ansible-collections/ansible.netcommon/pull/549).
 - Update valid documentation for net_ping module.
 - ncclient - catch and handle exception to prevent stack trace when running in FIPS mode
 - net_put - Remove temp file created when file already exist on destination when mode is 'text'.
