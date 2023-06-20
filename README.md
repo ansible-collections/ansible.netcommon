@@ -1,7 +1,7 @@
 
 
 # Ansible Network Collection for Common Code (netcommon)
-[![CI](https://zuul-ci.org/gated.svg)](https://dashboard.zuul.ansible.com/t/ansible/builds?project=ansible-collections%2Fansible.netcommon) <!--[![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/ansible.netcommon)](https://codecov.io/gh/ansible-collections/ansible.netcommon)-->
+[![CI](https://zuul-ci.org/gated.svg)](https://ansible.softwarefactory-project.io/zuul/builds?project=ansible-collections%2Fansible.netcommon) <!--[![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/ansible.netcommon)](https://codecov.io/gh/ansible-collections/ansible.netcommon)-->
 
 The Ansible ``ansible.netcommon`` collection includes common content to help automate the management of network, security, and cloud devices.
 This includes  connection plugins, such as ``network_cli``, ``httpapi``, and ``netconf``.
