@@ -101,6 +101,12 @@ options:
     default: true
     vars:
     - name: ansible_httpapi_use_proxy
+  explicit_proxy:
+    type: string
+    description:
+    - Define an explicit proxy for the connection. Will reset HTTPS_PROXY and HTTP_PROXY env variable
+    vars:
+    - name: ansible_httpapi_explicit_proxy
   ciphers:
     description:
       - SSL/TLS Ciphers to use for requests
@@ -156,6 +162,7 @@ options:
 """
 
 from io import BytesIO
+from os import environ
 
 from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils._text import to_bytes
@@ -283,6 +290,11 @@ class Connection(NetworkConnectionBase):
             headers={},
         )
         url_kwargs.update(kwargs)
+
+        explicit_proxy = self.get_option("explicit_proxy")
+        if explicit_proxy and explicit_proxy != "":
+            environ['HTTPS_PROXY'] = explicit_proxy
+            environ['HTTP_PROXY']  = explicit_proxy
 
         ciphers = self.get_option("ciphers")
         if ciphers:
