@@ -293,8 +293,8 @@ class Connection(NetworkConnectionBase):
 
         explicit_proxy = self.get_option("explicit_proxy")
         if explicit_proxy and explicit_proxy != "":
-            environ['HTTPS_PROXY'] = explicit_proxy
-            environ['HTTP_PROXY']  = explicit_proxy
+            environ["HTTPS_PROXY"] = explicit_proxy
+            environ["HTTP_PROXY"] = explicit_proxy
 
         ciphers = self.get_option("ciphers")
         if ciphers:
