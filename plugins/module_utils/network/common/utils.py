@@ -468,12 +468,12 @@ def load_provider(spec, args):
     provider = args.get("provider") or {}
     for key, value in iteritems(spec):
         if key not in provider:
-            if "fallback" in value:
+            try:
+                # Get fallback if defined, and valid
                 provider[key] = _fallback(value["fallback"])
-            elif "default" in value:
-                provider[key] = value["default"]
-            else:
-                provider[key] = None
+            except (basic.AnsibleFallbackNotFound, KeyError):
+                # Get default if defined, otherwise set to None
+                provider[key] = value.get("default")
     if "authorize" in provider:
         # Coerce authorize to provider if a string has somehow snuck in.
         provider["authorize"] = boolean(provider["authorize"] or False)
@@ -491,10 +491,8 @@ def _fallback(fallback):
             kwargs = item
         else:
             args = item
-    try:
-        return strategy(*args, **kwargs)
-    except basic.AnsibleFallbackNotFound:
-        pass
+
+    return strategy(*args, **kwargs)
 
 
 def generate_dict(spec):

@@ -1,0 +1,2 @@
+bugfixes:
+  - "Ensure that all connection plugin options that should be strings are actually strings (https://github.com/ansible-collections/ansible.netcommon/pull/549)."
