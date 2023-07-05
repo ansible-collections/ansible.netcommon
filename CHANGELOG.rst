@@ -5,6 +5,14 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v5.1.2
+======
+
+Bugfixes
+--------
+
+- Ensure that all connection plugin options that should be strings are actually strings (https://github.com/ansible-collections/ansible.netcommon/pull/549).
+
 v5.1.1
 ======
 
