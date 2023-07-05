@@ -662,3 +662,14 @@ releases:
     fragments:
       - resource_manager.yaml
     release_date: "2023-05-09"
+  5.1.2:
+    changes:
+      bugfixes:
+        - Ensure that all connection plugin options that should be strings are actually
+          strings (https://github.com/ansible-collections/ansible.netcommon/pull/549).
+    fragments:
+      - 549-connection-strings.yml
+      - 550-ansible-lint.yml
+      - gha_release.yaml
+      - line-length.yaml
+    release_date: "2023-07-05"
