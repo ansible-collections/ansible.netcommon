@@ -36,9 +36,9 @@ To do:
 
 
 # Imported modules
-import sys
-import socket
 import selectors
+import socket
+import sys
 from time import monotonic as _time
 
 __all__ = ["Telnet"]
