@@ -162,7 +162,6 @@ Parameters
                 </td>
                 <td>
                         <div>List of prompts expected before sending next command</div>
-                        <div>Do not use '|' in prompts if you will use '|' in command</div>
                 </td>
             </tr>
             <tr>
