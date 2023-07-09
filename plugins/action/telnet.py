@@ -46,6 +46,7 @@ class ActionModule(ActionBase):
             pause = int(self._task.args.get("pause", 1))
 
             send_newline = self._task.args.get("send_newline", False)
+            send_carriage_return = self._task.args.get("send_carriage_return", False)
 
             login_prompt = to_text(self._task.args.get("login_prompt", "login: "))
             password_prompt = to_text(self._task.args.get("password_prompt", "Password: "))
@@ -62,6 +63,8 @@ class ActionModule(ActionBase):
                 try:
                     if send_newline:
                         self.tn.write(b"\n")
+                    if send_carriage_return:
+                        self.tn.write(b"\r")
 
                     self.await_prompts([login_prompt], timeout)
                     self.tn.write(to_bytes(user + "\n"))
