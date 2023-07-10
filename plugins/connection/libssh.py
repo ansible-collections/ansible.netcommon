@@ -403,7 +403,7 @@ class Connection(ConnectionBase):
                 private_key=private_key,
                 timeout=self._play_context.timeout,
                 port=port,
-                **ssh_connect_kwargs
+                **ssh_connect_kwargs,
             )
         except LibsshSessionException as e:
             msg = "ssh connection failed: " + to_text(e)

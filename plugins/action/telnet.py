@@ -7,13 +7,13 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import telnetlib
 from time import sleep
 
 from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.six import text_type
 from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.compat import telnetlib
 
 display = Display()
 
