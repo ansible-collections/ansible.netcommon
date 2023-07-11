@@ -131,7 +131,8 @@ DOCUMENTATION = """
           description:
            - Arguments to pass to all ssh CLI tools.
            - ProxyCommand is the only supported argument.
-           - This option is deprecated in favor of I(proxy_command).
+           - This option is deprecated in favor of I(proxy_command) and will be removed
+             in a release after 2026-01-01.
           type: string
           ini:
               - section: 'ssh_connection'
@@ -147,7 +148,8 @@ DOCUMENTATION = """
           description:
            - Common extra arguments for all ssh CLI tools.
            - ProxyCommand is the only supported argument.
-           - This option is deprecated in favor of I(proxy_command).
+           - This option is deprecated in favor of I(proxy_command) and will be removed
+             in a release after 2026-01-01.
           type: string
           ini:
               - section: 'ssh_connection'
@@ -163,7 +165,8 @@ DOCUMENTATION = """
           description:
            - Extra arguments exclusive to the 'ssh' CLI tool.
            - ProxyCommand is the only supported argument.
-           - This option is deprecated in favor of I(proxy_command).
+           - This option is deprecated in favor of I(proxy_command) and will be removed
+             in a release after 2026-01-01.
           type: string
           vars:
               - name: ansible_ssh_extra_args
@@ -318,6 +321,9 @@ class Connection(ConnectionBase):
         ]
 
         if any(ssh_args):
+            display.warning(
+                "The ssh_*_args options are deprecated and will be removed in a release after 2026-01-01. Please use the proxy_command option instead."
+            )
             args = self._split_ssh_args(" ".join(ssh_args))
             for i, arg in enumerate(args):
                 if arg.lower() == "proxycommand":
