@@ -13,9 +13,11 @@ from functools import wraps
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils._text import to_bytes, to_text
+from ansible.module_utils.common._collections_compat import Mapping
 
 # Needed to satisfy PluginLoader's required_base_class
 from ansible.plugins.cliconf import CliconfBase as CliconfBaseBase
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 
 
 try:
@@ -70,12 +72,13 @@ class CliconfBase(CliconfBaseBase):
     """
 
     __rpc__ = [
-        "get_config",
         "edit_config",
-        "get_capabilities",
-        "get",
         "enable_response_logging",
+        "get",
+        "get_capabilities",
+        "get_config",
         "disable_response_logging",
+        "run_commands",
     ]
 
     def __init__(self, connection):
@@ -241,7 +244,6 @@ class CliconfBase(CliconfBaseBase):
         """
         pass
 
-    @abstractmethod
     def get(
         self,
         command=None,
@@ -268,7 +270,17 @@ class CliconfBase(CliconfBaseBase):
                           given prompt.
         :return: The output from the device after executing the command
         """
-        pass
+        if not command:
+            raise ValueError("must provide value of command to execute")
+
+        return self.send_command(
+            command=command,
+            prompt=prompt,
+            answer=answer,
+            sendonly=sendonly,
+            newline=newline,
+            check_all=check_all,
+        )
 
     @abstractmethod
     def get_capabilities(self):
@@ -478,7 +490,24 @@ class CliconfBase(CliconfBaseBase):
                          value is True an exception is raised.
         :return: List of returned response
         """
-        pass
+        if commands is None:
+            raise ValueError("'commands' value is required")
+
+        responses = list()
+        for cmd in to_list(commands):
+            if not isinstance(cmd, Mapping):
+                cmd = {"command": cmd}
+
+            try:
+                out = self.send_command(**cmd)
+            except AnsibleConnectionFailure as e:
+                if check_rc:
+                    raise
+                out = getattr(e, "err", e)
+
+            responses.append(out)
+
+        return responses
 
     def check_edit_config_capability(
         self,
