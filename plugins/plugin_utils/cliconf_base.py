@@ -17,6 +17,7 @@ from ansible.module_utils.common._collections_compat import Mapping
 
 # Needed to satisfy PluginLoader's required_base_class
 from ansible.plugins.cliconf import CliconfBase as CliconfBaseBase
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 
 
@@ -352,7 +353,7 @@ class CliconfBase(CliconfBaseBase):
 
         :return: None
         """
-        return self._connection.method_not_found(
+        raise AnsibleConnectionFailure(
             "commit is not supported by network_os %s" % self._play_context.network_os
         )
 
@@ -365,7 +366,7 @@ class CliconfBase(CliconfBaseBase):
 
         :returns: None
         """
-        return self._connection.method_not_found(
+        raise AnsibleConnectionFailure(
             "discard_changes is not supported by network_os %s" % self._play_context.network_os
         )
 

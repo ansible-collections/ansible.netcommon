@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -18,6 +19,8 @@ version_added: 5.2.0
 
 import json
 
+from ansible.errors import AnsibleConnectionFailure
+
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.cliconf_base import CliconfBase
 
 
@@ -31,17 +34,17 @@ class Cliconf(CliconfBase):
             device_info = {}
 
             device_info["network_os"] = "default"
+            self._device_info = device_info
+
         return self._device_info
 
     def get_config(self, flags=None, format=None):
-        return self._connection.method_not_found(
-            "commit is not supported by network_os %s" % self._play_context.network_os
-        )
+        network_os = self.get_device_info()["network_os"]
+        raise AnsibleConnectionFailure("get_config is not supported by network_os %s" % network_os)
 
     def edit_config(self, candidate=None, commit=True, replace=None, comment=None):
-        return self._connection.method_not_found(
-            "commit is not supported by network_os %s" % self._play_context.network_os
-        )
+        network_os = self.get_device_info()["network_os"]
+        raise AnsibleConnectionFailure("edit_config is not supported by network_os %s" % network_os)
 
     def get_capabilities(self):
         result = super(Cliconf, self).get_capabilities()
