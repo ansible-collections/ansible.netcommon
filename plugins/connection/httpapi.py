@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -167,6 +168,7 @@ from ansible.playbook.play_context import PlayContext
 from ansible.plugins.connection import ensure_connect
 from ansible.plugins.loader import httpapi_loader
 from ansible.release import __version__ as ANSIBLE_CORE_VERSION
+
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )

@@ -5,11 +5,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import unittest
 
 from ansible.errors import AnsibleFilterError
+
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import pop_ace
 
 

@@ -6,12 +6,14 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import os
 import re
 import string
 import traceback
+
 from xml.etree.ElementTree import fromstring
 
 from ansible.errors import AnsibleError, AnsibleFilterError
@@ -20,7 +22,9 @@ from ansible.module_utils.common._collections_compat import Mapping
 from ansible.module_utils.six import iteritems, string_types
 from ansible.utils.display import Display
 from ansible.utils.encrypt import passlib_or_crypt, random_password
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import Template
+
 
 try:
     import yaml

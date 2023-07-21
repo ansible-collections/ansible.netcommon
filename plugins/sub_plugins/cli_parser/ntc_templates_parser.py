@@ -10,6 +10,7 @@ https://github.com/networktocode/ntc-templates
 """
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -43,6 +44,7 @@ EXAMPLES = r"""
 from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
 from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
+
 
 try:
     from ntc_templates.parse import parse_output

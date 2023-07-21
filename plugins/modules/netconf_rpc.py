@@ -7,6 +7,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 
@@ -152,18 +153,21 @@ output:
 
 import ast
 
+
 try:
     from lxml.etree import tostring
 except ImportError:
     from xml.etree.ElementTree import tostring
 
 from ansible.module_utils.basic import AnsibleModule
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     remove_namespaces,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
     dispatch,
 )
+
 
 try:
     import jxmlease

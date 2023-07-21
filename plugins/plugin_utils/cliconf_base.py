@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 from abc import abstractmethod
@@ -15,6 +16,7 @@ from ansible.module_utils._text import to_bytes, to_text
 
 # Needed to satisfy PluginLoader's required_base_class
 from ansible.plugins.cliconf import CliconfBase as CliconfBaseBase
+
 
 try:
     from scp import SCPClient

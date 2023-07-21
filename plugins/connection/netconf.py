@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -161,10 +162,12 @@ from ansible.module_utils.six.moves import cPickle
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.connection import ensure_connect
 from ansible.plugins.loader import netconf_loader
+
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
+
 
 try:
     from ncclient import __version__ as NCCLIENT_VERSION
