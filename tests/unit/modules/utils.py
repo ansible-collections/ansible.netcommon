@@ -1,8 +1,10 @@
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 import json
 import unittest
+
 from unittest.mock import patch
 
 from ansible.module_utils import basic

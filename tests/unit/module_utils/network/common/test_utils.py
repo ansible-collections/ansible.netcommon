@@ -7,12 +7,14 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 from copy import deepcopy
 from unittest.mock import MagicMock
 
 import pytest
+
 from ansible.module_utils.common.network import (
     is_masklen,
     is_netmask,
@@ -22,6 +24,7 @@ from ansible.module_utils.common.network import (
     to_netmask,
     to_subnet,
 )
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import utils
 
 

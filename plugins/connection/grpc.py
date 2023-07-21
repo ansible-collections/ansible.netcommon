@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -144,6 +145,7 @@ from importlib import import_module
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.plugins.connection import NetworkConnectionBase
+
 
 try:
     from grpc import insecure_channel, secure_channel, ssl_channel_credentials

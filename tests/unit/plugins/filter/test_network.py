@@ -16,6 +16,7 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import os
@@ -30,6 +31,7 @@ from ansible_collections.ansible.netcommon.plugins.filter.network import (
     vlan_expander,
     vlan_parser,
 )
+
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "network")
 

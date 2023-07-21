@@ -6,12 +6,15 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
+
 from ansible.playbook.play_context import PlayContext
+
 
 pytest.importorskip("ncclient")
 
@@ -29,6 +32,7 @@ def import_mock(name, *args):
 
 with patch("builtins.__import__", side_effect=import_mock):
     from ansible.plugins.loader import connection_loader
+
     from ansible_collections.ansible.netcommon.plugins.connection import netconf
 
 
