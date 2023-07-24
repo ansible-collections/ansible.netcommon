@@ -79,3 +79,13 @@ def test_get_config(cliconf):
 def test_edit_config(cliconf):
     with pytest.raises(AnsibleConnectionFailure):
         cliconf.edit_config()
+
+
+def test_get_no_command(cliconf):
+    with pytest.raises(ValueError, match="must provide value of command to execute"):
+        cliconf.get()
+
+
+def test_run_commands_no_commands(cliconf):
+    with pytest.raises(ValueError, match="'commands' value is required"):
+        cliconf.run_commands()
