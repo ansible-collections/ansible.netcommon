@@ -13,6 +13,7 @@ import json
 
 import pytest
 
+from ansible.errors import AnsibleConnectionFailure
 from ansible.plugins.loader import cliconf_loader
 
 
@@ -68,3 +69,13 @@ def test_get_capabilities(cliconf):
         network_api="cliconf",
         device_operations=OPERATIONS,
     )
+
+
+def test_get_config(cliconf):
+    with pytest.raises(AnsibleConnectionFailure):
+        cliconf.get_config()
+
+
+def test_edit_config(cliconf):
+    with pytest.raises(AnsibleConnectionFailure):
+        cliconf.edit_config()
