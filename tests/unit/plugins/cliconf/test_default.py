@@ -97,13 +97,27 @@ def test_get_no_command(cliconf):
         cliconf.get()
 
 
-def test_run_commands(cliconf):
+@pytest.mark.parametrize("commands", ["show version", {"command": "show version"}])
+def test_run_commands(cliconf, commands):
     return_value = "ABC FakeOS v1.23.4"
     conn = MagicMock()
     conn.send.return_value = return_value
     cliconf._connection = conn
-    resp = cliconf.run_commands(["show version"])
+    resp = cliconf.run_commands([commands])
     assert resp == [return_value]
+
+
+@pytest.mark.parametrize("check_rc", [True, False])
+def test_run_commands_check_rc(cliconf, check_rc):
+    error = AnsibleConnectionFailure("Invalid command: [sow]")
+    cliconf.send_command = MagicMock(side_effect=error)
+
+    if check_rc:
+        with pytest.raises(AnsibleConnectionFailure):
+            resp = cliconf.run_commands(["sow version"], check_rc=check_rc)
+    else:
+        resp = cliconf.run_commands(["sow version"], check_rc=check_rc)
+        assert resp == [error]
 
 
 def test_run_commands_no_commands(cliconf):
