@@ -73,14 +73,15 @@ def test_get_capabilities(cliconf):
     )
 
 
-def test_get_config(cliconf):
-    with pytest.raises(AnsibleConnectionFailure):
-        cliconf.get_config()
+@pytest.mark.parametrize("method", ["get_config", "edit_config", "commit", "discard_changes"])
+def test_unsupported_method(cliconf, method):
+    cliconf._play_context = MagicMock()
+    cliconf._play_context.network_os = "default"
 
-
-def test_edit_config(cliconf):
-    with pytest.raises(AnsibleConnectionFailure):
-        cliconf.edit_config()
+    with pytest.raises(
+        AnsibleConnectionFailure, match=f"{method} is not supported by network_os default"
+    ):
+        getattr(cliconf, method)()
 
 
 def test_get(cliconf):
