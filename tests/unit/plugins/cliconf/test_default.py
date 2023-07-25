@@ -11,6 +11,8 @@ __metaclass__ = type
 
 import json
 
+from unittest.mock import MagicMock
+
 import pytest
 
 from ansible.errors import AnsibleConnectionFailure
@@ -43,7 +45,7 @@ RPC = [
 
 
 @pytest.fixture(name="cliconf")
-def plugin_fixture(monkeypatch):
+def plugin_fixture():
     cliconf = cliconf_loader.get("ansible.netcommon.default", None)
     return cliconf
 
@@ -81,9 +83,27 @@ def test_edit_config(cliconf):
         cliconf.edit_config()
 
 
+def test_get(cliconf):
+    return_value = "ABC FakeOS v1.23.4"
+    conn = MagicMock()
+    conn.send.return_value = return_value
+    cliconf._connection = conn
+    resp = cliconf.get("show version")
+    assert resp == return_value
+
+
 def test_get_no_command(cliconf):
     with pytest.raises(ValueError, match="must provide value of command to execute"):
         cliconf.get()
+
+
+def test_run_commands(cliconf):
+    return_value = "ABC FakeOS v1.23.4"
+    conn = MagicMock()
+    conn.send.return_value = return_value
+    cliconf._connection = conn
+    resp = cliconf.run_commands(["show version"])
+    assert resp == [return_value]
 
 
 def test_run_commands_no_commands(cliconf):
