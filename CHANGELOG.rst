@@ -8,11 +8,6 @@ Ansible Netcommon Collection Release Notes
 v5.1.3
 ======
 
-Bugfixes
---------
-
-- Vendor telnetlib from cpython (https://github.com/ansible-collections/ansible.netcommon/pull/546)
-
 v5.1.2
 ======
 
