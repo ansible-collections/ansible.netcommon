@@ -386,26 +386,30 @@ class Connection(NetworkConnectionBase):
                 raise AnsibleConnectionFailure("network os %s is not supported" % self._network_os)
 
             self.cliconf = cliconf_loader.get(self._network_os, self)
-            if self.cliconf:
-                self._sub_plugin = {
-                    "type": "cliconf",
-                    "name": self.cliconf._load_name,
-                    "obj": self.cliconf,
-                }
+            if not self.cliconf:
                 self.queue_message(
                     "vvvv",
-                    "loaded cliconf plugin %s from path %s for network_os %s"
-                    % (
-                        self.cliconf._load_name,
-                        self.cliconf._original_path,
-                        self._network_os,
-                    ),
+                    "unable to load cliconf for network_os %s. Falling back to default"
+                    % self._network_os,
                 )
-            else:
-                self.queue_message(
-                    "vvvv",
-                    "unable to load cliconf for network_os %s" % self._network_os,
-                )
+                self.cliconf = cliconf_loader.get("ansible.netcommon.default", self)
+                if not self.cliconf:
+                    raise AnsibleConnectionFailure("Couldn't load fallback cliconf plugin")
+
+            self._sub_plugin = {
+                "type": "cliconf",
+                "name": self.cliconf._load_name,
+                "obj": self.cliconf,
+            }
+            self.queue_message(
+                "vvvv",
+                "loaded cliconf plugin %s from path %s for network_os %s"
+                % (
+                    self.cliconf._load_name,
+                    self.cliconf._original_path,
+                    self._network_os,
+                ),
+            )
         else:
             raise AnsibleConnectionFailure(
                 "Unable to automatically determine host network os. Please "
