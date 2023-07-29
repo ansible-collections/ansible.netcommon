@@ -49,11 +49,17 @@ class ActionModule(ActionBase):
             pause = int(self._task.args.get("pause", 1))
 
             send_newline = self._task.args.get("send_newline", False)
+            clrf = self._task.args.get("clrf", False)
 
             login_prompt = to_text(self._task.args.get("login_prompt", "login: "))
             password_prompt = to_text(self._task.args.get("password_prompt", "Password: "))
             prompts = self._task.args.get("prompts", ["\\$ "])
             commands = self._task.args.get("command") or self._task.args.get("commands")
+
+            if clrf:
+                line_ending = "\r\n"
+            else:
+                line_ending = "\n"
 
             if isinstance(commands, text_type):
                 commands = commands.split(",")
@@ -64,25 +70,27 @@ class ActionModule(ActionBase):
                 self.output = bytes()
                 try:
                     if send_newline:
-                        self.tn.write(b"\n")
+                        self.tn.write(to_bytes(line_ending))
 
                     self.await_prompts([login_prompt], timeout)
-                    self.tn.write(to_bytes(user + "\n"))
+                    display.vvvvv(">>>user: %s" % user)
+                    self.tn.write(to_bytes(user + line_ending))
 
                     if password:
                         self.await_prompts([password_prompt], timeout)
-                        self.tn.write(to_bytes(password + "\n"))
+                        display.vvvvv(">>>password: %s" % password)
+                        self.tn.write(to_bytes(password + line_ending))
 
                     self.await_prompts(prompts, timeout)
 
                     for cmd in commands:
                         display.vvvvv(">>> %s" % cmd)
-                        self.tn.write(to_bytes(cmd + "\n"))
+                        self.tn.write(to_bytes(cmd + line_ending))
                         self.await_prompts(prompts, timeout)
                         display.vvvvv("<<< %s" % cmd)
                         sleep(pause)
 
-                    self.tn.write(b"exit\n")
+                    self.tn.write(to_bytes("exit" + line_ending))
 
                 except EOFError as e:
                     result["failed"] = True

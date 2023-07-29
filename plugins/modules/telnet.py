@@ -84,6 +84,12 @@ options:
     required: false
     type: bool
     default: false
+  crlf:
+    description:
+    - Sends a CRLF (Carrage Return) instead of just a LF (Line Feed).
+    required: false
+    type: bool
+    default: false
 notes:
 - The C(environment) keyword does not work with this task
 author:
