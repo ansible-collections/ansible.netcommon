@@ -5,6 +5,17 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v5.2.0
+======
+
+New Plugins
+-----------
+
+Cliconf
+~~~~~~~
+
+- default - General purpose cliconf plugin for new platforms
+
 v5.1.3
 ======
 
