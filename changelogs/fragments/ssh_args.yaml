@@ -1,3 +1,3 @@
 ---
 deprecated_features:
-  - The ssh_*_args options are now marked that they will be removed after 2026-01-01.
+  - libssh - the ssh_*_args options are now marked that they will be removed after 2026-01-01.
