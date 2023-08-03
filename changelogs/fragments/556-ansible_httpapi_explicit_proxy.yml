@@ -1,0 +1,2 @@
+minor_changes:
+  - httpapi - New ansible_explicit_proxy variable for setting HTTP/HTTPS proxy with ansible variable instead of environment variable
