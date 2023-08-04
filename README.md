@@ -46,6 +46,7 @@ Name | Description
 --- | ---
 [ansible.netcommon.pop_ace](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.pop_ace_filter.rst)|Remove ace entries from a acl source of truth.
 [ansible.netcommon.vlan_expander](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.vlan_expander_filter.rst)|vlan_expander filter plugin.
+[ansible.netcommon.vlan_parser](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.vlan_parser_filter.rst)|vlan_parser filter plugin.
 
 ### Httpapi plugins
 Name | Description
