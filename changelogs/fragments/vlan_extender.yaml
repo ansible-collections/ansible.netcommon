@@ -1,3 +1,4 @@
 ---
 trivial:
   - vlan_expander - Filter plugin updated as individual plugin.
+  - vlan_parser - Filter plugin updated as individual plugin.

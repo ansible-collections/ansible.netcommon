@@ -28,10 +28,9 @@ from ansible_collections.ansible.netcommon.plugins.filter.network import (
     hash_salt,
     parse_xml,
     type5_pw,
-    vlan_parser,
 )
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
-
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "network")
 
