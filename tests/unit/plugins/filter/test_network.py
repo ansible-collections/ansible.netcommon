@@ -30,8 +30,8 @@ from ansible_collections.ansible.netcommon.plugins.filter.network import (
     type5_pw,
     vlan_parser,
 )
-
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
+
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "network")
 
