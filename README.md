@@ -45,20 +45,7 @@ Name | Description
 Name | Description
 --- | ---
 [ansible.netcommon.pop_ace](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.pop_ace_filter.rst)|Remove ace entries from a acl source of truth.
-
-### Network filter plugins
-Filters for working with output from network devices
-
-Name | Description
---- | ---
-ansible.netcommon.comp_type5|ansible.netcommon comp_type5 filter plugin
-ansible.netcommon.hash_salt|ansible.netcommon hash_salt filter plugin
-ansible.netcommon.parse_cli|ansible.netcommon parse_cli filter plugin
-ansible.netcommon.parse_cli_textfsm|ansible.netcommon parse_cli_textfsm filter plugin
-ansible.netcommon.parse_xml|ansible.netcommon parse_xml filter plugin
-ansible.netcommon.type5_pw|ansible.netcommon type5_pw filter plugin
-ansible.netcommon.vlan_expander|ansible.netcommon vlan_expander filter plugin
-ansible.netcommon.vlan_parser|Input: Unsorted list of vlan integers
+[ansible.netcommon.vlan_expander](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.vlan_expander_filter.rst)|vlan_expander filter plugin.
 
 ### Httpapi plugins
 Name | Description
