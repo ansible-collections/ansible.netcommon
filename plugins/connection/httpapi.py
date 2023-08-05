@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -80,6 +81,34 @@ options:
     - When specified, I(password) is ignored.
     vars:
     - name: ansible_httpapi_session_key
+  ca_path:
+    description:
+      - Path to CA cert bundle to use.
+    type: path
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_ca_path
+  client_cert:
+    description:
+      - PEM formatted certificate chain file to be used for SSL client
+        authentication. This file can also include the key as well, and if the key
+        is included, I(client_key) is not required
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_client_cert
+  client_key:
+    description:
+      - PEM formatted file that contains the private key to be used for SSL client
+        authentication. If I(client_cert) contains both the certificate and key,
+        this option is not required.
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_client_key
+  http_agent:
+    description: User-Agent to use in the request.
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_http_agent
   use_ssl:
     type: boolean
     description:
@@ -167,6 +196,7 @@ from ansible.playbook.play_context import PlayContext
 from ansible.plugins.connection import ensure_connect
 from ansible.plugins.loader import httpapi_loader
 from ansible.release import __version__ as ANSIBLE_CORE_VERSION
+
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
@@ -277,10 +307,14 @@ class Connection(NetworkConnectionBase):
         Sends the command to the device over api
         """
         url_kwargs = dict(
+            headers={},
+            use_proxy=self.get_option("use_proxy"),
             timeout=self.get_option("persistent_command_timeout"),
             validate_certs=self.get_option("validate_certs"),
-            use_proxy=self.get_option("use_proxy"),
-            headers={},
+            http_agent=self.get_option("http_agent"),
+            client_cert=self.get_option("client_cert"),
+            client_key=self.get_option("client_key"),
+            ca_path=self.get_option("ca_path"),
         )
         url_kwargs.update(kwargs)
 

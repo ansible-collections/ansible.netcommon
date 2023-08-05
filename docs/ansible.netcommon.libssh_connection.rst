@@ -291,7 +291,7 @@ Parameters
                 <td>
                         <div>Arguments to pass to all ssh CLI tools.</div>
                         <div>ProxyCommand is the only supported argument.</div>
-                        <div>This option is deprecated in favor of <em>proxy_command</em>.</div>
+                        <div>This option is deprecated in favor of <em>proxy_command</em> and will be removed in a release after 2026-01-01.</div>
                 </td>
             </tr>
             <tr>
@@ -316,7 +316,7 @@ Parameters
                 <td>
                         <div>Common extra arguments for all ssh CLI tools.</div>
                         <div>ProxyCommand is the only supported argument.</div>
-                        <div>This option is deprecated in favor of <em>proxy_command</em>.</div>
+                        <div>This option is deprecated in favor of <em>proxy_command</em> and will be removed in a release after 2026-01-01.</div>
                 </td>
             </tr>
             <tr>
@@ -341,7 +341,7 @@ Parameters
                 <td>
                         <div>Extra arguments exclusive to the &#x27;ssh&#x27; CLI tool.</div>
                         <div>ProxyCommand is the only supported argument.</div>
-                        <div>This option is deprecated in favor of <em>proxy_command</em>.</div>
+                        <div>This option is deprecated in favor of <em>proxy_command</em> and will be removed in a release after 2026-01-01.</div>
                 </td>
             </tr>
             <tr>

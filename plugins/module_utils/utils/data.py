@@ -7,6 +7,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 """
 Utils functions for handle data formatting
@@ -17,6 +18,7 @@ import sys
 from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six import string_types
+
 
 try:
     HAS_LXML = True

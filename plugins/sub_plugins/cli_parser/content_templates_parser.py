@@ -7,6 +7,7 @@ The parser functionality used by the network resource modules is leveraged here.
 """
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -31,10 +32,11 @@ EXAMPLES = """
 
 """
 from ansible.module_utils._text import to_native
+from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parsertemplate import (
     CliParserTemplate,
 )
-from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
 
 
 class CliParser(CliParserBase):

@@ -11,9 +11,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import re
+
 from copy import deepcopy
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
@@ -26,6 +28,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     validate_config as _validate_config,
 )
+
 
 try:
     from ansible.module_utils.common.parameters import _list_no_log_values as list_no_log_values

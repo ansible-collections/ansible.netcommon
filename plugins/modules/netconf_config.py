@@ -6,6 +6,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 
@@ -394,6 +395,7 @@ diff:
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection, ConnectionError
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
     get_capabilities,
     get_config,
@@ -403,6 +405,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data impor
     dict_to_xml,
     validate_and_normalize_data,
 )
+
 
 try:
     from lxml.etree import fromstring, tostring

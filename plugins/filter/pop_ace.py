@@ -10,6 +10,7 @@ The pop_ace filter plugin
 """
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -992,10 +993,12 @@ tasks:
 """
 
 from ansible.errors import AnsibleFilterError
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import pop_ace
 from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (
     AnsibleArgSpecValidator,
 )
+
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import pop_ace
+
 
 try:
     from jinja2.filters import pass_environment

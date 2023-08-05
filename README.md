@@ -26,6 +26,11 @@ Name | Description
 --- | ---
 [ansible.netcommon.enable](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.enable_become.rst)|Switch to elevated permissions on a network device
 
+### Cliconf plugins
+Name | Description
+--- | ---
+[ansible.netcommon.default](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.default_cliconf.rst)|General purpose cliconf plugin for new platforms
+
 ### Connection plugins
 Name | Description
 --- | ---

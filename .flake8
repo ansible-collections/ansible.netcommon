@@ -7,6 +7,8 @@ count = true
 
 # Don't even try to analyze these:
 extend-exclude =
+  # vendored files
+  compat
   # project env vars
   .env,
   # GitHub configs

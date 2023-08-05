@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -130,7 +131,8 @@ DOCUMENTATION = """
           description:
            - Arguments to pass to all ssh CLI tools.
            - ProxyCommand is the only supported argument.
-           - This option is deprecated in favor of I(proxy_command).
+           - This option is deprecated in favor of I(proxy_command) and will be removed
+             in a release after 2026-01-01.
           type: string
           ini:
               - section: 'ssh_connection'
@@ -146,7 +148,8 @@ DOCUMENTATION = """
           description:
            - Common extra arguments for all ssh CLI tools.
            - ProxyCommand is the only supported argument.
-           - This option is deprecated in favor of I(proxy_command).
+           - This option is deprecated in favor of I(proxy_command) and will be removed
+             in a release after 2026-01-01.
           type: string
           ini:
               - section: 'ssh_connection'
@@ -162,7 +165,8 @@ DOCUMENTATION = """
           description:
            - Extra arguments exclusive to the 'ssh' CLI tool.
            - ProxyCommand is the only supported argument.
-           - This option is deprecated in favor of I(proxy_command).
+           - This option is deprecated in favor of I(proxy_command) and will be removed
+             in a release after 2026-01-01.
           type: string
           vars:
               - name: ansible_ssh_extra_args
@@ -192,6 +196,7 @@ import os
 import re
 import socket
 import sys
+
 from termios import TCIFLUSH, tcflush
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError, AnsibleFileNotFound
@@ -200,7 +205,9 @@ from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six.moves import input
 from ansible.plugins.connection import ConnectionBase
 from ansible.utils.display import Display
+
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
+
 
 display = Display()
 
@@ -314,6 +321,9 @@ class Connection(ConnectionBase):
         ]
 
         if any(ssh_args):
+            display.warning(
+                "The ssh_*_args options are deprecated and will be removed in a release after 2026-01-01. Please use the proxy_command option instead."
+            )
             args = self._split_ssh_args(" ".join(ssh_args))
             for i, arg in enumerate(args):
                 if arg.lower() == "proxycommand":
@@ -403,7 +413,7 @@ class Connection(ConnectionBase):
                 private_key=private_key,
                 timeout=self._play_context.timeout,
                 port=port,
-                **ssh_connect_kwargs
+                **ssh_connect_kwargs,
             )
         except LibsshSessionException as e:
             msg = "ssh connection failed: " + to_text(e)

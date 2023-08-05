@@ -7,6 +7,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 
@@ -270,6 +271,7 @@ except ImportError:
 
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     remove_namespaces,
 )
@@ -283,6 +285,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data impor
     validate_and_normalize_data,
     xml_to_dict,
 )
+
 
 try:
     import jxmlease

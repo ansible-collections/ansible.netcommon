@@ -1,0 +1,5 @@
+---
+minor_changes:
+  - Add a new cliconf plugin ``default`` that can be used when no cliconf
+    plugin is found for a given network_os. This plugin only supports ``get()``.
+    (https://github.com/ansible-collections/ansible.netcommon/pull/569)

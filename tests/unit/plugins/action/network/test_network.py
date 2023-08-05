@@ -4,18 +4,22 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import os
 import tempfile
+
 from unittest.mock import MagicMock
 
 import pytest
+
 from ansible.errors import AnsibleError
 from ansible.playbook.role import Role
 from ansible.playbook.task import Task
 from ansible.plugins.loader import action_loader
 from ansible.template import Templar
+
 from ansible_collections.ansible.netcommon.tests.unit.mock.loader import DictDataLoader
 
 

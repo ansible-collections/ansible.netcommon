@@ -84,6 +84,25 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>ca_path</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">path</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 5.2.0</div>
+                </td>
+                <td>
+                </td>
+                    <td>
+                                <div>var: ansible_httpapi_ca_path</div>
+                    </td>
+                <td>
+                        <div>Path to CA cert bundle to use.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ciphers</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -108,6 +127,44 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>client_cert</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 5.2.0</div>
+                </td>
+                <td>
+                </td>
+                    <td>
+                                <div>var: ansible_httpapi_client_cert</div>
+                    </td>
+                <td>
+                        <div>PEM formatted certificate chain file to be used for SSL client authentication. This file can also include the key as well, and if the key is included, <em>client_key</em> is not required</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>client_key</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 5.2.0</div>
+                </td>
+                <td>
+                </td>
+                    <td>
+                                <div>var: ansible_httpapi_client_key</div>
+                    </td>
+                <td>
+                        <div>PEM formatted file that contains the private key to be used for SSL client authentication. If <em>client_cert</em> contains both the certificate and key, this option is not required.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>host</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -123,6 +180,25 @@ Parameters
                     </td>
                 <td>
                         <div>Specifies the remote device FQDN or IP address to establish the HTTP(S) connection to.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>http_agent</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 5.2.0</div>
+                </td>
+                <td>
+                </td>
+                    <td>
+                                <div>var: ansible_httpapi_http_agent</div>
+                    </td>
+                <td>
+                        <div>User-Agent to use in the request.</div>
                 </td>
             </tr>
             <tr>

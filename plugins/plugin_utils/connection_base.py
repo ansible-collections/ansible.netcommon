@@ -7,6 +7,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 
@@ -15,6 +16,7 @@ from ansible.utils.display import Display
 from ansible_collections.ansible.utils.plugins.plugin_utils.connection_base import (
     PersistentConnectionBase,
 )
+
 
 display = Display()
 

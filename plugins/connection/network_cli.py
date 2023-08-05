@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -306,6 +307,7 @@ import signal
 import socket
 import time
 import traceback
+
 from functools import wraps
 from io import BytesIO
 
@@ -316,11 +318,13 @@ from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import cache_loader, cliconf_loader, connection_loader, terminal_loader
+
 from ansible_collections.ansible.netcommon.plugins.connection.libssh import HAS_PYLIBSSH
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
+
 
 try:
     from scp import SCPClient
@@ -382,26 +386,30 @@ class Connection(NetworkConnectionBase):
                 raise AnsibleConnectionFailure("network os %s is not supported" % self._network_os)
 
             self.cliconf = cliconf_loader.get(self._network_os, self)
-            if self.cliconf:
-                self._sub_plugin = {
-                    "type": "cliconf",
-                    "name": self.cliconf._load_name,
-                    "obj": self.cliconf,
-                }
+            if not self.cliconf:
                 self.queue_message(
                     "vvvv",
-                    "loaded cliconf plugin %s from path %s for network_os %s"
-                    % (
-                        self.cliconf._load_name,
-                        self.cliconf._original_path,
-                        self._network_os,
-                    ),
+                    "unable to load cliconf for network_os %s. Falling back to default"
+                    % self._network_os,
                 )
-            else:
-                self.queue_message(
-                    "vvvv",
-                    "unable to load cliconf for network_os %s" % self._network_os,
-                )
+                self.cliconf = cliconf_loader.get("ansible.netcommon.default", self)
+                if not self.cliconf:
+                    raise AnsibleConnectionFailure("Couldn't load fallback cliconf plugin")
+
+            self._sub_plugin = {
+                "type": "cliconf",
+                "name": self.cliconf._load_name,
+                "obj": self.cliconf,
+            }
+            self.queue_message(
+                "vvvv",
+                "loaded cliconf plugin %s from path %s for network_os %s"
+                % (
+                    self.cliconf._load_name,
+                    self.cliconf._original_path,
+                    self._network_os,
+                ),
+            )
         else:
             raise AnsibleConnectionFailure(
                 "Unable to automatically determine host network os. Please "
