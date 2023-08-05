@@ -48,8 +48,8 @@ class ActionModule(ActionBase):
             timeout = int(self._task.args.get("timeout", 120))
             pause = int(self._task.args.get("pause", 1))
 
+            send_carriage_return = self._task.args.get("send_carriage_return", False)           
             send_newline = self._task.args.get("send_newline", False)
-            send_carriage_return = self._task.args.get("send_carriage_return", False)
 
             login_prompt = to_text(self._task.args.get("login_prompt", "login: "))
             password_prompt = to_text(self._task.args.get("password_prompt", "Password: "))
@@ -64,10 +64,10 @@ class ActionModule(ActionBase):
 
                 self.output = bytes()
                 try:
+                    if send_carriage_return:
+                        self.tn.write(b"\r")                   
                     if send_newline:
                         self.tn.write(b"\n")
-                    if send_carriage_return:
-                        self.tn.write(b"\r")
 
                     self.await_prompts([login_prompt], timeout)
                     self.tn.write(to_bytes(user + "\n"))
