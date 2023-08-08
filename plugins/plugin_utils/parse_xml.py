@@ -24,13 +24,8 @@ from ansible.module_utils.common._collections_compat import Mapping
 from ansible.module_utils.six import iteritems, string_types
 from ansible.utils.display import Display
 
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import Template
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    Template,
-)
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    Template,
-)
 
 try:
     import yaml
