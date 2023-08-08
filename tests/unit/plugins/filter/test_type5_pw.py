@@ -10,8 +10,6 @@ __metaclass__ = type
 
 import unittest
 
-from ansible.errors import AnsibleFilterError
-
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
 
 

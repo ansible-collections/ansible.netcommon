@@ -85,7 +85,7 @@ EXAMPLES = r"""
 # keys:
 #   result:
 #     value: "{{ ntp_peers }}"
-#     top: "{http://cisco.com/ns/yang/Cisco-IOS-XR-ip-ntp-oper}ntp/{http://cisco.com/ns/yang/Cisco-IOS-XR-ip-ntp-oper}nodes/{http://cisco.com/ns/yang/Cisco-IOS-XR-ip-ntp-oper}node"
+#     top: "{http://cisco.com/ns/yang/Cisco-IOS-XR-ip-ntp-oper}ntp/"
 #     items:
 #       address: "{http://cisco.com/ns/yang/Cisco-IOS-XR-ip-ntp-oper}node"
 
