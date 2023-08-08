@@ -2,3 +2,9 @@
 trivial:
   - vlan_expander - Filter plugin updated as individual plugin.
   - vlan_parser - Filter plugin updated as individual plugin.
+  - type5_pw - Filter plugin updated as individual plugin.
+  - parse_xml - Filter plugin updated as individual plugin.
+  - comp_type5 - Filter plugin updated as individual plugin.
+  - hash_salt - Filter plugin updated as individual plugin.
+  - parse_cli - Filter plugin updated as individual plugin.
+  - parse_cli_textfsm - Filter plugin updated as individual plugin.

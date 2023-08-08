@@ -26,12 +26,11 @@ import unittest
 from ansible_collections.ansible.netcommon.plugins.filter.network import (
     comp_type5,
     hash_salt,
-    parse_xml,
-    type5_pw,
 )
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
-
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_xml import parse_xml
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "network")
 
