@@ -33,7 +33,7 @@ options:
     required: True
   template:
     description:
-    - The first line of the list can be first_line_len characters long.
+    - The template to compare it with.
     - For example C(xml_data | ansible.netcommon.parse_xml(template.yml)),
       in this case C(xml_data) represents this option.
     type: raw
