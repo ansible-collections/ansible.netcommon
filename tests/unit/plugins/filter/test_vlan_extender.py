@@ -10,8 +10,6 @@ __metaclass__ = type
 
 import unittest
 
-from ansible.errors import AnsibleFilterError
-
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
 
 
