@@ -78,13 +78,3 @@ class TestVlanExtender(unittest.TestCase):
                 19,
             ],
         )
-
-    def test_vlan_extender_fail_wrong_data(self):
-        data = "13"
-        args = [data]
-        with self.assertRaises(AnsibleFilterError) as error:
-            vlan_expander(*args)
-        self.assertIn(
-            "Error when using plugin 'vlan_expander': Input is not valid for vlan_expander",
-            str(error.exception),
-        )

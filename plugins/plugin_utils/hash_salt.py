@@ -22,8 +22,8 @@ def _raise_error(msg):
     :type msg: str
     :raises: AnsibleError
     """
-    error = "Error when using plugin 'hash_salt': {msg}".format(msg=msg)
-    raise AnsibleFilterError(error)
+    # error = "Error when using plugin 'hash_salt': {msg}".format(msg=msg)
+    raise AnsibleFilterError(msg)
 
 
 def hash_salt(password):

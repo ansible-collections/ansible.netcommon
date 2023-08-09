@@ -301,6 +301,7 @@ class TestVlanExapander(unittest.TestCase):
     def test_no_ranges(self):
         raw_list = "1,3,5"
         expanded_list = [1, 3, 5]
+        print(vlan_expander(raw_list))
         self.assertEqual(vlan_expander(raw_list), expanded_list)
 
 

@@ -16,19 +16,7 @@ __metaclass__ = type
 from ansible.errors import AnsibleFilterError
 
 
-def _raise_error(msg):
-    """Raise an error message, prepend with filter name
-    :param msg: The message
-    :type msg: str
-    :raises: AnsibleError
-    """
-    error = "Error when using plugin 'vlan_expander': {msg}".format(msg=msg)
-    raise AnsibleFilterError(error)
-
-
 def vlan_expander(data):
-    if "-" not in data:
-        _raise_error("Input is not valid for vlan_expander")
     expanded_list = []
     for each in data.split(","):
         if "-" in each:

@@ -27,8 +27,8 @@ def _raise_error(msg):
     :type msg: str
     :raises: AnsibleError
     """
-    error = "Error when using plugin 'type5_pw': {msg}".format(msg=msg)
-    raise AnsibleFilterError(error)
+    # error = "Error when using plugin 'type5_pw': {msg}".format(msg=msg)
+    raise AnsibleFilterError(msg)
 
 
 def type5_pw(password, salt=None):

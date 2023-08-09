@@ -43,8 +43,8 @@ def _raise_error(msg):
     :type msg: str
     :raises: AnsibleError
     """
-    error = "Error when using plugin 'parse_xml': {msg}".format(msg=msg)
-    raise AnsibleFilterError(error)
+    # error = "Error when using plugin 'parse_xml': {msg}".format(msg=msg)
+    raise AnsibleFilterError(msg)
 
 
 def _extract_param(template, root, attrs, value):
