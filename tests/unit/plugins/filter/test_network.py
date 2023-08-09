@@ -23,7 +23,7 @@ import os
 import sys
 import unittest
 
-from ansible_collections.ansible.netcommon.plugins.filter.network import comp_type5
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import comp_type5
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import hash_salt
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_xml import parse_xml
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
