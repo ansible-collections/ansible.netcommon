@@ -123,12 +123,10 @@ def _extract_param(template, root, attrs, value):
 
 def parse_xml(output, tmpl):
     if not os.path.exists(tmpl):
-        raise AnsibleFilterError("unable to locate parse_xml template: %s" % template)
+        _raise_error("unable to locate parse_xml template: %s" % tmpl)
 
     if not isinstance(output, string_types):
-        raise AnsibleFilterError(
-            "parse_xml works on string input, but given input of : %s" % type(data)
-        )
+        _raise_error("parse_xml works on string input, but given input of : %s" % type(output))
 
     root = fromstring(output)
     try:
