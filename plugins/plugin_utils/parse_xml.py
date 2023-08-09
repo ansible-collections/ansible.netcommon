@@ -132,7 +132,7 @@ def parse_xml(output, tmpl):
 
     root = fromstring(output)
     try:
-        tmpl = Template()
+        template = Template()
     except ImportError as exc:
         raise AnsibleFilterError(to_native(exc))
 
@@ -147,12 +147,12 @@ def parse_xml(output, tmpl):
 
         try:
             variables = spec.get("vars", {})
-            value = tmpl(value, variables)
+            value = template(value, variables)
         except Exception:
             pass
 
         if "items" in attrs:
-            obj[name] = _extract_param(tmpl, root, attrs, value)
+            obj[name] = _extract_param(template, root, attrs, value)
         else:
             obj[name] = value
 
