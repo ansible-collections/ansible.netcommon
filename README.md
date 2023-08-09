@@ -44,6 +44,7 @@ Name | Description
 ### Filter plugins
 Name | Description
 --- | ---
+[ansible.netcommon.hash_salt](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.hash_salt_filter.rst)|hash_salt filter plugin.
 [ansible.netcommon.parse_cli](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.parse_cli_filter.rst)|parse_cli filter plugin.
 [ansible.netcommon.parse_cli_textfsm](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.parse_cli_textfsm_filter.rst)|parse_cli_textfsm filter plugin.
 [ansible.netcommon.parse_xml](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.parse_xml_filter.rst)|parse_xml filter plugin.
