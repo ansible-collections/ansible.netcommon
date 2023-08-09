@@ -72,9 +72,17 @@ EXAMPLES = r"""
 # keys:
 #   dhcp_pools:
 #     value: "{{ dhcp_pool }}"
-#     items: "^ip dhcp pool (?P<name>[^\\n]+)\\s+(?:import (?P<import_all>all)\\s*)?(?:network (?P<network_ip>[\\d.]+) (?P<network_subnet>[\\d.]+)?\\s*)?(?:update dns\\s*)?(?:host (?P<host_ip>[\\d.]+) (?P<host_subnet>[\\d.]+)\\s*)?(?:domain-name (?P<domain_name_0>[\\w._-]+)\\s+)?(?:default-router (?P<default_router>[\\d.]+)\\s*)?(?:dns-server (?P<dns_servers_1>(?:[\\d.]+ ?)+ ?)+\\s*)?(?:domain-name (?P<domain_name_1>[\\w._-]+)\\s+)?(?P<options_1>(?:option [^\\n]+\\n*\\s*)*)?(?:domain-name (?P<domain_name_2>[\\w._-]+)\\s+)?(?P<options_2>(?:option [^\\n]+\\n*\\s*)*)?(?:dns-server (?P<dns_servers_2>(?:[\\d.]+ ?)+ ?)+\\s*)?(?:domain-name (?P<domain_name_3>[\\w._-]+)\\s*)?(lease (?P<lease_days>\\d+)(?: (?P<lease_hours>\\d+))?(?: (?P<lease_minutes>\\d+))?\\s*)?(?:update arp)?"
+#     items: "^ip dhcp pool (
+#           ?P<name>[^\\n]+)\\s+(?:import (?P<import_all>all)\\s*)?(?:network (?P<network_ip>[\\d.]+)
+#           (?P<network_subnet>[\\d.]+)?\\s*)?(?:update dns\\s*)?(?:host (?P<host_ip>[\\d.]+)
+#           (?P<host_subnet>[\\d.]+)\\s*)?(?:domain-name (?P<domain_name_0>[\\w._-]+)\\s+)?
+#           (?:default-router (?P<default_router>[\\d.]+)\\s*)?(?:dns-server
+#           (?P<dns_servers_1>(?:[\\d.]+ ?)+ ?)+\\s*)?(?:domain-name (?P<domain_name_1>[\\w._-]+)\\s+)?
+#           (?P<options_1>(?:option [^\\n]+\\n*\\s*)*)?(?:domain-name (?P<domain_name_2>[\\w._-]+)\\s+)?(?P<options_2>(?:option [^\\n]+\\n*\\s*)*)?
+#           (?:dns-server (?P<dns_servers_2>(?:[\\d.]+ ?)+ ?)+\\s*)?(?:domain-name
+#           (?P<domain_name_3>[\\w._-]+)\\s*)?(lease (?P<lease_days>\\d+)(?: (?P<lease_hours>\\d+))?(?: (?P<lease_minutes>\\d+))?\\s*)?(?:update arp)?"
 
-
+# playbook
 
 - name: Add config data
   ansible.builtin.set_fact:
