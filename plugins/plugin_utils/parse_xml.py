@@ -121,22 +121,22 @@ def _extract_param(template, root, attrs, value):
     return entries
 
 
-def parse_xml(data, template):
-    if not os.path.exists(template):
+def parse_xml(output, tmpl):
+    if not os.path.exists(tmpl):
         raise AnsibleFilterError("unable to locate parse_xml template: %s" % template)
 
-    if not isinstance(data, string_types):
+    if not isinstance(output, string_types):
         raise AnsibleFilterError(
             "parse_xml works on string input, but given input of : %s" % type(data)
         )
 
-    root = fromstring(data)
+    root = fromstring(output)
     try:
-        template = Template()
+        tmpl = Template()
     except ImportError as exc:
         raise AnsibleFilterError(to_native(exc))
 
-    with open(template) as tmpl_fh:
+    with open(tmpl) as tmpl_fh:
         tmpl_content = tmpl_fh.read()
 
     spec = yaml.safe_load(tmpl_content)
@@ -147,12 +147,12 @@ def parse_xml(data, template):
 
         try:
             variables = spec.get("vars", {})
-            value = template(value, variables)
+            value = tmpl(value, variables)
         except Exception:
             pass
 
         if "items" in attrs:
-            obj[name] = _extract_param(template, root, attrs, value)
+            obj[name] = _extract_param(tmpl, root, attrs, value)
         else:
             obj[name] = value
 
