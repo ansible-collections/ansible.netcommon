@@ -15,8 +15,8 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 name: type5_pw
-author: Ansible Network Community (@ansible-network)
-version_added: "5.1.0"
+author: Ken Celenza (@itdependsnetworks)
+version_added: "1.0.0"
 short_description: type5_pw filter plugin.
 description:
     - The filter plugin extends vlans when data.

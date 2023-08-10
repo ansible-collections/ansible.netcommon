@@ -15,8 +15,8 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 name: parse_cli
-author: Ansible Network Community (@ansible-network)
-version_added: "5.1.0"
+author: Peter Sprygada (@privateip)
+version_added: "1.0.0"
 short_description: parse_cli filter plugin.
 description:
     - The filter plugin extends vlans when data.

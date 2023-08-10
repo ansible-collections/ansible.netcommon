@@ -15,8 +15,8 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 name: comp_type5
-author: Ansible Network Community (@ansible-network)
-version_added: "5.1.0"
+author: Ken Celenza (@itdependsnetworks)
+version_added: "1.0.0"
 short_description: comp_type5 filter plugin.
 description:
     - The filter plugin extends vlans when data.

@@ -15,11 +15,11 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 name: vlan_expander
-author: Ansible Network Community (@ansible-network)
-version_added: "5.1.0"
+author: Akira Yokochi (@akira6592)
+version_added: "2.3.0"
 short_description: vlan_expander filter plugin.
 description:
-    - The filter plugin extends vlans when data.
+    - Expand shorthand list of VLANs to list all VLANs. Inverse of vlan_parser
     - Using the parameters below - C(vlans_data | ansible.netcommon.vlan_expander)
 notes:
   - The filter plugin extends vlans when data provided in range or comma separated.

@@ -15,8 +15,8 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 name: vlan_parser
-author: Ansible Network Community (@ansible-network)
-version_added: "5.1.0"
+author: Steve Dodd (@idahood)
+version_added: "1.0.0"
 short_description: vlan_parser filter plugin.
 description:
     - The filter plugin extends vlans when data.
@@ -96,7 +96,7 @@ EXAMPLES = r"""
 #     - 3900
 #     - 3998
 #     - 3999
-#     vlan_rangesx: 1,10-12,15,20-22
+#     vlan_ranges: 1,10-12,15,20-22
 
 # TASK [Invoke vlan_parser filter plugin]
 # ok: [host] => changed=false
