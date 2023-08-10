@@ -17,13 +17,7 @@ from ansible.errors import AnsibleFilterError
 
 
 def _raise_error(msg):
-    """Raise an error message, prepend with filter name
-    :param msg: The message
-    :type msg: str
-    :raises: AnsibleError
-    """
-    error = "Error when using plugin 'vlan_parser': {msg}".format(msg=msg)
-    raise AnsibleFilterError(error)
+    raise AnsibleFilterError(msg)
 
 
 def vlan_parser(data, first_line_len=48, other_line_len=44):
@@ -42,7 +36,7 @@ def vlan_parser(data, first_line_len=48, other_line_len=44):
     sorted_list = sorted(set(data))
 
     if sorted_list[0] < 1 or sorted_list[-1] > 4094:
-        raise AnsibleFilterError("Valid VLAN range is 1-4094")
+        _raise_error("Valid VLAN range is 1-4094")
 
     parse_list = []
     idx = 0

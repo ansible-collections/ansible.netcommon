@@ -77,6 +77,6 @@ class TestVlanParser(unittest.TestCase):
         with self.assertRaises(AnsibleFilterError) as error:
             vlan_parser(*args)
         self.assertIn(
-            "Error when using plugin 'vlan_parser': Input is not valid for vlan_parser",
+            "Input is not valid for vlan_parser",
             str(error.exception),
         )

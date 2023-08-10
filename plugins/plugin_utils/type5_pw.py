@@ -22,12 +22,6 @@ from ansible.utils.encrypt import passlib_or_crypt, random_password
 
 
 def _raise_error(msg):
-    """Raise an error message, prepend with filter name
-    :param msg: The message
-    :type msg: str
-    :raises: AnsibleError
-    """
-    # error = "Error when using plugin 'type5_pw': {msg}".format(msg=msg)
     raise AnsibleFilterError(msg)
 
 

@@ -33,13 +33,7 @@ except ImportError:
 
 
 def _raise_error(msg):
-    """Raise an error message, prepend with filter name
-    :param msg: The message
-    :type msg: str
-    :raises: AnsibleError
-    """
-    error = "Error when using plugin 'parse_xml': {msg}".format(msg=msg)
-    raise AnsibleFilterError(error)
+    raise AnsibleFilterError(msg)
 
 
 def re_matchall(regex, value):
