@@ -19,17 +19,16 @@ author: Peter Sprygada (@privateip)
 version_added: "1.0.0"
 short_description: parse_cli_textfsm filter plugin.
 description:
-    - The filter plugin extends vlans when data.
-    - Using the parameters below - C(data | ansible.netcommon.parse_cli_textfsm(template.yml))
+  - The network filters also support parsing the output of a CLI command using the TextFSM library.
+    To parse the CLI output with TextFSM use this filter.
+  - Using the parameters below - C(data | ansible.netcommon.parse_cli_textfsm(template.yml))
 notes:
-  - The filter plugin extends vlans when data provided in range or comma separated.
+  - Use of the TextFSM filter requires the TextFSM library to be installed.
 options:
   value:
     description:
     - This source data on which parse_cli_textfsm invokes.
-    - For example C(data | ansible.netcommon.parse_cli_textfsm),
-      in this case C(data) represents this option.
-    type: str
+    type: raw
     required: True
   template:
     description:

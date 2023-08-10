@@ -17,32 +17,27 @@ DOCUMENTATION = """
 name: vlan_parser
 author: Steve Dodd (@idahood)
 version_added: "1.0.0"
-short_description: vlan_parser filter plugin.
+short_description: The vlan_parser filter plugin.
 description:
-    - The filter plugin extends vlans when data.
-    - Using the parameters below - C(vlans_data | ansible.netcommon.vlan_parser)
+  - The filter plugin converts a list of vlans to IOS like vlan configuration.
+  - Converts list to a list of range of numbers into multiple lists.
+  - C(vlans_data | ansible.netcommon.vlan_parser(first_line_len = 20, other_line_len=20))
 notes:
   - The filter plugin extends vlans when data provided in range or comma separated.
 options:
   data:
     description:
-    - This option represents a string containing the range of vlans.
-    - For example C(vlans_data | ansible.netcommon.vlan_parser),
-      in this case C(vlans_data) represents this option.
+    - This option represents a list containing vlans.
     type: list
     required: True
   first_line_len:
     description:
     - The first line of the list can be first_line_len characters long.
-    - For example C(vlans_data | ansible.netcommon.vlan_parser),
-      in this case C(vlans_data) represents this option.
     type: int
     default: 48
   other_line_len:
     description:
     - The subsequent list lines can be other_line_len characters.
-    - For example C(vlans_data | ansible.netcommon.vlan_parser),
-      in this case C(vlans_data) represents this option.
     type: int
     default: 44
 """
@@ -52,7 +47,7 @@ EXAMPLES = r"""
 
 - name: Setting host facts for vlan_parser filter plugin
   ansible.builtin.set_fact:
-    vlan_ranges:
+    vlans:
       [
         100,
         1688,
@@ -72,7 +67,7 @@ EXAMPLES = r"""
 
 - name: Invoke vlan_parser filter plugin
   ansible.builtin.set_fact:
-    extended_vlans: "{{ vlan_ranges | ansible.netcommon.vlan_parser(first_line_len = 20, other_line_len=20)  }}"
+    vlans_ranges: "{{ vlans | ansible.netcommon.vlan_parser(first_line_len = 20, other_line_len=20) }}"
 
 
 # Task Output
@@ -81,7 +76,7 @@ EXAMPLES = r"""
 # TASK [Setting host facts for vlan_parser filter plugin]
 # ok: [host] => changed=false
 #   ansible_facts:
-#     vlan_ranges:
+#     vlans:
 #     - 100
 #     - 1688
 #     - 3002
@@ -96,12 +91,11 @@ EXAMPLES = r"""
 #     - 3900
 #     - 3998
 #     - 3999
-#     vlan_ranges: 1,10-12,15,20-22
 
 # TASK [Invoke vlan_parser filter plugin]
 # ok: [host] => changed=false
 #   ansible_facts:
-#     clean_acls:
+#     msg:
 #     - 100,1688,3002-3005
 #     - 3102-3105,3802,3900
 #     - 3998,3999

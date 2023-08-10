@@ -17,26 +17,26 @@ DOCUMENTATION = """
 name: parse_xml
 author: Ganesh Nalawade (@ganeshrn)
 version_added: "1.0.0"
-short_description: parse_xml filter plugin.
+short_description: The parse_xml filter plugin.
 description:
-    - The filter plugin extends vlans when data.
-    - Using the parameters below - C(xml_data | ansible.netcommon.parse_xml(template.yml))
+  - This filter will load the spec file and pass the command output
+    through it, returning JSON output.
+  - The YAML spec file defines how to parse the CLI output.
 notes:
-  - The filter plugin extends vlans when data provided in range or comma separated.
+  - To convert the XML output of a network device command into structured JSON output.
 options:
   output:
     description:
     - This source xml on which parse_xml invokes.
-    - For example C(xml_data | ansible.netcommon.parse_xml),
-      in this case C(xml_data) represents this option.
     type: raw
     required: True
   tmpl:
     description:
-    - The template to compare it with.
+    - The spec file should be valid formatted YAML.
+      It defines how to parse the XML output and return JSON data.
     - For example C(xml_data | ansible.netcommon.parse_xml(template.yml)),
-      in this case C(xml_data) represents this option.
-    type: raw
+      in this case C(xml_data) represents xml data option.
+    type: string
 """
 
 EXAMPLES = r"""

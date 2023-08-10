@@ -17,19 +17,17 @@ DOCUMENTATION = """
 name: vlan_expander
 author: Akira Yokochi (@akira6592)
 version_added: "2.3.0"
-short_description: vlan_expander filter plugin.
+short_description: The vlan_expander filter plugin.
 description:
-    - Expand shorthand list of VLANs to list all VLANs. Inverse of vlan_parser
-    - Using the parameters below - C(vlans_data | ansible.netcommon.vlan_expander)
+  - Expand shorthand list of VLANs to list all VLANs. Inverse of vlan_parser
+  - Using the parameters below - C(vlans_data | ansible.netcommon.vlan_expander)
 notes:
   - The filter plugin extends vlans when data provided in range or comma separated.
 options:
   data:
     description:
     - This option represents a string containing the range of vlans.
-    - For example C(vlans_data | ansible.netcommon.vlan_expander),
-      in this case C(vlans_data) represents this option.
-    type: raw
+    type: string
     required: True
 """
 

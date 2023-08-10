@@ -17,18 +17,18 @@ DOCUMENTATION = """
 name: hash_salt
 author: Ken Celenza (@itdependsnetworks)
 version_added: "1.0.0"
-short_description: hash_salt filter plugin.
+short_description: The hash_salt filter plugin.
 description:
-    - The filter plugin extends vlans when data.
-    - Using the parameters below - C(password | ansible.netcommon.hash_salt(template.yml))
+  - The filter plugin produces the salt from a hashed password.
+  - Using the parameters below - C(password | ansible.netcommon.hash_salt(template.yml))
 notes:
-  - The filter plugin extends vlans when data provided in range or comma separated.
+  - The filter plugin produces the salt from a hashed password.
 options:
   password:
     description:
     - This source data on which hash_salt invokes.
     - For example C(password | ansible.netcommon.hash_salt),
-      in this case C(password) represents this option.
+      in this case C(password) represents the hashed password.
     type: str
     required: True
 """
@@ -50,7 +50,7 @@ EXAMPLES = r"""
 # Task Output
 # -----------
 #
-# TASK [The lookup]
+# TASK [Set the facts]
 # ok: [host] => changed=false
 #   ansible_facts:
 #     password: $1$avs$uSTOEMh65qzvpb9yBMpzd/

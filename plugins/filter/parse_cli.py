@@ -19,24 +19,25 @@ author: Peter Sprygada (@privateip)
 version_added: "1.0.0"
 short_description: parse_cli filter plugin.
 description:
-    - The filter plugin extends vlans when data.
-    - Using the parameters below - C(xml_data | ansible.netcommon.parse_cli(template.yml))
+  - The filter plugins converts the output of a network device
+    CLI command into structured JSON output.
+  - Using the parameters below - C(xml_data | ansible.netcommon.parse_cli(template.yml))
 notes:
-  - The filter plugin extends vlans when data provided in range or comma separated.
+  - The parse_cli filter will load the spec file and pass the command output through it,
+    returning JSON output. The YAML spec file defines how to parse the CLI output
 options:
   output:
     description:
     - This source data on which parse_cli invokes.
-    - For example C(cli_data | ansible.netcommon.parse_cli),
-      in this case C(cli_data) represents this option.
     type: raw
     required: True
   tmpl:
     description:
-    - The template to compare it with.
+    - The spec file should be valid formatted YAML.
+      It defines how to parse the CLI output and return JSON data.
     - For example C(cli_data | ansible.netcommon.parse_cli(template.yml)),
-      in this case C(cli_data) represents this option.
-    type: raw
+      in this case C(cli_data) represents cli output.
+    type: string
 """
 
 EXAMPLES = r"""

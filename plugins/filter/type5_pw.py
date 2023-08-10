@@ -17,32 +17,28 @@ DOCUMENTATION = """
 name: type5_pw
 author: Ken Celenza (@itdependsnetworks)
 version_added: "1.0.0"
-short_description: type5_pw filter plugin.
+short_description: The type5_pw filter plugin.
 description:
-    - The filter plugin extends vlans when data.
-    - Using the parameters below - C(xml_data | ansible.netcommon.type5_pw(template.yml))
+  - Filter plugin to produce cisco type5 hashed password.
+  - Using the parameters below - C(xml_data | ansible.netcommon.type5_pw(template.yml))
 notes:
-  - The filter plugin extends vlans when data provided in range or comma separated.
+  - The filter plugin generates cisco type5 hashed password.
 options:
   password:
     description:
-    - This source xml on which type5_pw invokes.
-    - For example C(xml_data | ansible.netcommon.type5_pw),
-      in this case C(xml_data) represents this option.
+    - The password to be hashed.
     type: str
     required: True
   salt:
     description:
-    - The template to compare it with.
-    - For example C(xml_data | ansible.netcommon.type5_pw(template.yml)),
-      in this case C(xml_data) represents this option.
+    - Mention the salt to hash the password.
     type: str
 """
 
 EXAMPLES = r"""
 # Using type5_pw
 
-- name: The facts
+- name: Set some facts
   ansible.builtin.set_fact:
     password: "cisco@123"
 
@@ -54,7 +50,7 @@ EXAMPLES = r"""
 # Task Output
 # -----------
 #
-# TASK [The facts]
+# TASK [Set some facts]
 # ok: [host] => changed=false
 #   ansible_facts:
 #     password: cisco@123

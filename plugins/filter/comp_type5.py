@@ -17,12 +17,13 @@ DOCUMENTATION = """
 name: comp_type5
 author: Ken Celenza (@itdependsnetworks)
 version_added: "1.0.0"
-short_description: comp_type5 filter plugin.
+short_description: The comp_type5 filter plugin.
 description:
-    - The filter plugin extends vlans when data.
-    - Using the parameters below - C(password | ansible.netcommon.comp_type5(template.yml))
+  - The filter confirms configuration idempotency on use of type5_pw.
 notes:
-  - The filter plugin extends vlans when data provided in range or comma separated.
+  - The filter confirms configuration idempotency on use of type5_pw.
+  - Can be used to validate password post hashing
+    username cisco secret 5 {{ ansible_ssh_pass | ansible.netcommon.comp_type5(encrypted, True) }}
 options:
   unencrypted_password:
     description:
@@ -52,7 +53,7 @@ EXAMPLES = r"""
 
 - name: Invoke comp_type5
   ansible.builtin.debug:
-    msg: "{{ unencrypted_password | ansible.netcommon.comp_type5(encrypted_password, False ) }}"
+    msg: "{{ unencrypted_password | ansible.netcommon.comp_type5(encrypted_password, False) }}"
 
 # Task Output
 # -----------
