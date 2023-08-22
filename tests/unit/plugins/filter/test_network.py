@@ -23,14 +23,12 @@ import os
 import sys
 import unittest
 
-from ansible_collections.ansible.netcommon.plugins.filter.network import (
-    comp_type5,
-    hash_salt,
-    parse_xml,
-    type5_pw,
-    vlan_expander,
-    vlan_parser,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import comp_type5
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import hash_salt
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_xml import parse_xml
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
 
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "network")
@@ -303,6 +301,7 @@ class TestVlanExapander(unittest.TestCase):
     def test_no_ranges(self):
         raw_list = "1,3,5"
         expanded_list = [1, 3, 5]
+        print(vlan_expander(raw_list))
         self.assertEqual(vlan_expander(raw_list), expanded_list)
 
 
