@@ -80,3 +80,34 @@ class TestVlanParser(unittest.TestCase):
             "Input is not valid for vlan_parser",
             str(error.exception),
         )
+
+    def test_vlan_parser_fail_out_range(self):
+        data = [
+            1,
+            2013,
+            2014,
+            2015,
+            2016,
+            2017,
+            2018,
+            2019,
+            2024,
+            2026,
+            4034,
+            4035,
+            4036,
+            4037,
+            4038,
+            4039,
+            4040,
+            4041,
+            4042,
+            4311,
+        ]
+        args = [data]
+        with self.assertRaises(AnsibleFilterError) as error:
+            vlan_parser(*args)
+        self.assertIn(
+            "Valid VLAN range is 1-4094",
+            str(error.exception),
+        )

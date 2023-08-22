@@ -23,8 +23,8 @@ class TestType5_pw(unittest.TestCase):
         args = [password, salt]
         result = type5_pw(*args)
         self.assertEqual(
-            "$1$nTc1$Z28sUTcWfXlvVe2x.3XAa.",
-            result,
+            "$1$nTc1$Z28sUTcWfXlvVe2x.3XAa.TESTPASS",
+            result + "TESTPASS",
         )
 
     def test_type5_pw_plugin_2(self):

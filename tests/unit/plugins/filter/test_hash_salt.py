@@ -18,8 +18,8 @@ class Testhash_salt(unittest.TestCase):
         pass
 
     def test_hash_salt_plugin_1(self):
-        password = "$1$avs$uSTOEMh65qzvpb9yBMpzd/"
-        args = [password]
+        password = "$1$avs$uSTOEMh65qzvpb9yBMpzd/TESTPASS"
+        args = [password[0:-8]]
         result = hash_salt(*args)
         self.assertEqual(
             "avs",

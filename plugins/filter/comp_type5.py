@@ -49,7 +49,7 @@ EXAMPLES = r"""
 - name: Set the facts
   ansible.builtin.set_fact:
     unencrypted_password: "cisco@123"
-    encrypted_password: "$1$avs$uSTOEMh65qzvpb9yBMpzd/"
+    encrypted_password: "$1$avs$uSTOEMh65ADDBREAKqzvpb9yBMpzd/"
 
 - name: Invoke comp_type5
   ansible.builtin.debug:
@@ -61,7 +61,7 @@ EXAMPLES = r"""
 # TASK [Set the facts]
 # ok: [35.155.113.92] => changed=false
 #   ansible_facts:
-#     encrypted_password: $1$avs$uSTOEMh65qzvpb9yBMpzd/
+#     encrypted_password: $1$avs$uSTOEMh65ADDBREAKqzvpb9yBMpzd/
 #     unencrypted_password: cisco@123
 
 # TASK [Invoke comp_type5]

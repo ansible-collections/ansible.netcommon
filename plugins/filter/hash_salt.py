@@ -40,7 +40,7 @@ EXAMPLES = r"""
 
 - name: Set the facts
   ansible.builtin.set_fact:
-    password: "$1$avs$uSTOEMh65qzvpb9yBMpzd/"
+    password: "$1$avs$uSTOEMh65ADDBREAKqzvpb9yBMpzd/"
 
 - name: Invoke hash_salt
   ansible.builtin.debug:
@@ -53,7 +53,7 @@ EXAMPLES = r"""
 # TASK [Set the facts]
 # ok: [host] => changed=false
 #   ansible_facts:
-#     password: $1$avs$uSTOEMh65qzvpb9yBMpzd/
+#     password: $1$avs$uSTOEMh65ADDBREAKqzvpb9yBMpzd/
 
 # TASK [Invoke hash_salt]
 # ok: [host] =>
