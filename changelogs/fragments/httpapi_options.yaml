@@ -1,5 +1,0 @@
----
-minor_changes:
-  - httpapi - Add additional option ``ca_path``, ``client_cert``, ``client_key``, and
-    ``http_agent`` that are available in open_url but not to httpapi.
-    (https://github.com/ansible-collections/ansible.netcommon/issues/528)
