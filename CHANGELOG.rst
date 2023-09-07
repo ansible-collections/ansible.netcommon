@@ -5,6 +5,34 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v5.2.0
+======
+
+Minor Changes
+-------------
+
+- Add a new cliconf plugin ``default`` that can be used when no cliconf plugin is found for a given network_os. This plugin only supports ``get()``. (https://github.com/ansible-collections/ansible.netcommon/pull/569)
+- httpapi - Add additional option ``ca_path``, ``client_cert``, ``client_key``, and ``http_agent`` that are available in open_url but not to httpapi. (https://github.com/ansible-collections/ansible.netcommon/issues/528)
+- telnet - add crlf option to send CRLF instead of just LF (https://github.com/ansible-collections/ansible.netcommon/pull/440).
+
+Deprecated Features
+-------------------
+
+- libssh - the ssh_*_args options are now marked that they will be removed after 2026-01-01.
+
+Bugfixes
+--------
+
+- Ensure that all connection plugin options that should be strings are actually strings (https://github.com/ansible-collections/ansible.netcommon/pull/549).
+
+New Plugins
+-----------
+
+Cliconf
+~~~~~~~
+
+- default - General purpose cliconf plugin for new platforms
+
 v5.1.3
 ======
 

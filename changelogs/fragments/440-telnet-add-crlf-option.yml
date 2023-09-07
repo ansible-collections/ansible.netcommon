@@ -1,2 +1,0 @@
-minor_changes:
-  - telnet - add crlf option to send CRLF instead of just LF (https://github.com/ansible-collections/ansible.netcommon/pull/440).
