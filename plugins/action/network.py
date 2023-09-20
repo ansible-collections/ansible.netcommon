@@ -81,11 +81,15 @@ class ActionModule(_ActionModule):
             result = super(ActionModule, self).run(task_vars=task_vars)
 
         if config_module and self._task.args.get("backup") and not result.get("failed"):
-            self._handle_backup_option(result, task_vars)
+            self._handle_backup_option(
+                result,
+                task_vars,
+                self._task.args.get("backup_options"),
+            )
 
         return result
 
-    def _handle_backup_option(self, result, task_vars):
+    def _handle_backup_option(self, result, task_vars, backup_options):
         filename = None
         backup_path = None
         try:
@@ -99,7 +103,6 @@ class ActionModule(_ActionModule):
         except KeyError:
             raise AnsibleError("Failed while reading configuration backup")
 
-        backup_options = self._task.args.get("backup_options")
         if backup_options:
             filename = backup_options.get("filename")
             backup_path = backup_options.get("dir_path")
