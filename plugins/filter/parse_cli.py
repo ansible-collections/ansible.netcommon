@@ -37,7 +37,7 @@ options:
       It defines how to parse the CLI output and return JSON data.
     - For example C(cli_data | ansible.netcommon.parse_cli(template.yml)),
       in this case C(cli_data) represents cli output.
-    type: string
+    type: str
 """
 
 EXAMPLES = r"""

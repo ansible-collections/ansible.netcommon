@@ -36,7 +36,7 @@ options:
       It defines how to parse the XML output and return JSON data.
     - For example C(xml_data | ansible.netcommon.parse_xml(template.yml)),
       in this case C(xml_data) represents xml data option.
-    type: string
+    type: str
 """
 
 EXAMPLES = r"""
