@@ -27,7 +27,7 @@ options:
   data:
     description:
     - This option represents a string containing the range of vlans.
-    type: string
+    type: str
     required: True
 """
 
