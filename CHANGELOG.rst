@@ -5,6 +5,19 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v5.3.0
+======
+
+Minor Changes
+-------------
+
+- Add new module cli_backup that exclusively handles configuration backup.
+
+Bugfixes
+--------
+
+- Fix attribute types from string to str in filter plugins.
+
 v5.2.0
 ======
 
