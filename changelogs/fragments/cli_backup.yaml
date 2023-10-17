@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Add new module cli_backup that exclusively handles configuration backup.
