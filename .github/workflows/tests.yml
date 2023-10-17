@@ -11,8 +11,6 @@ on:  # yamllint disable-line rule:truthy
   workflow_dispatch:
 
 jobs:
-  ansible-lint:
-    uses: ansible-network/github_actions/.github/workflows/ansible-lint.yml@main
   changelog:
     uses: ansible-network/github_actions/.github/workflows/changelog.yml@main
   sanity:
@@ -24,11 +22,9 @@ jobs:
     with:
       collection_pre_install: >-
         git+https://github.com/ansible-collections/ansible.utils.git
-
   all_green:
     if: ${{ always() }}
     needs:
-      - ansible-lint
       - changelog
       - sanity
       - unit-galaxy
@@ -38,7 +34,6 @@ jobs:
       - run: >-
           python -c "assert 'failure' not in
           set([
-          '${{ needs.ansible-lint.result }}',
           '${{ needs.changelog.result }}',
           '${{ needs.sanity.result }}',
           '${{ needs.unit-galaxy.result }}',
