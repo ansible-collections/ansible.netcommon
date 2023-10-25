@@ -198,6 +198,16 @@ options:
       response, for example I('re.I').
     vars:
     - name: ansible_terminal_stderr_re
+  terminal_initial_newline:
+    type: boolean
+    description:
+    - This boolean flag, that when set to I(True) will send newline on initial
+      connection establishment to the remote device.
+    - This can be useful for equipment which does not send an initial header until
+      it receives some input, like Serial-to-SSH multiplexer hardware.
+    default: false
+    vars:
+    - name: ansible_terminal_initial_newline
   terminal_initial_prompt:
     type: list
     elements: string
@@ -656,6 +666,10 @@ class Connection(NetworkConnectionBase):
                 "loaded terminal plugin for network_os %s" % self._network_os,
             )
 
+            terminal_initial_newline = (
+                    self.get_option("terminal_initial_newline") or self._terminal.terminal_initial_newline
+            )
+
             terminal_initial_prompt = (
                 self.get_option("terminal_initial_prompt") or self._terminal.terminal_initial_prompt
             )
@@ -667,6 +681,13 @@ class Connection(NetworkConnectionBase):
                 or self._terminal.terminal_inital_prompt_newline
             )
             check_all = self.get_option("terminal_initial_prompt_checkall") or False
+
+            if terminal_initial_newline:
+                self.send(
+                    command=b"",
+                    sendonly=True,
+                    newline=True
+                )
 
             self.receive(
                 prompts=terminal_initial_prompt,
