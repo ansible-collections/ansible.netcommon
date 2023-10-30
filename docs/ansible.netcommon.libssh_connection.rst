@@ -111,6 +111,29 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>hostkeys</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">""</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[libssh_connection]<br>hostkeys = </p>
+                            </div>
+                                <div>env:ANSIBLE_LIBSSH_HOSTKEYS</div>
+                                <div>var: ansible_libssh_hostkeys</div>
+                    </td>
+                <td>
+                        <div>Set the preferred server host key types as a comma-separated list (e.g., ssh-rsa,ssh-dss,ecdh-sha2-nistp256).</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>look_for_keys</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">

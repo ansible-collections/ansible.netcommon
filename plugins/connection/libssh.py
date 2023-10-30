@@ -111,6 +111,16 @@ DOCUMENTATION = """
           - {key: publickey_algorithms, section: libssh_connection}
         vars:
           - name: ansible_libssh_publickey_algorithms
+      hostkeys:
+        default: ''
+        description: Set the preferred server host key types as a comma-separated list (e.g., ssh-rsa,ssh-dss,ecdh-sha2-nistp256).
+        type: string
+        env:
+          - name: ANSIBLE_LIBSSH_HOSTKEYS
+        ini:
+          - {key: hostkeys, section: libssh_connection}
+        vars:
+          - name: ansible_libssh_hostkeys
       host_key_checking:
         description: 'Set this to "False" if you want to avoid host key checking by the underlying tools Ansible uses to connect to the host'
         type: boolean
@@ -416,6 +426,9 @@ class Connection(ConnectionBase):
                 ssh_connect_kwargs["publickey_accepted_algorithms"] = self.get_option(
                     "publickey_accepted_algorithms"
                 )
+
+            if self.get_option("hostkeys"):
+                ssh_connect_kwargs["hostkeys"] = self.get_option("hostkeys")
 
             self.ssh.set_missing_host_key_policy(MyAddPolicy(self._new_stdin, self))
 
