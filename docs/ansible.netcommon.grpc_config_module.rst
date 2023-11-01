@@ -159,38 +159,37 @@ Examples
 .. code-block:: yaml
 
     - name: Merge static route config
-        ansible.netcommon.grpc_config:
-          config:
-            Cisco-IOS-XR-ip-static-cfg:router-static:
-              default-vrf:
-                address-family:
-                  vrfipv4:
-                    vrf-unicast:
-                      vrf-prefixes:
-                        vrf-prefix:
-                          - prefix: "1.2.3.6"
-                            prefix-length: 32
-                            vrf-route:
-                              vrf-next-hop-table:
-                                vrf-next-hop-next-hop-address:
-                                  - next-hop-address: "10.0.2.2"
+      ansible.netcommon.grpc_config:
+        config:
+          Cisco-IOS-XR-ip-static-cfg:router-static:
+            default-vrf:
+              address-family:
+                vrfipv4:
+                  vrf-unicast:
+                    vrf-prefixes:
+                      vrf-prefix:
+                        - prefix: "1.2.3.6"
+                          prefix-length: 32
+                          vrf-route:
+                            vrf-next-hop-table:
+                              vrf-next-hop-next-hop-address:
+                                - next-hop-address: "10.0.2.2"
+        state: merged
 
-          state: merged
+    - name: Merge bgp config
+      ansible.netcommon.grpc_config:
+        config: "{{ lookup('file', 'bgp.json')  }}"
+        state: merged
 
-      - name: Merge bgp config
-        ansible.netcommon.grpc_config:
-          config: "{{ lookup('file', 'bgp.json')  }}"
-          state: merged
+    - name: Find diff
+      diff: true
+      ansible.netcommon.grpc_config:
+        config: "{{ lookup('file', 'bgp_start.yml')  }}"
+        state: merged
 
-      - name: Find diff
-        diff: True
-        ansible.netcommon.grpc_config:
-          config: "{{ lookup('file', 'bgp_start.yml')  }}"
-          state: merged
-
-      - name: Backup running config
-        ansible.netcommon.grpc_config:
-           backup: yes
+    - name: Backup running config
+      ansible.netcommon.grpc_config:
+        backup: true
 
 
 
