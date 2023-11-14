@@ -667,7 +667,8 @@ class Connection(NetworkConnectionBase):
             )
 
             terminal_initial_newline = (
-                    self.get_option("terminal_initial_newline") or self._terminal.terminal_initial_newline
+                self.get_option("terminal_initial_newline")
+                or self._terminal.terminal_initial_newline
             )
 
             terminal_initial_prompt = (
@@ -683,11 +684,7 @@ class Connection(NetworkConnectionBase):
             check_all = self.get_option("terminal_initial_prompt_checkall") or False
 
             if terminal_initial_newline:
-                self.send(
-                    command=b"",
-                    sendonly=True,
-                    newline=True
-                )
+                self.send(command=b"", sendonly=True, newline=True)
 
             self.receive(
                 prompts=terminal_initial_prompt,
