@@ -431,14 +431,14 @@ Examples
 
     - name: configure interface while providing different private key file path (for connection=netconf)
       ansible.netcommon.netconf_config:
-        backup: yes
+        backup: true
       register: backup_junos_location
       vars:
         ansible_private_key_file: /home/admin/.ssh/newprivatekeyfile
 
     - name: configurable backup path
       ansible.netcommon.netconf_config:
-        backup: yes
+        backup: true
         backup_options:
           filename: backup.cfg
           dir_path: /home/user
@@ -446,49 +446,54 @@ Examples
     - name: "configure using direct native format configuration (cisco iosxr)"
       ansible.netcommon.netconf_config:
         format: json
-        content: {
-                    "config": {
-                        "interface-configurations": {
-                            "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                            "interface-configuration": {
-                                "active": "act",
-                                "description": "test for ansible Loopback999",
-                                "interface-name": "Loopback999"
-                            }
-                        }
-                    }
-                }
-        get_filter: {
-                      "interface-configurations": {
-                          "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                          "interface-configuration": null
-                      }
-                  }
+        content:
+          {
+            "config":
+              {
+                "interface-configurations":
+                  {
+                    "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                    "interface-configuration":
+                      {
+                        "active": "act",
+                        "description": "test for ansible Loopback999",
+                        "interface-name": "Loopback999",
+                      },
+                  },
+              },
+          }
+        get_filter:
+          {
+            "interface-configurations":
+              {
+                "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                "interface-configuration": null,
+              },
+          }
 
     - name: "configure using json string format configuration (cisco iosxr)"
       ansible.netcommon.netconf_config:
         format: json
         content: |
-                {
-                    "config": {
-                        "interface-configurations": {
-                            "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                            "interface-configuration": {
-                                "active": "act",
-                                "description": "test for ansible Loopback999",
-                                "interface-name": "Loopback999"
-                            }
-                        }
-                    }
-                }
-        get_filter: |
-                {
-                      "interface-configurations": {
-                          "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                          "interface-configuration": null
+          {
+              "config": {
+                  "interface-configurations": {
+                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                      "interface-configuration": {
+                          "active": "act",
+                          "description": "test for ansible Loopback999",
+                          "interface-name": "Loopback999"
                       }
                   }
-
+              }
+          }
+        get_filter: |
+          {
+                "interface-configurations": {
+                    "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                    "interface-configuration": null
+                }
+            }
 
     # Make a round-trip interface description change, diff the before and after
     # this demonstrates the use of the native display format and several utilities
@@ -512,8 +517,8 @@ Examples
     - name: Update the description
       ansible.utils.update_fact:
         updates:
-        - path: pre.output.data.interfaces.interface.config.description
-          value: "Configured by ansible {{ 100 | random }}"
+          - path: pre.output.data.interfaces.interface.config.description
+            value: "Configured by ansible {{ 100 | random }}"
       register: updated
 
     - name: Apply the new configuration
@@ -533,7 +538,6 @@ Examples
       ansible.utils.fact_diff:
         before: "{{ pre.output.data|ansible.utils.to_paths }}"
         after: "{{ post.output.data|ansible.utils.to_paths }}"
-
     # TASK [Show the differences between the pre and post configurations] ********
     # --- before
     # +++ after

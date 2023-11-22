@@ -255,24 +255,24 @@ Examples
       ansible.netcommon.telnet:
         user: cisco
         password: cisco
-        login_prompt: 'Username: '
+        login_prompt: "Username: "
         prompts:
-        - '[>#]'
+          - "[>#]"
         command:
-        - terminal length 0
-        - configure terminal
-        - hostname ios01
+          - terminal length 0
+          - configure terminal
+          - hostname ios01
 
     - name: run show commands
       ansible.netcommon.telnet:
         user: cisco
         password: cisco
-        login_prompt: 'Username: '
+        login_prompt: "Username: "
         prompts:
-        - '[>#]'
+          - "[>#]"
         command:
-        - terminal length 0
-        - show version
+          - terminal length 0
+          - show version
 
 
 
