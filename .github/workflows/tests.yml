@@ -1,5 +1,5 @@
 ---
-name: test_collection
+name: CI
 
 concurrency:
   group: ${{ github.head_ref }}
@@ -9,10 +9,13 @@ on:  # yamllint disable-line rule:truthy
   pull_request:
     branches: [main]
   workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   changelog:
     uses: ansible-network/github_actions/.github/workflows/changelog.yml@main
+    if: github.event_name == 'pull_request'
   sanity:
     uses: ansible-network/github_actions/.github/workflows/sanity.yml@main
   unit-galaxy:
