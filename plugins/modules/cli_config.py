@@ -167,7 +167,7 @@ EXAMPLES = """
 - name: configure device with config with defaults enabled
   ansible.netcommon.cli_config:
     config: "{{ lookup('template', 'basic/config.j2') }}"
-    defaults: yes
+    defaults: "yes"
 
 - name: Use diff_match
   ansible.netcommon.cli_config:
@@ -190,7 +190,7 @@ EXAMPLES = """
 - name: configurable backup path
   ansible.netcommon.cli_config:
     config: "{{ lookup('template', 'basic/config.j2') }}"
-    backup: yes
+    backup: "yes"
     backup_options:
       filename: backup.cfg
       dir_path: /home/user
