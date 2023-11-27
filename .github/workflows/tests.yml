@@ -10,7 +10,7 @@ on:  # yamllint disable-line rule:truthy
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '0 0 0 0 0'
+    - cron: '0 0 * * *'
 
 jobs:
   changelog:
