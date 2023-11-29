@@ -1,5 +1,5 @@
 ---
-requires_ansible: ">=2.14.2"
+requires_ansible: ">=2.14.0"
 plugin_routing:
   action:
     grpc_config:
