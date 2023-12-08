@@ -4,8 +4,6 @@
 gcc-c++ [doc test platform:rpm]
 libyaml-devel [test platform:rpm]
 libyaml-dev [test platform:dpkg]
-python3-devel [test platform:rpm]
-python3 [test platform:rpm]
 
 # ansible-pylibssh
 gcc [compile platform:rpm]
@@ -26,8 +24,6 @@ python39-lxml [platform:centos-8 platform:rhel-8]
 findutils [compile platform:centos-8 platform:rhel-8]
 gcc [compile platform:centos-8 platform:rhel-8]
 make [compile platform:centos-8 platform:rhel-8]
-python3-devel [compile platform:centos-9 platform:rhel-9]
-python39-devel [compile platform:centos-8 platform:rhel-8]
 python3-cffi [platform:centos-9 platform:rhel-9]
 python39-cffi [platform:centos-8 platform:rhel-8]
 python3-cryptography [platform:centos-9 platform:rhel-9]

@@ -63,15 +63,15 @@ notes:
 """
 
 EXAMPLES = """
-    - name: Get bgp configuration data
-      grpc_get:
-        section:
-          Cisco-IOS-XR-ip-static-cfg:router-static:
-            - null
-    - name: run cli command
-      grpc_get:
-        command: 'show version'
-        display: text
+- name: Get bgp configuration data
+  grpc_get:
+    section:
+      Cisco-IOS-XR-ip-static-cfg:router-static:
+        - null
+- name: run cli command
+  grpc_get:
+    command: "show version"
+    display: text
 """
 
 RETURN = """

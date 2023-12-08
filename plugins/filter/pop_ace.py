@@ -84,7 +84,7 @@ options:
 """
 
 EXAMPLES = r"""
-##Playbook with filter plugin example
+## Playbook with filter plugin example
 vars:
   filter_options:
     match_all: true
@@ -219,7 +219,7 @@ tasks:
     ansible.builtin.debug:
       msg: "{{ acls_data | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria) }}"
 
-##Output
+## Output
 # PLAY [Filter plugin example pop_ace] ******************************************************************************************************************
 
 # TASK [Remove ace entries from a provided data] ***********************************************************************************************************
@@ -353,8 +353,8 @@ tasks:
 #         afi: ipv6
 
 
-##Playbook with workflow example
-tasks:
+## Playbook with workflow example
+_tasks:
   - name: Gather ACLs config from device existing ACLs config
     cisco.ios.ios_acls:
       state: gathered
@@ -379,8 +379,7 @@ tasks:
       state: overridden
       config: "{{ clean_acls['clean_acls']['acls'] | from_yaml }}"
 
-
-##Output
+## Output
 
 # PLAYBOOK: pop_ace_example.yml ***********************************************
 
@@ -989,7 +988,6 @@ tasks:
 #   - ip access-list extended 110
 #   - no 10 deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 traceroute dscp ef ttl eq 10
 #   - no ip access-list extended test
-
 """
 
 from ansible.errors import AnsibleFilterError
