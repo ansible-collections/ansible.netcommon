@@ -52,14 +52,14 @@ EXAMPLES = r"""
     device_neighbors: "{{ lldp_output.stdout[0] | parse_cli_textfsm('~/ntc-templates/templates/cisco_ios_show_lldp_neighbors.textfsm') }}"
 
 - name: "Debug"
-  ansible.builtindebug:
+  ansible.builtin.debug:
     msg: "{{ device_neighbors }}"
 
 # Task Output
 # -----------
 #
 # TASK [Fetch command output]
-# ok: [rtr-2]
+# ok: [rtr-1]
 
 # TASK [Invoke parse_cli_textfsm]
 # ok: [rtr-1]
