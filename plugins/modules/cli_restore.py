@@ -85,10 +85,13 @@ def validate_args(module, device_operations):
             if supports_feature is None:
                 module.fail_json(
                     msg="Thisdfvdfdsd platform does not specify whether %s is supported or not. "
-                    "Please report an issue against this platform's cliconf plugin." % feature
+                    "Please report an issue against this platform's cliconf plugin."
+                    % feature
                 )
             elif not supports_feature:
-                module.fail_json(msg="Option %s is not supported on this platform" % feature)
+                module.fail_json(
+                    msg="Option %s is not supported on this platform" % feature
+                )
 
 
 def run(module, device_operations, connection, candidate, running, rollback_id):
@@ -151,8 +154,6 @@ def run(module, device_operations, connection, candidate, running, rollback_id):
             candidate = json.dumps(banner_diff)
 
             kwargs = {"candidate": candidate, "commit": commit}
-            if multiline_delimiter:
-                kwargs.update({"multiline_delimiter": multiline_delimiter})
             if commit:
                 connection.edit_banner(**kwargs)
             result["changed"] = True
@@ -214,7 +215,9 @@ def main():
         device_operations = dict()
 
     candidate = module.params["config"]
-    candidate = to_text(candidate, errors="surrogate_then_replace") if candidate else None
+    candidate = (
+        to_text(candidate, errors="surrogate_then_replace") if candidate else None
+    )
 
     if candidate:
         try:
