@@ -37,8 +37,33 @@ options:
 EXAMPLES = """
 - name: Restore IOS-XE configuration
   ansible.netcommon.cli_restore:
-    filename: test.cfg
-    force: false
+    filename: backupDday.cfg
+    force: true
+
+# Task Output
+# -----------
+#
+# ok: [BATMON] => changed=false
+#   __restore__: |-
+#     The rollback configlet from the last pass is listed below:
+#     ********
+#     !List of Rollback Commands:
+#     Building configuration...
+#     Current configuration : 3781 bytes
+#     end
+#     ********
+#
+#
+#     Rollback aborted after 5 passes
+#     The following commands are failed to apply to the IOS image.
+#     ********
+#     Building configuration...
+#     Current configuration : 3781 bytes
+#     ********
+#   invocation:
+#     module_args:
+#       filename: backupDday.cfg
+#       force: true
 """
 
 RETURN = """
@@ -61,7 +86,9 @@ def validate_args(module, device_operations):
                     "Please report an issue against this platform's cliconf plugin."
                 )
             elif not supports_feature:
-                module.fail_json(msg=f"Option {feature} is not supported on this platform")
+                module.fail_json(
+                    msg=f"Option {feature} is not supported on this platform"
+                )
 
 
 def main():
@@ -77,7 +104,9 @@ def main():
 
     result = {"changed": False}
     connection = Connection(module._socket_path)
-    running = connection.restore(force=module.params["force"], filename=module.params["filename"])
+    running = connection.restore(
+        force=module.params["force"], filename=module.params["filename"]
+    )
     result["__restore__"] = running
 
     module.exit_json(**result)
