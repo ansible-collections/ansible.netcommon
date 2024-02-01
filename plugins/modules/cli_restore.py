@@ -77,9 +77,7 @@ def main():
     )
 
     result = {"changed": False}
-
     connection = Connection(module._socket_path)
-
     running = connection.restore(
         force=module.params["force"], filename=module.params["filename"]
     )
