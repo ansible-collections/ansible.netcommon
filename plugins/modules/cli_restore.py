@@ -26,6 +26,10 @@ options:
     description:
     - Filename of the backup file to be restored.
     type: str
+  path:
+    description:
+    - The directory where the backup is stored eg .
+    type: str
   force:
     description:
     - The force keyword replaces the current running configuration file with the specified saved
@@ -39,6 +43,7 @@ EXAMPLES = """
   ansible.netcommon.cli_restore:
     filename: backupDday.cfg
     force: true
+    path: flash://
 
 # Task Output
 # -----------
@@ -86,15 +91,14 @@ def validate_args(module, device_operations):
                     "Please report an issue against this platform's cliconf plugin."
                 )
             elif not supports_feature:
-                module.fail_json(msg=f"Option {feature} is not supported on this platform")
+                module.fail_json(
+                    msg=f"Option {feature} is not supported on this platform"
+                )
 
 
 def main():
     """main entry point for execution"""
-    argument_spec = dict(
-        force=dict(default=False, type="bool"),
-        filename=dict(),
-    )
+    argument_spec = dict(force=dict(default=False, type="bool"), filename=str, path=str)
 
     module = AnsibleModule(
         argument_spec=argument_spec,
@@ -102,7 +106,11 @@ def main():
 
     result = {"changed": False}
     connection = Connection(module._socket_path)
-    running = connection.restore(force=module.params["force"], filename=module.params["filename"])
+    running = connection.restore(
+        force=module.params["force"],
+        filename=module.params["filename"],
+        path=module.params["path"],
+    )
     result["__restore__"] = running
 
     module.exit_json(**result)
