@@ -30,19 +30,12 @@ options:
     description:
     - The directory where the backup is stored eg .
     type: str
-  force:
-    description:
-    - The force keyword replaces the current running configuration file with the specified saved
-      configuration file without prompting you for confirmation.
-    type: bool
-    default: False
 """
 
 EXAMPLES = """
 - name: Restore IOS-XE configuration
   ansible.netcommon.cli_restore:
     filename: backupDday.cfg
-    force: true
     path: flash://
 
 # Task Output
@@ -68,7 +61,6 @@ EXAMPLES = """
 #   invocation:
 #     module_args:
 #       filename: backupDday.cfg
-#       force: true
 """
 
 RETURN = """
@@ -91,12 +83,17 @@ def validate_args(module, device_operations):
                     "Please report an issue against this platform's cliconf plugin."
                 )
             elif not supports_feature:
-                module.fail_json(msg=f"Option {feature} is not supported on this platform")
+                module.fail_json(
+                    msg=f"Option {feature} is not supported on this platform"
+                )
 
 
 def main():
     """main entry point for execution"""
-    argument_spec = dict(force=dict(default=False, type="bool"), filename=str, path=str)
+    argument_spec = dict(
+        filename=dict(type="str"),
+        path=dict(type="str"),
+    )
 
     module = AnsibleModule(
         argument_spec=argument_spec,
@@ -105,7 +102,6 @@ def main():
     result = {"changed": False}
     connection = Connection(module._socket_path)
     running = connection.restore(
-        force=module.params["force"],
         filename=module.params["filename"],
         path=module.params["path"],
     )
