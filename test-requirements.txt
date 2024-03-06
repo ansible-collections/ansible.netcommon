@@ -1,15 +1,16 @@
 # For ansible-tox-linters
-black==23.3.0 ; python_version > '3.7'
+black==23.3.0
 flake8
 yamllint
 
 # Unit test runner
-pytest-ansible ; python_version >= '3.7'
-git+https://github.com/ansible-community/pytest-ansible-units.git ; python_version < '3.7'
+pytest-ansible
 pytest-xdist
+pytest-cov
 
 # The following are 3rd party libs for cli_parse
 ntc_templates
 # 21.4 changed the output of an error message we check in tests
 pyats >= 21.4 ; python_version < '3.11'
 genie >= 21.4 ; python_version < '3.11'
+passlib

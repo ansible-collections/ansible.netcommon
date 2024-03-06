@@ -188,12 +188,12 @@ Examples
     - name: "get configuration with json filter string and native output (using xmltodict)"
       netconf_get:
         filter: |
-                  {
-                      "interface-configurations": {
-                          "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                          "interface-configuration": null
-                      }
-                  }
+          {
+              "interface-configurations": {
+                  "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                  "interface-configuration": null
+              }
+          }
         display: native
 
     - name: Define the Cisco IOSXR interface filter
@@ -211,15 +211,16 @@ Examples
 
     - name: "get configuration with direct native filter type"
       ansible.netcommon.netconf_get:
-        filter: {
-                "interface-configurations": {
+        filter:
+          {
+            "interface-configurations":
+              {
                 "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                "interface-configuration": null
+                "interface-configuration": null,
+              },
           }
-        }
         display: native
       register: result
-
 
     # Make a round-trip interface description change, diff the before and after
     # this demonstrates the use of the native display format and several utilities
@@ -243,8 +244,8 @@ Examples
     - name: Update the description
       ansible.utils.update_fact:
         updates:
-        - path: pre.output.data.interfaces.interface.config.description
-          value: "Configured by ansible {{ 100 | random }}"
+          - path: pre.output.data.interfaces.interface.config.description
+            value: "Configured by ansible {{ 100 | random }}"
       register: updated
 
     - name: Apply the new configuration
@@ -264,7 +265,6 @@ Examples
       ansible.utils.fact_diff:
         before: "{{ pre.output.data|ansible.utils.to_paths }}"
         after: "{{ post.output.data|ansible.utils.to_paths }}"
-
     # TASK [Show the differences between the pre and post configurations] ********
     # --- before
     # +++ after
