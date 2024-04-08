@@ -11,7 +11,7 @@ __metaclass__ = type
 
 import json
 import sys
-import unittest
+from unittest import TestCase
 
 from contextlib import contextmanager
 from io import BytesIO, StringIO
@@ -64,7 +64,7 @@ def swap_stdout():
         sys.stdout = old_stdout
 
 
-class ModuleTestCase(unittest.TestCase):
+class ModuleTestCase(TestCase):
     def setUp(self, module_args=None):
         if module_args is None:
             module_args = {

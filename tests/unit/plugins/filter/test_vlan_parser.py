@@ -8,14 +8,16 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import unittest
+from unittest import TestCase
 
 from ansible.errors import AnsibleFilterError
 
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import (
+    vlan_parser,
+)
 
 
-class TestVlanParser(unittest.TestCase):
+class TestVlanParser(TestCase):
     def setUp(self):
         pass
 

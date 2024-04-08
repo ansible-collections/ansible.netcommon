@@ -21,14 +21,24 @@ __metaclass__ = type
 
 import os
 import sys
-import unittest
+from unittest import TestCase
 
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import comp_type5
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import hash_salt
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_xml import parse_xml
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import (
+    comp_type5,
+)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import (
+    hash_salt,
+)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_xml import (
+    parse_xml,
+)
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import (
+    vlan_expander,
+)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import (
+    vlan_parser,
+)
 
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "network")
@@ -37,11 +47,7 @@ with open(os.path.join(fixture_path, "show_vlans_xml_output.txt")) as f:
     output_xml = f.read()
 
 
-class TestNetworkParseFilter(unittest.TestCase):
-    @unittest.skipIf(
-        sys.version_info[:2] == (2, 6),
-        "XPath expression not supported in this version",
-    )
+class TestNetworkParseFilter(TestCase):
     def test_parse_xml_to_list_of_dict(self):
         spec_file_path = os.path.join(fixture_path, "show_vlans_xml_spec.yml")
         parsed = parse_xml(output_xml, spec_file_path)
@@ -91,10 +97,6 @@ class TestNetworkParseFilter(unittest.TestCase):
         }
         self.assertEqual(parsed, expected)
 
-    @unittest.skipIf(
-        sys.version_info[:2] == (2, 6),
-        "XPath expression not supported in this version",
-    )
     def test_parse_xml_to_dict(self):
         spec_file_path = os.path.join(fixture_path, "show_vlans_xml_with_key_spec.yml")
         parsed = parse_xml(output_xml, spec_file_path)
@@ -144,12 +146,10 @@ class TestNetworkParseFilter(unittest.TestCase):
         }
         self.assertEqual(parsed, expected)
 
-    @unittest.skipIf(
-        sys.version_info[:2] == (2, 6),
-        "XPath expression not supported in this version",
-    )
     def test_parse_xml_with_condition_spec(self):
-        spec_file_path = os.path.join(fixture_path, "show_vlans_xml_with_condition_spec.yml")
+        spec_file_path = os.path.join(
+            fixture_path, "show_vlans_xml_with_condition_spec.yml"
+        )
         parsed = parse_xml(output_xml, spec_file_path)
         expected = {
             "vlans": [
@@ -166,7 +166,9 @@ class TestNetworkParseFilter(unittest.TestCase):
         self.assertEqual(parsed, expected)
 
     def test_parse_xml_with_single_value_spec(self):
-        spec_file_path = os.path.join(fixture_path, "show_vlans_xml_single_value_spec.yml")
+        spec_file_path = os.path.join(
+            fixture_path, "show_vlans_xml_single_value_spec.yml"
+        )
         parsed = parse_xml(output_xml, spec_file_path)
         expected = {"vlans": ["test-1", "test-2", "test-3", "test-4", "test-5"]}
         self.assertEqual(parsed, expected)
@@ -177,7 +179,9 @@ class TestNetworkParseFilter(unittest.TestCase):
 
         with self.assertRaises(Exception) as e:
             parse_xml(output_xml, "junk_path")
-        self.assertEqual("unable to locate parse_xml template: junk_path", str(e.exception))
+        self.assertEqual(
+            "unable to locate parse_xml template: junk_path", str(e.exception)
+        )
 
         with self.assertRaises(Exception) as e:
             parse_xml(output, spec_file_path)
@@ -187,7 +191,7 @@ class TestNetworkParseFilter(unittest.TestCase):
         )
 
 
-class TestNetworkType5(unittest.TestCase):
+class TestNetworkType5(TestCase):
     def test_defined_salt_success(self):
         password = "cisco"
         salt = "nTc1"
@@ -247,7 +251,7 @@ class TestNetworkType5(unittest.TestCase):
         )
 
 
-class TestHashSalt(unittest.TestCase):
+class TestHashSalt(TestCase):
     def test_retrieve_salt(self):
         password = "$1$nTc1$Z28sUTcWfXlvVe2x.3XAa."
         parsed = hash_salt(password)
@@ -267,7 +271,7 @@ class TestHashSalt(unittest.TestCase):
         )
 
 
-class TestCompareType5(unittest.TestCase):
+class TestCompareType5(TestCase):
     def test_compare_type5_boolean(self):
         unencrypted_password = "cisco"
         encrypted_password = "$1$nTc1$Z28sUTcWfXlvVe2x.3XAa."
@@ -287,7 +291,7 @@ class TestCompareType5(unittest.TestCase):
         self.assertEqual(parsed, False)
 
 
-class TestVlanExapander(unittest.TestCase):
+class TestVlanExapander(TestCase):
     def test_single_range(self):
         raw_list = "1-3"
         expanded_list = [1, 2, 3]
@@ -305,7 +309,7 @@ class TestVlanExapander(unittest.TestCase):
         self.assertEqual(vlan_expander(raw_list), expanded_list)
 
 
-class TestVlanParser(unittest.TestCase):
+class TestVlanParser(TestCase):
     def test_compression(self):
         raw_list = [1, 2, 3]
         parsed_list = ["1-3"]

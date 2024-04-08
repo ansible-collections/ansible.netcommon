@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import os
-import unittest
+from unittest import TestCase
 
 import pytest
 
@@ -20,7 +20,7 @@ from ansible_collections.ansible.netcommon.plugins.sub_plugins.cli_parser.pyats_
 pyats = pytest.importorskip("pyats")
 
 
-class TestPyatsParser(unittest.TestCase):
+class TestPyatsParser(TestCase):
     _nxos_parsed_output = {
         "platform": {
             "hardware": {
