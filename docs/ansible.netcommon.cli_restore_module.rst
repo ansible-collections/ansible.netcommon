@@ -87,6 +87,10 @@ Examples
         filename: backupDday.cfg
         path: flash://
 
+    # Command fired
+    # -------------
+    # config replace flash://backupDday.cfg force
+
     # Task Output
     # -----------
     #
