@@ -18,17 +18,22 @@ short_description: Restore device configuration to network devices over network_
 description:
 - This module provides platform agnostic way of restore text based configuration to
   network devices over network_cli connection plugin.
+- The module uses the platforms `config replace` commands to restore
+  backup configuration that is already copied over to the appliance.
 version_added: 6.1.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
 options:
   filename:
     description:
-    - Filename of the backup file to be restored.
+    - Filename of the backup file, present in the appliance where the restore operation
+      is to be performed. Check appliance for the configuration backup file name.
     type: str
   path:
     description:
-    - The directory where the backup is stored eg .
+    - The location in the target appliance where the file containing the backup exists.
+      The path and the filename together create the input to the config replace command,
+    - For an IOSXE appliance the path pattern is flash://<filename>
     type: str
 """
 
@@ -83,7 +88,9 @@ def validate_args(module, device_operations):
                     "Please report an issue against this platform's cliconf plugin."
                 )
             elif not supports_feature:
-                module.fail_json(msg=f"Option {feature} is not supported on this platform")
+                module.fail_json(
+                    msg=f"Option {feature} is not supported on this platform"
+                )
 
 
 def main():
