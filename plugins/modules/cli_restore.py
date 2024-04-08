@@ -88,9 +88,7 @@ def validate_args(module, device_operations):
                     "Please report an issue against this platform's cliconf plugin."
                 )
             elif not supports_feature:
-                module.fail_json(
-                    msg=f"Option {feature} is not supported on this platform"
-                )
+                module.fail_json(msg=f"Option {feature} is not supported on this platform")
 
 
 def main():
