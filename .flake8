@@ -43,7 +43,9 @@ extend-ignore =
   # line-length
   E501,
   # module level import not at top of file
-  E402
+  E402,
+  # white space before :
+  E203,
 
 # Accessibility/large fonts and PEP8 unfriendly:
 max-line-length = 120
