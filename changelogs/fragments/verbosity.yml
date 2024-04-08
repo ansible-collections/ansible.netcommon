@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - network_cli - removed deprecated play_context.verbosity property.
