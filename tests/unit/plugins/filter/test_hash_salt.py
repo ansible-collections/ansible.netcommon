@@ -8,12 +8,12 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import unittest
+from unittest import TestCase
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import hash_salt
 
 
-class Testhash_salt(unittest.TestCase):
+class Testhash_salt(TestCase):
     def setUp(self):
         pass
 

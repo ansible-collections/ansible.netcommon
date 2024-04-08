@@ -9,7 +9,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import unittest
+from unittest import TestCase
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.parsing import (
     Conditional,
@@ -22,7 +22,7 @@ c2 = Conditional("result[2] not == result_2")
 c3 = Conditional("result[0] neq not result_1")
 
 
-class TestNotKeyword(unittest.TestCase):
+class TestNotKeyword(TestCase):
     def test_negate_instance_variable_assignment(self):
         assert c1.negate is False and c2.negate is True
 

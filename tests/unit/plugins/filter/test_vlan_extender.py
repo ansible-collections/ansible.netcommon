@@ -8,12 +8,12 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import unittest
+from unittest import TestCase
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
 
 
-class TestVlanExtender(unittest.TestCase):
+class TestVlanExtender(TestCase):
     def setUp(self):
         pass
 
