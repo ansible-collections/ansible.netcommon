@@ -12,9 +12,7 @@ from unittest import TestCase
 
 from ansible.errors import AnsibleFilterError
 
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import (
-    vlan_parser,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
 
 
 class TestVlanParser(TestCase):

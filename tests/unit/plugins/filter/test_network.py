@@ -21,24 +21,15 @@ __metaclass__ = type
 
 import os
 import sys
+
 from unittest import TestCase
 
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import (
-    comp_type5,
-)
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import (
-    hash_salt,
-)
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_xml import (
-    parse_xml,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import comp_type5
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import hash_salt
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_xml import parse_xml
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import (
-    vlan_expander,
-)
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import (
-    vlan_parser,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
 
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "network")
@@ -147,9 +138,7 @@ class TestNetworkParseFilter(TestCase):
         self.assertEqual(parsed, expected)
 
     def test_parse_xml_with_condition_spec(self):
-        spec_file_path = os.path.join(
-            fixture_path, "show_vlans_xml_with_condition_spec.yml"
-        )
+        spec_file_path = os.path.join(fixture_path, "show_vlans_xml_with_condition_spec.yml")
         parsed = parse_xml(output_xml, spec_file_path)
         expected = {
             "vlans": [
@@ -166,9 +155,7 @@ class TestNetworkParseFilter(TestCase):
         self.assertEqual(parsed, expected)
 
     def test_parse_xml_with_single_value_spec(self):
-        spec_file_path = os.path.join(
-            fixture_path, "show_vlans_xml_single_value_spec.yml"
-        )
+        spec_file_path = os.path.join(fixture_path, "show_vlans_xml_single_value_spec.yml")
         parsed = parse_xml(output_xml, spec_file_path)
         expected = {"vlans": ["test-1", "test-2", "test-3", "test-4", "test-5"]}
         self.assertEqual(parsed, expected)
@@ -179,9 +166,7 @@ class TestNetworkParseFilter(TestCase):
 
         with self.assertRaises(Exception) as e:
             parse_xml(output_xml, "junk_path")
-        self.assertEqual(
-            "unable to locate parse_xml template: junk_path", str(e.exception)
-        )
+        self.assertEqual("unable to locate parse_xml template: junk_path", str(e.exception))
 
         with self.assertRaises(Exception) as e:
             parse_xml(output, spec_file_path)

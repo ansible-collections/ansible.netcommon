@@ -10,9 +10,7 @@ __metaclass__ = type
 
 from unittest import TestCase
 
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import (
-    vlan_expander,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
 
 
 class TestVlanExtender(TestCase):

@@ -10,9 +10,7 @@ __metaclass__ = type
 
 from unittest import TestCase
 
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import (
-    comp_type5,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import comp_type5
 
 
 class TestComp_type5(TestCase):

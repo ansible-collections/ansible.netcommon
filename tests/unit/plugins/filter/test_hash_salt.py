@@ -10,9 +10,7 @@ __metaclass__ = type
 
 from unittest import TestCase
 
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import (
-    hash_salt,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import hash_salt
 
 
 class Testhash_salt(TestCase):
