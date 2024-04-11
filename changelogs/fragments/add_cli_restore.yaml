@@ -1,3 +1,0 @@
----
-minor_changes:
-  - Add new module cli_restore that exclusively handles restoring of backup configuration to target applaince.
