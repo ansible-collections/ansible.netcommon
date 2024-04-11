@@ -5,6 +5,24 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v6.1.0
+======
+
+Minor Changes
+-------------
+
+- Add new module cli_restore that exclusively handles restoring of backup configuration to target applaince.
+
+Bugfixes
+--------
+
+- network_cli - removed deprecated play_context.verbosity property.
+
+New Modules
+-----------
+
+- cli_restore - Restore device configuration to network devices over network_cli
+
 v6.0.0
 ======
 
