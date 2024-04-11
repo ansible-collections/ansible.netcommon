@@ -16,6 +16,7 @@ Minor Changes
 Bugfixes
 --------
 
+- libssh connection plugin - stop using deprecated ``PlayContext.verbosity`` property that is no longer present in ansible-core 2.18 (https://github.com/ansible-collections/ansible.netcommon/pull/626).
 - network_cli - removed deprecated play_context.verbosity property.
 
 New Modules
