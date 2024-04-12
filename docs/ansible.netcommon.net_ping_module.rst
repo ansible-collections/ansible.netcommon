@@ -1,14 +1,19 @@
-.. _ansible.netcommon.net_ping_module:
 
+.. Created with antsibull-docs 2.9.0
 
-**************************
-ansible.netcommon.net_ping
-**************************
+ansible.netcommon.net_ping module -- Tests reachability using ping from a network device
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-**Tests reachability using ping from a network device**
+This module is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
 
+It is not included in ``ansible-core``.
+To check whether it is installed, run ``ansible-galaxy collection list``.
 
-Version added: 1.0.0
+To install it, use: :code:`ansible-galaxy collection install ansible.netcommon`.
+
+To use it in a playbook, specify: ``ansible.netcommon.net_ping``.
+
+New in ansible.netcommon 1.0.0
 
 .. contents::
    :local:
@@ -17,7 +22,13 @@ Version added: 1.0.0
 
 Synopsis
 --------
+
 - Tests reachability using ping from network device to a remote destination.
+
+This module has a corresponding action plugin.
+
+
+
 
 
 
@@ -27,111 +38,106 @@ Parameters
 
 .. raw:: html
 
-    <table  border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="1">Parameter</th>
-            <th>Choices/<font color="blue">Defaults</font></th>
-            <th width="100%">Comments</th>
-        </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>count</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">5</div>
-                </td>
-                <td>
-                        <div>Number of packets to send.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>dest</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The IP Address or hostname (resolvable by switch) of the remote node.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>source</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The source IP Address.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>state</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>absent</li>
-                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Determines if the expected result is success or fail.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>vrf</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">"default"</div>
-                </td>
-                <td>
-                        <div>The VRF to use for forwarding.</div>
-                </td>
-            </tr>
-    </table>
-    <br/>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th><p>Parameter</p></th>
+    <th><p>Comments</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-count"></div>
+      <p style="display: inline;"><strong>count</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-count" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Number of packets to send.</p>
+      <p style="margin-top: 8px;"><b style="color: blue;">Default:</b> <code style="color: blue;">5</code></p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-dest"></div>
+      <p style="display: inline;"><strong>dest</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-dest" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+        / <span style="color: red;">required</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The IP Address or hostname (resolvable by switch) of the remote node.</p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-source"></div>
+      <p style="display: inline;"><strong>source</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-source" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The source IP Address.</p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-state"></div>
+      <p style="display: inline;"><strong>state</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Determines if the expected result is success or fail.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code>&#34;absent&#34;</code></p></li>
+        <li><p><code style="color: blue;"><b>&#34;present&#34;</b></code> <span style="color: blue;">← (default)</span></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-vrf"></div>
+      <p style="display: inline;"><strong>vrf</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-vrf" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The VRF to use for forwarding.</p>
+      <p style="margin-top: 8px;"><b style="color: blue;">Default:</b> <code style="color: blue;">&#34;default&#34;</code></p>
+    </td>
+  </tr>
+  </tbody>
+  </table>
+
+
 
 
 Notes
 -----
 
-.. note::
-   - For targets running Python, use the :ref:`ansible.builtin.shell <ansible.builtin.shell_module>` module along with ping command instead.
-   - This module is supported on ``ansible_network_os`` network platforms. See the :ref:`Network Platform Options <platform_options>` for details.
-
+- For targets running Python, use the \ `ansible.builtin.shell <shell_module.rst>`__\  module along with ping command instead.
+- This module is supported on \ :literal:`ansible\_network\_os`\  network platforms. See the :ref:\`Network Platform Options \<platform\_options\>\` for details.
 
 
 Examples
 --------
 
 .. code-block:: yaml
+
 
     - name: Test reachability to 10.10.10.10 using default vrf
       ansible.netcommon.net_ping:
@@ -162,112 +168,113 @@ Examples
 
 
 
+
+
 Return Values
 -------------
-Common return values are documented `here <https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html#common-return-values>`_, the following are the fields unique to this module:
+The following are the fields unique to this module:
 
 .. raw:: html
 
-    <table border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="1">Key</th>
-            <th>Returned</th>
-            <th width="100%">Description</th>
-        </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>commands</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Show the command sent.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;ping vrf prod 10.40.40.40 count 20 source loopback0&#x27;]</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>packet_loss</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Percentage of packets lost.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">0%</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>packets_rx</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Packets successfully received.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">20</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>packets_tx</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Packets successfully transmitted.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">20</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>rtt</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Show RTT stats.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;avg&#x27;: 2, &#x27;max&#x27;: 8, &#x27;min&#x27;: 1}</div>
-                </td>
-            </tr>
-    </table>
-    <br/><br/>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th><p>Key</p></th>
+    <th><p>Description</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="return-commands"></div>
+      <p style="display: inline;"><strong>commands</strong></p>
+      <a class="ansibleOptionLink" href="#return-commands" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">list</span>
+        / <span style="color: purple;">elements=string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Show the command sent.</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> always</p>
+      <p style="margin-top: 8px; color: blue; word-wrap: break-word; word-break: break-all;"><b style="color: black;">Sample:</b> <code>[&#34;ping vrf prod 10.40.40.40 count 20 source loopback0&#34;]</code></p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="return-packet_loss"></div>
+      <p style="display: inline;"><strong>packet_loss</strong></p>
+      <a class="ansibleOptionLink" href="#return-packet_loss" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Percentage of packets lost.</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> always</p>
+      <p style="margin-top: 8px; color: blue; word-wrap: break-word; word-break: break-all;"><b style="color: black;">Sample:</b> <code>&#34;0%&#34;</code></p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="return-packets_rx"></div>
+      <p style="display: inline;"><strong>packets_rx</strong></p>
+      <a class="ansibleOptionLink" href="#return-packets_rx" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">integer</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Packets successfully received.</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> always</p>
+      <p style="margin-top: 8px; color: blue; word-wrap: break-word; word-break: break-all;"><b style="color: black;">Sample:</b> <code>20</code></p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="return-packets_tx"></div>
+      <p style="display: inline;"><strong>packets_tx</strong></p>
+      <a class="ansibleOptionLink" href="#return-packets_tx" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">integer</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Packets successfully transmitted.</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> always</p>
+      <p style="margin-top: 8px; color: blue; word-wrap: break-word; word-break: break-all;"><b style="color: black;">Sample:</b> <code>20</code></p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="return-rtt"></div>
+      <p style="display: inline;"><strong>rtt</strong></p>
+      <a class="ansibleOptionLink" href="#return-rtt" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">dictionary</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Show RTT stats.</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> always</p>
+      <p style="margin-top: 8px; color: blue; word-wrap: break-word; word-break: break-all;"><b style="color: black;">Sample:</b> <code>{&#34;avg&#34;: 2, &#34;max&#34;: 8, &#34;min&#34;: 1}</code></p>
+    </td>
+  </tr>
+  </tbody>
+  </table>
 
 
-Status
-------
 
 
 Authors
 ~~~~~~~
 
 - Jacob McGill (@jmcgill298)
+
+
+
+Collection links
+~~~~~~~~~~~~~~~~
+
+* `Issue Tracker <https://github.com/ansible-collections/ansible.netcommon/issues>`__
+* `Repository (Sources) <https://github.com/ansible-collections/ansible.netcommon>`__

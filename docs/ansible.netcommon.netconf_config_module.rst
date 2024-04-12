@@ -1,14 +1,21 @@
-.. _ansible.netcommon.netconf_config_module:
 
+.. Created with antsibull-docs 2.9.0
 
-********************************
-ansible.netcommon.netconf_config
-********************************
+ansible.netcommon.netconf_config module -- netconf device configuration
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-**netconf device configuration**
+This module is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
 
+It is not included in ``ansible-core``.
+To check whether it is installed, run ``ansible-galaxy collection list``.
 
-Version added: 1.0.0
+To install it, use: :code:`ansible-galaxy collection install ansible.netcommon`.
+You need further requirements to be able to use this module,
+see `Requirements <ansible_collections.ansible.netcommon.netconf_config_module_requirements_>`_ for details.
+
+To use it in a playbook, specify: ``ansible.netcommon.netconf_config``.
+
+New in ansible.netcommon 1.0.0
 
 .. contents::
    :local:
@@ -17,10 +24,13 @@ Version added: 1.0.0
 
 Synopsis
 --------
+
 - Netconf is a network management protocol developed and standardized by the IETF. It is documented in RFC 6241.
 - This module allows the user to send a configuration XML file to a netconf device, and detects if there was a configuration change.
 
 
+
+.. _ansible_collections.ansible.netcommon.netconf_config_module_requirements:
 
 Requirements
 ------------
@@ -29,372 +39,368 @@ The below requirements are needed on the host that executes this module.
 - ncclient
 
 
+
+
+
+
 Parameters
 ----------
 
 .. raw:: html
 
-    <table  border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="2">Parameter</th>
-            <th>Choices/<font color="blue">Defaults</font></th>
-            <th width="100%">Comments</th>
-        </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>backup</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>This argument will cause the module to create a full backup of the current <code>running-config</code> from the remote device before any changes are made. If the <code>backup_options</code> value is not given, the backup file is written to the <code>backup</code> folder in the playbook root directory or role root directory, if playbook is part of an ansible role. If the directory does not exist, it is created.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>backup_options</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>This is a dict object containing configurable options related to backup file path. The value of this option is read only when <code>backup</code> is set to <em>yes</em>, if <code>backup</code> is set to <em>no</em> this option will be silently ignored.</div>
-                </td>
-            </tr>
-                                <tr>
-                    <td class="elbow-placeholder"></td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>dir_path</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">path</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>This option provides the path ending with directory name in which the backup configuration file will be stored. If the directory does not exist it will be first created and the filename is either the value of <code>filename</code> or default filename as described in <code>filename</code> options description. If the path value is not given in that case a <em>backup</em> directory will be created in the current working directory and backup configuration will be copied in <code>filename</code> within <em>backup</em> directory.</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder"></td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>filename</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The filename to be used to store the backup configuration. If the filename is not given it will be generated based on the hostname, current time and date in format defined by &lt;hostname&gt;_config.&lt;current-date&gt;@&lt;current-time&gt;</div>
-                </td>
-            </tr>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th colspan="2"><p>Parameter</p></th>
+    <th><p>Comments</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-backup"></div>
+      <p style="display: inline;"><strong>backup</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-backup" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">boolean</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This argument will cause the module to create a full backup of the current <code class='docutils literal notranslate'>running-config</code> from the remote device before any changes are made. If the <code class='docutils literal notranslate'>backup_options</code> value is not given, the backup file is written to the <code class='docutils literal notranslate'>backup</code> folder in the playbook root directory or role root directory, if playbook is part of an ansible role. If the directory does not exist, it is created.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code style="color: blue;"><b>false</b></code> <span style="color: blue;">← (default)</span></p></li>
+        <li><p><code>true</code></p></li>
+      </ul>
 
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>commit</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
-                        </ul>
-                </td>
-                <td>
-                        <div>This boolean flag controls if the configuration changes should be committed or not after editing the candidate datastore. This option is supported only if remote Netconf server supports :candidate capability. If the value is set to <em>False</em> commit won&#x27;t be issued after edit-config operation and user needs to handle commit or discard-changes explicitly.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>confirm</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">0</div>
-                </td>
-                <td>
-                        <div>This argument will configure a timeout value for the commit to be confirmed before it is automatically rolled back. If the <code>confirm_commit</code> argument is set to False, this argument is silently ignored. If the value of this argument is set to 0, the commit is confirmed immediately. The remote host MUST support :candidate and :confirmed-commit capability for this option to .</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>confirm_commit</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>This argument will execute commit operation on remote device. It can be used to confirm a previous commit.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>content</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">raw</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The configuration data as defined by the device&#x27;s data models, the value can be either in xml string format or text format or python dictionary representation of JSON format.</div>
-                        <div>In case of json string format it will be converted to the corresponding xml string using xmltodict library before pushing onto the remote host.</div>
-                        <div>In case the value of this option isn <em>text</em> format the format should be supported by remote Netconf server.</div>
-                        <div>If the value of <code>content</code> option is in <em>xml</em> format in that case the xml value should have <em>config</em> as root tag.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: xml</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>default_operation</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>merge</li>
-                                    <li>replace</li>
-                                    <li>none</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>The default operation for &lt;edit-config&gt; rpc, valid values are <em>merge</em>, <em>replace</em> and <em>none</em>. If the default value is merge, the configuration data in the <code>content</code> option is merged at the corresponding level in the <code>target</code> datastore. If the value is replace the data in the <code>content</code> option completely replaces the configuration in the <code>target</code> datastore. If the value is none the <code>target</code> datastore is unaffected by the configuration in the config option, unless and until the incoming configuration data uses the <code>operation</code> operation to request a different operation.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>delete</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>It instructs the module to delete the configuration from value mentioned in <code>target</code> datastore.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>error_option</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>stop-on-error</b>&nbsp;&larr;</div></li>
-                                    <li>continue-on-error</li>
-                                    <li>rollback-on-error</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>This option controls the netconf server action after an error occurs while editing the configuration.</div>
-                        <div>If <em>error_option=stop-on-error</em>, abort the config edit on first error.</div>
-                        <div>If <em>error_option=continue-on-error</em>, continue to process configuration data on error. The error is recorded and negative response is generated if any errors occur.</div>
-                        <div>If <em>error_option=rollback-on-error</em>, rollback to the original configuration if any error occurs. This requires the remote Netconf server to support the <em>error_option=rollback-on-error</em> capability.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>format</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>xml</li>
-                                    <li>text</li>
-                                    <li>json</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>The format of the configuration provided as value of <code>content</code>.</div>
-                        <div>In case of json string format it will be converted to the corresponding xml string using xmltodict library before pushing onto the remote host.</div>
-                        <div>In case of <em>text</em> format of the configuration should be supported by remote Netconf server.</div>
-                        <div>If the value of <code>format</code> options is not given it tries to guess the data format of <code>content</code> option as one of <em>xml</em> or <em>json</em> or <em>text</em>.</div>
-                        <div>If the data format is not identified it is set to <em>xml</em> by default.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>get_filter</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">raw</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>This argument specifies the XML string which acts as a filter to restrict the portions of the data retrieved from the remote device when comparing the before and after state of the device following calls to edit_config. When not specified, the entire configuration or state data is returned for comparison depending on the value of <code>source</code> option. The <code>get_filter</code> value can be either XML string or XPath or JSON string or native python dictionary, if the filter is in XPath format the NETCONF server running on remote host should support xpath capability else it will result in an error.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>lock</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>never</li>
-                                    <li><div style="color: blue"><b>always</b>&nbsp;&larr;</div></li>
-                                    <li>if-supported</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Instructs the module to explicitly lock the datastore specified as <code>target</code>. By setting the option value <em>always</em> is will explicitly lock the datastore mentioned in <code>target</code> option. It the value is <em>never</em> it will not lock the <code>target</code> datastore. The value <em>if-supported</em> lock the <code>target</code> datastore only if it is supported by the remote Netconf server.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>save</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>The <code>save</code> argument instructs the module to save the configuration in <code>target</code> datastore to the startup-config if changed and if :startup capability is supported by Netconf server.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>source_datastore</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Name of the configuration datastore to use as the source to copy the configuration to the datastore mentioned by <code>target</code> option. The values can be either <em>running</em>, <em>candidate</em>, <em>startup</em> or a remote URL</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: source</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>target</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>auto</b>&nbsp;&larr;</div></li>
-                                    <li>candidate</li>
-                                    <li>running</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Name of the configuration datastore to be edited. - auto, uses candidate and fallback to running - candidate, edit &lt;candidate/&gt; datastore and then commit - running, edit &lt;running/&gt; datastore directly</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: datastore</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>validate</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>This boolean flag if set validates the content of datastore given in <code>target</code> option. For this option to work remote Netconf server should support :validate capability.</div>
-                </td>
-            </tr>
-    </table>
-    <br/>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-backup_options"></div>
+      <p style="display: inline;"><strong>backup_options</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-backup_options" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">dictionary</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This is a dict object containing configurable options related to backup file path. The value of this option is read only when <code class='docutils literal notranslate'>backup</code> is set to <em>yes</em>, if <code class='docutils literal notranslate'>backup</code> is set to <em>no</em> this option will be silently ignored.</p>
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-backup_options/dir_path"></div>
+      <p style="display: inline;"><strong>dir_path</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-backup_options/dir_path" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">path</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This option provides the path ending with directory name in which the backup configuration file will be stored. If the directory does not exist it will be first created and the filename is either the value of <code class='docutils literal notranslate'>filename</code> or default filename as described in <code class='docutils literal notranslate'>filename</code> options description. If the path value is not given in that case a <em>backup</em> directory will be created in the current working directory and backup configuration will be copied in <code class='docutils literal notranslate'>filename</code> within <em>backup</em> directory.</p>
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-backup_options/filename"></div>
+      <p style="display: inline;"><strong>filename</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-backup_options/filename" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The filename to be used to store the backup configuration. If the filename is not given it will be generated based on the hostname, current time and date in format defined by &lt;hostname&gt;_config.&lt;current-date&gt;@&lt;current-time&gt;</p>
+    </td>
+  </tr>
+
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-commit"></div>
+      <p style="display: inline;"><strong>commit</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-commit" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">boolean</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This boolean flag controls if the configuration changes should be committed or not after editing the candidate datastore. This option is supported only if remote Netconf server supports :candidate capability. If the value is set to <em>False</em> commit won&#x27;t be issued after edit-config operation and user needs to handle commit or discard-changes explicitly.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code>false</code></p></li>
+        <li><p><code style="color: blue;"><b>true</b></code> <span style="color: blue;">← (default)</span></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-confirm"></div>
+      <p style="display: inline;"><strong>confirm</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-confirm" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">integer</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This argument will configure a timeout value for the commit to be confirmed before it is automatically rolled back. If the <code class='docutils literal notranslate'>confirm_commit</code> argument is set to False, this argument is silently ignored. If the value of this argument is set to 0, the commit is confirmed immediately. The remote host MUST support :candidate and :confirmed-commit capability for this option to .</p>
+      <p style="margin-top: 8px;"><b style="color: blue;">Default:</b> <code style="color: blue;">0</code></p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-confirm_commit"></div>
+      <p style="display: inline;"><strong>confirm_commit</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-confirm_commit" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">boolean</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This argument will execute commit operation on remote device. It can be used to confirm a previous commit.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code style="color: blue;"><b>false</b></code> <span style="color: blue;">← (default)</span></p></li>
+        <li><p><code>true</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-content"></div>
+      <div class="ansibleOptionAnchor" id="parameter-xml"></div>
+      <p style="display: inline;"><strong>content</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-content" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;"><span style="color: darkgreen; white-space: normal;">aliases: xml</span></p>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">any</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The configuration data as defined by the device&#x27;s data models, the value can be either in xml string format or text format or python dictionary representation of JSON format.</p>
+      <p>In case of json string format it will be converted to the corresponding xml string using xmltodict library before pushing onto the remote host.</p>
+      <p>In case the value of this option isn <em>text</em> format the format should be supported by remote Netconf server.</p>
+      <p>If the value of <code class='docutils literal notranslate'>content</code> option is in <em>xml</em> format in that case the xml value should have <em>config</em> as root tag.</p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-default_operation"></div>
+      <p style="display: inline;"><strong>default_operation</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-default_operation" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The default operation for &lt;edit-config&gt; rpc, valid values are <em>merge</em>, <em>replace</em> and <em>none</em>. If the default value is merge, the configuration data in the <code class='docutils literal notranslate'>content</code> option is merged at the corresponding level in the <code class='docutils literal notranslate'>target</code> datastore. If the value is replace the data in the <code class='docutils literal notranslate'>content</code> option completely replaces the configuration in the <code class='docutils literal notranslate'>target</code> datastore. If the value is none the <code class='docutils literal notranslate'>target</code> datastore is unaffected by the configuration in the config option, unless and until the incoming configuration data uses the <code class='docutils literal notranslate'>operation</code> operation to request a different operation.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code>&#34;merge&#34;</code></p></li>
+        <li><p><code>&#34;replace&#34;</code></p></li>
+        <li><p><code>&#34;none&#34;</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-delete"></div>
+      <p style="display: inline;"><strong>delete</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-delete" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">boolean</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>It instructs the module to delete the configuration from value mentioned in <code class='docutils literal notranslate'>target</code> datastore.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code style="color: blue;"><b>false</b></code> <span style="color: blue;">← (default)</span></p></li>
+        <li><p><code>true</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-error_option"></div>
+      <p style="display: inline;"><strong>error_option</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-error_option" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This option controls the netconf server action after an error occurs while editing the configuration.</p>
+      <p>If <em>error_option=stop-on-error</em>, abort the config edit on first error.</p>
+      <p>If <em>error_option=continue-on-error</em>, continue to process configuration data on error. The error is recorded and negative response is generated if any errors occur.</p>
+      <p>If <em>error_option=rollback-on-error</em>, rollback to the original configuration if any error occurs. This requires the remote Netconf server to support the <em>error_option=rollback-on-error</em> capability.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code style="color: blue;"><b>&#34;stop-on-error&#34;</b></code> <span style="color: blue;">← (default)</span></p></li>
+        <li><p><code>&#34;continue-on-error&#34;</code></p></li>
+        <li><p><code>&#34;rollback-on-error&#34;</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-format"></div>
+      <p style="display: inline;"><strong>format</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-format" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The format of the configuration provided as value of <code class='docutils literal notranslate'>content</code>.</p>
+      <p>In case of json string format it will be converted to the corresponding xml string using xmltodict library before pushing onto the remote host.</p>
+      <p>In case of <em>text</em> format of the configuration should be supported by remote Netconf server.</p>
+      <p>If the value of <code class='docutils literal notranslate'>format</code> options is not given it tries to guess the data format of <code class='docutils literal notranslate'>content</code> option as one of <em>xml</em> or <em>json</em> or <em>text</em>.</p>
+      <p>If the data format is not identified it is set to <em>xml</em> by default.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code>&#34;xml&#34;</code></p></li>
+        <li><p><code>&#34;text&#34;</code></p></li>
+        <li><p><code>&#34;json&#34;</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-get_filter"></div>
+      <p style="display: inline;"><strong>get_filter</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-get_filter" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">any</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This argument specifies the XML string which acts as a filter to restrict the portions of the data retrieved from the remote device when comparing the before and after state of the device following calls to edit_config. When not specified, the entire configuration or state data is returned for comparison depending on the value of <code class='docutils literal notranslate'>source</code> option. The <code class='docutils literal notranslate'>get_filter</code> value can be either XML string or XPath or JSON string or native python dictionary, if the filter is in XPath format the NETCONF server running on remote host should support xpath capability else it will result in an error.</p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-lock"></div>
+      <p style="display: inline;"><strong>lock</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-lock" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Instructs the module to explicitly lock the datastore specified as <code class='docutils literal notranslate'>target</code>. By setting the option value <em>always</em> is will explicitly lock the datastore mentioned in <code class='docutils literal notranslate'>target</code> option. It the value is <em>never</em> it will not lock the <code class='docutils literal notranslate'>target</code> datastore. The value <em>if-supported</em> lock the <code class='docutils literal notranslate'>target</code> datastore only if it is supported by the remote Netconf server.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code>&#34;never&#34;</code></p></li>
+        <li><p><code style="color: blue;"><b>&#34;always&#34;</b></code> <span style="color: blue;">← (default)</span></p></li>
+        <li><p><code>&#34;if-supported&#34;</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-save"></div>
+      <p style="display: inline;"><strong>save</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-save" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">boolean</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The <code class='docutils literal notranslate'>save</code> argument instructs the module to save the configuration in <code class='docutils literal notranslate'>target</code> datastore to the startup-config if changed and if :startup capability is supported by Netconf server.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code style="color: blue;"><b>false</b></code> <span style="color: blue;">← (default)</span></p></li>
+        <li><p><code>true</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-source_datastore"></div>
+      <div class="ansibleOptionAnchor" id="parameter-source"></div>
+      <p style="display: inline;"><strong>source_datastore</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-source_datastore" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;"><span style="color: darkgreen; white-space: normal;">aliases: source</span></p>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Name of the configuration datastore to use as the source to copy the configuration to the datastore mentioned by <code class='docutils literal notranslate'>target</code> option. The values can be either <em>running</em>, <em>candidate</em>, <em>startup</em> or a remote URL</p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-target"></div>
+      <div class="ansibleOptionAnchor" id="parameter-datastore"></div>
+      <p style="display: inline;"><strong>target</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-target" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;"><span style="color: darkgreen; white-space: normal;">aliases: datastore</span></p>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Name of the configuration datastore to be edited. - auto, uses candidate and fallback to running - candidate, edit &lt;candidate/&gt; datastore and then commit - running, edit &lt;running/&gt; datastore directly</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code style="color: blue;"><b>&#34;auto&#34;</b></code> <span style="color: blue;">← (default)</span></p></li>
+        <li><p><code>&#34;candidate&#34;</code></p></li>
+        <li><p><code>&#34;running&#34;</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-validate"></div>
+      <p style="display: inline;"><strong>validate</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-validate" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">boolean</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This boolean flag if set validates the content of datastore given in <code class='docutils literal notranslate'>target</code> option. For this option to work remote Netconf server should support :validate capability.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code style="color: blue;"><b>false</b></code> <span style="color: blue;">← (default)</span></p></li>
+        <li><p><code>true</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  </tbody>
+  </table>
+
+
 
 
 Notes
 -----
 
-.. note::
-   - This module requires the netconf system service be enabled on the remote device being managed.
-   - This module supports devices with and without the candidate and confirmed-commit capabilities. It will always use the safer feature.
-   - This module supports the use of connection=netconf
-   - This module is supported on ``ansible_network_os`` network platforms. See the :ref:`Network Platform Options <platform_options>` for details.
-
+- This module requires the netconf system service be enabled on the remote device being managed.
+- This module supports devices with and without the candidate and confirmed-commit capabilities. It will always use the safer feature.
+- This module supports the use of connection=netconf
+- This module is supported on \ :literal:`ansible\_network\_os`\  network platforms. See the :ref:\`Network Platform Options \<platform\_options\>\` for details.
 
 
 Examples
 --------
 
 .. code-block:: yaml
+
 
     - name: use lookup filter to provide xml configuration
       ansible.netcommon.netconf_config:
@@ -558,75 +564,72 @@ Examples
 
 
 
+
+
 Return Values
 -------------
-Common return values are documented `here <https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html#common-return-values>`_, the following are the fields unique to this module:
+The following are the fields unique to this module:
 
 .. raw:: html
 
-    <table border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="1">Key</th>
-            <th>Returned</th>
-            <th width="100%">Description</th>
-        </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>backup_path</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when backup is yes</td>
-                <td>
-                            <div>The full path to the backup file</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">/playbooks/ansible/backup/config.2016-07-16@22:28:34</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>diff</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>when diff is enabled</td>
-                <td>
-                            <div>If --diff option in enabled while running, the before and after configuration change are returned as part of before and after key.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;after&#x27;: &#x27;&lt;rpc-reply&gt; &lt;data&gt; &lt;configuration&gt; &lt;version&gt;17.3R1.10&lt;/version&gt;...&lt;--snip--&gt;&#x27;, &#x27;before&#x27;: &#x27;&lt;rpc-reply&gt; &lt;data&gt; &lt;configuration&gt; &lt;version&gt;17.3R1.10&lt;/version&gt;...&lt;--snip--&gt;&#x27;}</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>server_capabilities</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                    </div>
-                </td>
-                <td>success</td>
-                <td>
-                            <div>list of capabilities of the server</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;urn:ietf:params:netconf:base:1.1&#x27;, &#x27;urn:ietf:params:netconf:capability:confirmed-commit:1.0&#x27;, &#x27;urn:ietf:params:netconf:capability:candidate:1.0&#x27;]</div>
-                </td>
-            </tr>
-    </table>
-    <br/><br/>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th><p>Key</p></th>
+    <th><p>Description</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="return-backup_path"></div>
+      <p style="display: inline;"><strong>backup_path</strong></p>
+      <a class="ansibleOptionLink" href="#return-backup_path" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The full path to the backup file</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> when backup is yes</p>
+      <p style="margin-top: 8px; color: blue; word-wrap: break-word; word-break: break-all;"><b style="color: black;">Sample:</b> <code>&#34;/playbooks/ansible/backup/config.2016-07-16@22:28:34&#34;</code></p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="return-diff"></div>
+      <p style="display: inline;"><strong>diff</strong></p>
+      <a class="ansibleOptionLink" href="#return-diff" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">dictionary</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>If --diff option in enabled while running, the before and after configuration change are returned as part of before and after key.</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> when diff is enabled</p>
+      <p style="margin-top: 8px; color: blue; word-wrap: break-word; word-break: break-all;"><b style="color: black;">Sample:</b> <code>{&#34;after&#34;: &#34;&lt;rpc-reply&gt; &lt;data&gt; &lt;configuration&gt; &lt;version&gt;17.3R1.10&lt;/version&gt;...&lt;--snip--&gt;&#34;, &#34;before&#34;: &#34;&lt;rpc-reply&gt; &lt;data&gt; &lt;configuration&gt; &lt;version&gt;17.3R1.10&lt;/version&gt;...&lt;--snip--&gt;&#34;}</code></p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="return-server_capabilities"></div>
+      <p style="display: inline;"><strong>server_capabilities</strong></p>
+      <a class="ansibleOptionLink" href="#return-server_capabilities" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">list</span>
+        / <span style="color: purple;">elements=string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>list of capabilities of the server</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> success</p>
+      <p style="margin-top: 8px; color: blue; word-wrap: break-word; word-break: break-all;"><b style="color: black;">Sample:</b> <code>[&#34;urn:ietf:params:netconf:base:1.1&#34;, &#34;urn:ietf:params:netconf:capability:confirmed-commit:1.0&#34;, &#34;urn:ietf:params:netconf:capability:candidate:1.0&#34;]</code></p>
+    </td>
+  </tr>
+  </tbody>
+  </table>
 
 
-Status
-------
 
 
 Authors
@@ -634,3 +637,11 @@ Authors
 
 - Leandro Lisboa Penz (@lpenz)
 - Ganesh Nalawade (@ganeshrn)
+
+
+
+Collection links
+~~~~~~~~~~~~~~~~
+
+* `Issue Tracker <https://github.com/ansible-collections/ansible.netcommon/issues>`__
+* `Repository (Sources) <https://github.com/ansible-collections/ansible.netcommon>`__

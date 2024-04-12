@@ -1,14 +1,19 @@
-.. _ansible.netcommon.comp_type5_filter:
 
+.. Created with antsibull-docs 2.9.0
 
-****************************
-ansible.netcommon.comp_type5
-****************************
+ansible.netcommon.comp_type5 filter -- The comp\_type5 filter plugin.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-**The comp_type5 filter plugin.**
+This filter plugin is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
 
+It is not included in ``ansible-core``.
+To check whether it is installed, run ``ansible-galaxy collection list``.
 
-Version added: 1.0.0
+To install it, use: :code:`ansible-galaxy collection install ansible.netcommon`.
+
+To use it in a playbook, specify: ``ansible.netcommon.comp_type5``.
+
+New in ansible.netcommon 1.0.0
 
 .. contents::
    :local:
@@ -17,97 +22,100 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- The filter confirms configuration idempotency on use of type5_pw.
+
+- The filter confirms configuration idempotency on use of type5\_pw.
 
 
 
 
-Parameters
-----------
+
+
+
+
+Keyword parameters
+------------------
+
+This describes keyword parameters of the filter. These are the values ``key1=value1``, ``key2=value2`` and so on in the following
+example: ``input | ansible.netcommon.comp_type5(key1=value1, key2=value2, ...)``
 
 .. raw:: html
 
-    <table  border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="1">Parameter</th>
-            <th>Choices/<font color="blue">Defaults</font></th>
-                <th>Configuration</th>
-            <th width="100%">Comments</th>
-        </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>encrypted_password</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>The encrypted text.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>return_original</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>Return the original text.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>unencrypted_password</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>The unencrypted text.</div>
-                </td>
-            </tr>
-    </table>
-    <br/>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th><p>Parameter</p></th>
+    <th><p>Comments</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-encrypted_password"></div>
+      <p style="display: inline;"><strong>encrypted_password</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-encrypted_password" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+        / <span style="color: red;">required</span>
+      </p>
+
+    </td>
+    <td valign="top">
+      <p>The encrypted text.</p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-return_original"></div>
+      <p style="display: inline;"><strong>return_original</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-return_original" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">boolean</span>
+      </p>
+
+    </td>
+    <td valign="top">
+      <p>Return the original text.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code>false</code></p></li>
+        <li><p><code>true</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-unencrypted_password"></div>
+      <p style="display: inline;"><strong>unencrypted_password</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-unencrypted_password" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+        / <span style="color: red;">required</span>
+      </p>
+
+    </td>
+    <td valign="top">
+      <p>The unencrypted text.</p>
+    </td>
+  </tr>
+  </tbody>
+  </table>
+
+
 
 
 Notes
 -----
 
-.. note::
-   - The filter confirms configuration idempotency on use of type5_pw.
-   - Can be used to validate password post hashing username cisco secret 5 {{ ansible_ssh_pass | ansible.netcommon.comp_type5(encrypted, True) }}
-
+- The filter confirms configuration idempotency on use of type5\_pw.
+- Can be used to validate password post hashing username cisco secret 5 {{ ansible\_ssh\_pass | ansible.netcommon.comp\_type5(encrypted, True) }}
 
 
 Examples
 --------
 
 .. code-block:: yaml
+
 
     # Using comp_type5
 
@@ -138,8 +146,7 @@ Examples
 
 
 
-Status
-------
+
 
 
 Authors
@@ -150,3 +157,9 @@ Authors
 
 .. hint::
     Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.
+
+Collection links
+~~~~~~~~~~~~~~~~
+
+* `Issue Tracker <https://github.com/ansible-collections/ansible.netcommon/issues>`__
+* `Repository (Sources) <https://github.com/ansible-collections/ansible.netcommon>`__
