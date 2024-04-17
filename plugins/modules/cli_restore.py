@@ -78,6 +78,7 @@ RETURN = """
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection
 from ansible.module_utils.connection import ConnectionError
+from ansible.module_utils._text import to_text
 
 
 def validate_args(module, device_operations):
@@ -115,7 +116,9 @@ def main():
               path=module.params["path"],
           )
     except ConnectionError as exc:
-        msg = "This platform does not support restore_plugin.Please report an issue against this platform's cliconf plugin."
+        msg=to_text(exc, errors="surrogate_then_replace")
+        if msg == "Method not found":
+          msg = "This platform does not support restore_plugin.Please report an issue against this platform's cliconf plugin."
         module.fail_json(msg, code=exc.code)
 
     result["__restore__"] = running
