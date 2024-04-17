@@ -77,6 +77,7 @@ RETURN = """
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection
+from ansible.module_utils.connection import ConnectionError
 
 
 def validate_args(module, device_operations):
@@ -113,7 +114,7 @@ def main():
               filename=module.params["filename"],
               path=module.params["path"],
           )
-    except Exception as exc:
+    except ConnectionError as exc:
         msg = "This platform does not support restore_plugin.Please report an issue against this platform's cliconf plugin."
         module.fail_json(msg, code=exc.code)
 
