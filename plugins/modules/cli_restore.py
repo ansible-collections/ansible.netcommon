@@ -108,12 +108,16 @@ def main():
 
     result = {"changed": False}
     connection = Connection(module._socket_path)
-    running = connection.restore(
-        filename=module.params["filename"],
-        path=module.params["path"],
-    )
-    result["__restore__"] = running
+    try:
+          running = connection.restore(
+              filename=module.params["filename"],
+              path=module.params["path"],
+          )
+    except Exception as exc:
+        msg = "This platform does not support restore_plugin.Please report an issue against this platform's cliconf plugin."
+        module.fail_json(msg, code=exc.code)
 
+    result["__restore__"] = running
     module.exit_json(**result)
 
 

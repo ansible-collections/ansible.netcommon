@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - Fail the module execution gracefully with plugin support required message.
+  - Also guide user to open issue for respective platform. 
