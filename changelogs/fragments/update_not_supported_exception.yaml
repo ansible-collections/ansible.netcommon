@@ -1,4 +1,0 @@
----
-bugfixes:
-  - Improved module execution to gracefully handle cases where plugin support is required, providing a clear error message to the user.
-  - Added guidance for users to open an issue for the respective platform if plugin support is needed.

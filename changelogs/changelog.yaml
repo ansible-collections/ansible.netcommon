@@ -749,3 +749,13 @@ releases:
         name: cli_restore
         namespace: ""
     release_date: "2024-04-11"
+  6.1.1:
+    changes:
+      bugfixes:
+        - Added guidance for users to open an issue for the respective platform if plugin
+          support is needed.
+        - Improved module execution to gracefully handle cases where plugin support
+          is required, providing a clear error message to the user.
+    fragments:
+      - update_not_supported_exception.yaml
+    release_date: "2024-04-19"
