@@ -5,6 +5,15 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v6.1.1
+======
+
+Bugfixes
+--------
+
+- Added guidance for users to open an issue for the respective platform if plugin support is needed.
+- Improved module execution to gracefully handle cases where plugin support is required, providing a clear error message to the user.
+
 v6.1.0
 ======
 
