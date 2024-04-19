@@ -116,7 +116,7 @@ def main():
         )
     except ConnectionError as exc:
         if exc.code == -32601:  # Method not found
-            msg = "This platform does not support restore_plugin.Please report an issue against this platform's cliconf plugin."
+            msg = "This platform is not supported with cli_restore. Please report an issue against this platform's cliconf plugin."
             module.fail_json(msg, code=exc.code)
         else:
             module.fail_json(msg=to_text(exc, errors="surrogate_then_replace").strip())
