@@ -12,5 +12,6 @@ pytest-cov
 ntc_templates
 # 21.4 changed the output of an error message we check in tests
 pyats >= 21.4 ; python_version < '3.11'
-genie==24.3
+genie == 24.3 ; python_version < '3.11'
+genie
 passlib
