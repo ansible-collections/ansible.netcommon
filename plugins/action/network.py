@@ -1,22 +1,10 @@
 #
 # (c) 2018 Red Hat Inc.
-#
-# This file is part of Ansible
-#
-# Ansible is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Ansible is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
-#
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
@@ -26,11 +14,12 @@ import time
 
 from ansible.errors import AnsibleError
 from ansible.module_utils._text import to_text
+from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves.urllib.parse import urlsplit
 from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
-from ansible.module_utils.six import PY3
+
 
 display = Display()
 
@@ -38,7 +27,7 @@ DEXEC_PREFIX = "ANSIBLE_NETWORK_IMPORT_MODULES:"
 
 
 class ActionModule(_ActionModule):
-    def run(self, task_vars=None):
+    def run(self, tmp=None, task_vars=None):
         config_module = hasattr(self, "_config_module") and self._config_module
         if config_module and self._task.args.get("src"):
             try:
@@ -73,13 +62,9 @@ class ActionModule(_ActionModule):
                 )
                 # execute the module, collect result
                 result = self._exec_module(module)
-                display.vvvv(
-                    "{prefix} complete".format(prefix=DEXEC_PREFIX), host
-                )
+                display.vvvv("{prefix} complete".format(prefix=DEXEC_PREFIX), host)
                 display.vvvvv(
-                    "{prefix} Result: {result}".format(
-                        prefix=DEXEC_PREFIX, result=result
-                    ),
+                    "{prefix} Result: {result}".format(prefix=DEXEC_PREFIX, result=result),
                     host,
                 )
 
@@ -95,23 +80,20 @@ class ActionModule(_ActionModule):
         if not dexec_eligible:
             result = super(ActionModule, self).run(task_vars=task_vars)
 
-        if (
-            config_module
-            and self._task.args.get("backup")
-            and not result.get("failed")
-        ):
-            self._handle_backup_option(result, task_vars)
+        if config_module and self._task.args.get("backup") and not result.get("failed"):
+            self._handle_backup_option(
+                result,
+                task_vars,
+                self._task.args.get("backup_options"),
+            )
 
         return result
 
-    def _handle_backup_option(self, result, task_vars):
-
+    def _handle_backup_option(self, result, task_vars, backup_options):
         filename = None
         backup_path = None
         try:
-            non_config_regexes = self._connection.cliconf.get_option(
-                "non_config_lines", task_vars
-            )
+            non_config_regexes = self._connection.cliconf.get_option("non_config_lines", task_vars)
         except (AttributeError, KeyError):
             non_config_regexes = []
         try:
@@ -121,14 +103,11 @@ class ActionModule(_ActionModule):
         except KeyError:
             raise AnsibleError("Failed while reading configuration backup")
 
-        backup_options = self._task.args.get("backup_options")
         if backup_options:
             filename = backup_options.get("filename")
             backup_path = backup_options.get("dir_path")
 
-        tstamp = time.strftime(
-            "%Y-%m-%d@%H:%M:%S", time.localtime(time.time())
-        )
+        tstamp = time.strftime("%Y-%m-%d@%H:%M:%S", time.localtime(time.time()))
         if not backup_path:
             cwd = self._get_working_path()
             backup_path = os.path.join(cwd, "backup")
@@ -150,9 +129,9 @@ class ActionModule(_ActionModule):
                     output_file.write(content)
             except Exception as exc:
                 result["failed"] = True
-                result["msg"] = (
-                    "Could not write to destination file %s: %s"
-                    % (dest, to_text(exc))
+                result["msg"] = "Could not write to destination file %s: %s" % (
+                    dest,
+                    to_text(exc),
                 )
                 return
             changed = True
@@ -178,9 +157,7 @@ class ActionModule(_ActionModule):
         if os.path.isabs(src) or urlsplit("src").scheme:
             source = src
         else:
-            source = self._loader.path_dwim_relative(
-                working_path, "templates", src
-            )
+            source = self._loader.path_dwim_relative(working_path, "templates", src)
             if not source:
                 source = self._loader.path_dwim_relative(working_path, src)
 
@@ -225,57 +202,44 @@ class ActionModule(_ActionModule):
             display.vvvv("Getting network OS from fact")
             network_os = task_vars["ansible_facts"]["network_os"]
         else:
-            raise AnsibleError(
-                "ansible_network_os must be specified on this host"
-            )
+            raise AnsibleError("ansible_network_os must be specified on this host")
 
         return network_os
 
     def _check_dexec_eligibility(self, host):
-        """ Check if current python and task are eligble
-        """
+        """Check if current python and task are eligble"""
         dexec = self.get_connection_option("import_modules")
 
         # log early about dexec
         if dexec:
-            display.vvvv(
-                "{prefix} enabled via connection option".format(
-                    prefix=DEXEC_PREFIX
-                ),
-                host=host,
-            )
+            display.vvvv("{prefix} enabled".format(prefix=DEXEC_PREFIX), host)
+
+            # disable dexec when not PY3
+            if not PY3:
+                dexec = False
+                display.vvvv(
+                    "{prefix} disabled for when not Python 3".format(prefix=DEXEC_PREFIX),
+                    host=host,
+                )
+
+            # disable dexec when running async
+            if self._task.async_val:
+                dexec = False
+                display.vvvv(
+                    "{prefix} disabled for a task using async".format(prefix=DEXEC_PREFIX),
+                    host=host,
+                )
         else:
             display.vvvv("{prefix} disabled".format(prefix=DEXEC_PREFIX), host)
             display.vvvv(
-                "{prefix} module execution time may be extended".format(
-                    prefix=DEXEC_PREFIX
-                ),
+                "{prefix} module execution time may be extended".format(prefix=DEXEC_PREFIX),
                 host,
             )
 
-        # disable dexec when running async
-        if self._task.async_val and dexec:
-            dexec = False
-            display.vvvv(
-                "{prefix} disabled for a task using async".format(
-                    prefix=DEXEC_PREFIX
-                ),
-                host=host,
-            )
-
-        # disable dexec when not PY3
-        if not PY3:
-            dexec = False
-            display.vvvv(
-                "{prefix} disabled for when not Python 3".format(
-                    prefix=DEXEC_PREFIX
-                ),
-                host=host,
-            )
         return dexec
 
     def _find_load_module(self):
-        """ Use the task action to find a module
+        """Use the task action to find a module
         and import it.
 
         :return filename: The module's filename
@@ -303,7 +267,7 @@ class ActionModule(_ActionModule):
         return filename, module
 
     def _patch_update_module(self, module, task_vars):
-        """ Update a module instance, replacing it's AnsibleModule
+        """Update a module instance, replacing it's AnsibleModule
         with one that doesn't load params
 
         :param module: An loaded module
@@ -312,6 +276,7 @@ class ActionModule(_ActionModule):
         :type task_vars: dict
         """
         import copy
+
         from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
 
         # build an AnsibleModule that doesn't load params
@@ -330,7 +295,7 @@ class ActionModule(_ActionModule):
         module.AnsibleModule = PatchedAnsibleModule
 
     def _exec_module(self, module):
-        """ exec the module's main() since modules
+        """exec the module's main() since modules
         print their result, we need to replace stdout
         with a buffer. If main() fails, we assume that as stderr
         Once we collect stdout/stderr, use our super to json load
@@ -343,24 +308,25 @@ class ActionModule(_ActionModule):
         """
         import io
         import sys
-        from ansible.vars.clean import remove_internal_keys
+
         from ansible.module_utils._text import to_native
+        from ansible.vars.clean import remove_internal_keys
 
         # preserve previous stdout, replace with buffer
         sys_stdout = sys.stdout
         sys.stdout = io.StringIO()
 
+        stdout = ""
+        stderr = ""
         # run the module, catch the SystemExit so we continue
         try:
             module.main()
         except SystemExit:
             # module exited cleanly
             stdout = sys.stdout.getvalue()
-            stderr = ""
         except Exception as exc:
             # dirty module or connection traceback
             stderr = to_native(exc)
-            stdout = ""
 
         # restore stdout & stderr
         sys.stdout = sys_stdout
@@ -379,17 +345,17 @@ class ActionModule(_ActionModule):
         # split stdout/stderr into lines if needed
         if "stdout" in data and "stdout_lines" not in data:
             # if the value is 'False', a default won't catch it.
-            txt = data.get("stdout", None) or u""
+            txt = data.get("stdout", None) or ""
             data["stdout_lines"] = txt.splitlines()
         if "stderr" in data and "stderr_lines" not in data:
             # if the value is 'False', a default won't catch it.
-            txt = data.get("stderr", None) or u""
+            txt = data.get("stderr", None) or ""
             data["stderr_lines"] = txt.splitlines()
 
         return data
 
     def _sanitize_contents(self, contents, filters):
-        """ remove lines from contents that match
+        """remove lines from contents that match
         regexes specified in the `filters` list
         """
         for x in filters:

@@ -1,14 +1,17 @@
 # 2017 Red Hat Inc.
 # (c) 2017 Ansible Project
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-connection: persistent
+author:
+ - Ansible Networking Team (@ansible-network)
+name: persistent
 short_description: Use a persistent unix socket for connection
 description:
 - This is a helper plugin to allow making other connections persistent.
@@ -17,24 +20,23 @@ extends_documentation_fragment:
 - ansible.netcommon.connection_persistent
 """
 from ansible.executor.task_executor import start_connection
-from ansible.plugins.connection import ConnectionBase
 from ansible.module_utils._text import to_text
 from ansible.module_utils.connection import Connection as SocketConnection
+from ansible.plugins.connection import ConnectionBase
 from ansible.utils.display import Display
+
 
 display = Display()
 
 
 class Connection(ConnectionBase):
-    """ Local based connections """
+    """Local based connections"""
 
     transport = "ansible.netcommon.persistent"
     has_pipelining = False
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(Connection, self).__init__(
-            play_context, new_stdin, *args, **kwargs
-        )
+        super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
         self._task_uuid = to_text(kwargs.get("task_uuid", ""))
 
     def _connect(self):
@@ -70,14 +72,8 @@ class Connection(ConnectionBase):
             "starting connection from persistent connection plugin",
             host=self._play_context.remote_addr,
         )
-        variables = {
-            "ansible_command_timeout": self.get_option(
-                "persistent_command_timeout"
-            )
-        }
-        socket_path = start_connection(
-            self._play_context, variables, self._task_uuid
-        )
+        variables = {"ansible_command_timeout": self.get_option("persistent_command_timeout")}
+        socket_path = start_connection(self._play_context, variables, self._task_uuid)
         display.vvvv(
             "local domain socket path is %s" % socket_path,
             host=self._play_context.remote_addr,

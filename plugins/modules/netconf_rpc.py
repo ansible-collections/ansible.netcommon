@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 # (c) 2018, Ansible by Red Hat, inc
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
@@ -151,18 +153,21 @@ output:
 
 import ast
 
+
 try:
     from lxml.etree import tostring
 except ImportError:
     from xml.etree.ElementTree import tostring
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
-    dispatch,
-)
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     remove_namespaces,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
+    dispatch,
+)
+
 
 try:
     import jxmlease
@@ -208,9 +213,7 @@ def get_xml_request(module, request, xmlns, content):
                 "It can be installed using `pip install jxmlease`"
             )
 
-        payload = jxmlease.XMLDictNode(content).emit_xml(
-            pretty=False, full_document=False
-        )
+        payload = jxmlease.XMLDictNode(content).emit_xml(pretty=False, full_document=False)
         if xmlns is None:
             return "<%s>%s</%s>" % (request, payload, request)
         else:
@@ -221,14 +224,11 @@ def get_xml_request(module, request, xmlns, content):
                 request,
             )
 
-    module.fail_json(
-        msg="unsupported content data-type `%s`" % type(content).__name__
-    )
+    module.fail_json(msg="unsupported content data-type `%s`" % type(content).__name__)
 
 
 def main():
-    """entry point for module execution
-    """
+    """entry point for module execution"""
     argument_spec = dict(
         rpc=dict(type="str", required=True),
         xmlns=dict(type="str"),
@@ -236,9 +236,7 @@ def main():
         display=dict(choices=["json", "pretty", "xml"]),
     )
 
-    module = AnsibleModule(
-        argument_spec=argument_spec, supports_check_mode=True
-    )
+    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
 
     rpc = module.params["rpc"]
     xmlns = module.params["xmlns"]

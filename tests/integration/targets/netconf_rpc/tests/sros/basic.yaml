@@ -1,5 +1,6 @@
 ---
-- debug: msg="START netconf_rpc sros/basic.yaml on connection={{ ansible_connection
+- debug:
+    msg="START netconf_rpc sros/basic.yaml on connection={{ ansible_connection
     }}"
 
 - name: lock candidate (content is dict)
@@ -61,7 +62,8 @@
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_rpc:
     rpc: get
-    content: "<filter>\n  <netconf-state xmlns=\"urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring\"\
+    content:
+      "<filter>\n  <netconf-state xmlns=\"urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring\"\
       >\n    <schemas/>\n  </netconf-state>\n</filter>\n"
     display: json
 
@@ -137,7 +139,7 @@
   connection: ansible.netcommon.netconf
   ignore_errors: true
   ansible.netcommon.netconf_rpc:
-    rpc: ''
+    rpc: ""
     display: json
 
 - assert:
@@ -149,12 +151,13 @@
   connection: ansible.netcommon.netconf
   ignore_errors: true
   ansible.netcommon.netconf_rpc:
-    rpc: '   '
+    rpc: "   "
     display: json
 
 - assert:
     that:
       - "'must not be empty' in result.msg"
 
-- debug: msg="END netconf_rpc sros/basic.yaml on connection={{ ansible_connection
+- debug:
+    msg="END netconf_rpc sros/basic.yaml on connection={{ ansible_connection
     }}"

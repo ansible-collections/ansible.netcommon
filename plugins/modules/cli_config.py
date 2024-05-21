@@ -2,9 +2,11 @@
 # -*- coding: utf-8 -*-
 
 # (c) 2018, Ansible by Red Hat, inc
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
@@ -165,7 +167,7 @@ EXAMPLES = """
 - name: configure device with config with defaults enabled
   ansible.netcommon.cli_config:
     config: "{{ lookup('template', 'basic/config.j2') }}"
-    defaults: yes
+    defaults: "yes"
 
 - name: Use diff_match
   ansible.netcommon.cli_config:
@@ -188,7 +190,7 @@ EXAMPLES = """
 - name: configurable backup path
   ansible.netcommon.cli_config:
     config: "{{ lookup('template', 'basic/config.j2') }}"
-    backup: yes
+    backup: "yes"
     backup_options:
       filename: backup.cfg
       dir_path: /home/user
@@ -224,14 +226,13 @@ backup_path:
 
 import json
 
+from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection
-from ansible.module_utils._text import to_text
 
 
 def validate_args(module, device_operations):
-    """validate param if it is supported on the platform
-    """
+    """validate param if it is supported on the platform"""
     feature_list = [
         "replace",
         "rollback",
@@ -249,18 +250,13 @@ def validate_args(module, device_operations):
             if supports_feature is None:
                 module.fail_json(
                     msg="This platform does not specify whether %s is supported or not. "
-                    "Please report an issue against this platform's cliconf plugin."
-                    % feature
+                    "Please report an issue against this platform's cliconf plugin." % feature
                 )
             elif not supports_feature:
-                module.fail_json(
-                    msg="Option %s is not supported on this platform" % feature
-                )
+                module.fail_json(msg="Option %s is not supported on this platform" % feature)
 
 
-def run(
-    module, device_operations, connection, candidate, running, rollback_id
-):
+def run(module, device_operations, connection, candidate, running, rollback_id):
     result = {}
     resp = {}
     config_diff = []
@@ -280,11 +276,7 @@ def run(
     elif replace in ("no", "false", "False"):
         replace = False
 
-    if (
-        replace is not None
-        and replace not in [True, False]
-        and candidate is not None
-    ):
+    if replace is not None and replace not in [True, False] and candidate is not None:
         module.fail_json(
             msg="Replace value '%s' is a configuration file path already"
             " present on the device. Hence 'replace' and 'config' options"
@@ -298,17 +290,11 @@ def run(
 
     elif device_operations.get("supports_onbox_diff"):
         if diff_replace:
-            module.warn(
-                "diff_replace is ignored as the device supports onbox diff"
-            )
+            module.warn("diff_replace is ignored as the device supports onbox diff")
         if diff_match:
-            module.warn(
-                "diff_match is ignored as the device supports onbox diff"
-            )
+            module.warn("diff_match is ignored as the device supports onbox diff")
         if diff_ignore_lines:
-            module.warn(
-                "diff_ignore_lines is ignored as the device supports onbox diff"
-            )
+            module.warn("diff_ignore_lines is ignored as the device supports onbox diff")
 
         if candidate and not isinstance(candidate, list):
             candidate = candidate.strip("\n").splitlines()
@@ -394,8 +380,7 @@ def run(
 
 
 def main():
-    """main entry point for execution
-    """
+    """main entry point for execution"""
     backup_spec = dict(filename=dict(), dir_path=dict(type="path"))
     argument_spec = dict(
         backup=dict(default=False, type="bool"),
@@ -442,11 +427,7 @@ def main():
         flags = []
 
     candidate = module.params["config"]
-    candidate = (
-        to_text(candidate, errors="surrogate_then_replace")
-        if candidate
-        else None
-    )
+    candidate = to_text(candidate, errors="surrogate_then_replace") if candidate else None
     running = connection.get_config(flags=flags)
     rollback_id = module.params["rollback"]
 

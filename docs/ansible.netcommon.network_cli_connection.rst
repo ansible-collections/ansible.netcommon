@@ -67,10 +67,34 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>become_errors</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>ignore</li>
+                                    <li>warn</li>
+                                    <li><div style="color: blue"><b>fail</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                    <td>
+                                <div>var: ansible_network_become_errors</div>
+                    </td>
+                <td>
+                        <div>This option determines how privilege escalation failures are handled when <em>become</em> is enabled.</div>
+                        <div>When set to <code>ignore</code>, the errors are silently ignored. When set to <code>warn</code>, a warning message is displayed. The default option <code>fail</code>, triggers a failure and halts execution.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>become_method</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -93,13 +117,14 @@ Parameters
                     <b>host</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
                         <b>Default:</b><br/><div style="color: blue">"inventory_hostname"</div>
                 </td>
                     <td>
+                                <div>var: inventory_hostname</div>
                                 <div>var: ansible_host</div>
                     </td>
                 <td>
@@ -165,11 +190,11 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"no"</div>
+                        <b>Default:</b><br/><div style="color: blue">"yes"</div>
                 </td>
                     <td>
                             <div> ini entries:
-                                    <p>[ansible_network]<br>import_modules = no</p>
+                                    <p>[ansible_network]<br>import_modules = yes</p>
                             </div>
                                 <div>env:ANSIBLE_NETWORK_IMPORT_MODULES</div>
                                 <div>var: ansible_network_import_modules</div>
@@ -207,7 +232,7 @@ Parameters
                     <b>network_os</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -225,7 +250,7 @@ Parameters
                     <b>password</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -361,7 +386,7 @@ Parameters
                     <b>private_key_file</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -383,7 +408,7 @@ Parameters
                     <b>remote_user</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -428,22 +453,53 @@ Parameters
                     <b>ssh_type</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"paramiko"</div>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>libssh</li>
+                                    <li>paramiko</li>
+                                    <li><div style="color: blue"><b>auto</b>&nbsp;&larr;</div></li>
+                        </ul>
                 </td>
                     <td>
                             <div> ini entries:
-                                    <p>[persistent_connection]<br>ssh_type = paramiko</p>
+                                    <p>[persistent_connection]<br>ssh_type = auto</p>
                             </div>
                                 <div>env:ANSIBLE_NETWORK_CLI_SSH_TYPE</div>
                                 <div>var: ansible_network_cli_ssh_type</div>
                     </td>
                 <td>
-                        <div>The type of the transport used by <code>network_cli</code> connection plugin to connection to remote host. Valid value is either <em>paramiko</em> or <em>libssh</em></div>
-                        <div>In order to use <em>libssh</em>, the ansible-pylibssh package needs to be installed</div>
+                        <div>The python package that will be used by the <code>network_cli</code> connection plugin to create a SSH connection to remote host.</div>
+                        <div><em>libssh</em> will use the ansible-pylibssh package, which needs to be installed in order to work.</div>
+                        <div><em>paramiko</em> will instead use the paramiko package to manage the SSH connection.</div>
+                        <div><em>auto</em> will use ansible-pylibssh if that package is installed, otherwise will fallback to paramiko.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>terminal_errors</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.1.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>ignore</li>
+                                    <li>warn</li>
+                                    <li><div style="color: blue"><b>fail</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                    <td>
+                                <div>var: ansible_network_terminal_errors</div>
+                    </td>
+                <td>
+                        <div>This option determines how failures while setting terminal parameters are handled.</div>
+                        <div>When set to <code>ignore</code>, the errors are silently ignored. When set to <code>warn</code>, a warning message is displayed. The default option <code>fail</code>, triggers a failure and halts execution.</div>
                 </td>
             </tr>
             <tr>
@@ -472,6 +528,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
@@ -490,6 +547,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
@@ -575,7 +633,7 @@ Status
 Authors
 ~~~~~~~
 
-- Ansible Networking Team
+- Ansible Networking Team (@ansible-network)
 
 
 .. hint::

@@ -6,44 +6,28 @@
 #
 # (c) 2021 Red Hat Inc.
 #
-# Redistribution and use in source and binary forms, with or without modification,
-# are permitted provided that the following conditions are met:
-#
-#    * Redistributions of source code must retain the above copyright
-#      notice, this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice,
-#      this list of conditions and the following disclaimer in the documentation
-#      and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# Simplified BSD License (see LICENSES/BSD-2-Clause.txt or https://opensource.org/licenses/BSD-2-Clause)
+# SPDX-License-Identifier: BSD-2-Clause
+
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
 from copy import deepcopy
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    remove_empties,
-    to_list,
-    get_from_dict,
-)
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
     RmEngineBase,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    get_from_dict,
+    remove_empties,
+    to_list,
+)
 
 
 class ResourceModule(RmEngineBase):  # pylint: disable=R0902
-    """ Base class for Network Resource Modules
-    """
+    """Base class for Network Resource Modules"""
 
     def __init__(self, *_args, **kwargs):
         super(ResourceModule, self).__init__(*_args, **kwargs)
@@ -54,18 +38,11 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         self._resource = kwargs.get("resource", None)
         self._tmplt = kwargs.get("tmplt", None)
 
-        self.want = remove_empties(self._module.params).get(
-            "config", self._empty_fact_val
-        )
+        self.want = remove_empties(self._module.params).get("config", self._empty_fact_val)
         # Error out if empty config is passed for following states
-        if (
-            self.state in ("overridden", "merged", "replaced", "rendered")
-            and not self.want
-        ):
+        if self.state in ("overridden", "merged", "replaced", "rendered") and not self.want:
             self._module.fail_json(
-                msg="value of config parameter must not be empty for state {0}".format(
-                    self.state
-                )
+                msg="value of config parameter must not be empty for state {0}".format(self.state)
             )
 
         self.before = self.gather_current()
@@ -88,8 +65,7 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
 
     @property
     def result(self):
-        """ Compute the final result
-        """
+        """Compute the final result"""
         result = {"warnings": self.warnings}
         if self.state not in self.ACTION_STATES:
             if self.state == "gathered":
@@ -107,15 +83,13 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         return result
 
     def addcmd(self, data, tmplt, negate=False):
-        """ addcmd
-        """
+        """addcmd"""
         command = self._tmplt.render(data, tmplt, negate)
         if command:
             self.commands.extend(to_list(command))
 
     def addcmd_first_found(self, data, tmplts, negate=False):
-        """ addcmd first found
-        """
+        """addcmd first found"""
         for pname in tmplts:
             before = len(self.commands)
             self.addcmd(data, pname, negate)
@@ -123,7 +97,7 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
                 break
 
     def get_facts(self, empty_val=None, data=None):
-        """ Get the 'facts' (the current configuration)
+        """Get the 'facts' (the current configuration)
 
         :rtype: A dictionary
         :returns: The current configuration as a dictionary
@@ -141,8 +115,8 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         return facts
 
     def compare(self, parsers, want=None, have=None):
-        """ Run through all the parsers and compare
-            the want and have dicts
+        """Run through all the parsers and compare
+        the want and have dicts
         """
         if want is None:
             want = self.want
@@ -172,8 +146,7 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
                     self.addcmd(have, parser, True)
 
     def run_commands(self):
-        """ Send commands to the device
-        """
+        """Send commands to the device"""
         if self.commands and self.state in self.ACTION_STATES:
             if not self._module.check_mode:
                 self._connection.edit_config(self.commands)

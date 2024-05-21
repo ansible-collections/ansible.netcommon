@@ -1,35 +1,20 @@
 #
 # (c) 2016 Red Hat Inc.
-#
-# This file is part of Ansible
-#
-# Ansible is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Ansible is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
-import sys
+from unittest.mock import MagicMock, PropertyMock, patch
 
-from ansible_collections.ansible.netcommon.tests.unit.compat.mock import (
-    patch,
-    MagicMock,
-    PropertyMock,
-)
-from ansible.playbook.play_context import PlayContext
 import pytest
+
+from ansible.playbook.play_context import PlayContext
+
 
 pytest.importorskip("ncclient")
 
@@ -45,19 +30,10 @@ def import_mock(name, *args):
     return builtin_import(name, *args)
 
 
-PY3 = sys.version_info[0] == 3
-if PY3:
-    with patch("builtins.__import__", side_effect=import_mock):
-        from ansible_collections.ansible.netcommon.plugins.connection import (
-            netconf,
-        )
-        from ansible.plugins.loader import connection_loader
-else:
-    with patch("__builtin__.__import__", side_effect=import_mock):
-        from ansible_collections.ansible.netcommon.plugins.connection import (
-            netconf,
-        )
-        from ansible.plugins.loader import connection_loader
+with patch("builtins.__import__", side_effect=import_mock):
+    from ansible.plugins.loader import connection_loader
+
+    from ansible_collections.ansible.netcommon.plugins.connection import netconf
 
 
 def test_netconf_init():
@@ -69,9 +45,7 @@ def test_netconf_init():
     assert conn._connected is False
 
 
-@patch(
-    "ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader"
-)
+@patch("ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader")
 def test_netconf__connect(mock_netconf_loader):
     pc = PlayContext()
     conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")

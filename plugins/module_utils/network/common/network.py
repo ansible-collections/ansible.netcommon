@@ -6,66 +6,41 @@
 #
 # Copyright (c) 2015 Peter Sprygada, <psprygada@ansible.com>
 #
-# Redistribution and use in source and binary forms, with or without modification,
-# are permitted provided that the following conditions are met:
-#
-#    * Redistributions of source code must retain the above copyright
-#      notice, this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice,
-#      this list of conditions and the following disclaimer in the documentation
-#      and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# Simplified BSD License (see LICENSES/BSD-2-Clause.txt or https://opensource.org/licenses/BSD-2-Clause)
+# SPDX-License-Identifier: BSD-2-Clause
+
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
-import traceback
 import json
+import traceback
 
-from ansible.module_utils._text import to_text, to_native
-from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.basic import env_fallback
+from ansible.module_utils._text import to_native, to_text
+from ansible.module_utils.basic import AnsibleModule, env_fallback
 from ansible.module_utils.connection import Connection, ConnectionError
 from ansible.module_utils.six import iteritems
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     NetconfConnection,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.parsing import (
-    Cli,
-)
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    to_list,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.parsing import Cli
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 
 
 NET_TRANSPORT_ARGS = dict(
     host=dict(required=True),
     port=dict(type="int"),
     username=dict(fallback=(env_fallback, ["ANSIBLE_NET_USERNAME"])),
-    password=dict(
-        no_log=True, fallback=(env_fallback, ["ANSIBLE_NET_PASSWORD"])
-    ),
-    ssh_keyfile=dict(
-        fallback=(env_fallback, ["ANSIBLE_NET_SSH_KEYFILE"]), type="path"
-    ),
+    password=dict(no_log=True, fallback=(env_fallback, ["ANSIBLE_NET_PASSWORD"])),
+    ssh_keyfile=dict(fallback=(env_fallback, ["ANSIBLE_NET_SSH_KEYFILE"]), type="path"),
     authorize=dict(
         default=False,
         fallback=(env_fallback, ["ANSIBLE_NET_AUTHORIZE"]),
         type="bool",
     ),
-    auth_pass=dict(
-        no_log=True, fallback=(env_fallback, ["ANSIBLE_NET_AUTH_PASS"])
-    ),
+    auth_pass=dict(no_log=True, fallback=(env_fallback, ["ANSIBLE_NET_AUTH_PASS"])),
     provider=dict(type="dict", no_log=True),
     transport=dict(choices=list()),
     timeout=dict(default=10, type="int"),
@@ -140,13 +115,9 @@ class NetworkModule(AnsibleModule):
             cls = NET_CONNECTIONS[transport]
             self.connection = cls()
         except KeyError:
-            self.fail_json(
-                msg="Unknown transport or no default transport specified"
-            )
+            self.fail_json(msg="Unknown transport or no default transport specified")
         except (TypeError, NetworkError) as exc:
-            self.fail_json(
-                msg=to_native(exc), exception=traceback.format_exc()
-            )
+            self.fail_json(msg=to_native(exc), exception=traceback.format_exc())
 
         if connect_on_load:
             self.connect()
@@ -197,9 +168,7 @@ class NetworkModule(AnsibleModule):
                     )
                 )
         except NetworkError as exc:
-            self.fail_json(
-                msg=to_native(exc), exception=traceback.format_exc()
-            )
+            self.fail_json(msg=to_native(exc), exception=traceback.format_exc())
 
     def disconnect(self):
         try:
@@ -207,9 +176,7 @@ class NetworkModule(AnsibleModule):
                 self.connection.disconnect()
             self.log("disconnected from %s" % self.params["host"])
         except NetworkError as exc:
-            self.fail_json(
-                msg=to_native(exc), exception=traceback.format_exc()
-            )
+            self.fail_json(msg=to_native(exc), exception=traceback.format_exc())
 
 
 def register_transport(transport, default=False):
@@ -264,6 +231,4 @@ class LocalResourceConnection:
         self.module = module
 
     def get(self, *args, **kwargs):
-        self.module.fail_json(
-            msg="Network resource modules not supported over local connection."
-        )
+        self.module.fail_json(msg="Network resource modules not supported over local connection.")

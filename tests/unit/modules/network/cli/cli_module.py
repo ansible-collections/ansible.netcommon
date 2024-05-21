@@ -1,22 +1,10 @@
 # (c) 2016 Red Hat Inc.
-#
-# This file is part of Ansible
-#
-# Ansible is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Ansible is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
@@ -53,10 +41,7 @@ def load_fixture(name):
 
 
 class TestCliModule(ModuleTestCase):
-    def execute_module(
-        self, failed=False, changed=False, commands=None, sort=True
-    ):
-
+    def execute_module(self, failed=False, changed=False, commands=None, sort=True):
         self.load_fixtures(commands)
 
         if failed:
@@ -74,9 +59,7 @@ class TestCliModule(ModuleTestCase):
                     result["commands"],
                 )
             else:
-                self.assertEqual(
-                    commands, result["commands"], result["commands"]
-                )
+                self.assertEqual(commands, result["commands"], result["commands"])
 
         return result
 

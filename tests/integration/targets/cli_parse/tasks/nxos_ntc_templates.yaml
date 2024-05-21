@@ -1,12 +1,12 @@
 ---
-- name: "{{ parser }} Run command and parse with ntc_templates"
+- name: "Run command and parse with {{ parser }}"
   ansible.utils.cli_parse:
     command: "show interface"
     parser:
       name: ansible.netcommon.ntc_templates
   register: nxos_ntc_templates_command
 
-- name: "{{ parser }} Pass text and command"
+- name: "Pass text and command to {{ parser }}"
   ansible.utils.cli_parse:
     text: "{{ nxos_ntc_templates_command['stdout'] }}"
     parser:
@@ -14,8 +14,8 @@
       command: show interface
   register: nxos_ntc_templates_text
 
-- name: "{{ parser }} Confirm response"
-  assert:
+- name: "Check output"
+  ansible.builtin.assert:
     that: "{{ item }}"
   with_items:
     - "{{ nxos_ntc_templates_command['stdout'] is defined }}"

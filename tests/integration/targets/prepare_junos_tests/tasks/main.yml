@@ -1,5 +1,7 @@
 ---
-- debug: msg="START prepare_junos_tests/main.yaml"
+- name: Start tasks
+  ansible.builtin.debug:
+    msg: "START prepare_junos_tests/main.yaml"
 
 - name: Ensure netconf is enabled
   connection: ansible.netcommon.network_cli
@@ -7,9 +9,9 @@
   junipernetworks.junos.junos_netconf:
     state: present
 
-- name: wait for netconf server to come up
+- name: Wait for netconf server to come up
   delegate_to: localhost
-  wait_for:
-    host: '{{ hostvars[item].ansible_host }}'
+  ansible.builtin.wait_for:
+    host: "{{ hostvars[item].ansible_host }}"
     port: 830
   with_inventory_hostnames: junos

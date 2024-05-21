@@ -1,3 +1,6 @@
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 """
 pyats parser
 
@@ -6,6 +9,7 @@ https://developer.cisco.com/docs/pyats/#!parsing-device-output
 
 """
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
@@ -37,12 +41,10 @@ EXAMPLES = r"""
   register: nxos_pyats_text
 """
 
-from ansible.module_utils.six import PY3
 from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
-from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
-    CliParserBase,
-)
+from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
+
 
 try:
     from genie.conf.base import Device
@@ -60,7 +62,7 @@ except ImportError:
 
 
 class CliParser(CliParserBase):
-    """ The pyats parser class
+    """The pyats parser class
     Convert raw text to structured data using pyats/genie
     """
 
@@ -69,13 +71,11 @@ class CliParser(CliParserBase):
 
     @staticmethod
     def _check_reqs():
-        """ Check the prerequisites are installed for pyats/genie
+        """Check the prerequisites are installed for pyats/genie
 
         :return dict: A dict with a list of errors
         """
         errors = []
-        if not PY3:
-            errors.append("Pyats and Genie require Python 3")
         if not HAS_GENIE:
             errors.append(missing_required_lib("genie"))
         if not HAS_PYATS:
@@ -83,20 +83,18 @@ class CliParser(CliParserBase):
         return errors
 
     def _check_vars(self):
-        """ Ensure specific args are set
+        """Ensure specific args are set
 
         :return: A dict with a list of errors
         :rtype: dict
         """
         errors = []
         if not self._task_args.get("parser").get("command"):
-            errors.append(
-                "The pyats parser requires parser/command be provided."
-            )
+            errors.append("The pyats parser requires parser/command be provided.")
         return errors
 
     def _transform_ansible_network_os(self):
-        """ Transform the ansible_network_os to a pyats OS
+        """Transform the ansible_network_os to a pyats OS
         The last part of the fully qualified name is used
         org.name.platform => platform
 
@@ -106,13 +104,11 @@ class CliParser(CliParserBase):
         if ane == "ios":
             self._debug("ansible_network_os was ios, using iosxe.")
             ane = "iosxe"
-        self._debug(
-            "OS set to '{ane}' using 'ansible_network_os'.".format(ane=ane)
-        )
+        self._debug("OS set to '{ane}' using 'ansible_network_os'.".format(ane=ane))
         return ane
 
     def parse(self, *_args, **_kwargs):
-        """ Std entry point for a cli_parse parse execution
+        """Std entry point for a cli_parse parse execution
 
         :return: Errors or parsed text as structured data
         :rtype: dict
@@ -130,10 +126,7 @@ class CliParser(CliParserBase):
             return {"errors": errors}
 
         command = self._task_args.get("parser").get("command")
-        network_os = (
-            self._task_args.get("parser").get("os")
-            or self._transform_ansible_network_os()
-        )
+        network_os = self._task_args.get("parser").get("os") or self._transform_ansible_network_os()
         cli_output = self._task_args.get("text")
 
         device = Device("new_device", os=network_os)
@@ -144,13 +137,5 @@ class CliParser(CliParserBase):
             parsed = device.parse(command, output=cli_output)
         except Exception as exc:
             msg = "The pyats library return an error for '{cmd}' for '{os}'. Error: {err}."
-            return {
-                "errors": [
-                    (
-                        msg.format(
-                            cmd=command, os=network_os, err=to_native(exc)
-                        )
-                    )
-                ]
-            }
+            return {"errors": [(msg.format(cmd=command, os=network_os, err=to_native(exc)))]}
         return {"parsed": parsed}

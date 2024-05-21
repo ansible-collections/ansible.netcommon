@@ -47,13 +47,14 @@ Parameters
                     <b>host</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
                         <b>Default:</b><br/><div style="color: blue">"inventory_hostname"</div>
                 </td>
                     <td>
+                                <div>var: inventory_hostname</div>
                                 <div>var: ansible_host</div>
                     </td>
                 <td>
@@ -98,11 +99,11 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"no"</div>
+                        <b>Default:</b><br/><div style="color: blue">"yes"</div>
                 </td>
                     <td>
                             <div> ini entries:
-                                    <p>[ansible_network]<br>import_modules = no</p>
+                                    <p>[ansible_network]<br>import_modules = yes</p>
                             </div>
                                 <div>env:ANSIBLE_NETWORK_IMPORT_MODULES</div>
                                 <div>var: ansible_network_import_modules</div>
@@ -139,7 +140,7 @@ Parameters
                     <b>netconf_ssh_config</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -161,7 +162,7 @@ Parameters
                     <b>network_os</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -179,7 +180,7 @@ Parameters
                     <b>password</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -293,7 +294,7 @@ Parameters
                     <b>private_key_file</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -315,7 +316,7 @@ Parameters
                     <b>proxy_command</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -340,7 +341,7 @@ Parameters
                     <b>remote_user</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -374,7 +375,7 @@ Status
 Authors
 ~~~~~~~
 
-- Ansible Networking Team
+- Ansible Networking Team (@ansible-network)
 
 
 .. hint::

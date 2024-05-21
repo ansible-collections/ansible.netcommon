@@ -1,5 +1,6 @@
 ---
-- include: restconf.yaml
+- name: Run restconf_config tests
+  ansible.builtin.include_tasks: restconf.yaml
   when: ansible_network_os == 'ansible.netcommon.restconf'
   tags:
     - restconf

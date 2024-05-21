@@ -1,8 +1,10 @@
 #!/usr/bin/python
 # Copyright: Ansible Project
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
@@ -77,7 +79,7 @@ EXAMPLES = """
   ansible.netcommon.cli_command:
     command: commit replace
     prompt: This commit will replace or remove the entire running configuration
-    answer: yes
+    answer: "yes"
 
 - name: run command expecting user confirmation
   ansible.netcommon.cli_command:
@@ -88,27 +90,27 @@ EXAMPLES = """
 
 - name: run config mode command and handle prompt/answer
   ansible.netcommon.cli_command:
-    command: '{{ item }}'
+    command: "{{ item }}"
     prompt:
-    - Exit with uncommitted changes
+      - Exit with uncommitted changes
     answer: y
   loop:
-  - configure
-  - set system syslog file test any any
-  - exit
+    - configure
+    - set system syslog file test any any
+    - exit
 
 - name: multiple prompt, multiple answer (mandatory check for all prompts)
   ansible.netcommon.cli_command:
     command: copy sftp sftp://user@host//user/test.img
     check_all: true
     prompt:
-    - Confirm download operation
-    - Password
-    - Do you want to change that to the standby image
+      - Confirm download operation
+      - Password
+      - Do you want to change that to the standby image
     answer:
-    - y
-    - <password>
-    - y
+      - y
+      - <password>
+      - y
 """
 
 RETURN = """
@@ -138,8 +140,7 @@ from ansible.module_utils.connection import Connection, ConnectionError
 
 
 def main():
-    """entry point for module execution
-    """
+    """entry point for module execution"""
     argument_spec = dict(
         command=dict(type="str", required=True),
         prompt=dict(type="list", elements="str", required=False),

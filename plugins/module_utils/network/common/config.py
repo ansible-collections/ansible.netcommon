@@ -6,33 +6,19 @@
 #
 # (c) 2016 Red Hat Inc.
 #
-# Redistribution and use in source and binary forms, with or without modification,
-# are permitted provided that the following conditions are met:
-#
-#    * Redistributions of source code must retain the above copyright
-#      notice, this list of conditions and the following disclaimer.
-#    * Redistributions in binary form must reproduce the above copyright notice,
-#      this list of conditions and the following disclaimer in the documentation
-#      and/or other materials provided with the distribution.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-# IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-# INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
-# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-# LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
-# USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-#
+# Simplified BSD License (see LICENSES/BSD-2-Clause.txt or https://opensource.org/licenses/BSD-2-Clause)
+# SPDX-License-Identifier: BSD-2-Clause
+
 from __future__ import absolute_import, division, print_function
 
-__metaclass__ = type
-import re
-import hashlib
 
-from ansible.module_utils.six.moves import zip
+__metaclass__ = type
+import hashlib
+import re
+
 from ansible.module_utils._text import to_bytes, to_native
+from ansible.module_utils.six.moves import zip
+
 
 DEFAULT_COMMENT_TOKENS = ["#", "!", "/*", "*/", "echo"]
 
@@ -167,9 +153,7 @@ def dumps(objects, output="block", comments=False):
 
 
 class NetworkConfig(object):
-    def __init__(
-        self, indent=1, contents=None, comment_tokens=None, ignore_lines=None
-    ):
+    def __init__(self, indent=1, contents=None, comment_tokens=None, ignore_lines=None):
         self._indent = indent
         self._items = list()
         self._config_text = None
@@ -231,9 +215,7 @@ class NetworkConfig(object):
 
         indents = [0]
 
-        for linenum, line in enumerate(
-            to_native(lines, errors="surrogate_or_strict").split("\n")
-        ):
+        for linenum, line in enumerate(to_native(lines, errors="surrogate_or_strict").split("\n")):
             text = entry_reg.sub("", line).strip()
 
             cfg = ConfigLine(line)
@@ -395,10 +377,7 @@ class NetworkConfig(object):
                     add_parents = True
                 # check if parent of current line is already added, if added don't
                 # add again
-                if (
-                    last_elem.has_children
-                    and last_elem.children[0] != curr_elem.text
-                ):
+                if last_elem.has_children and last_elem.children[0] != curr_elem.text:
                     add_parents = True
             for p in curr_elem._parents:
                 if p.line not in visited or add_parents:

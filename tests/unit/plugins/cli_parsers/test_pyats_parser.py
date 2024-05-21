@@ -1,23 +1,27 @@
 # (c) 2020 Ansible Project
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
 import os
 
+from unittest import TestCase
+
 import pytest
 
-from ansible_collections.ansible.netcommon.tests.unit.compat import unittest
 from ansible_collections.ansible.netcommon.plugins.sub_plugins.cli_parser.pyats_parser import (
     CliParser,
 )
 
+
 pyats = pytest.importorskip("pyats")
 
 
-class TestPyatsParser(unittest.TestCase):
+class TestPyatsParser(TestCase):
     _nxos_parsed_output = {
         "platform": {
             "hardware": {
@@ -77,9 +81,7 @@ class TestPyatsParser(unittest.TestCase):
         self._debug_msgs.append(msg)
 
     def _load_fixture(self, filename):
-        cfg_path = os.path.join(
-            os.path.dirname(__file__), "fixtures", filename
-        )
+        cfg_path = os.path.join(os.path.dirname(__file__), "fixtures", filename)
 
         with open(cfg_path) as f:
             return f.read()
@@ -110,9 +112,7 @@ class TestPyatsParser(unittest.TestCase):
             debug=self._debug,
         )
         result = parser.parse()
-        error = {
-            "errors": ["The pyats parser requires parser/command be provided."]
-        }
+        error = {"errors": ["The pyats parser requires parser/command be provided."]}
         self.assertEqual(result, error)
 
     def test_pyats_parser_ano_shortname(self):

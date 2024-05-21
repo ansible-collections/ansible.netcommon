@@ -51,27 +51,27 @@
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
     content: |
-            {
-                "config": {
-                    "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
-                    "@xmlns:nc": "urn:ietf:params:xml:ns:netconf:base:1.0",
-                    "interface-configurations": {
-                        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                        "interface-configuration": {
-                            "active": "act",
-                            "description": "test for ansible Loopback999",
-                            "interface-name": "Loopback999",
-                        }
-                    }
-                }
-            }
-    get_filter: |
-              {
-                  "interface-configurations": {
-                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                      "interface-configuration": null
+      {
+          "config": {
+              "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
+              "@xmlns:nc": "urn:ietf:params:xml:ns:netconf:base:1.0",
+              "interface-configurations": {
+                  "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                  "interface-configuration": {
+                      "active": "act",
+                      "description": "test for ansible Loopback999",
+                      "interface-name": "Loopback999",
                   }
               }
+          }
+      }
+    get_filter: |
+      {
+          "interface-configurations": {
+              "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+              "interface-configuration": null
+          }
+      }
   register: result
   ignore_errors: true
   diff: true
@@ -86,27 +86,27 @@
   ansible.netcommon.netconf_config:
     format: json
     content: |
-            {
-                "config": {
-                    "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
-                    "@xmlns:nc": "urn:ietf:params:xml:ns:netconf:base:1.0",
-                    "interface-configurations": {
-                        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                        "interface-configuration": {
-                            "active": "act",
-                            "description": "test for ansible Loopback999",
-                            "interface-name": "Loopback999"
-                        }
-                    }
-                }
-            }
-    get_filter: |
-              {
-                  "interface-configurations": {
-                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                      "interface-configuration": null
+      {
+          "config": {
+              "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
+              "@xmlns:nc": "urn:ietf:params:xml:ns:netconf:base:1.0",
+              "interface-configurations": {
+                  "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                  "interface-configuration": {
+                      "active": "act",
+                      "description": "test for ansible Loopback999",
+                      "interface-name": "Loopback999"
                   }
               }
+          }
+      }
+    get_filter: |
+      {
+          "interface-configurations": {
+              "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+              "interface-configuration": null
+          }
+      }
   register: result
   diff: true
 
@@ -129,26 +129,32 @@
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
     format: json
-    content: {
-      "config": {
-        "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
-        "@xmlns:nc": "urn:ietf:params:xml:ns:netconf:base:1.0",
-        "interface-configurations": {
-          "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-          "interface-configuration": {
-            "active": "act",
-            "description": "test for ansible Loopback999",
-            "interface-name": "Loopback999"
-          }
-        }
+    content:
+      {
+        "config":
+          {
+            "@xmlns": "urn:ietf:params:xml:ns:netconf:base:1.0",
+            "@xmlns:nc": "urn:ietf:params:xml:ns:netconf:base:1.0",
+            "interface-configurations":
+              {
+                "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+                "interface-configuration":
+                  {
+                    "active": "act",
+                    "description": "test for ansible Loopback999",
+                    "interface-name": "Loopback999",
+                  },
+              },
+          },
       }
-    }
-    get_filter: {
-      "interface-configurations": {
-        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-        "interface-configuration": null
+    get_filter:
+      {
+        "interface-configurations":
+          {
+            "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+            "interface-configuration": null,
+          },
       }
-    }
   register: result
   diff: true
 
@@ -167,5 +173,6 @@
       - interface Loopback999
     match: none
 
-- debug: msg="END netconf_config iosxr/basic.yaml on connection={{ ansible_connection
+- debug:
+    msg="END netconf_config iosxr/basic.yaml on connection={{ ansible_connection
     }}"

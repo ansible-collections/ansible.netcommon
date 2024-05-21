@@ -1,5 +1,6 @@
 ---
-- debug: msg="START netconf_get iosxr/basic.yaml on connection={{ ansible_connection
+- debug:
+    msg="START netconf_get iosxr/basic.yaml on connection={{ ansible_connection
     }}"
 
 - name: setup interface
@@ -135,12 +136,12 @@
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     filter: |
-              {
-                  "interface-configurations": {
-                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                      "interface-configuration": null
-                  }
-              }
+      {
+          "interface-configurations": {
+              "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+              "interface-configuration": null
+          }
+      }
     display: native
   register: result
 
@@ -175,12 +176,14 @@
 - name: "get configuration with direct native filter type"
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
-    filter: {
-      "interface-configurations": {
-        "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-        "interface-configuration": null
+    filter:
+      {
+        "interface-configurations":
+          {
+            "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+            "interface-configuration": null,
+          },
       }
-    }
     display: native
   register: result
 
@@ -201,5 +204,6 @@
       - interface Loopback999
     match: none
 
-- debug: msg="END netconf_get iosxr/basic.yaml on connection={{ ansible_connection
+- debug:
+    msg="END netconf_get iosxr/basic.yaml on connection={{ ansible_connection
     }}"

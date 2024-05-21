@@ -1,24 +1,12 @@
 # -*- coding: utf-8 -*-
 #
 # (c) 2017 Red Hat, Inc.
-#
-# This file is part of Ansible
-#
-# Ansible is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Ansible is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
@@ -26,9 +14,7 @@ import re
 
 import pytest
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import (
-    config,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import config
 
 
 RUNNING = """interface Ethernet1
@@ -109,9 +95,7 @@ def test_config_items():
     net_config = config.NetworkConfig(indent=3, contents=RUNNING)
     assert len(net_config.items) == 10
 
-    net_config = config.NetworkConfig(
-        indent=3, contents=RUNNING, ignore_lines=[r"\s*no .*"]
-    )
+    net_config = config.NetworkConfig(indent=3, contents=RUNNING, ignore_lines=[r"\s*no .*"])
     assert len(net_config.items) == 6
 
     net_config = config.NetworkConfig(
@@ -126,9 +110,7 @@ def test_config_items():
 def test_config_get_block():
     net_config = config.NetworkConfig(indent=3, contents=RUNNING)
 
-    with pytest.raises(
-        AssertionError, match="path argument must be a list object"
-    ):
+    with pytest.raises(AssertionError, match="path argument must be a list object"):
         net_config.get_block("interface Ethernet2")
 
     with pytest.raises(ValueError, match="path does not exist in config"):
@@ -157,9 +139,7 @@ def test_updates_repeat_lines():
     configdiffobjs = candidate_obj.difference(running_obj)
     diff_list = config.dumps(configdiffobjs, "commands").split("\n")
     want_src_list = WANT_SRC_1.strip().split("\n")
-    for generated_diff_line, candidate_diff_line in zip(
-        diff_list, want_src_list
-    ):
+    for generated_diff_line, candidate_diff_line in zip(diff_list, want_src_list):
         assert generated_diff_line == candidate_diff_line.strip()
 
 
@@ -189,8 +169,6 @@ def test_updates_repeat_parents():
     configdiffobjs = candidate_obj.difference(running_obj)
     diff_list = config.dumps(configdiffobjs, "commands").split("\n")
 
-    for generated_diff_line, candidate_diff_line in zip(
-        diff_list, expected_diff
-    ):
+    for generated_diff_line, candidate_diff_line in zip(diff_list, expected_diff):
         print(generated_diff_line, candidate_diff_line)
         assert generated_diff_line == candidate_diff_line.strip()

@@ -2,24 +2,28 @@
 # -*- coding: utf-8 -*-
 # Copyright 2019 Red Hat
 # GNU General Public License v3.0+
-# (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 """
 Utils functions for handle data formatting
 """
-import sys
 import json
+import sys
 
+from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six import string_types
-from ansible.module_utils._text import to_native
+
 
 try:
     HAS_LXML = True
-    from lxml.etree import fromstring, XMLSyntaxError
     from lxml import etree
+    from lxml.etree import XMLSyntaxError, fromstring
 
 except ImportError:
     HAS_LXML = False
@@ -75,8 +79,7 @@ def validate_and_normalize_data(data, fmt=None):
                 result = fromstring(data)
                 if fmt and fmt != "xml":
                     raise Exception(
-                        "Invalid format '%s'. Expected format is 'xml' for data '%s'"
-                        % (fmt, data)
+                        "Invalid format '%s'. Expected format is 'xml' for data '%s'" % (fmt, data)
                     )
                 return result, "xml"
             except XMLSyntaxError as exc:
@@ -91,16 +94,13 @@ def validate_and_normalize_data(data, fmt=None):
                 pass
             except Exception as exc:
                 error = "'%s' recognized as XML but was not valid." % data
-                raise Exception(
-                    error + to_native(exc, errors="surrogate_then_replace")
-                )
+                raise Exception(error + to_native(exc, errors="surrogate_then_replace"))
         elif (data.startswith("{") and data.endswith("}")) or fmt == "json":
             try:
                 result = json.loads(data)
                 if fmt and fmt != "json":
                     raise Exception(
-                        "Invalid format '%s'. Expected format is 'json' for data '%s'"
-                        % (fmt, data)
+                        "Invalid format '%s'. Expected format is 'json' for data '%s'" % (fmt, data)
                     )
                 return result, "json"
             except (
@@ -117,9 +117,7 @@ def validate_and_normalize_data(data, fmt=None):
                     )
             except Exception as exc:
                 error = "'%s' recognized as JSON but was not valid." % data
-                raise Exception(
-                    error + to_native(exc, errors="surrogate_then_replace")
-                )
+                raise Exception(error + to_native(exc, errors="surrogate_then_replace"))
         else:
             try:
                 if not HAS_LXML:
@@ -144,15 +142,12 @@ def validate_and_normalize_data(data, fmt=None):
                 pass
             except Exception as exc:
                 error = "'%s' recognized as Xpath but was not valid." % data
-                raise Exception(
-                    error + to_native(exc, errors="surrogate_then_replace")
-                )
+                raise Exception(error + to_native(exc, errors="surrogate_then_replace"))
 
     elif isinstance(data, dict):
         if fmt and fmt != "json":
             raise Exception(
-                "Invalid format '%s'. Expected format is 'json' for data '%s'"
-                % (fmt, data)
+                "Invalid format '%s'. Expected format is 'json' for data '%s'" % (fmt, data)
             )
 
         try:
@@ -168,31 +163,21 @@ def validate_and_normalize_data(data, fmt=None):
             )
         except Exception as exc:
             error = "'%s' recognized as JSON but was not valid." % data
-            raise Exception(
-                error + to_native(exc, errors="surrogate_then_replace")
-            )
+            raise Exception(error + to_native(exc, errors="surrogate_then_replace"))
 
     return data, None
 
 
 def xml_to_dict(data):
     if not HAS_XMLTODICT:
-        msg = (
-            "xml to dict conversion requires 'xmltodict' for given data %s ."
-            % data
-        )
+        msg = "xml to dict conversion requires 'xmltodict' for given data %s ." % data
         raise Exception(msg + missing_required_lib("xmltodict"))
 
     try:
         return xmltodict.parse(data, dict_constructor=dict)
     except Exception as exc:
-        error = (
-            "'xmltodict' returned the following error when converting %s to dict. "
-            % data
-        )
-        raise Exception(
-            error + to_native(exc, errors="surrogate_then_replace")
-        )
+        error = "'xmltodict' returned the following error when converting %s to dict. " % data
+        raise Exception(error + to_native(exc, errors="surrogate_then_replace"))
 
 
 def dict_to_xml(data, full_document=False):
@@ -203,19 +188,11 @@ def dict_to_xml(data, full_document=False):
     :return: Valid XML string
     """
     if not HAS_XMLTODICT:
-        msg = (
-            "dict to xml conversion requires 'xmltodict' for given data %s ."
-            % data
-        )
+        msg = "dict to xml conversion requires 'xmltodict' for given data %s ." % data
         raise Exception(msg + missing_required_lib("xmltodict"))
 
     try:
         return xmltodict.unparse(data, full_document=full_document)
     except Exception as exc:
-        error = (
-            "'xmltodict' returned the following error when converting %s to xml. "
-            % data
-        )
-        raise Exception(
-            error + to_native(exc, errors="surrogate_then_replace")
-        )
+        error = "'xmltodict' returned the following error when converting %s to xml. " % data
+        raise Exception(error + to_native(exc, errors="surrogate_then_replace"))

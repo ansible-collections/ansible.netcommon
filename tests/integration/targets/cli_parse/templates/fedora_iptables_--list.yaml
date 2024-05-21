@@ -9,7 +9,7 @@
   shared: true
 
 - example: "target     prot opt source               destination"
-  getval: '^target.*'
+  getval: "^target.*"
   result: {}
 
 - example: "ACCEPT     all  --  anywhere             192.168.122.0/24     ctstate RELATED,ESTABLISHED"

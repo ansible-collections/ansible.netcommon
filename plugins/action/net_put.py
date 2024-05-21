@@ -1,34 +1,23 @@
 # (c) 2018, Ansible Inc,
-#
-# This file is part of Ansible
-#
-# Ansible is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Ansible is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
-#
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
+import hashlib
 import os
 import uuid
-import hashlib
 
 from ansible.errors import AnsibleError
-from ansible.module_utils._text import to_text, to_bytes
+from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.connection import Connection, ConnectionError
-from ansible.plugins.action import ActionBase
 from ansible.module_utils.six.moves.urllib.parse import urlsplit
+from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
+
 
 display = Display()
 
@@ -107,9 +96,7 @@ class ActionModule(ActionBase):
         if dest is None:
             dest = src_file_path_name
         try:
-            changed = self._handle_existing_file(
-                conn, output_file, dest, proto, sock_timeout
-            )
+            changed = self._handle_existing_file(conn, output_file, dest, proto, sock_timeout)
             if changed is False:
                 result["changed"] = changed
                 result["destination"] = dest
@@ -118,9 +105,7 @@ class ActionModule(ActionBase):
                     os.remove(output_file)
                 return result
         except Exception as exc:
-            result["msg"] = (
-                "Warning: %s idempotency check failed. Check dest" % exc
-            )
+            result["msg"] = "Warning: %s idempotency check failed. Check dest" % exc
 
         try:
             conn.copy_file(
@@ -134,9 +119,7 @@ class ActionModule(ActionBase):
                 if network_os == "iosxr":
                     # IOSXR sometimes closes socket prematurely after completion
                     # of file transfer
-                    result[
-                        "msg"
-                    ] = "Warning: iosxr scp server pre close issue. Please check dest"
+                    result["msg"] = "Warning: iosxr scp server pre close issue. Please check dest"
             else:
                 result["failed"] = True
                 result["msg"] = "Exception received: %s" % exc
@@ -200,9 +183,7 @@ class ActionModule(ActionBase):
         if os.path.isabs(src) or urlsplit("src").scheme:
             source = src
         else:
-            source = self._loader.path_dwim_relative(
-                working_path, "templates", src
-            )
+            source = self._loader.path_dwim_relative(working_path, "templates", src)
             if not source:
                 source = self._loader.path_dwim_relative(working_path, src)
 
@@ -224,9 +205,7 @@ class ActionModule(ActionBase):
         if os.path.isabs(src) or urlsplit("src").scheme:
             source = src
         else:
-            source = self._loader.path_dwim_relative(
-                working_path, "templates", src
-            )
+            source = self._loader.path_dwim_relative(working_path, "templates", src)
             if not source:
                 source = self._loader.path_dwim_relative(working_path, src)
 
@@ -271,8 +250,6 @@ class ActionModule(ActionBase):
             display.vvvv("Getting network OS from fact")
             network_os = task_vars["ansible_facts"]["network_os"]
         else:
-            raise AnsibleError(
-                "ansible_network_os must be specified on this host"
-            )
+            raise AnsibleError("ansible_network_os must be specified on this host")
 
         return network_os

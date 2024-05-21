@@ -1,28 +1,16 @@
 # Copyright (c) 2018 Cisco and/or its affiliates.
-#
-# This file is part of Ansible
-#
-# Ansible is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Ansible is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
-#
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-httpapi: restconf
+author:
+ - Ansible Networking Team (@ansible-network)
+name: restconf
 short_description: HttpApi Plugin for devices supporting Restconf API
 description:
 - This HttpApi plugin provides methods to connect to Restconf API endpoints.
@@ -42,7 +30,8 @@ import json
 from ansible.module_utils._text import to_text
 from ansible.module_utils.connection import ConnectionError
 from ansible.module_utils.six.moves.urllib.error import HTTPError
-from ansible.plugins.httpapi import HttpApiBase
+
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.httpapi_base import HttpApiBase
 
 
 CONTENT_TYPE = "application/yang-data+json"
@@ -75,15 +64,14 @@ def handle_response(response, response_data):
     try:
         response_data = json.loads(response_data.read())
     except ValueError:
+        response_data.seek(0)
         response_data = response_data.read()
 
     if isinstance(response, HTTPError):
         if response_data:
             if "errors" in response_data:
                 errors = response_data["errors"]["error"]
-                error_text = "\n".join(
-                    (error["error-message"] for error in errors)
-                )
+                error_text = "\n".join((error["error-message"] for error in errors))
             else:
                 error_text = response_data
 

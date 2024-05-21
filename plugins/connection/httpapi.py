@@ -1,13 +1,16 @@
 # (c) 2018 Red Hat Inc.
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-connection: httpapi
+author:
+ - Ansible Networking Team (@ansible-network)
+name: httpapi
 short_description: Use httpapi to run command on network appliances
 description:
 - This connection plugin provides a connection to remote devices over a HTTP(S)-based
@@ -16,30 +19,14 @@ version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.connection_persistent
 options:
-  import_modules:
-    type: boolean
-    description:
-    - Reduce CPU usage and network module execution time
-      by enabling direct execution. Instead of the module being packaged
-      and executed by the shell, it will be directly executed by the Ansible
-      control node using the same python interpreter as the Ansible process.
-      Note- Incompatible with C(asynchronous mode).
-      Note- Python 3 and Ansible 2.9.16 or greater required.
-      Note- With Ansible 2.9.x fully qualified modules names are required in tasks.
-    default: false
-    ini:
-    - section: ansible_network
-      key: import_modules
-    env:
-    - name: ANSIBLE_NETWORK_IMPORT_MODULES
-    vars:
-    - name: ansible_network_import_modules
   host:
     description:
     - Specifies the remote device FQDN or IP address to establish the HTTP(S) connection
       to.
     default: inventory_hostname
+    type: string
     vars:
+    - name: inventory_hostname
     - name: ansible_host
   port:
     type: int
@@ -58,6 +45,7 @@ options:
     description:
     - Configures the device platform network operating system.  This value is used
       to load the correct httpapi plugin to communicate with the remote device
+    type: string
     vars:
     - name: ansible_network_os
   remote_user:
@@ -66,6 +54,7 @@ options:
       is first established.  If the remote_user is not specified, the connection will
       use the username of the logged in user.
     - Can be configured from the CLI via the C(--user) or C(-u) options.
+    type: string
     ini:
     - section: defaults
       key: remote_user
@@ -77,6 +66,7 @@ options:
     description:
     - Configures the user password used to authenticate to the remote device when
       needed for the device API.
+    type: string
     vars:
     - name: ansible_password
     - name: ansible_httpapi_pass
@@ -91,6 +81,34 @@ options:
     - When specified, I(password) is ignored.
     vars:
     - name: ansible_httpapi_session_key
+  ca_path:
+    description:
+      - Path to CA cert bundle to use.
+    type: path
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_ca_path
+  client_cert:
+    description:
+      - PEM formatted certificate chain file to be used for SSL client
+        authentication. This file can also include the key as well, and if the key
+        is included, I(client_key) is not required
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_client_cert
+  client_key:
+    description:
+      - PEM formatted file that contains the private key to be used for SSL client
+        authentication. If I(client_cert) contains both the certificate and key,
+        this option is not required.
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_client_key
+  http_agent:
+    description: User-Agent to use in the request.
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_http_agent
   use_ssl:
     type: boolean
     description:
@@ -112,6 +130,19 @@ options:
     default: true
     vars:
     - name: ansible_httpapi_use_proxy
+  ciphers:
+    description:
+      - SSL/TLS Ciphers to use for requests
+      - 'When a list is provided, all ciphers are joined in order with C(:)'
+      - See the L(OpenSSL Cipher List Format,https://www.openssl.org/docs/manmaster/man1/openssl-ciphers.html#CIPHER-LIST-FORMAT)
+        for more details.
+      - The available ciphers is dependent on the Python and OpenSSL/LibreSSL versions.
+      - This option will have no effect on ansible-core<2.14 but a warning will be emitted.
+    version_added: 5.0.0
+    type: list
+    elements: string
+    vars:
+    - name: ansible_httpapi_ciphers
   become:
     type: boolean
     description:
@@ -135,6 +166,7 @@ options:
       escalation.  Typically the become_method value is set to C(enable) but could
       be defined as other values.
     default: sudo
+    type: string
     ini:
     - section: privilege_escalation
       key: become_method
@@ -142,6 +174,14 @@ options:
     - name: ANSIBLE_BECOME_METHOD
     vars:
     - name: ansible_become_method
+  platform_type:
+    description:
+    - Set type of platform.
+    type: string
+    env:
+    - name: ANSIBLE_PLATFORM_TYPE
+    vars:
+    - name: ansible_platform_type
 """
 
 from io import BytesIO
@@ -153,8 +193,14 @@ from ansible.module_utils.six.moves import cPickle
 from ansible.module_utils.six.moves.urllib.error import HTTPError, URLError
 from ansible.module_utils.urls import open_url
 from ansible.playbook.play_context import PlayContext
+from ansible.plugins.connection import ensure_connect
 from ansible.plugins.loader import httpapi_loader
-from ansible.plugins.connection import NetworkConnectionBase, ensure_connect
+from ansible.release import __version__ as ANSIBLE_CORE_VERSION
+
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
+    NetworkConnectionBase,
+)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
 
 
 class Connection(NetworkConnectionBase):
@@ -164,15 +210,17 @@ class Connection(NetworkConnectionBase):
     has_pipelining = True
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(Connection, self).__init__(
-            play_context, new_stdin, *args, **kwargs
-        )
+        super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
 
         self._auth = None
-
         if self._network_os:
+            self.load_platform_plugins(self._network_os)
 
-            self.httpapi = httpapi_loader.get(self._network_os, self)
+    def load_platform_plugins(self, platform_type=None):
+        platform_type = platform_type or self.get_option("platform_type")
+
+        if platform_type:
+            self.httpapi = httpapi_loader.get(platform_type, self)
             if self.httpapi:
                 self._sub_plugin = {
                     "type": "httpapi",
@@ -181,25 +229,24 @@ class Connection(NetworkConnectionBase):
                 }
                 self.queue_message(
                     "vvvv",
-                    "loaded API plugin %s from path %s for network_os %s"
+                    "loaded API plugin %s from path %s for platform type %s"
                     % (
                         self.httpapi._load_name,
                         self.httpapi._original_path,
-                        self._network_os,
+                        platform_type,
                     ),
                 )
             else:
                 raise AnsibleConnectionFailure(
-                    "unable to load API plugin for network_os %s"
-                    % self._network_os
+                    "unable to load API plugin for platform type %s" % platform_type
                 )
 
         else:
             raise AnsibleConnectionFailure(
-                "Unable to automatically determine host network os. Please "
-                "manually configure ansible_network_os value for this host"
+                "Unable to automatically determine host platform type. Please "
+                "manually configure platform_type value for this host"
             )
-        self.queue_message("log", "network_os is set to %s" % self._network_os)
+        self.queue_message("log", "platform_type is set to %s" % platform_type)
 
     @property
     def _url(self):
@@ -241,9 +288,7 @@ class Connection(NetworkConnectionBase):
             if self.get_option("session_key"):
                 self._auth = self.get_option("session_key")
             else:
-                self.httpapi.login(
-                    self.get_option("remote_user"), self.get_option("password")
-                )
+                self.httpapi.login(self.get_option("remote_user"), self.get_option("password"))
 
     def close(self):
         """
@@ -257,17 +302,34 @@ class Connection(NetworkConnectionBase):
         super(Connection, self).close()
 
     @ensure_connect
-    def send(self, path, data, **kwargs):
+    def send(self, path, data, retries=None, **kwargs):
         """
         Sends the command to the device over api
         """
         url_kwargs = dict(
+            headers={},
+            use_proxy=self.get_option("use_proxy"),
             timeout=self.get_option("persistent_command_timeout"),
             validate_certs=self.get_option("validate_certs"),
-            use_proxy=self.get_option("use_proxy"),
-            headers={},
+            http_agent=self.get_option("http_agent"),
+            client_cert=self.get_option("client_cert"),
+            client_key=self.get_option("client_key"),
+            ca_path=self.get_option("ca_path"),
         )
         url_kwargs.update(kwargs)
+
+        ciphers = self.get_option("ciphers")
+        if ciphers:
+            if Version(ANSIBLE_CORE_VERSION) >= Version("2.14.0"):
+                # Only insert "ciphers" kwarg for ansible-core versions >= 2.14.0.
+                url_kwargs["ciphers"] = ciphers
+            else:
+                # Emit warning when "ansible_httpapi_ciphers" is set but not supported
+                self.queue_message(
+                    "warning",
+                    "'ansible_httpapi_ciphers' option is unavailable on ansible-core<2.14",
+                )
+
         if self._auth:
             # Avoid modifying passed-in headers
             headers = dict(kwargs.get("headers", {}))
@@ -281,23 +343,24 @@ class Connection(NetworkConnectionBase):
         try:
             url = self._url + path
             self._log_messages(
-                "send url '%s' with data '%s' and kwargs '%s'"
-                % (url, data, url_kwargs)
+                "send url '%s' with data '%s' and kwargs '%s'" % (url, data, url_kwargs)
             )
             response = open_url(url, data=data, **url_kwargs)
         except HTTPError as exc:
             is_handled = self.handle_httperror(exc)
             if is_handled is True:
-                return self.send(path, data, **kwargs)
-            elif is_handled is False:
+                if retries is None:
+                    # The default behavior, retry indefinitely until timeout.
+                    return self.send(path, data, **kwargs)
+                if retries:
+                    return self.send(path, data, retries=retries - 1, **kwargs)
                 raise
-            else:
-                response = is_handled
+            if is_handled is False:
+                raise
+            response = is_handled
         except URLError as exc:
             raise AnsibleConnectionFailure(
-                "Could not connect to {0}: {1}".format(
-                    self._url + path, exc.reason
-                )
+                "Could not connect to {0}: {1}".format(self._url + path, exc.reason)
             )
 
         response_buffer = BytesIO()

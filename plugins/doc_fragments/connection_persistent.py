@@ -1,16 +1,35 @@
 # -*- coding: utf-8 -*-
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
 
 class ModuleDocFragment(object):
-
     # Standard files documentation fragment
     DOCUMENTATION = r"""
 options:
+  import_modules:
+    type: boolean
+    description:
+    - Reduce CPU usage and network module execution time
+      by enabling direct execution. Instead of the module being packaged
+      and executed by the shell, it will be directly executed by the Ansible
+      control node using the same python interpreter as the Ansible process.
+      Note- Incompatible with C(asynchronous mode).
+      Note- Python 3 and Ansible 2.9.16 or greater required.
+      Note- With Ansible 2.9.x fully qualified modules names are required in tasks.
+    default: true
+    ini:
+    - section: ansible_network
+      key: import_modules
+    env:
+    - name: ANSIBLE_NETWORK_IMPORT_MODULES
+    vars:
+    - name: ansible_network_import_modules
   persistent_connect_timeout:
     type: int
     description:

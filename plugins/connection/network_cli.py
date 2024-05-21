@@ -1,14 +1,17 @@
 # (c) 2016 Red Hat Inc.
 # (c) 2017 Ansible Project
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-connection: network_cli
+author:
+ - Ansible Networking Team (@ansible-network)
+name: network_cli
 short_description: Use network_cli to run command on network appliances
 description:
 - This connection plugin provides a connection to remote devices over the SSH and
@@ -25,7 +28,9 @@ options:
     - Specifies the remote device FQDN or IP address to establish the SSH connection
       to.
     default: inventory_hostname
+    type: string
     vars:
+    - name: inventory_hostname
     - name: ansible_host
   port:
     type: int
@@ -45,6 +50,7 @@ options:
     - Configures the device platform network operating system.  This value is used
       to load the correct terminal and cliconf plugins to communicate with the remote
       device.
+    type: string
     vars:
     - name: ansible_network_os
   remote_user:
@@ -53,6 +59,7 @@ options:
       is first established.  If the remote_user is not specified, the connection will
       use the username of the logged in user.
     - Can be configured from the CLI via the C(--user) or C(-u) options.
+    type: string
     ini:
     - section: defaults
       key: remote_user
@@ -64,6 +71,7 @@ options:
     description:
     - Configures the user password used to authenticate to the remote device when
       first establishing the SSH connection.
+    type: string
     vars:
     - name: ansible_password
     - name: ansible_ssh_pass
@@ -72,6 +80,7 @@ options:
     description:
     - The private SSH key or certificate file used to authenticate to the remote device
       when first establishing the SSH connection.
+    type: string
     ini:
     - section: defaults
       key: private_key_file
@@ -96,12 +105,38 @@ options:
     - name: ANSIBLE_BECOME
     vars:
     - name: ansible_become
+  become_errors:
+    type: str
+    description:
+    - This option determines how privilege escalation failures are handled when
+      I(become) is enabled.
+    - When set to C(ignore), the errors are silently ignored.
+      When set to C(warn), a warning message is displayed.
+      The default option C(fail), triggers a failure and halts execution.
+    vars:
+    - name: ansible_network_become_errors
+    default: fail
+    choices: ["ignore", "warn", "fail"]
+  terminal_errors:
+    type: str
+    description:
+    - This option determines how failures while setting terminal parameters
+      are handled.
+    - When set to C(ignore), the errors are silently ignored.
+      When set to C(warn), a warning message is displayed.
+      The default option C(fail), triggers a failure and halts execution.
+    vars:
+    - name: ansible_network_terminal_errors
+    default: fail
+    choices: ["ignore", "warn", "fail"]
+    version_added: 3.1.0
   become_method:
     description:
     - This option allows the become method to be specified in for handling privilege
       escalation.  Typically the become_method value is set to C(enable) but could
       be defined as other values.
     default: sudo
+    type: string
     ini:
     - section: privilege_escalation
       key: become_method
@@ -109,24 +144,6 @@ options:
     - name: ANSIBLE_BECOME_METHOD
     vars:
     - name: ansible_become_method
-  import_modules:
-    type: boolean
-    description:
-    - Reduce CPU usage and network module execution time
-      by enabling direct execution. Instead of the module being packaged
-      and executed by the shell, it will be directly executed by the Ansible
-      control node using the same python interpreter as the Ansible process.
-      Note- Incompatible with C(asynchronous mode).
-      Note- Python 3 and Ansible 2.9.16 or greater required.
-      Note- With Ansible 2.9.x fully qualified modules names are required in tasks.
-    default: false
-    ini:
-    - section: ansible_network
-      key: import_modules
-    env:
-    - name: ANSIBLE_NETWORK_IMPORT_MODULES
-    vars:
-    - name: ansible_network_import_modules
   host_key_auto_add:
     type: boolean
     description:
@@ -183,6 +200,7 @@ options:
     - name: ansible_terminal_stderr_re
   terminal_initial_prompt:
     type: list
+    elements: string
     description:
     - A single regex pattern or a sequence of patterns to evaluate the expected prompt
       at the time of initial login to the remote host.
@@ -190,6 +208,7 @@ options:
     - name: ansible_terminal_initial_prompt
   terminal_initial_answer:
     type: list
+    elements: string
     description:
     - The answer to reply with if the C(terminal_initial_prompt) is matched. The value
       can be a single answer or a list of answers for multiple terminal_initial_prompt.
@@ -236,10 +255,13 @@ options:
     - name: ansible_network_cli_retries
   ssh_type:
     description:
-      - The type of the transport used by C(network_cli) connection plugin to connection to remote host.
-        Valid value is either I(paramiko) or I(libssh)
-      - In order to use I(libssh), the ansible-pylibssh package needs to be installed
-    default: paramiko
+      - The python package that will be used by the C(network_cli) connection plugin to create a SSH connection to remote host.
+      - I(libssh) will use the ansible-pylibssh package, which needs to be installed in order to work.
+      - I(paramiko) will instead use the paramiko package to manage the SSH connection.
+      - I(auto) will use ansible-pylibssh if that package is installed, otherwise will fallback to paramiko.
+    default: auto
+    choices: ["libssh", "paramiko", "auto"]
+    type: string
     env:
         - name: ANSIBLE_NETWORK_CLI_SSH_TYPE
     ini:
@@ -276,34 +298,34 @@ options:
     - name: ansible_network_single_user_mode
 """
 
-from functools import wraps
 import getpass
 import json
 import logging
-import re
 import os
+import re
 import signal
 import socket
 import time
 import traceback
+
+from functools import wraps
 from io import BytesIO
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
+from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    to_list,
-)
-from ansible.module_utils._text import to_bytes, to_text
 from ansible.playbook.play_context import PlayContext
-from ansible.plugins.connection import NetworkConnectionBase
-from ansible.plugins.loader import (
-    cliconf_loader,
-    terminal_loader,
-    connection_loader,
+from ansible.plugins.loader import cache_loader, cliconf_loader, connection_loader, terminal_loader
+from ansible.utils.display import Display
+
+from ansible_collections.ansible.netcommon.plugins.connection.libssh import HAS_PYLIBSSH
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
+    NetworkConnectionBase,
 )
-from ansible.plugins.loader import cache_loader
+
 
 try:
     from scp import SCPClient
@@ -311,6 +333,7 @@ try:
     HAS_SCP = True
 except ImportError:
     HAS_SCP = False
+display = Display()
 
 
 def ensure_connect(func):
@@ -329,15 +352,13 @@ class AnsibleCmdRespRecv(Exception):
 
 
 class Connection(NetworkConnectionBase):
-    """ CLI (shell) SSH connections on Paramiko """
+    """CLI (shell) SSH connections on Paramiko"""
 
     transport = "ansible.netcommon.network_cli"
     has_pipelining = True
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(Connection, self).__init__(
-            play_context, new_stdin, *args, **kwargs
-        )
+        super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
         self._ssh_shell = None
 
         self._matched_prompt = None
@@ -364,32 +385,33 @@ class Connection(NetworkConnectionBase):
         if self._network_os:
             self._terminal = terminal_loader.get(self._network_os, self)
             if not self._terminal:
-                raise AnsibleConnectionFailure(
-                    "network os %s is not supported" % self._network_os
-                )
+                raise AnsibleConnectionFailure("network os %s is not supported" % self._network_os)
 
             self.cliconf = cliconf_loader.get(self._network_os, self)
-            if self.cliconf:
-                self._sub_plugin = {
-                    "type": "cliconf",
-                    "name": self.cliconf._load_name,
-                    "obj": self.cliconf,
-                }
+            if not self.cliconf:
                 self.queue_message(
                     "vvvv",
-                    "loaded cliconf plugin %s from path %s for network_os %s"
-                    % (
-                        self.cliconf._load_name,
-                        self.cliconf._original_path,
-                        self._network_os,
-                    ),
-                )
-            else:
-                self.queue_message(
-                    "vvvv",
-                    "unable to load cliconf for network_os %s"
+                    "unable to load cliconf for network_os %s. Falling back to default"
                     % self._network_os,
                 )
+                self.cliconf = cliconf_loader.get("ansible.netcommon.default", self)
+                if not self.cliconf:
+                    raise AnsibleConnectionFailure("Couldn't load fallback cliconf plugin")
+
+            self._sub_plugin = {
+                "type": "cliconf",
+                "name": self.cliconf._load_name,
+                "obj": self.cliconf,
+            }
+            self.queue_message(
+                "vvvv",
+                "loaded cliconf plugin %s from path %s for network_os %s"
+                % (
+                    self.cliconf._load_name,
+                    self.cliconf._original_path,
+                    self._network_os,
+                ),
+            )
         else:
             raise AnsibleConnectionFailure(
                 "Unable to automatically determine host network os. Please "
@@ -398,26 +420,49 @@ class Connection(NetworkConnectionBase):
         self.queue_message("log", "network_os is set to %s" % self._network_os)
 
     @property
+    def ssh_type(self):
+        if self._ssh_type is None:
+            self._ssh_type = self.get_option("ssh_type")
+            self.queue_message("vvvv", "ssh type is set to %s" % self._ssh_type)
+            # Support autodetection of supported library
+            if self._ssh_type == "auto":
+                self.queue_message("vvvv", "autodetecting ssh_type")
+                if HAS_PYLIBSSH:
+                    self._ssh_type = "libssh"
+                else:
+                    self.queue_message(
+                        "warning",
+                        "ansible-pylibssh not installed, falling back to paramiko",
+                    )
+                    self._ssh_type = "paramiko"
+                self.queue_message("vvvv", "ssh type is now set to %s" % self._ssh_type)
+
+        if self._ssh_type not in ["paramiko", "libssh"]:
+            raise AnsibleConnectionFailure(
+                "Invalid value '%s' set for ssh_type option."
+                " Expected value is either 'libssh' or 'paramiko'" % self._ssh_type
+            )
+
+        return self._ssh_type
+
+    @property
     def ssh_type_conn(self):
-        self._ssh_type = self.get_option("ssh_type")
         if self._ssh_type_conn is None:
-            if self._ssh_type not in ["paramiko", "libssh"]:
+            if self.ssh_type == "libssh":
+                connection_plugin = "ansible.netcommon.libssh"
+            elif self.ssh_type == "paramiko":
+                # NOTE: This MUST be paramiko or things will break
+                connection_plugin = "paramiko"
+            else:
                 raise AnsibleConnectionFailure(
                     "Invalid value '%s' set for ssh_type option."
-                    " Expected value is either 'libssh' or 'paramiko'"
-                    % self._ssh_type
+                    " Expected value is either 'libssh' or 'paramiko'" % self._ssh_type
                 )
 
-            # TODO: Remove this check if/when libssh connection plugin is moved to ansible-base
-            if self._ssh_type == "libssh":
-                self._ssh_type = "ansible.netcommon.libssh"
-
             self._ssh_type_conn = connection_loader.get(
-                self._ssh_type, self._play_context, "/dev/null"
+                connection_plugin, self._play_context, "/dev/null"
             )
-            self.queue_message(
-                "vvvv", "ssh type is set to %s" % self.get_option("ssh_type")
-            )
+
         return self._ssh_type_conn
 
     # To maintain backward compatibility
@@ -426,8 +471,17 @@ class Connection(NetworkConnectionBase):
         return self.ssh_type_conn
 
     def _get_log_channel(self):
-        name = "p=%s u=%s | " % (os.getpid(), getpass.getuser())
-        name += "%s [%s]" % (self._ssh_type, self._play_context.remote_addr)
+        user = ""
+        try:
+            user = getpass.getuser()
+        except KeyError:
+            self.queue_message(
+                "vv",
+                "Current user (uid=%s) does not seem to exist on this system, leaving user empty."
+                % os.getuid(),
+            )
+        name = "p=%s u=%s | " % (os.getpid(), user)
+        name += "%s [%s]" % (self.ssh_type, self._play_context.remote_addr)
         return name
 
     @ensure_connect
@@ -443,11 +497,7 @@ class Connection(NetworkConnectionBase):
         if self._ssh_shell:
             try:
                 cmd = json.loads(to_text(cmd, errors="surrogate_or_strict"))
-                kwargs = {
-                    "command": to_bytes(
-                        cmd["command"], errors="surrogate_or_strict"
-                    )
-                }
+                kwargs = {"command": to_bytes(cmd["command"], errors="surrogate_or_strict")}
                 for key in (
                     "prompt",
                     "answer",
@@ -458,9 +508,7 @@ class Connection(NetworkConnectionBase):
                     if cmd.get(key) is True or cmd.get(key) is False:
                         kwargs[key] = cmd[key]
                     elif cmd.get(key) is not None:
-                        kwargs[key] = to_bytes(
-                            cmd[key], errors="surrogate_or_strict"
-                        )
+                        kwargs[key] = to_bytes(cmd[key], errors="surrogate_or_strict")
                 return self.send(**kwargs)
             except ValueError:
                 cmd = to_bytes(cmd, errors="surrogate_or_strict")
@@ -478,9 +526,7 @@ class Connection(NetworkConnectionBase):
         super(Connection, self).set_options(
             task_keys=task_keys, var_options=var_options, direct=direct
         )
-        self.ssh_type_conn.set_options(
-            task_keys=task_keys, var_options=var_options, direct=direct
-        )
+        self.ssh_type_conn.set_options(task_keys=task_keys, var_options=var_options, direct=direct)
         # Retain old look_for_keys behaviour, but only if not set
         if not any(
             [
@@ -490,8 +536,7 @@ class Connection(NetworkConnectionBase):
             ]
         ):
             look_for_keys = not bool(
-                self.get_option("password")
-                and not self.get_option("private_key_file")
+                self.get_option("password") and not self.get_option("private_key_file")
             )
             if not look_for_keys:
                 # This actually can't be overridden yet without changes in ansible-core
@@ -521,7 +566,7 @@ class Connection(NetworkConnectionBase):
         if self._play_context.become ^ play_context.become:
             if play_context.become is True:
                 auth_pass = play_context.become_pass
-                self._terminal.on_become(passwd=auth_pass)
+                self._on_become(become_pass=auth_pass)
                 self.queue_message("vvvv", "authorizing connection")
             else:
                 self._terminal.on_unbecome()
@@ -554,12 +599,10 @@ class Connection(NetworkConnectionBase):
         """
         Connects to the remote device and starts the terminal
         """
-        if self._play_context.verbosity > 3:
-            logging.getLogger(self._ssh_type).setLevel(logging.DEBUG)
+        if display.verbosity > 3:
+            logging.getLogger(self.ssh_type).setLevel(logging.DEBUG)
 
-        self.queue_message(
-            "vvvv", "invoked shell using ssh_type: %s" % self._ssh_type
-        )
+        self.queue_message("vvvv", "invoked shell using ssh_type: %s" % self.ssh_type)
 
         self._single_user_mode = self.get_option("single_user_mode")
 
@@ -586,13 +629,11 @@ class Connection(NetworkConnectionBase):
                 except Exception as e:
                     pause = 2 ** (attempt + 1)
                     if attempt == retries or total_pause >= max_pause:
-                        raise AnsibleConnectionFailure(
-                            to_text(e, errors="surrogate_or_strict")
-                        )
+                        raise AnsibleConnectionFailure(to_text(e, errors="surrogate_or_strict"))
                     else:
                         msg = (
-                            u"network_cli_retry: attempt: %d, caught exception(%s), "
-                            u"pausing for %d seconds"
+                            "network_cli_retry: attempt: %d, caught exception(%s), "
+                            "pausing for %d seconds"
                             % (
                                 attempt + 1,
                                 to_text(e, errors="surrogate_or_strict"),
@@ -609,7 +650,7 @@ class Connection(NetworkConnectionBase):
             self._connected = True
 
             self._ssh_shell = ssh.ssh.invoke_shell()
-            if self._ssh_type == "paramiko":
+            if self.ssh_type == "paramiko":
                 self._ssh_shell.settimeout(command_timeout)
 
             self.queue_message(
@@ -618,24 +659,20 @@ class Connection(NetworkConnectionBase):
             )
 
             terminal_initial_prompt = (
-                self.get_option("terminal_initial_prompt")
-                or self._terminal.terminal_initial_prompt
+                self.get_option("terminal_initial_prompt") or self._terminal.terminal_initial_prompt
             )
             terminal_initial_answer = (
-                self.get_option("terminal_initial_answer")
-                or self._terminal.terminal_initial_answer
+                self.get_option("terminal_initial_answer") or self._terminal.terminal_initial_answer
             )
             newline = (
                 self.get_option("terminal_inital_prompt_newline")
                 or self._terminal.terminal_inital_prompt_newline
             )
-            check_all = (
-                self.get_option("terminal_initial_prompt_checkall") or False
-            )
+            check_all = self.get_option("terminal_initial_prompt_checkall") or False
 
             self.receive(
-                prompts=to_bytes(terminal_initial_prompt),
-                answer=to_bytes(terminal_initial_answer),
+                prompts=terminal_initial_prompt,
+                answer=terminal_initial_answer,
                 newline=newline,
                 check_all=check_all,
             )
@@ -643,16 +680,49 @@ class Connection(NetworkConnectionBase):
             if self._play_context.become:
                 self.queue_message("vvvv", "firing event: on_become")
                 auth_pass = self._play_context.become_pass
-                self._terminal.on_become(passwd=auth_pass)
+                self._on_become(become_pass=auth_pass)
 
             self.queue_message("vvvv", "firing event: on_open_shell()")
-            self._terminal.on_open_shell()
+            self._on_open_shell()
 
-            self.queue_message(
-                "vvvv", "ssh connection has completed successfully"
-            )
+            self.queue_message("vvvv", "ssh connection has completed successfully")
 
         return self
+
+    def _on_become(self, become_pass=None):
+        """
+        Wraps terminal.on_become() to handle
+        privilege escalation failures based on user preference
+        """
+        on_become_error = self.get_option("become_errors")
+        try:
+            self._terminal.on_become(passwd=become_pass)
+        except AnsibleConnectionFailure:
+            if on_become_error == "ignore":
+                pass
+            elif on_become_error == "warn":
+                self.queue_message("warning", "on_become: privilege escalation failed")
+            else:
+                raise
+
+    def _on_open_shell(self):
+        """
+        Wraps terminal.on_open_shell() to handle
+        terminal setting failures based on user preference
+        """
+        on_terminal_error = self.get_option("terminal_errors")
+        try:
+            self._terminal.on_open_shell()
+        except AnsibleConnectionFailure:
+            if on_terminal_error == "ignore":
+                pass
+            elif on_terminal_error == "warn":
+                self.queue_message(
+                    "warning",
+                    "on_open_shell: failed to set terminal parameters",
+                )
+            else:
+                raise
 
     def close(self):
         """
@@ -670,9 +740,7 @@ class Connection(NetworkConnectionBase):
 
                 self.ssh_type_conn.close()
                 self._ssh_type_conn = None
-                self.queue_message(
-                    "debug", "ssh connection has been closed successfully"
-                )
+                self.queue_message("debug", "ssh connection has been closed successfully")
         super(Connection, self).close()
 
     def _read_post_command_prompt_match(self):
@@ -688,10 +756,11 @@ class Connection(NetworkConnectionBase):
         newline=True,
         prompt_retry_check=False,
         check_all=False,
+        strip_prompt=True,
     ):
-
         recv = BytesIO()
-        cache_socket_timeout = self._ssh_shell.gettimeout()
+        cache_socket_timeout = self.get_option("persistent_command_timeout")
+        self._ssh_shell.settimeout(cache_socket_timeout)
         command_prompt_matched = False
         handled = False
         errored_response = None
@@ -699,17 +768,11 @@ class Connection(NetworkConnectionBase):
         while True:
             if command_prompt_matched:
                 try:
-                    signal.signal(
-                        signal.SIGALRM, self._handle_buffer_read_timeout
-                    )
-                    signal.setitimer(
-                        signal.ITIMER_REAL, self._buffer_read_timeout
-                    )
+                    signal.signal(signal.SIGALRM, self._handle_buffer_read_timeout)
+                    signal.setitimer(signal.ITIMER_REAL, self._buffer_read_timeout)
                     data = self._ssh_shell.recv(256)
                     signal.alarm(0)
-                    self._log_messages(
-                        "response-%s: %s" % (self._window_count + 1, data)
-                    )
+                    self._log_messages("response-%s: %s" % (self._window_count + 1, data))
                     # if data is still received on channel it indicates the prompt string
                     # is wrongly matched in between response chunks, continue to read
                     # remaining response.
@@ -721,13 +784,10 @@ class Connection(NetworkConnectionBase):
 
                 except AnsibleCmdRespRecv:
                     # reset socket timeout to global timeout
-                    self._ssh_shell.settimeout(cache_socket_timeout)
                     return self._command_response
             else:
                 data = self._ssh_shell.recv(256)
-                self._log_messages(
-                    "response-%s: %s" % (self._window_count + 1, data)
-                )
+                self._log_messages("response-%s: %s" % (self._window_count + 1, data))
             # when a channel stream is closed, received data will be empty
             if not data:
                 break
@@ -741,9 +801,7 @@ class Connection(NetworkConnectionBase):
             self._window_count += 1
 
             if prompts and not handled:
-                handled = self._handle_prompt(
-                    window, prompts, answer, newline, False, check_all
-                )
+                handled = self._handle_prompt(window, prompts, answer, newline, False, check_all)
                 self._matched_prompt_window = self._window_count
             elif (
                 prompts
@@ -763,8 +821,7 @@ class Connection(NetworkConnectionBase):
                     check_all,
                 ):
                     raise AnsibleConnectionFailure(
-                        "For matched prompt '%s', answer is not valid"
-                        % self._matched_cmd_prompt
+                        "For matched prompt '%s', answer is not valid" % self._matched_cmd_prompt
                     )
 
             if self._find_error(window):
@@ -777,10 +834,9 @@ class Connection(NetworkConnectionBase):
                     raise AnsibleConnectionFailure(errored_response)
                 self._last_response = recv.getvalue()
                 resp = self._strip(self._last_response)
-                self._command_response = self._sanitize(resp, command)
+                self._command_response = self._sanitize(resp, command, strip_prompt)
                 if self._buffer_read_timeout == 0.0:
                     # reset socket timeout to global timeout
-                    self._ssh_shell.settimeout(cache_socket_timeout)
                     return self._command_response
                 else:
                     command_prompt_matched = True
@@ -793,6 +849,7 @@ class Connection(NetworkConnectionBase):
         newline=True,
         prompt_retry_check=False,
         check_all=False,
+        strip_prompt=True,
     ):
         self._command_response = resp = b""
         command_prompt_matched = False
@@ -800,7 +857,6 @@ class Connection(NetworkConnectionBase):
         errored_response = None
 
         while True:
-
             if command_prompt_matched:
                 data = self._read_post_command_prompt_match()
                 if data:
@@ -824,9 +880,7 @@ class Connection(NetworkConnectionBase):
             self._log_messages("response-%s: %s" % (self._window_count, data))
 
             if prompts and not handled:
-                handled = self._handle_prompt(
-                    resp, prompts, answer, newline, False, check_all
-                )
+                handled = self._handle_prompt(resp, prompts, answer, newline, False, check_all)
                 self._matched_prompt_window = self._window_count
             elif (
                 prompts
@@ -846,8 +900,7 @@ class Connection(NetworkConnectionBase):
                     check_all,
                 ):
                     raise AnsibleConnectionFailure(
-                        "For matched prompt '%s', answer is not valid"
-                        % self._matched_cmd_prompt
+                        "For matched prompt '%s', answer is not valid" % self._matched_cmd_prompt
                     )
 
             if self._find_error(resp):
@@ -859,7 +912,7 @@ class Connection(NetworkConnectionBase):
                 if errored_response:
                     raise AnsibleConnectionFailure(errored_response)
                 self._last_response = data
-                self._command_response += self._sanitize(resp, command)
+                self._command_response = self._sanitize(resp, command, strip_prompt)
                 command_prompt_matched = True
 
     def receive(
@@ -870,6 +923,7 @@ class Connection(NetworkConnectionBase):
         newline=True,
         prompt_retry_check=False,
         check_all=False,
+        strip_prompt=True,
     ):
         """
         Handles receiving of output from command
@@ -880,27 +934,17 @@ class Connection(NetworkConnectionBase):
         self._window_count = 0
 
         # set terminal regex values for command prompt and errors in response
-        self._terminal_stderr_re = self._get_terminal_std_re(
-            "terminal_stderr_re"
-        )
-        self._terminal_stdout_re = self._get_terminal_std_re(
-            "terminal_stdout_re"
-        )
+        self._terminal_stderr_re = self._get_terminal_std_re("terminal_stderr_re")
+        self._terminal_stdout_re = self._get_terminal_std_re("terminal_stdout_re")
 
         self._command_timeout = self.get_option("persistent_command_timeout")
-        self._validate_timeout_value(
-            self._command_timeout, "persistent_command_timeout"
-        )
+        self._validate_timeout_value(self._command_timeout, "persistent_command_timeout")
 
-        self._buffer_read_timeout = self.get_option(
-            "persistent_buffer_read_timeout"
-        )
-        self._validate_timeout_value(
-            self._buffer_read_timeout, "persistent_buffer_read_timeout"
-        )
+        self._buffer_read_timeout = self.get_option("persistent_buffer_read_timeout")
+        self._validate_timeout_value(self._buffer_read_timeout, "persistent_buffer_read_timeout")
 
         self._log_messages("command: %s" % command)
-        if self._ssh_type == "libssh":
+        if self.ssh_type == "libssh":
             response = self.receive_libssh(
                 command,
                 prompts,
@@ -908,8 +952,9 @@ class Connection(NetworkConnectionBase):
                 newline,
                 prompt_retry_check,
                 check_all,
+                strip_prompt,
             )
-        else:
+        elif self.ssh_type == "paramiko":
             response = self.receive_paramiko(
                 command,
                 prompts,
@@ -917,6 +962,7 @@ class Connection(NetworkConnectionBase):
                 newline,
                 prompt_retry_check,
                 check_all,
+                strip_prompt,
             )
 
         return response
@@ -931,6 +977,7 @@ class Connection(NetworkConnectionBase):
         sendonly=False,
         prompt_retry_check=False,
         check_all=False,
+        strip_prompt=True,
     ):
         """
         Sends the command to the device in the opened shell
@@ -939,9 +986,7 @@ class Connection(NetworkConnectionBase):
         if (not prompt) and (self._single_user_mode):
             out = self.get_cache().lookup(command)
             if out:
-                self.queue_message(
-                    "vvvv", "cache hit for command: %s" % command
-                )
+                self.queue_message("vvvv", "cache hit for command: %s" % command)
                 return out
 
         if check_all:
@@ -960,7 +1005,13 @@ class Connection(NetworkConnectionBase):
             if sendonly:
                 return
             response = self.receive(
-                command, prompt, answer, newline, prompt_retry_check, check_all
+                command,
+                prompt,
+                answer,
+                newline,
+                prompt_retry_check,
+                check_all,
+                strip_prompt,
             )
             response = to_text(response, errors="surrogate_then_replace")
 
@@ -968,15 +1019,11 @@ class Connection(NetworkConnectionBase):
                 if self._needs_cache_invalidation(command):
                     # invalidate the existing cache
                     if self.get_cache().keys():
-                        self.queue_message(
-                            "vvvv", "invalidating existing cache"
-                        )
+                        self.queue_message("vvvv", "invalidating existing cache")
                         self.get_cache().invalidate()
                 else:
                     # populate cache
-                    self.queue_message(
-                        "vvvv", "populating cache for command: %s" % command
-                    )
+                    self.queue_message("vvvv", "populating cache for command: %s" % command)
                     self.get_cache().populate(command, response)
 
             return response
@@ -1039,28 +1086,27 @@ class Connection(NetworkConnectionBase):
             single_prompt = True
         if not isinstance(answer, list):
             answer = [answer]
-        prompts_regex = [re.compile(to_bytes(r), re.I) for r in prompts]
+        try:
+            prompts_regex = [re.compile(to_bytes(r), re.I) for r in prompts]
+        except re.error as exc:
+            raise ConnectionError(
+                "Failed to compile one or more terminal prompt regexes: %s.\n"
+                "Prompts provided: %s" % (to_text(exc), prompts)
+            )
         for index, regex in enumerate(prompts_regex):
             match = regex.search(resp)
             if match:
                 self._matched_cmd_prompt = match.group()
-                self._log_messages(
-                    "matched command prompt: %s" % self._matched_cmd_prompt
-                )
+                self._log_messages("matched command prompt: %s" % self._matched_cmd_prompt)
 
                 # if prompt_retry_check is enabled to check if same prompt is
                 # repeated don't send answer again.
                 if not prompt_retry_check:
-                    prompt_answer = (
-                        answer[index] if len(answer) > index else answer[0]
-                    )
-                    self._ssh_shell.sendall(b"%s" % prompt_answer)
+                    prompt_answer = to_bytes(answer[index] if len(answer) > index else answer[0])
                     if newline:
-                        self._ssh_shell.sendall(b"\r")
                         prompt_answer += b"\r"
-                    self._log_messages(
-                        "matched command prompt answer: %s" % prompt_answer
-                    )
+                    self._ssh_shell.sendall(prompt_answer)
+                    self._log_messages("matched command prompt answer: %s" % prompt_answer)
                 if check_all and prompts and not single_prompt:
                     prompts.pop(0)
                     answer.pop(0)
@@ -1068,7 +1114,7 @@ class Connection(NetworkConnectionBase):
                 return True
         return False
 
-    def _sanitize(self, resp, command=None):
+    def _sanitize(self, resp, command=None, strip_prompt=True):
         """
         Removes elements from the response before returning to the caller
         """
@@ -1078,15 +1124,15 @@ class Connection(NetworkConnectionBase):
                 continue
 
             for prompt in self._matched_prompt.strip().splitlines():
-                if prompt.strip() in line:
+                if prompt.strip() in line and strip_prompt:
                     break
             else:
                 cleaned.append(line)
+
         return b"\n".join(cleaned).strip()
 
     def _find_error(self, response):
-        """Searches the buffered response for a matching error condition
-        """
+        """Searches the buffered response for a matching error condition"""
         for stderr_regex in self._terminal_stderr_re:
             if stderr_regex.search(response):
                 self._log_messages(
@@ -1103,8 +1149,7 @@ class Connection(NetworkConnectionBase):
         return False
 
     def _find_prompt(self, response):
-        """Searches the buffered response for a matching command prompt
-        """
+        """Searches the buffered response for a matching command prompt"""
         for stdout_regex in self._terminal_stdout_re:
             match = stdout_regex.search(response)
             if match:
@@ -1150,7 +1195,7 @@ class Connection(NetworkConnectionBase):
                         "'pattern' is a required key for option '%s',"
                         " received option value is %s" % (option, item)
                     )
-                pattern = br"%s" % to_bytes(item["pattern"])
+                pattern = rb"%s" % to_bytes(item["pattern"])
                 flag = item.get("flags", 0)
                 if flag:
                     flag = getattr(re, flag.split(".")[1])
@@ -1161,9 +1206,7 @@ class Connection(NetworkConnectionBase):
 
         return terminal_std_re
 
-    def copy_file(
-        self, source=None, destination=None, proto="scp", timeout=30
-    ):
+    def copy_file(self, source=None, destination=None, proto="scp", timeout=30):
         """Copies file over scp/sftp to remote device
 
         :param source: Source file path
@@ -1174,30 +1217,22 @@ class Connection(NetworkConnectionBase):
                         remote host before triggering timeout exception
         :return: None
         """
-        ssh_type = self.get_option("ssh_type")
         ssh = self.ssh_type_conn._connect_uncached()
-        if ssh_type == "libssh":
+        if self.ssh_type == "libssh":
             self.ssh_type_conn.put_file(source, destination, proto=proto)
-        elif ssh_type == "paramiko":
+        elif self.ssh_type == "paramiko":
             if proto == "scp":
                 if not HAS_SCP:
                     raise AnsibleError(missing_required_lib("scp"))
-                with SCPClient(
-                    ssh.get_transport(), socket_timeout=timeout
-                ) as scp:
+                with SCPClient(ssh.get_transport(), socket_timeout=timeout) as scp:
                     scp.put(source, destination)
             elif proto == "sftp":
                 with ssh.open_sftp() as sftp:
                     sftp.put(source, destination)
             else:
-                raise AnsibleError(
-                    "Do not know how to do transfer file over protocol %s"
-                    % proto
-                )
+                raise AnsibleError("Do not know how to do transfer file over protocol %s" % proto)
         else:
-            raise AnsibleError(
-                "Do not know how to do SCP with ssh_type %s" % ssh_type
-            )
+            raise AnsibleError("Do not know how to do SCP with ssh_type %s" % self.ssh_type)
 
     def get_file(self, source=None, destination=None, proto="scp", timeout=30):
         """Fetch file over scp/sftp from remote device
@@ -1210,18 +1245,15 @@ class Connection(NetworkConnectionBase):
         :return: None
         """
         """Fetch file over scp/sftp from remote device"""
-        ssh_type = self.get_option("ssh_type")
         ssh = self.ssh_type_conn._connect_uncached()
-        if ssh_type == "libssh":
+        if self.ssh_type == "libssh":
             self.ssh_type_conn.fetch_file(source, destination, proto=proto)
-        elif ssh_type == "paramiko":
+        elif self.ssh_type == "paramiko":
             if proto == "scp":
                 if not HAS_SCP:
                     raise AnsibleError(missing_required_lib("scp"))
                 try:
-                    with SCPClient(
-                        ssh.get_transport(), socket_timeout=timeout
-                    ) as scp:
+                    with SCPClient(ssh.get_transport(), socket_timeout=timeout) as scp:
                         scp.get(source, destination)
                 except EOFError:
                     # This appears to be benign.
@@ -1230,14 +1262,9 @@ class Connection(NetworkConnectionBase):
                 with ssh.open_sftp() as sftp:
                     sftp.get(source, destination)
             else:
-                raise AnsibleError(
-                    "Do not know how to do transfer file over protocol %s"
-                    % proto
-                )
+                raise AnsibleError("Do not know how to do transfer file over protocol %s" % proto)
         else:
-            raise AnsibleError(
-                "Do not know how to do SCP with ssh_type %s" % ssh_type
-            )
+            raise AnsibleError("Do not know how to do SCP with ssh_type %s" % self.ssh_type)
 
     def get_cache(self):
         if not self._cache:
@@ -1255,9 +1282,7 @@ class Connection(NetworkConnectionBase):
         :returns: A boolean indicating if the device is in config mode or not.
         """
         cfg_mode = False
-        cur_prompt = to_text(
-            self.get_prompt(), errors="surrogate_then_replace"
-        ).strip()
+        cur_prompt = to_text(self.get_prompt(), errors="surrogate_then_replace").strip()
         cfg_prompt = getattr(self._terminal, "terminal_config_prompt", None)
         if cfg_prompt and cfg_prompt.match(cur_prompt):
             cfg_mode = True

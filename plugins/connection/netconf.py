@@ -1,14 +1,17 @@
 # (c) 2016 Red Hat Inc.
 # (c) 2017 Ansible Project
-# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+# GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
+# SPDX-License-Identifier: GPL-3.0-or-later
 
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
 DOCUMENTATION = """
-author: Ansible Networking Team
-connection: netconf
+author:
+ - Ansible Networking Team (@ansible-network)
+name: netconf
 short_description: Provides a persistent connection using the netconf protocol
 description:
 - This connection plugin provides a connection to remote devices over the SSH NETCONF
@@ -22,30 +25,14 @@ requirements:
 extends_documentation_fragment:
 - ansible.netcommon.connection_persistent
 options:
-  import_modules:
-    type: boolean
-    description:
-    - Reduce CPU usage and network module execution time
-      by enabling direct execution. Instead of the module being packaged
-      and executed by the shell, it will be directly executed by the Ansible
-      control node using the same python interpreter as the Ansible process.
-      Note- Incompatible with C(asynchronous mode).
-      Note- Python 3 and Ansible 2.9.16 or greater required.
-      Note- With Ansible 2.9.x fully qualified modules names are required in tasks.
-    default: false
-    ini:
-    - section: ansible_network
-      key: import_modules
-    env:
-    - name: ANSIBLE_NETWORK_IMPORT_MODULES
-    vars:
-    - name: ansible_network_import_modules
   host:
     description:
     - Specifies the remote device FQDN or IP address to establish the SSH connection
       to.
     default: inventory_hostname
+    type: string
     vars:
+    - name: inventory_hostname
     - name: ansible_host
   port:
     type: int
@@ -66,6 +53,7 @@ options:
       to load a device specific netconf plugin.  If this option is not configured
       (or set to C(auto)), then Ansible will attempt to guess the correct network_os
       to use. If it can not guess a network_os correctly it will use C(default).
+    type: string
     vars:
     - name: ansible_network_os
   remote_user:
@@ -74,6 +62,7 @@ options:
       is first established.  If the remote_user is not specified, the connection will
       use the username of the logged in user.
     - Can be configured from the CLI via the C(--user) or C(-u) options.
+    type: string
     ini:
     - section: defaults
       key: remote_user
@@ -85,6 +74,7 @@ options:
     description:
     - Configures the user password used to authenticate to the remote device when
       first establishing the SSH connection.
+    type: string
     vars:
     - name: ansible_password
     - name: ansible_ssh_pass
@@ -94,6 +84,7 @@ options:
     description:
     - The private SSH key or certificate file used to authenticate to the remote device
       when first establishing the SSH connection.
+    type: string
     ini:
     - section: defaults
       key: private_key_file
@@ -134,6 +125,7 @@ options:
     description:
       - Proxy information for running the connection via a jumphost.
       - This requires ncclient >= 0.6.10 to be installed on the controller.
+    type: string
     env:
       - name: ANSIBLE_NETCONF_PROXY_COMMAND
     ini:
@@ -147,6 +139,7 @@ options:
       set to True the bastion/jump host ssh settings should be present in ~/.ssh/config
       file, alternatively it can be set to custom ssh configuration file path to read
       the bastion/jump host settings.
+    type: string
     ini:
     - section: netconf_connection
       key: ssh_config
@@ -156,32 +149,31 @@ options:
     - name: ansible_netconf_ssh_config
 """
 
-import os
-import logging
 import json
+import logging
+import os
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils._text import to_bytes, to_native, to_text
 from ansible.module_utils.basic import missing_required_lib
+from ansible.module_utils.parsing.convert_bool import BOOLEANS_FALSE, BOOLEANS_TRUE
 from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
-from ansible.module_utils.parsing.convert_bool import (
-    BOOLEANS_TRUE,
-    BOOLEANS_FALSE,
-)
 from ansible.playbook.play_context import PlayContext
+from ansible.plugins.connection import ensure_connect
 from ansible.plugins.loader import netconf_loader
-from ansible.plugins.connection import NetworkConnectionBase, ensure_connect
-from distutils.version import LooseVersion
+
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
+    NetworkConnectionBase,
+)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
+
 
 try:
     from ncclient import __version__ as NCCLIENT_VERSION
     from ncclient import manager
     from ncclient.operations import RPCError
-    from ncclient.transport.errors import (
-        AuthenticationError,
-        SSHUnknownHostError,
-    )
+    from ncclient.transport.errors import AuthenticationError, SSHUnknownHostError
     from ncclient.xml_ import to_ele, to_xml
     from paramiko import ProxyCommand
 
@@ -204,9 +196,7 @@ class Connection(NetworkConnectionBase):
     has_pipelining = False
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(Connection, self).__init__(
-            play_context, new_stdin, *args, **kwargs
-        )
+        super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
 
         # If network_os is not specified then set the network os to auto
         # This will be used to trigger the use of guess_network_os when connecting.
@@ -296,11 +286,10 @@ class Connection(NetworkConnectionBase):
 
         sock = None
         if proxy_command:
-            if LooseVersion(NCCLIENT_VERSION) < LooseVersion("0.6.10"):
+            if Version(NCCLIENT_VERSION) < "0.6.10":
                 raise AnsibleError(
                     "Configuring jumphost settings through ProxyCommand is unsupported in ncclient version %s. "
-                    "Please upgrade to ncclient 0.6.10 or newer."
-                    % NCCLIENT_VERSION
+                    "Please upgrade to ncclient 0.6.10 or newer." % NCCLIENT_VERSION
                 )
 
             replacers = {
@@ -332,9 +321,8 @@ class Connection(NetworkConnectionBase):
             allow_agent = False
         setattr(self._play_context, "allow_agent", allow_agent)
 
-        self.key_filename = (
-            self._play_context.private_key_file
-            or self.get_option("private_key_file")
+        self.key_filename = self._play_context.private_key_file or self.get_option(
+            "private_key_file"
         )
         if self.key_filename:
             self.key_filename = str(os.path.expanduser(self.key_filename))
@@ -350,9 +338,7 @@ class Connection(NetworkConnectionBase):
             for cls in netconf_loader.all(class_only=True):
                 network_os = cls.guess_network_os(self)
                 if network_os:
-                    self.queue_message(
-                        "vvv", "discovered network_os %s" % network_os
-                    )
+                    self.queue_message("vvv", "discovered network_os %s" % network_os)
                     self._network_os = network_os
 
         # If we have tried to detect the network_os but were unable to i.e. network_os is still 'auto'
@@ -366,15 +352,12 @@ class Connection(NetworkConnectionBase):
             )
             self._network_os = "default"
         try:
-            ncclient_device_handler = self.netconf.get_option(
-                "ncclient_device_handler"
-            )
+            ncclient_device_handler = self.netconf.get_option("ncclient_device_handler")
         except KeyError:
             ncclient_device_handler = "default"
         self.queue_message(
             "vvv",
-            "identified ncclient device handler: %s."
-            % ncclient_device_handler,
+            "identified ncclient device handler: %s." % ncclient_device_handler,
         )
         device_params = {"name": ncclient_device_handler}
 
@@ -415,9 +398,7 @@ class Connection(NetworkConnectionBase):
 
             self._manager = manager.connect(**params)
 
-            self._manager._timeout = self.get_option(
-                "persistent_command_timeout"
-            )
+            self._manager._timeout = self.get_option("persistent_command_timeout")
         except SSHUnknownHostError as exc:
             raise AnsibleConnectionFailure(to_native(exc))
         except AuthenticationError as exc:
@@ -430,17 +411,13 @@ class Connection(NetworkConnectionBase):
             raise
         except ImportError:
             raise AnsibleError(
-                "connection=netconf is not supported on {0}".format(
-                    self._network_os
-                )
+                "connection=netconf is not supported on {0}".format(self._network_os)
             )
 
         if not self._manager.connected:
             return 1, b"", b"not connected"
 
-        self.queue_message(
-            "log", "ncclient manager object created successfully"
-        )
+        self.queue_message("log", "ncclient manager object created successfully")
 
         self._connected = True
 

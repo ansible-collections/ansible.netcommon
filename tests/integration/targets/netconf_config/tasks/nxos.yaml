@@ -1,16 +1,19 @@
 ---
-- name: collect all netconf test cases
-  find:
-    paths: '{{ role_path }}/tests/nxos'
-    patterns: '{{ testcase }}.yaml'
+- name: Collect all netconf test cases
+  ansible.builtin.find:
+    paths: "{{ role_path }}/tests/nxos"
+    patterns: "{{ testcase }}.yaml"
   register: test_cases
   connection: local
 
-- name: set test_items
-  set_fact: test_items="{{ test_cases.files | map(attribute='path') | list }}"
+- name: Set test_items
+  ansible.builtin.set_fact:
+    test_items: "{{ test_cases.files | map(attribute='path') | list }}"
 
-- name: run test case (connection=ansible.netcommon.netconf)
-  include: '{{ test_case_to_run }}'
-  with_items: '{{ test_items }}'
+- name: Run test case (connection=ansible.netcommon.netconf)
+  ansible.builtin.include_tasks: "{{ test_case_to_run }}"
+  with_items: "{{ test_items }}"
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   loop_control:
     loop_var: test_case_to_run
