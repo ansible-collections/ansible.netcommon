@@ -5,6 +5,7 @@ This is the content templates parser for use with the cli_parse module and actio
 The parser functionality used by the network resource modules is leveraged here.
 
 """
+
 from __future__ import absolute_import, division, print_function
 
 
