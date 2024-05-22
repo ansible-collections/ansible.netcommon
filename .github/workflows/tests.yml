@@ -1,5 +1,5 @@
 ---
-name: CI
+name: "CI"
 
 concurrency:
   group: ${{ github.head_ref || github.run_id }}
@@ -14,12 +14,16 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
   changelog:
-    uses: ansible-network/github_actions/.github/workflows/changelog.yml@main
+    uses: ansible/ansible-content-actions/.github/workflows/changelog.yaml@main
     if: github.event_name == 'pull_request'
+  build-import:
+    uses: ansible/ansible-content-actions/.github/workflows/build_import.yaml@main
+  ansible-lint:
+    uses: ansible/ansible-content-actions/.github/workflows/ansible_lint.yaml@main
   sanity:
-    uses: ansible-network/github_actions/.github/workflows/sanity.yml@main
+    uses: ansible/ansible-content-actions/.github/workflows/sanity.yaml@main
   unit-galaxy:
-    uses: ansible-network/github_actions/.github/workflows/unit_galaxy.yml@main
+    uses: ansible/ansible-content-actions/.github/workflows/unit.yaml@main
   unit-source:
     uses: ansible-network/github_actions/.github/workflows/unit_source.yml@main
     with:
@@ -30,6 +34,7 @@ jobs:
     needs:
       - changelog
       - sanity
+      - ansible-lint
       - unit-galaxy
       - unit-source
     runs-on: ubuntu-latest
@@ -40,5 +45,6 @@ jobs:
           '${{ needs.changelog.result }}',
           '${{ needs.sanity.result }}',
           '${{ needs.unit-galaxy.result }}',
-          '${{ needs.unit-source.result }}'
+          '${{ needs.unit-source.result }}',
+          '${{ needs.ansible-lint.result }}'
           ])"

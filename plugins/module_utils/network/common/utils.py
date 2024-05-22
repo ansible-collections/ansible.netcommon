@@ -24,6 +24,7 @@ import socket
 
 from copy import deepcopy
 from functools import reduce  # forward compatibility for Python 3
+from io import StringIO
 from itertools import chain
 
 from ansible.module_utils import basic
@@ -719,7 +720,7 @@ def extract_argspec(doc_obj, argpsec):
 
 # TODO: Support extends_documentation_fragment
 def convert_doc_to_ansible_module_kwargs(doc):
-    doc_obj = yaml.load(str(doc), SafeLoader)
+    doc_obj = yaml.load(StringIO(doc), SafeLoader)
     argspec = {}
     spec = {}
     extract_argspec(doc_obj, argspec)

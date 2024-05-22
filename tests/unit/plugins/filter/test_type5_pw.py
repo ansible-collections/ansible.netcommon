@@ -8,12 +8,12 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import unittest
+from unittest import TestCase
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
 
 
-class TestType5_pw(unittest.TestCase):
+class TestType5_pw(TestCase):
     def setUp(self):
         pass
 
