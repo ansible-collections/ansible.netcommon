@@ -3,8 +3,8 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 import json
-import unittest
 
+from unittest import TestCase
 from unittest.mock import patch
 
 from ansible.module_utils import basic
@@ -40,7 +40,7 @@ def fail_json(*args, **kwargs):
     raise AnsibleFailJson(kwargs)
 
 
-class ModuleTestCase(unittest.TestCase):
+class ModuleTestCase(TestCase):
     def setUp(self):
         self.mock_module = patch.multiple(
             basic.AnsibleModule, exit_json=exit_json, fail_json=fail_json
