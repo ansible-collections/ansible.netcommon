@@ -5,6 +5,14 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v6.1.2
+======
+
+Documentation Changes
+---------------------
+
+- Fixed module name and log consistency in parse_cli_textfsm filter doc.
+
 v6.1.1
 ======
 

@@ -759,3 +759,10 @@ releases:
     fragments:
       - update_not_supported_exception.yaml
     release_date: "2024-04-19"
+  6.1.2:
+    changes:
+      doc_changes:
+        - Fixed module name and log consistency in parse_cli_textfsm filter doc.
+    fragments:
+      - 614-fix-parse_cli_textfsm-doc.yaml
+    release_date: "2024-05-22"
