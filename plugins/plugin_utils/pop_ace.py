@@ -36,29 +36,56 @@ def check_match(ace, match_criteria, match_all, name, afi):
     for k, v in match_criteria.items():
         if v:
             if k not in ["source", "destination", "acl_name", "afi"]:
-                check_arr.append(True) if ace.get(k, "NA") == match_criteria.get(
-                    k,
-                ) else check_arr.append(False)
+                (
+                    check_arr.append(True)
+                    if ace.get(k, "NA")
+                    == match_criteria.get(
+                        k,
+                    )
+                    else check_arr.append(False)
+                )
             elif k == "acl_name":
-                check_arr.append(True) if name == match_criteria.get(
-                    k,
-                ) else check_arr.append(False)
+                (
+                    check_arr.append(True)
+                    if name
+                    == match_criteria.get(
+                        k,
+                    )
+                    else check_arr.append(False)
+                )
             elif k == "afi":
-                check_arr.append(True) if afi == match_criteria.get(
-                    k,
-                ) else check_arr.append(False)
+                (
+                    check_arr.append(True)
+                    if afi
+                    == match_criteria.get(
+                        k,
+                    )
+                    else check_arr.append(False)
+                )
             else:  # for source and destination address
                 _sub = "source" if "source" in k else "destination"
                 _valid = []
-                _valid.append(True) if ace.get(_sub, {}).get("address", "NA") == match_criteria.get(
-                    k,
-                ) else _valid.append(False)
-                _valid.append(True) if ace.get(_sub, {}).get("host", "NA") == match_criteria.get(
-                    k,
-                ) else _valid.append(False)
-                _valid.append(True) if ace.get(_sub, {}).get("any", "NA") == (
-                    match_criteria.get(k) == "any"
-                ) else _valid.append(False)
+                (
+                    _valid.append(True)
+                    if ace.get(_sub, {}).get("address", "NA")
+                    == match_criteria.get(
+                        k,
+                    )
+                    else _valid.append(False)
+                )
+                (
+                    _valid.append(True)
+                    if ace.get(_sub, {}).get("host", "NA")
+                    == match_criteria.get(
+                        k,
+                    )
+                    else _valid.append(False)
+                )
+                (
+                    _valid.append(True)
+                    if ace.get(_sub, {}).get("any", "NA") == (match_criteria.get(k) == "any")
+                    else _valid.append(False)
+                )
                 check_arr.append(any(_valid))
 
     if match_all:  # forces all criteria to match
