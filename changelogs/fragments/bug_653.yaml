@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - The v6.1.2 release introduced a change in cliconfbase's edit_config() signature which broke many platform cliconfs. This patch would revert that change.
