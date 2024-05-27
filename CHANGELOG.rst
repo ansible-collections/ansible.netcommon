@@ -5,6 +5,42 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v6.1.2
+======
+
+Documentation Changes
+---------------------
+
+- Fixed module name and log consistency in parse_cli_textfsm filter doc.
+
+v6.1.1
+======
+
+Bugfixes
+--------
+
+- Added guidance for users to open an issue for the respective platform if plugin support is needed.
+- Improved module execution to gracefully handle cases where plugin support is required, providing a clear error message to the user.
+
+v6.1.0
+======
+
+Minor Changes
+-------------
+
+- Add new module cli_restore that exclusively handles restoring of backup configuration to target applaince.
+
+Bugfixes
+--------
+
+- libssh connection plugin - stop using deprecated ``PlayContext.verbosity`` property that is no longer present in ansible-core 2.18 (https://github.com/ansible-collections/ansible.netcommon/pull/626).
+- network_cli - removed deprecated play_context.verbosity property.
+
+New Modules
+-----------
+
+- cli_restore - Restore device configuration to network devices over network_cli
+
 v6.0.0
 ======
 

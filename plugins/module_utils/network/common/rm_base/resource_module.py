@@ -149,5 +149,5 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         """Send commands to the device"""
         if self.commands and self.state in self.ACTION_STATES:
             if not self._module.check_mode:
-                self._connection.edit_config(self.commands)
+                self._connection.edit_config(candidate=self.commands)
             self.changed = True

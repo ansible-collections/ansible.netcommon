@@ -7,7 +7,7 @@ on:  # yamllint disable-line rule:truthy
 
 jobs:
   refresh:
-    uses: ansible/devtools/.github/workflows/ah_token_refresh.yml@main
+    uses: ansible/ansible-content-actions/.github/workflows/refresh_ah_token.yaml@main
     with:
       environment: release
     secrets:
