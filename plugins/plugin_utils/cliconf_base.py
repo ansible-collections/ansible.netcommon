@@ -215,7 +215,6 @@ class CliconfBase(CliconfBaseBase):
         replace=None,
         diff=False,
         comment=None,
-        err_responses=None,
     ):
         """Loads the candidate configuration into the network device
 
@@ -235,8 +234,6 @@ class CliconfBase(CliconfBaseBase):
                         the file in this case should be present on the remote host in the mentioned path as a
                         prerequisite.
         :param comment: Commit comment provided it is supported by remote host.
-        :param err_responses: A list of error regexes that will be used to evaluate the responses received
-                              from executing the candidate command(s).
         :return: Returns a json string with contains configuration applied on remote host, the returned
                  response on executing configuration commands and platform relevant data.
                {
