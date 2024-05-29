@@ -4,6 +4,13 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v6.1.3
+======
+
+Bugfixes
+--------
+
+- The v6.1.2 release introduced a change in cliconfbase's edit_config() signature which broke many platform cliconfs. This patch release reverts that change.
 
 v6.1.2
 ======
