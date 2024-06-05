@@ -35,6 +35,13 @@ options:
     choices:
     - scp
     - sftp
+  check_destination:
+    description:
+    - Enabling this check for the file in the destination if the file exists or not and
+      only copy the file if it does not exist.
+    type: bool
+    default: true
+    required: false
   dest:
     description:
     - Specifies the destination file. The path to destination file can either be the
