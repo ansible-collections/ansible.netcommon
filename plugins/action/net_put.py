@@ -142,10 +142,11 @@ class ActionModule(ActionBase):
         filename = str(uuid.uuid4())
         tmp_source_file = os.path.join(cwd, filename)
         try:
-            conn.put_file(
+            conn.get_file(
                 source=dest,
                 destination=tmp_source_file,
                 proto=proto,
+                timeout=timeout,
             )
         except ConnectionError as exc:
             error = to_text(exc)
