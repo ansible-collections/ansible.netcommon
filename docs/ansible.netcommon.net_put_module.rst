@@ -42,6 +42,25 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>check_destination</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Enabling this check for the file in the destination if the file exists or not and only copy the file if it does not exist.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>dest</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">

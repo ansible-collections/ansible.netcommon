@@ -103,9 +103,7 @@ class ActionModule(ActionBase):
 
         if check_destination:
             try:
-                changed = self._handle_existing_file(
-                    conn, output_file, dest, proto, sock_timeout
-                )
+                changed = self._handle_existing_file(conn, output_file, dest, proto, sock_timeout)
                 if changed is False:
                     result["changed"] = changed
                     result["destination"] = dest
@@ -129,9 +127,7 @@ class ActionModule(ActionBase):
                 if network_os == "iosxr":
                     # IOSXR sometimes closes socket prematurely after completion
                     # of file transfer
-                    result["msg"] = (
-                        "Warning: iosxr scp server pre close issue. Please check dest"
-                    )
+                    result["msg"] = "Warning: iosxr scp server pre close issue. Please check dest"
             else:
                 result["failed"] = True
                 result["msg"] = "Exception received: %s" % exc
