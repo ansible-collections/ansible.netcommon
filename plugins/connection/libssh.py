@@ -246,7 +246,9 @@ class MyAddPolicy(object):
         self.connection = connection
         self._options = connection._options
 
-    def missing_host_key(self, session, hostname, username, key_type, fingerprint, message):
+    def missing_host_key(
+        self, session, hostname, username, key_type, fingerprint, message
+    ):
         if all(
             (
                 self._options["host_key_checking"],
@@ -260,7 +262,8 @@ class MyAddPolicy(object):
                 # don't print the prompt string since the user cannot respond
                 # to the question anyway
                 raise AnsibleError(
-                    AUTHENTICITY_MSG.rsplit("\n", 2)[0] % (hostname, message, key_type, fingerprint)
+                    AUTHENTICITY_MSG.rsplit("\n", 2)[0]
+                    % (hostname, message, key_type, fingerprint)
                 )
 
             self.connection.connection_lock()
@@ -385,7 +388,9 @@ class Connection(ConnectionBase):
         try:
             private_key = None
             if self._play_context.private_key_file:
-                with open(os.path.expanduser(self._play_context.private_key_file)) as fp:
+                with open(
+                    os.path.expanduser(self._play_context.private_key_file)
+                ) as fp:
                     b_content = fp.read()
                     private_key = to_bytes(b_content, errors="surrogate_or_strict")
 
@@ -395,10 +400,13 @@ class Connection(ConnectionBase):
             if self.get_option("config_file"):
                 ssh_connect_kwargs["config_file"] = self.get_option("config_file")
 
-            if self.get_option("password_prompt") and (Version(PYLIBSSH_VERSION) < "1.0.0"):
+            if self.get_option("password_prompt") and (
+                Version(PYLIBSSH_VERSION) < "1.0.0"
+            ):
                 raise AnsibleError(
                     "Configuring password prompt is not supported in ansible-pylibssh version %s. "
-                    "Please upgrade to ansible-pylibssh 1.0.0 or newer." % PYLIBSSH_VERSION
+                    "Please upgrade to ansible-pylibssh 1.0.0 or newer."
+                    % PYLIBSSH_VERSION
                 )
 
             self.ssh.set_missing_host_key_policy(MyAddPolicy(self._new_stdin, self))
@@ -505,14 +513,20 @@ class Connection(ConnectionBase):
                             to_bytes(become_pass, errors="surrogate_or_strict") + b"\n"
                         )
                     else:
-                        raise AnsibleError("A password is required but none was supplied")
+                        raise AnsibleError(
+                            "A password is required but none was supplied"
+                        )
                 else:
                     no_prompt_out += become_output
                     no_prompt_err += become_output
             else:
-                result = self.chan.exec_command(to_text(cmd, errors="surrogate_or_strict"))
+                result = self.chan.exec_command(
+                    to_text(cmd, errors="surrogate_or_strict")
+                )
         except socket.timeout:
-            raise AnsibleError("ssh timed out waiting for privilege escalation.\n" + become_output)
+            raise AnsibleError(
+                "ssh timed out waiting for privilege escalation.\n" + become_output
+            )
 
         if result:
             rc = result.returncode
@@ -553,9 +567,13 @@ class Connection(ConnectionBase):
             try:
                 scp.put(in_path, out_path)
             except LibsshSCPException as exc:
-                raise AnsibleError("Error transferring file to %s: %s" % (out_path, to_text(exc)))
+                raise AnsibleError(
+                    "Error transferring file to %s: %s" % (out_path, to_text(exc))
+                )
         else:
-            raise AnsibleError("Don't know how to transfer file over protocol %s" % proto)
+            raise AnsibleError(
+                "Don't know how to transfer file over protocol %s" % proto
+            )
 
     def _connect_sftp(self):
         cache_key = "%s__%s__" % (
@@ -581,7 +599,9 @@ class Connection(ConnectionBase):
             try:
                 self.sftp = self._connect_sftp()
             except Exception as e:
-                raise AnsibleError("failed to open a SFTP connection (%s)" % to_native(e))
+                raise AnsibleError(
+                    "failed to open a SFTP connection (%s)" % to_native(e)
+                )
 
             try:
                 self.sftp.get(
@@ -593,16 +613,18 @@ class Connection(ConnectionBase):
         elif proto == "scp":
             scp = self.ssh.scp()
             try:
-                # scp.get(out_path, in_path) # wrong call
-
                 # this abruptly closes the connection when
                 # scp.get fails only when the file is not there
                 # it works fine if the file is actually present
                 scp.get(in_path, out_path)  # correct call
-            except Exception as exc:
-                raise AnsibleError("Error transferring file from %s: %s" % (out_path, to_text(exc)))
+            except LibsshSCPException as exc:
+                raise AnsibleError(
+                    "Error transferring file from %s: %s" % (out_path, to_text(exc))
+                )
         else:
-            raise AnsibleError("Don't know how to transfer file over protocol %s" % proto)
+            raise AnsibleError(
+                "Don't know how to transfer file over protocol %s" % proto
+            )
 
     def reset(self):
         self.close()
