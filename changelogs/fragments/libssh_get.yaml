@@ -1,0 +1,5 @@
+---
+bugfixes:
+  - Fix get api call during scp with libssh.
+known_issues:
+  - libssh - net_put and net_get fail when the destination file intended to be fetched is not present.
