@@ -375,7 +375,7 @@ class Connection(ConnectionBase):
 
         self.ssh = Session()
 
-        if self._play_context.verbosity > 3:
+        if display.verbosity > 3:
             self.ssh.set_log_level(logging.INFO)
 
         self.keyfile = os.path.expanduser("~/.ssh/known_hosts")

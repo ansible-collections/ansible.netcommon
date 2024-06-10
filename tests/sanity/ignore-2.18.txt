@@ -1,0 +1,5 @@
+plugins/action/netconf.py action-plugin-docs # base class for deprecated network platform modules using `connection: local`
+plugins/action/network.py action-plugin-docs # base class for network action plugins
+plugins/action/grpc.py action-plugin-docs # base class for grpc action plugins
+plugins/plugin_utils/compat/telnetlib.py pep8!skip  # vendored file
+plugins/plugin_utils/compat/telnetlib.py pylint!skip  # vendored file

@@ -328,6 +328,7 @@ from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import cache_loader, cliconf_loader, connection_loader, terminal_loader
+from ansible.utils.display import Display
 
 from ansible_collections.ansible.netcommon.plugins.connection.libssh import HAS_PYLIBSSH
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
@@ -342,6 +343,7 @@ try:
     HAS_SCP = True
 except ImportError:
     HAS_SCP = False
+display = Display()
 
 
 def ensure_connect(func):
@@ -607,7 +609,7 @@ class Connection(NetworkConnectionBase):
         """
         Connects to the remote device and starts the terminal
         """
-        if self._play_context.verbosity > 3:
+        if display.verbosity > 3:
             logging.getLogger(self.ssh_type).setLevel(logging.DEBUG)
 
         self.queue_message("vvvv", "invoked shell using ssh_type: %s" % self.ssh_type)
