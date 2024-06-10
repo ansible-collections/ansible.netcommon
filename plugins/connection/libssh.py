@@ -594,7 +594,10 @@ class Connection(ConnectionBase):
         elif proto == "scp":
             scp = self.ssh.scp()
             try:
-                scp.get(out_path, in_path)
+                # this abruptly closes the connection when
+                # scp.get fails only when the file is not there
+                # it works fine if the file is actually present
+                scp.get(in_path, out_path)
             except LibsshSCPException as exc:
                 raise AnsibleError("Error transferring file from %s: %s" % (out_path, to_text(exc)))
         else:

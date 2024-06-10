@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Fix get api call during scp with libssh.
