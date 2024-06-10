@@ -150,7 +150,7 @@ class ActionModule(ActionBase):
             )
         except ConnectionError as exc:
             error = to_text(exc)
-            if error.endswith("No such file or directory"):
+            if error.endswith("No such file or directory") or "File doesn't exist" in error:
                 if os.path.exists(tmp_source_file):
                     os.remove(tmp_source_file)
                 return True
