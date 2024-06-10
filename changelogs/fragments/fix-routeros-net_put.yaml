@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Handle sftp error messages for file not present for routerOS.
