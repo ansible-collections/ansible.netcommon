@@ -214,7 +214,6 @@ def parse_cli(output, tmpl):
                 item = re_search(regexp, output)
                 obj[name] = template(value, {"item": item})
 
-
         else:
             obj[name] = value
 
