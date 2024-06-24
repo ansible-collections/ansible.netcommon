@@ -72,7 +72,17 @@ class Connection(ConnectionBase):
             "starting connection from persistent connection plugin",
             host=self._play_context.remote_addr,
         )
-        variables = {"ansible_command_timeout": self.get_option("persistent_command_timeout")}
+        variables = {
+            "ansible_command_timeout": self.get_option(
+                "persistent_command_timeout"
+            ),
+            "remote_addr": self.get_option("remote_addr"),
+            "remote_user": self.get_option("remote_user"),
+            "password": self.get_option("password"),
+            "port": self.get_option("port"),
+            "private_key_file": self.get_option("private_key_file")
+        }
+        self._play_context.connection
         socket_path = start_connection(self._play_context, variables, self._task_uuid)
         display.vvvv(
             "local domain socket path is %s" % socket_path,
