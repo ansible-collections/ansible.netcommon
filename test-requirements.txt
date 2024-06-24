@@ -8,7 +8,7 @@ pytest-ansible
 pytest-xdist
 pytest-cov
 
-# The following are 3rd party libs for cli_parse 
+# The following are 3rd party libs for cli_parse
 ntc_templates
 # 21.4 changed the output of an error message we checked in the tests
 pyats >= 21.4 ; python_version < '3.11'
