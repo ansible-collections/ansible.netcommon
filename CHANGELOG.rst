@@ -5,6 +5,56 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v7.0.0
+======
+
+Release Summary
+---------------
+
+Starting from this release, the minimum `ansible-core` version this collection requires is `2.15.0`. The last known version compatible with ansible-core<2.15 is v6.1.3.
+
+
+Major Changes
+-------------
+
+- Bumping `requires_ansible` to `>=2.15.0`, since previous ansible-core versions are EoL now.
+
+Bugfixes
+--------
+
+- Fix get api call during scp with libssh.
+- Handle sftp error messages for file not present for routerOS.
+
+Known Issues
+------------
+
+- libssh - net_put and net_get fail when the destination file intended to be fetched is not present.
+
+v6.1.3
+======
+
+Bugfixes
+--------
+
+- The v6.1.2 release introduced a change in cliconfbase's edit_config() signature which broke many platform cliconfs. This patch release reverts that change.
+
+v6.1.2
+======
+
+Documentation Changes
+---------------------
+
+- Fixed module name and log consistency in parse_cli_textfsm filter doc.
+
+v6.1.1
+======
+
+Bugfixes
+--------
+
+- Added guidance for users to open an issue for the respective platform if plugin support is needed.
+- Improved module execution to gracefully handle cases where plugin support is required, providing a clear error message to the user.
+
 v6.1.0
 ======
 

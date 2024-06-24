@@ -230,10 +230,10 @@ class CliconfBase(CliconfBaseBase):
             configuration should be  pushed in the running configuration or discarded.
 
         :param replace: If the value is True/False it indicates if running configuration should be completely
-                        replace by candidate configuration. If can also take configuration file path as value,
+                        replace by candidate configuration. It can also take configuration file path as value,
                         the file in this case should be present on the remote host in the mentioned path as a
                         prerequisite.
-        :param comment: Commit comment provided it is supported by remote host
+        :param comment: Commit comment provided it is supported by remote host.
         :return: Returns a json string with contains configuration applied on remote host, the returned
                  response on executing configuration commands and platform relevant data.
                {

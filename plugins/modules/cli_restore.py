@@ -75,8 +75,9 @@ EXAMPLES = """
 RETURN = """
 """
 
+from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.connection import Connection
+from ansible.module_utils.connection import Connection, ConnectionError
 
 
 def validate_args(module, device_operations):
@@ -108,12 +109,18 @@ def main():
 
     result = {"changed": False}
     connection = Connection(module._socket_path)
-    running = connection.restore(
-        filename=module.params["filename"],
-        path=module.params["path"],
-    )
+    try:
+        running = connection.restore(
+            filename=module.params["filename"],
+            path=module.params["path"],
+        )
+    except ConnectionError as exc:
+        if exc.code == -32601:  # Method not found
+            msg = "This platform is not supported with cli_restore. Please report an issue against this platform's cliconf plugin."
+            module.fail_json(msg, code=exc.code)
+        else:
+            module.fail_json(msg=to_text(exc, errors="surrogate_then_replace").strip())
     result["__restore__"] = running
-
     module.exit_json(**result)
 
 
