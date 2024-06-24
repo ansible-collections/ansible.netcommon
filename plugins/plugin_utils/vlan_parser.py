@@ -43,6 +43,7 @@ def vlan_parser(data, first_line_len=48, other_line_len=44):
     while idx < len(sorted_list):
         start = idx
         end = start
+
         while end < len(sorted_list) - 1:
             if sorted_list[end + 1] - sorted_list[end] == 1:
                 end += 1
