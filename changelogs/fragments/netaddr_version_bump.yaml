@@ -1,0 +1,2 @@
+minor_changes:
+  - Updated netaddr to specify the same version requirement as dependency ansible.utils

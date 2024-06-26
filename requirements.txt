@@ -1,7 +1,7 @@
 ansible-pylibssh >= 0.2.0
 jxmlease
 ncclient
-netaddr
+netaddr>=0.10.1
 paramiko
 xmltodict
 grpcio
