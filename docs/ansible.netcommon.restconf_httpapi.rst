@@ -1,14 +1,19 @@
-.. _ansible.netcommon.restconf_httpapi:
 
+.. Created with antsibull-docs 2.9.0
 
-**************************
-ansible.netcommon.restconf
-**************************
+ansible.netcommon.restconf httpapi -- HttpApi Plugin for devices supporting Restconf API
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-**HttpApi Plugin for devices supporting Restconf API**
+This httpapi plugin is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
 
+It is not included in ``ansible-core``.
+To check whether it is installed, run ``ansible-galaxy collection list``.
 
-Version added: 1.0.0
+To install it, use: :code:`ansible-galaxy collection install ansible.netcommon`.
+
+To use it in a playbook, specify: ``ansible.netcommon.restconf``.
+
+New in ansible.netcommon 1.0.0
 
 .. contents::
    :local:
@@ -17,7 +22,12 @@ Version added: 1.0.0
 
 Synopsis
 --------
+
 - This HttpApi plugin provides methods to connect to Restconf API endpoints.
+
+
+
+
 
 
 
@@ -27,34 +37,38 @@ Parameters
 
 .. raw:: html
 
-    <table  border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="1">Parameter</th>
-            <th>Choices/<font color="blue">Defaults</font></th>
-                <th>Configuration</th>
-            <th width="100%">Comments</th>
-        </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>root_path</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">"/restconf"</div>
-                </td>
-                    <td>
-                                <div>var: ansible_httpapi_restconf_root</div>
-                    </td>
-                <td>
-                        <div>Specifies the location of the Restconf root.</div>
-                </td>
-            </tr>
-    </table>
-    <br/>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th><p>Parameter</p></th>
+    <th><p>Comments</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-root_path"></div>
+      <p style="display: inline;"><strong>root_path</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-root_path" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+
+    </td>
+    <td valign="top">
+      <p>Specifies the location of the Restconf root.</p>
+      <p style="margin-top: 8px;"><b style="color: blue;">Default:</b> <code style="color: blue;">&#34;/restconf&#34;</code></p>
+      <p style="margin-top: 8px;"><b>Configuration:</b></p>
+      <ul>
+      <li>
+        <p>Variable: ansible_httpapi_restconf_root</p>
+
+      </li>
+      </ul>
+    </td>
+  </tr>
+  </tbody>
+  </table>
 
 
 
@@ -63,8 +77,7 @@ Parameters
 
 
 
-Status
-------
+
 
 
 Authors
@@ -75,3 +88,9 @@ Authors
 
 .. hint::
     Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.
+
+Collection links
+~~~~~~~~~~~~~~~~
+
+* `Issue Tracker <https://github.com/ansible-collections/ansible.netcommon/issues>`__
+* `Repository (Sources) <https://github.com/ansible-collections/ansible.netcommon>`__

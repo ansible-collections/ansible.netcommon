@@ -1,19 +1,19 @@
 
 .. Created with antsibull-docs 2.9.0
 
-ansible.netcommon.default cliconf -- General purpose cliconf plugin for new platforms
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ansible.netcommon.memory cache -- RAM backed, non persistent cache.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-This cliconf plugin is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
+This cache plugin is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
 
 It is not included in ``ansible-core``.
 To check whether it is installed, run ``ansible-galaxy collection list``.
 
 To install it, use: :code:`ansible-galaxy collection install ansible.netcommon`.
 
-To use it in a playbook, specify: ``ansible.netcommon.default``.
+To use it in a playbook, specify: ``ansible.netcommon.memory``.
 
-New in ansible.netcommon 5.2.0
+New in ansible.netcommon 2.0.0
 
 .. contents::
    :local:
@@ -23,7 +23,8 @@ New in ansible.netcommon 5.2.0
 Synopsis
 --------
 
-- This plugin attemts to provide low level abstraction apis for sending and receiving CLI commands from arbitrary network devices.
+- RAM backed cache that is not persistent.
+- Tailored for networking use case.
 
 
 
