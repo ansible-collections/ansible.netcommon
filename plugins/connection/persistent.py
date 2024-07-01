@@ -73,7 +73,6 @@ class Connection(ConnectionBase):
             host=self._play_context.remote_addr,
         )
         options = self.get_options()
-        options["ansible_command_timeout"] = self.get_option("persistent_command_timeout")
         for option in self._options.keys():
             options[option] = self.get_option(option)
         socket_path = start_connection(self._play_context, options, self._task_uuid)

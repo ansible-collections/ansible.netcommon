@@ -1,3 +1,3 @@
 ---
 bugfixes:
-  - Correctly supply the provided variables(remote server,host,port) addr as part of options to persistent connection.
+  - Properly pass the provided variables (remote server, host, port) as options to the persistent connection.
