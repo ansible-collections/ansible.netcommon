@@ -5,7 +5,6 @@ ansible-pylibssh
 jxmlease
 ncclient
 selectors2 ; python_version == '3.5'
-netaddr
 
 # The follow are 3rd party libs for cli_parse
 ntc_templates
