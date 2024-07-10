@@ -23,7 +23,7 @@ DOCUMENTATION = """
 """
 
 EXAMPLES = """
-- name: "Run command and parse with native"
+- name: "Run command and parse with content_templates"
   ansible.utils.cli_parse:
     command: "show bgp summary"
     parser:
@@ -41,7 +41,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_p
 
 
 class CliParser(CliParserBase):
-    """The native parser class
+    """The content_templates parser class
     Convert raw text to structured data using the resource module parser
     """
 
@@ -72,8 +72,7 @@ class CliParser(CliParserBase):
         try:
             parser.PARSERS = template_obj
             out = {"parsed": parser.parse()}
-            print(out)
             return out
         except Exception as exc:
-            msg = "Native parser returned an error while parsing. Error: {err}"
+            msg = "An error occurred during content_templates parsing. Error: {err}"
             return {"errors": [msg.format(err=to_native(exc))]}

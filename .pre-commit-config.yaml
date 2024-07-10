@@ -14,8 +14,8 @@ repos:
       - id: no-commit-to-branch
       - id: trailing-whitespace
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v4.0.0-alpha.8"
+  - repo: https://github.com/pycontribs/mirrors-prettier
+    rev: "v3.3.2"
     hooks:
       - id: prettier
         additional_dependencies:
@@ -34,6 +34,6 @@ repos:
       - id: black
 
   - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
+    rev: 7.1.0
     hooks:
       - id: flake8
