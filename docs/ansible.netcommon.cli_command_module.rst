@@ -196,9 +196,6 @@ Examples
           - Password
           - Do you want to change that to the standby image
         answer:
-          - y
-          - <password>
-          - y
 
     - name: Simple regexp match for multiple prompt, multiple answer(mandatory check for all prompts)
       ansible.netcommon.cli_command:
