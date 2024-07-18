@@ -117,11 +117,11 @@ EXAMPLES = """
       command: reload in 5
       check_all: true
       prompt:
-      - Save\\?
-      - confirm
+        - Save\\?
+        - confirm
       answer:
-      - n
-      - y
+        - n
+        - y
 """
 
 RETURN = """
