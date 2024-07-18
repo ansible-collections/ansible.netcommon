@@ -136,7 +136,7 @@ Parameters
                     <b>password</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -159,7 +159,7 @@ Parameters
                     <b>password_prompt</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                     <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.1.0</div>
                 </td>
@@ -179,7 +179,7 @@ Parameters
                     <b>proxy_command</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -226,7 +226,7 @@ Parameters
                     <b>remote_addr</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -248,7 +248,7 @@ Parameters
                     <b>remote_user</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
@@ -275,7 +275,7 @@ Parameters
                     <b>ssh_args</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                     <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
                 </td>
@@ -291,7 +291,7 @@ Parameters
                 <td>
                         <div>Arguments to pass to all ssh CLI tools.</div>
                         <div>ProxyCommand is the only supported argument.</div>
-                        <div>This option is deprecated in favor of <em>proxy_command</em>.</div>
+                        <div>This option is deprecated in favor of <em>proxy_command</em> and will be removed in a release after 2026-01-01.</div>
                 </td>
             </tr>
             <tr>
@@ -300,7 +300,7 @@ Parameters
                     <b>ssh_common_args</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                     <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
                 </td>
@@ -316,7 +316,7 @@ Parameters
                 <td>
                         <div>Common extra arguments for all ssh CLI tools.</div>
                         <div>ProxyCommand is the only supported argument.</div>
-                        <div>This option is deprecated in favor of <em>proxy_command</em>.</div>
+                        <div>This option is deprecated in favor of <em>proxy_command</em> and will be removed in a release after 2026-01-01.</div>
                 </td>
             </tr>
             <tr>
@@ -325,7 +325,7 @@ Parameters
                     <b>ssh_extra_args</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">-</span>
+                        <span style="color: purple">string</span>
                     </div>
                     <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
                 </td>
@@ -341,7 +341,7 @@ Parameters
                 <td>
                         <div>Extra arguments exclusive to the &#x27;ssh&#x27; CLI tool.</div>
                         <div>ProxyCommand is the only supported argument.</div>
-                        <div>This option is deprecated in favor of <em>proxy_command</em>.</div>
+                        <div>This option is deprecated in favor of <em>proxy_command</em> and will be removed in a release after 2026-01-01.</div>
                 </td>
             </tr>
             <tr>

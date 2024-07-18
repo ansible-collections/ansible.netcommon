@@ -14,6 +14,7 @@ The base class for cli_parsers
 """
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 #  TODO: Remove this file after ansible.netcommon.cli_parse module is removed

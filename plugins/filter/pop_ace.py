@@ -10,6 +10,7 @@ The pop_ace filter plugin
 """
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -83,7 +84,7 @@ options:
 """
 
 EXAMPLES = r"""
-##Playbook with filter plugin example
+## Playbook with filter plugin example
 vars:
   filter_options:
     match_all: true
@@ -218,7 +219,7 @@ tasks:
     ansible.builtin.debug:
       msg: "{{ acls_data | ansible.netcommon.pop_ace(filter_options=filter_options, match_criteria=match_criteria) }}"
 
-##Output
+## Output
 # PLAY [Filter plugin example pop_ace] ******************************************************************************************************************
 
 # TASK [Remove ace entries from a provided data] ***********************************************************************************************************
@@ -352,8 +353,8 @@ tasks:
 #         afi: ipv6
 
 
-##Playbook with workflow example
-tasks:
+## Playbook with workflow example
+_tasks:
   - name: Gather ACLs config from device existing ACLs config
     cisco.ios.ios_acls:
       state: gathered
@@ -378,8 +379,7 @@ tasks:
       state: overridden
       config: "{{ clean_acls['clean_acls']['acls'] | from_yaml }}"
 
-
-##Output
+## Output
 
 # PLAYBOOK: pop_ace_example.yml ***********************************************
 
@@ -988,16 +988,15 @@ tasks:
 #   - ip access-list extended 110
 #   - no 10 deny icmp 192.0.2.0 0.0.0.255 192.0.3.0 0.0.0.255 traceroute dscp ef ttl eq 10
 #   - no ip access-list extended test
-
 """
 
 from ansible.errors import AnsibleFilterError
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import (
-    pop_ace,
-)
 from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_validate import (
     AnsibleArgSpecValidator,
 )
+
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import pop_ace
+
 
 try:
     from jinja2.filters import pass_environment
@@ -1012,9 +1011,7 @@ def _pop_ace(*args, **kwargs):
     keys = ["data", "filter_options", "match_criteria"]
     data = dict(zip(keys, args[1:]))
     data.update(kwargs)
-    aav = AnsibleArgSpecValidator(
-        data=data, schema=DOCUMENTATION, name="pop_ace"
-    )
+    aav = AnsibleArgSpecValidator(data=data, schema=DOCUMENTATION, name="pop_ace")
     valid, errors, updated_data = aav.validate()
     if not valid:
         raise AnsibleFilterError(errors)

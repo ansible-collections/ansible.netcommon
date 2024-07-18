@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 
@@ -125,12 +126,11 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
 from ansible.module_utils.six import string_types
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_diff,
 )
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.restconf import (
-    restconf,
-)
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.restconf import restconf
 
 
 def main():
@@ -138,9 +138,7 @@ def main():
     argument_spec = dict(
         path=dict(required=True),
         content=dict(),
-        method=dict(
-            choices=["post", "put", "patch", "delete"], default="post"
-        ),
+        method=dict(choices=["post", "put", "patch", "delete"], default="post"),
         format=dict(choices=["json", "xml"], default="json"),
     )
     required_if = [
@@ -183,10 +181,7 @@ def main():
                     restconf.edit_config(module, path=path, method="DELETE")
                 result["changed"] = True
             else:
-                warnings.append(
-                    "delete not executed as resource '%s' does not exist"
-                    % path
-                )
+                warnings.append("delete not executed as resource '%s' does not exist" % path)
         else:
             if running:
                 diff = dict_diff(running, candidate)

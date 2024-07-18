@@ -5,6 +5,145 @@ Ansible Netcommon Collection Release Notes
 .. contents:: Topics
 
 
+v7.0.0
+======
+
+Release Summary
+---------------
+
+Starting from this release, the minimum `ansible-core` version this collection requires is `2.15.0`. The last known version compatible with ansible-core<2.15 is v6.1.3.
+
+
+Major Changes
+-------------
+
+- Bumping `requires_ansible` to `>=2.15.0`, since previous ansible-core versions are EoL now.
+
+Bugfixes
+--------
+
+- Fix get api call during scp with libssh.
+- Handle sftp error messages for file not present for routerOS.
+
+Known Issues
+------------
+
+- libssh - net_put and net_get fail when the destination file intended to be fetched is not present.
+
+v6.1.3
+======
+
+Bugfixes
+--------
+
+- The v6.1.2 release introduced a change in cliconfbase's edit_config() signature which broke many platform cliconfs. This patch release reverts that change.
+
+v6.1.2
+======
+
+Documentation Changes
+---------------------
+
+- Fixed module name and log consistency in parse_cli_textfsm filter doc.
+
+v6.1.1
+======
+
+Bugfixes
+--------
+
+- Added guidance for users to open an issue for the respective platform if plugin support is needed.
+- Improved module execution to gracefully handle cases where plugin support is required, providing a clear error message to the user.
+
+v6.1.0
+======
+
+Minor Changes
+-------------
+
+- Add new module cli_restore that exclusively handles restoring of backup configuration to target applaince.
+
+Bugfixes
+--------
+
+- libssh connection plugin - stop using deprecated ``PlayContext.verbosity`` property that is no longer present in ansible-core 2.18 (https://github.com/ansible-collections/ansible.netcommon/pull/626).
+- network_cli - removed deprecated play_context.verbosity property.
+
+New Modules
+-----------
+
+- cli_restore - Restore device configuration to network devices over network_cli
+
+v6.0.0
+======
+
+Release Summary
+---------------
+
+Starting from this release, the minimum `ansible-core` version this collection requires is `2.14.0`. That last known version compatible with ansible-core<2.14 is `v5.3.0`.
+
+Major Changes
+-------------
+
+- Bumping `requires_ansible` to `>=2.14.0`, since previous ansible-core versions are EoL now.
+
+v5.3.0
+======
+
+Minor Changes
+-------------
+
+- Add new module cli_backup that exclusively handles configuration backup.
+
+Bugfixes
+--------
+
+- Fix attribute types from string to str in filter plugins.
+
+v5.2.0
+======
+
+Minor Changes
+-------------
+
+- Add a new cliconf plugin ``default`` that can be used when no cliconf plugin is found for a given network_os. This plugin only supports ``get()``. (https://github.com/ansible-collections/ansible.netcommon/pull/569)
+- httpapi - Add additional option ``ca_path``, ``client_cert``, ``client_key``, and ``http_agent`` that are available in open_url but not to httpapi. (https://github.com/ansible-collections/ansible.netcommon/issues/528)
+- telnet - add crlf option to send CRLF instead of just LF (https://github.com/ansible-collections/ansible.netcommon/pull/440).
+
+Deprecated Features
+-------------------
+
+- libssh - the ssh_*_args options are now marked that they will be removed after 2026-01-01.
+
+Bugfixes
+--------
+
+- Ensure that all connection plugin options that should be strings are actually strings (https://github.com/ansible-collections/ansible.netcommon/pull/549).
+
+New Plugins
+-----------
+
+Cliconf
+~~~~~~~
+
+- default - General purpose cliconf plugin for new platforms
+
+v5.1.3
+======
+
+Bugfixes
+--------
+
+- Vendor telnetlib from cpython (https://github.com/ansible-collections/ansible.netcommon/pull/546)
+
+v5.1.2
+======
+
+Bugfixes
+--------
+
+- Ensure that all connection plugin options that should be strings are actually strings (https://github.com/ansible-collections/ansible.netcommon/pull/549).
+
 v5.1.1
 ======
 

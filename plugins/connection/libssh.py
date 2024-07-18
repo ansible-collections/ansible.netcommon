@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -20,6 +21,7 @@ DOCUMENTATION = """
       remote_addr:
         description:
             - Address of the remote target
+        type: string
         default: inventory_hostname
         vars:
             - name: inventory_hostname
@@ -30,6 +32,7 @@ DOCUMENTATION = """
         description:
             - User to login/authenticate as
             - Can be set from the CLI via the C(--user) or C(-u) options.
+        type: string
         vars:
             - name: ansible_user
             - name: ansible_ssh_user
@@ -46,6 +49,7 @@ DOCUMENTATION = """
         description:
           - Secret used to either login the ssh server or as a passphrase for ssh keys that require it
           - Can be set from the CLI via the C(--ask-pass) option.
+        type: string
         vars:
             - name: ansible_password
             - name: ansible_ssh_pass
@@ -57,6 +61,7 @@ DOCUMENTATION = """
           - Text to match when using keyboard-interactive authentication to determine if the prompt is
             for the password.
           - Requires ansible-pylibssh version >= 1.0.0
+        type: string
         vars:
           - name: ansible_libssh_password_prompt
         version_added: 3.1.0
@@ -78,6 +83,7 @@ DOCUMENTATION = """
         description:
             - Proxy information for running the connection via a jumphost.
             - Also this plugin will scan 'ssh_args', 'ssh_extra_args' and 'ssh_common_args' from the 'ssh' plugin settings for proxy information if set.
+        type: string
         env:
           - name: ANSIBLE_LIBSSH_PROXY_COMMAND
         ini:
@@ -125,7 +131,9 @@ DOCUMENTATION = """
           description:
            - Arguments to pass to all ssh CLI tools.
            - ProxyCommand is the only supported argument.
-           - This option is deprecated in favor of I(proxy_command).
+           - This option is deprecated in favor of I(proxy_command) and will be removed
+             in a release after 2026-01-01.
+          type: string
           ini:
               - section: 'ssh_connection'
                 key: 'ssh_args'
@@ -140,7 +148,9 @@ DOCUMENTATION = """
           description:
            - Common extra arguments for all ssh CLI tools.
            - ProxyCommand is the only supported argument.
-           - This option is deprecated in favor of I(proxy_command).
+           - This option is deprecated in favor of I(proxy_command) and will be removed
+             in a release after 2026-01-01.
+          type: string
           ini:
               - section: 'ssh_connection'
                 key: 'ssh_common_args'
@@ -155,7 +165,9 @@ DOCUMENTATION = """
           description:
            - Extra arguments exclusive to the 'ssh' CLI tool.
            - ProxyCommand is the only supported argument.
-           - This option is deprecated in favor of I(proxy_command).
+           - This option is deprecated in favor of I(proxy_command) and will be removed
+             in a release after 2026-01-01.
+          type: string
           vars:
               - name: ansible_ssh_extra_args
           env:
@@ -184,21 +196,18 @@ import os
 import re
 import socket
 import sys
+
 from termios import TCIFLUSH, tcflush
 
-from ansible.errors import (
-    AnsibleConnectionFailure,
-    AnsibleError,
-    AnsibleFileNotFound,
-)
+from ansible.errors import AnsibleConnectionFailure, AnsibleError, AnsibleFileNotFound
 from ansible.module_utils._text import to_bytes, to_native, to_text
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.six.moves import input
 from ansible.plugins.connection import ConnectionBase
 from ansible.utils.display import Display
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import (
-    Version,
-)
+
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
+
 
 display = Display()
 
@@ -237,9 +246,7 @@ class MyAddPolicy(object):
         self.connection = connection
         self._options = connection._options
 
-    def missing_host_key(
-        self, session, hostname, username, key_type, fingerprint, message
-    ):
+    def missing_host_key(self, session, hostname, username, key_type, fingerprint, message):
         if all(
             (
                 self._options["host_key_checking"],
@@ -253,8 +260,7 @@ class MyAddPolicy(object):
                 # don't print the prompt string since the user cannot respond
                 # to the question anyway
                 raise AnsibleError(
-                    AUTHENTICITY_MSG.rsplit("\n", 2)[0]
-                    % (hostname, message, key_type, fingerprint)
+                    AUTHENTICITY_MSG.rsplit("\n", 2)[0] % (hostname, message, key_type, fingerprint)
                 )
 
             self.connection.connection_lock()
@@ -264,9 +270,7 @@ class MyAddPolicy(object):
             # clear out any premature input on sys.stdin
             tcflush(sys.stdin, TCIFLUSH)
 
-            inp = input(
-                AUTHENTICITY_MSG % (hostname, message, key_type, fingerprint)
-            )
+            inp = input(AUTHENTICITY_MSG % (hostname, message, key_type, fingerprint))
             sys.stdin = old_stdin
 
             self.connection.connection_unlock()
@@ -301,9 +305,7 @@ class Connection(ConnectionBase):
         if cache_key in SSH_CONNECTION_CACHE:
             self.ssh = SSH_CONNECTION_CACHE[cache_key]
         else:
-            self.ssh = SSH_CONNECTION_CACHE[
-                cache_key
-            ] = self._connect_uncached()
+            self.ssh = SSH_CONNECTION_CACHE[cache_key] = self._connect_uncached()
         return self
 
     def _set_log_channel(self, name):
@@ -319,6 +321,9 @@ class Connection(ConnectionBase):
         ]
 
         if any(ssh_args):
+            display.warning(
+                "The ssh_*_args options are deprecated and will be removed in a release after 2026-01-01. Please use the proxy_command option instead."
+            )
             args = self._split_ssh_args(" ".join(ssh_args))
             for i, arg in enumerate(args):
                 if arg.lower() == "proxycommand":
@@ -370,7 +375,7 @@ class Connection(ConnectionBase):
 
         self.ssh = Session()
 
-        if self._play_context.verbosity > 3:
+        if display.verbosity > 3:
             self.ssh.set_log_level(logging.INFO)
 
         self.keyfile = os.path.expanduser("~/.ssh/known_hosts")
@@ -380,34 +385,23 @@ class Connection(ConnectionBase):
         try:
             private_key = None
             if self._play_context.private_key_file:
-                with open(
-                    os.path.expanduser(self._play_context.private_key_file)
-                ) as fp:
+                with open(os.path.expanduser(self._play_context.private_key_file)) as fp:
                     b_content = fp.read()
-                    private_key = to_bytes(
-                        b_content, errors="surrogate_or_strict"
-                    )
+                    private_key = to_bytes(b_content, errors="surrogate_or_strict")
 
             if proxy_command:
                 ssh_connect_kwargs["proxycommand"] = proxy_command
 
             if self.get_option("config_file"):
-                ssh_connect_kwargs["config_file"] = self.get_option(
-                    "config_file"
-                )
+                ssh_connect_kwargs["config_file"] = self.get_option("config_file")
 
-            if self.get_option("password_prompt") and (
-                Version(PYLIBSSH_VERSION) < "1.0.0"
-            ):
+            if self.get_option("password_prompt") and (Version(PYLIBSSH_VERSION) < "1.0.0"):
                 raise AnsibleError(
                     "Configuring password prompt is not supported in ansible-pylibssh version %s. "
-                    "Please upgrade to ansible-pylibssh 1.0.0 or newer."
-                    % PYLIBSSH_VERSION
+                    "Please upgrade to ansible-pylibssh 1.0.0 or newer." % PYLIBSSH_VERSION
                 )
 
-            self.ssh.set_missing_host_key_policy(
-                MyAddPolicy(self._new_stdin, self)
-            )
+            self.ssh.set_missing_host_key_policy(MyAddPolicy(self._new_stdin, self))
 
             self.ssh.connect(
                 host=remote_addr.lower(),
@@ -419,7 +413,7 @@ class Connection(ConnectionBase):
                 private_key=private_key,
                 timeout=self._play_context.timeout,
                 port=port,
-                **ssh_connect_kwargs
+                **ssh_connect_kwargs,
             )
         except LibsshSessionException as e:
             msg = "ssh connection failed: " + to_text(e)
@@ -433,9 +427,7 @@ class Connection(ConnectionBase):
     def exec_command(self, cmd, in_data=None, sudoable=True):
         """run a command on the remote host"""
 
-        super(Connection, self).exec_command(
-            cmd, in_data=in_data, sudoable=sudoable
-        )
+        super(Connection, self).exec_command(cmd, in_data=in_data, sudoable=sudoable)
 
         if in_data:
             raise AnsibleError(
@@ -490,9 +482,7 @@ class Connection(ConnectionBase):
                                     playcontext=self._play_context,
                                 )
                             )
-                            raise AnsibleError(
-                                "user %s does not exist" % n_become_user
-                            )
+                            raise AnsibleError("user %s does not exist" % n_become_user)
                         else:
                             break
                             # raise AnsibleError('ssh connection closed waiting for password prompt')
@@ -512,25 +502,17 @@ class Connection(ConnectionBase):
                             "become_pass", playcontext=self._play_context
                         )
                         self.chan.sendall(
-                            to_bytes(become_pass, errors="surrogate_or_strict")
-                            + b"\n"
+                            to_bytes(become_pass, errors="surrogate_or_strict") + b"\n"
                         )
                     else:
-                        raise AnsibleError(
-                            "A password is required but none was supplied"
-                        )
+                        raise AnsibleError("A password is required but none was supplied")
                 else:
                     no_prompt_out += become_output
                     no_prompt_err += become_output
             else:
-                result = self.chan.exec_command(
-                    to_text(cmd, errors="surrogate_or_strict")
-                )
+                result = self.chan.exec_command(to_text(cmd, errors="surrogate_or_strict"))
         except socket.timeout:
-            raise AnsibleError(
-                "ssh timed out waiting for privilege escalation.\n"
-                + become_output
-            )
+            raise AnsibleError("ssh timed out waiting for privilege escalation.\n" + become_output)
 
         if result:
             rc = result.returncode
@@ -551,9 +533,7 @@ class Connection(ConnectionBase):
         )
 
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
-            raise AnsibleFileNotFound(
-                "file or module does not exist: %s" % in_path
-            )
+            raise AnsibleFileNotFound("file or module does not exist: %s" % in_path)
 
         if proto == "sftp":
             try:
@@ -573,14 +553,9 @@ class Connection(ConnectionBase):
             try:
                 scp.put(in_path, out_path)
             except LibsshSCPException as exc:
-                raise AnsibleError(
-                    "Error transferring file to %s: %s"
-                    % (out_path, to_text(exc))
-                )
+                raise AnsibleError("Error transferring file to %s: %s" % (out_path, to_text(exc)))
         else:
-            raise AnsibleError(
-                "Don't know how to transfer file over protocol %s" % proto
-            )
+            raise AnsibleError("Don't know how to transfer file over protocol %s" % proto)
 
     def _connect_sftp(self):
         cache_key = "%s__%s__" % (
@@ -590,9 +565,7 @@ class Connection(ConnectionBase):
         if cache_key in SFTP_CONNECTION_CACHE:
             return SFTP_CONNECTION_CACHE[cache_key]
         else:
-            result = SFTP_CONNECTION_CACHE[
-                cache_key
-            ] = self._connect().ssh.sftp()
+            result = SFTP_CONNECTION_CACHE[cache_key] = self._connect().ssh.sftp()
             return result
 
     def fetch_file(self, in_path, out_path, proto="sftp"):
@@ -609,9 +582,7 @@ class Connection(ConnectionBase):
             try:
                 self.sftp = self._connect_sftp()
             except Exception as e:
-                raise AnsibleError(
-                    "failed to open a SFTP connection (%s)" % to_native(e)
-                )
+                raise AnsibleError("failed to open a SFTP connection (%s)" % to_native(e))
 
             try:
                 self.sftp.get(
@@ -623,16 +594,14 @@ class Connection(ConnectionBase):
         elif proto == "scp":
             scp = self.ssh.scp()
             try:
-                scp.get(out_path, in_path)
+                # this abruptly closes the connection when
+                # scp.get fails only when the file is not there
+                # it works fine if the file is actually present
+                scp.get(in_path, out_path)
             except LibsshSCPException as exc:
-                raise AnsibleError(
-                    "Error transferring file from %s: %s"
-                    % (out_path, to_text(exc))
-                )
+                raise AnsibleError("Error transferring file from %s: %s" % (out_path, to_text(exc)))
         else:
-            raise AnsibleError(
-                "Don't know how to transfer file over protocol %s" % proto
-            )
+            raise AnsibleError("Don't know how to transfer file over protocol %s" % proto)
 
     def reset(self):
         self.close()

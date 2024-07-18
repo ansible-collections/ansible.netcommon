@@ -11,11 +11,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 import sys
 
 from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.connection import Connection, ConnectionError
+
 
 try:
     from ncclient.xml_ import NCElement, new_ele, sub_ele
@@ -61,13 +63,9 @@ class NetconfConnection(Connection):
         response = self._exec_jsonrpc(name, *args, **kwargs)
         if "error" in response:
             rpc_error = response["error"].get("data")
-            return self.parse_rpc_error(
-                to_bytes(rpc_error, errors="surrogate_then_replace")
-            )
+            return self.parse_rpc_error(to_bytes(rpc_error, errors="surrogate_then_replace"))
 
-        return fromstring(
-            to_bytes(response["result"], errors="surrogate_then_replace")
-        )
+        return fromstring(to_bytes(response["result"], errors="surrogate_then_replace"))
 
     def parse_rpc_error(self, rpc_error):
         if self.check_rc:
@@ -78,9 +76,7 @@ class NetconfConnection(Connection):
 
                 error_list = root.findall(".//nc:rpc-error", NS_MAP)
                 if not error_list:
-                    raise ConnectionError(
-                        to_text(rpc_error, errors="surrogate_then_replace")
-                    )
+                    raise ConnectionError(to_text(rpc_error, errors="surrogate_then_replace"))
 
                 warnings = []
                 for error in error_list:
@@ -89,22 +85,14 @@ class NetconfConnection(Connection):
                     if message_ele is None:
                         message_ele = error.find("./nc:error-info", NS_MAP)
 
-                    message = (
-                        message_ele.text if message_ele is not None else None
-                    )
+                    message = message_ele.text if message_ele is not None else None
 
                     severity = error.find("./nc:error-severity", NS_MAP).text
 
-                    if (
-                        severity == "warning"
-                        and self.ignore_warning
-                        and message is not None
-                    ):
+                    if severity == "warning" and self.ignore_warning and message is not None:
                         warnings.append(message)
                     else:
-                        raise ConnectionError(
-                            to_text(rpc_error, errors="surrogate_then_replace")
-                        )
+                        raise ConnectionError(to_text(rpc_error, errors="surrogate_then_replace"))
                 return warnings
             except XMLSyntaxError:
                 raise ConnectionError(rpc_error)

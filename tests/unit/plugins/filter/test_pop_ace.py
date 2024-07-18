@@ -5,17 +5,17 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
-import unittest
+from unittest import TestCase
 
 from ansible.errors import AnsibleFilterError
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import (
-    pop_ace,
-)
+
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import pop_ace
 
 
-class TestPopAce(unittest.TestCase):
+class TestPopAce(TestCase):
     def setUp(self):
         pass
 
@@ -39,9 +39,7 @@ class TestPopAce(unittest.TestCase):
                                 "dscp": "ef",
                                 "grant": "deny",
                                 "protocol": "icmp",
-                                "protocol_options": {
-                                    "icmp": {"traceroute": True}
-                                },
+                                "protocol_options": {"icmp": {"traceroute": True}},
                                 "sequence": 10,
                                 "source": {
                                     "address": "192.0.2.0",
@@ -296,9 +294,7 @@ class TestPopAce(unittest.TestCase):
                                     "dscp": "ef",
                                     "grant": "deny",
                                     "protocol": "icmp",
-                                    "protocol_options": {
-                                        "icmp": {"traceroute": True}
-                                    },
+                                    "protocol_options": {"icmp": {"traceroute": True}},
                                     "sequence": 10,
                                     "source": {
                                         "address": "192.0.2.0",
@@ -550,9 +546,7 @@ class TestPopAce(unittest.TestCase):
                                 {
                                     "grant": "deny",
                                     "protocol": "icmp",
-                                    "protocol_options": {
-                                        "icmp": {"echo": True}
-                                    },
+                                    "protocol_options": {"icmp": {"echo": True}},
                                     "sequence": 40,
                                     "source": {
                                         "address": "10.1.1.0",
@@ -732,9 +726,7 @@ class TestPopAce(unittest.TestCase):
                                 "dscp": "ef",
                                 "grant": "deny",
                                 "protocol": "icmp",
-                                "protocol_options": {
-                                    "icmp": {"traceroute": True}
-                                },
+                                "protocol_options": {"icmp": {"traceroute": True}},
                                 "sequence": 10,
                                 "source": {
                                     "address": "192.0.2.0",
@@ -1017,9 +1009,7 @@ class TestPopAce(unittest.TestCase):
                                 {
                                     "grant": "deny",
                                     "protocol": "icmp",
-                                    "protocol_options": {
-                                        "icmp": {"echo": True}
-                                    },
+                                    "protocol_options": {"icmp": {"echo": True}},
                                     "sequence": 40,
                                     "source": {
                                         "address": "10.1.1.0",
@@ -1223,9 +1213,7 @@ class TestPopAce(unittest.TestCase):
                                 {
                                     "grant": "deny",
                                     "protocol": "icmp",
-                                    "protocol_options": {
-                                        "icmp": {"echo": True}
-                                    },
+                                    "protocol_options": {"icmp": {"echo": True}},
                                     "sequence": 40,
                                     "source": {
                                         "address": "10.1.1.0",

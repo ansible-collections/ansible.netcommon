@@ -11,6 +11,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 from copy import deepcopy
@@ -37,18 +38,11 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         self._resource = kwargs.get("resource", None)
         self._tmplt = kwargs.get("tmplt", None)
 
-        self.want = remove_empties(self._module.params).get(
-            "config", self._empty_fact_val
-        )
+        self.want = remove_empties(self._module.params).get("config", self._empty_fact_val)
         # Error out if empty config is passed for following states
-        if (
-            self.state in ("overridden", "merged", "replaced", "rendered")
-            and not self.want
-        ):
+        if self.state in ("overridden", "merged", "replaced", "rendered") and not self.want:
             self._module.fail_json(
-                msg="value of config parameter must not be empty for state {0}".format(
-                    self.state
-                )
+                msg="value of config parameter must not be empty for state {0}".format(self.state)
             )
 
         self.before = self.gather_current()
@@ -155,5 +149,5 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         """Send commands to the device"""
         if self.commands and self.state in self.ACTION_STATES:
             if not self._module.check_mode:
-                self._connection.edit_config(self.commands)
+                self._connection.edit_config(candidate=self.commands)
             self.changed = True

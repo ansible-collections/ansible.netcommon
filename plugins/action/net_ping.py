@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import copy
@@ -11,6 +12,7 @@ import copy
 from ansible.errors import AnsibleError
 from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
+
 
 display = Display()
 
@@ -24,18 +26,14 @@ class ActionModule(ActionBase):
         play_context.network_os = self._get_network_os(task_vars)
         new_task = self._task.copy()
 
-        module = self._get_implementation_module(
-            play_context.network_os, self._task.action
-        )
+        module = self._get_implementation_module(play_context.network_os, self._task.action)
         if not module:
             if self._task.args["fail_on_missing_module"]:
                 result["failed"] = True
             else:
                 result["failed"] = False
 
-            result[
-                "msg"
-            ] = "Could not find implementation module %s for %s" % (
+            result["msg"] = "Could not find implementation module %s for %s" % (
                 self._task.action,
                 play_context.network_os,
             )
@@ -76,11 +74,7 @@ class ActionModule(ActionBase):
         return network_os
 
     def _get_implementation_module(self, network_os, platform_agnostic_module):
-        module_name = (
-            network_os.split(".")[-1]
-            + "_"
-            + platform_agnostic_module.partition("_")[2]
-        )
+        module_name = network_os.split(".")[-1] + "_" + platform_agnostic_module.partition("_")[2]
         if "." in network_os:
             fqcn_module = ".".join(network_os.split(".")[0:-1])
             implementation_module = fqcn_module + "." + module_name

@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -29,6 +30,7 @@ options:
       - Specifies the remote device FQDN or IP address to establish the gRPC
         connection to.
     default: inventory_hostname
+    type: string
     vars:
       - name: ansible_host
   port:
@@ -49,6 +51,7 @@ options:
       - Configures the device platform network operating system. This value is
         used to load a device specific grpc plugin to communicate with the remote
         device.
+    type: string
     vars:
       - name: ansible_network_os
   remote_user:
@@ -57,6 +60,7 @@ options:
         connection is first established.  If the remote_user is not specified,
         the connection will use the username of the logged in user.
       - Can be configured from the CLI via the C(--user) or C(-u) options.
+    type: string
     ini:
       - section: defaults
         key: remote_user
@@ -68,6 +72,7 @@ options:
     description:
       - Configures the user password used to authenticate to the remote device
         when first establishing the gRPC connection.
+    type: string
     vars:
       - name: ansible_password
       - name: ansible_ssh_pass
@@ -75,6 +80,7 @@ options:
     description:
       - The PEM encoded private key file used to authenticate to the
         remote device when first establishing the grpc connection.
+    type: string
     ini:
       - section: grpc_connection
         key: private_key_file
@@ -87,6 +93,7 @@ options:
       - The PEM encoded root certificate file used to create a SSL-enabled
         channel, if the value is None it reads the root certificates from
         a default location chosen by gRPC at runtime.
+    type: string
     ini:
       - section: grpc_connection
         key: root_certificates_file
@@ -98,6 +105,7 @@ options:
     description:
       - The PEM encoded certificate chain file used to create a SSL-enabled
         channel. If the value is None, no certificate chain is used.
+    type: string
     ini:
       - section: grpc_connection
         key: certificate_chain_file
@@ -111,6 +119,7 @@ options:
         The name used for SSL host name checking will be the target parameter
         (assuming that the secure channel is an SSL channel). If this parameter is
         specified and the underlying is not an SSL channel, it will just be ignored.
+    type: string
     ini:
       - section: grpc_connection
         key: ssl_target_name_override
@@ -137,6 +146,7 @@ from importlib import import_module
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.plugins.connection import NetworkConnectionBase
 
+
 try:
     from grpc import insecure_channel, secure_channel, ssl_channel_credentials
     from grpc.beta import implementations
@@ -160,9 +170,7 @@ class Connection(NetworkConnectionBase):
     has_pipelining = False
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(Connection, self).__init__(
-            play_context, new_stdin, *args, **kwargs
-        )
+        super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
 
         grpc_type = self._network_os or self.get_option("grpc_type")
         if grpc_type:
@@ -185,9 +193,7 @@ class Connection(NetworkConnectionBase):
                     "name": grpc_type,
                     "obj": grpc_obj,
                 }
-                self.queue_message(
-                    "log", "loaded gRPC plugin for type %s" % grpc_type
-                )
+                self.queue_message("log", "loaded gRPC plugin for type %s" % grpc_type)
                 self.queue_message("log", "grpc type is set to %s" % grpc_type)
             else:
                 raise AnsibleConnectionFailure(
@@ -211,9 +217,7 @@ class Connection(NetworkConnectionBase):
         host = self.get_option("host")
         host = self._play_context.remote_addr
         if self.connected:
-            self.queue_message(
-                "log", "gRPC connection to host %s already exist" % host
-            )
+            self.queue_message("log", "gRPC connection to host %s already exist" % host)
             return
 
         port = self.get_option("port")
@@ -247,18 +251,12 @@ class Connection(NetworkConnectionBase):
                 with open(certificate_chain_file, "rb") as f:
                     certs["certificate_chain"] = f.read()
         except Exception as e:
-            raise AnsibleConnectionFailure(
-                "Failed to read certificate keys: %s" % e
-            )
+            raise AnsibleConnectionFailure("Failed to read certificate keys: %s" % e)
         if certs:
             creds = ssl_channel_credentials(**certs)
-            channel = secure_channel(
-                self._target, creds, options=self._channel_options
-            )
+            channel = secure_channel(self._target, creds, options=self._channel_options)
         else:
-            channel = insecure_channel(
-                self._target, options=self._channel_options
-            )
+            channel = insecure_channel(self._target, options=self._channel_options)
 
         self.queue_message(
             "vvv",
@@ -266,9 +264,7 @@ class Connection(NetworkConnectionBase):
             % (self.get_option("remote_user"), port, host),
         )
         self._channel = implementations.Channel(channel)
-        self.queue_message(
-            "vvvv", "grpc connection has completed successfully"
-        )
+        self.queue_message("vvvv", "grpc connection has completed successfully")
         self._connected = True
 
     def close(self):
@@ -277,8 +273,6 @@ class Connection(NetworkConnectionBase):
         :return: None
         """
         if self._connected:
-            self.queue_message(
-                "vvvv", "closing gRPC connection to target host"
-            )
+            self.queue_message("vvvv", "closing gRPC connection to target host")
             self._channel.close()
         super(Connection, self).close()

@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 from abc import abstractmethod
@@ -12,9 +13,13 @@ from functools import wraps
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils._text import to_bytes, to_text
+from ansible.module_utils.common._collections_compat import Mapping
 
 # Needed to satisfy PluginLoader's required_base_class
 from ansible.plugins.cliconf import CliconfBase as CliconfBaseBase
+
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
+
 
 try:
     from scp import SCPClient
@@ -28,11 +33,7 @@ def enable_mode(func):
     @wraps(func)
     def wrapped(self, *args, **kwargs):
         prompt = self._connection.get_prompt()
-        if (
-            not to_text(prompt, errors="surrogate_or_strict")
-            .strip()
-            .endswith("#")
-        ):
+        if not to_text(prompt, errors="surrogate_or_strict").strip().endswith("#"):
             raise AnsibleError("operation requires privilege escalation")
         return func(self, *args, **kwargs)
 
@@ -72,12 +73,13 @@ class CliconfBase(CliconfBaseBase):
     """
 
     __rpc__ = [
-        "get_config",
         "edit_config",
-        "get_capabilities",
-        "get",
         "enable_response_logging",
+        "get",
+        "get_capabilities",
+        "get_config",
         "disable_response_logging",
+        "run_commands",
     ]
 
     def __init__(self, connection):
@@ -228,10 +230,10 @@ class CliconfBase(CliconfBaseBase):
             configuration should be  pushed in the running configuration or discarded.
 
         :param replace: If the value is True/False it indicates if running configuration should be completely
-                        replace by candidate configuration. If can also take configuration file path as value,
+                        replace by candidate configuration. It can also take configuration file path as value,
                         the file in this case should be present on the remote host in the mentioned path as a
                         prerequisite.
-        :param comment: Commit comment provided it is supported by remote host
+        :param comment: Commit comment provided it is supported by remote host.
         :return: Returns a json string with contains configuration applied on remote host, the returned
                  response on executing configuration commands and platform relevant data.
                {
@@ -243,7 +245,6 @@ class CliconfBase(CliconfBaseBase):
         """
         pass
 
-    @abstractmethod
     def get(
         self,
         command=None,
@@ -270,7 +271,17 @@ class CliconfBase(CliconfBaseBase):
                           given prompt.
         :return: The output from the device after executing the command
         """
-        pass
+        if not command:
+            raise ValueError("must provide value of command to execute")
+
+        return self.send_command(
+            command=command,
+            prompt=prompt,
+            answer=answer,
+            sendonly=sendonly,
+            newline=newline,
+            check_all=check_all,
+        )
 
     @abstractmethod
     def get_capabilities(self):
@@ -342,9 +353,8 @@ class CliconfBase(CliconfBaseBase):
 
         :return: None
         """
-        return self._connection.method_not_found(
-            "commit is not supported by network_os %s"
-            % self._play_context.network_os
+        raise AnsibleConnectionFailure(
+            "commit is not supported by network_os %s" % self._play_context.network_os
         )
 
     def discard_changes(self):
@@ -356,9 +366,8 @@ class CliconfBase(CliconfBaseBase):
 
         :returns: None
         """
-        return self._connection.method_not_found(
-            "discard_changes is not supported by network_os %s"
-            % self._play_context.network_os
+        raise AnsibleConnectionFailure(
+            "discard_changes is not supported by network_os %s" % self._play_context.network_os
         )
 
     def rollback(self, rollback_id, commit=True):
@@ -370,9 +379,7 @@ class CliconfBase(CliconfBaseBase):
         """
         pass
 
-    def copy_file(
-        self, source=None, destination=None, proto="scp", timeout=30
-    ):
+    def copy_file(self, source=None, destination=None, proto="scp", timeout=30):
         """Copies file over scp/sftp to remote device
 
         :param source: Source file path
@@ -413,9 +420,7 @@ class CliconfBase(CliconfBaseBase):
                     "Required library scp is not installed.  Please install it using `pip install scp`"
                 )
             try:
-                with SCPClient(
-                    ssh.get_transport(), socket_timeout=timeout
-                ) as scp:
+                with SCPClient(ssh.get_transport(), socket_timeout=timeout) as scp:
                     scp.get(source, destination)
             except EOFError:
                 # This appears to be benign.
@@ -486,7 +491,24 @@ class CliconfBase(CliconfBaseBase):
                          value is True an exception is raised.
         :return: List of returned response
         """
-        pass
+        if commands is None:
+            raise ValueError("'commands' value is required")
+
+        responses = list()
+        for cmd in to_list(commands):
+            if not isinstance(cmd, Mapping):
+                cmd = {"command": cmd}
+
+            try:
+                out = self.send_command(**cmd)
+            except AnsibleConnectionFailure as e:
+                if check_rc:
+                    raise
+                out = getattr(e, "err", e)
+
+            responses.append(out)
+
+        return responses
 
     def check_edit_config_capability(
         self,
@@ -497,9 +519,7 @@ class CliconfBase(CliconfBaseBase):
         comment=None,
     ):
         if not candidate and not replace:
-            raise ValueError(
-                "must provide a candidate or replace to load configuration"
-            )
+            raise ValueError("must provide a candidate or replace to load configuration")
 
         if commit not in (True, False):
             raise ValueError("'commit' must be a bool, got %s" % commit)
@@ -520,9 +540,7 @@ class CliconfBase(CliconfBaseBase):
         """
         pass
 
-    def _update_cli_prompt_context(
-        self, config_context=None, exit_command="exit"
-    ):
+    def _update_cli_prompt_context(self, config_context=None, exit_command="exit"):
         """
         Update the cli prompt context to ensure it is in operational mode
         :param config_context: It is string value to identify if the current cli prompt ends with config mode prompt
@@ -539,9 +557,7 @@ class CliconfBase(CliconfBaseBase):
         while True:
             out = to_text(out, errors="surrogate_then_replace").strip()
             if config_context and out.endswith(config_context):
-                self._connection.queue_message(
-                    "vvvv", "wrong context, sending exit to device"
-                )
+                self._connection.queue_message("vvvv", "wrong context, sending exit to device")
                 self.send_command(exit_command)
                 out = self._connection.get_prompt()
             else:

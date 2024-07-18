@@ -5,10 +5,13 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 import json
+
 from contextlib import contextmanager
 from copy import deepcopy
+
 
 try:
     from lxml.etree import fromstring, tostring
@@ -17,9 +20,11 @@ except ImportError:
 
 from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.connection import Connection, ConnectionError
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     NetconfConnection,
 )
+
 
 IGNORE_XML_ATTRIBUTE = ()
 
@@ -77,9 +82,7 @@ def get_config(module, source, filter=None, lock=False):
         response = conn.get_config(source=source, filter=filter)
 
     except ConnectionError as e:
-        module.fail_json(
-            msg=to_text(e, errors="surrogate_then_replace").strip()
-        )
+        module.fail_json(msg=to_text(e, errors="surrogate_then_replace").strip())
 
     finally:
         if locked:
@@ -100,9 +103,7 @@ def get(module, filter, lock=False):
         response = conn.get(filter=filter)
 
     except ConnectionError as e:
-        module.fail_json(
-            msg=to_text(e, errors="surrogate_then_replace").strip()
-        )
+        module.fail_json(msg=to_text(e, errors="surrogate_then_replace").strip())
 
     finally:
         if locked:
@@ -116,17 +117,13 @@ def dispatch(module, request):
     try:
         response = conn.dispatch(request)
     except ConnectionError as e:
-        module.fail_json(
-            msg=to_text(e, errors="surrogate_then_replace").strip()
-        )
+        module.fail_json(msg=to_text(e, errors="surrogate_then_replace").strip())
 
     return response
 
 
 def sanitize_xml(data):
-    tree = fromstring(
-        to_bytes(deepcopy(data), errors="surrogate_then_replace")
-    )
+    tree = fromstring(to_bytes(deepcopy(data), errors="surrogate_then_replace"))
     for element in tree.iter():
         # remove attributes
         attribute = element.attrib

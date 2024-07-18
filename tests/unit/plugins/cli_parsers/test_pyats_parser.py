@@ -4,20 +4,24 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import os
-import unittest
+
+from unittest import TestCase
 
 import pytest
+
 from ansible_collections.ansible.netcommon.plugins.sub_plugins.cli_parser.pyats_parser import (
     CliParser,
 )
 
+
 pyats = pytest.importorskip("pyats")
 
 
-class TestPyatsParser(unittest.TestCase):
+class TestPyatsParser(TestCase):
     _nxos_parsed_output = {
         "platform": {
             "hardware": {
@@ -77,9 +81,7 @@ class TestPyatsParser(unittest.TestCase):
         self._debug_msgs.append(msg)
 
     def _load_fixture(self, filename):
-        cfg_path = os.path.join(
-            os.path.dirname(__file__), "fixtures", filename
-        )
+        cfg_path = os.path.join(os.path.dirname(__file__), "fixtures", filename)
 
         with open(cfg_path) as f:
             return f.read()
@@ -110,9 +112,7 @@ class TestPyatsParser(unittest.TestCase):
             debug=self._debug,
         )
         result = parser.parse()
-        error = {
-            "errors": ["The pyats parser requires parser/command be provided."]
-        }
+        error = {"errors": ["The pyats parser requires parser/command be provided."]}
         self.assertEqual(result, error)
 
     def test_pyats_parser_ano_shortname(self):
