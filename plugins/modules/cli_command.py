@@ -108,17 +108,20 @@ EXAMPLES = """
       - Password
       - Do you want to change that to the standby image
     answer:
+      - y
+      - <password>
+      - y
 
-- name: Simple regexp match for multiple prompt, multiple answer(mandatory check for all prompts)
-  ansible.netcommon.cli_command:
-    command: reload in 5
-    check_all: true
-    prompt:
-    - Save\\?
-    - confirm
-    answer:
-    - n
-    - y
+  - name: Simple regexp match for multiple prompt, multiple answer(mandatory check for all prompts)
+    ansible.netcommon.cli_command:
+      command: reload in 5
+      check_all: true
+      prompt:
+      - Save\\?
+      - confirm
+      answer:
+      - n
+      - y
 """
 
 RETURN = """
