@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - support XML huge_tree for RPC calls(https://github.com/ansible-collections/ansible.netcommon/pull/332)
