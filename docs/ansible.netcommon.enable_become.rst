@@ -1,14 +1,19 @@
-.. _ansible.netcommon.enable_become:
 
+.. Created with antsibull-docs 2.9.0
 
-************************
-ansible.netcommon.enable
-************************
+ansible.netcommon.enable become -- Switch to elevated permissions on a network device
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-**Switch to elevated permissions on a network device**
+This become plugin is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
 
+It is not included in ``ansible-core``.
+To check whether it is installed, run ``ansible-galaxy collection list``.
 
-Version added: 1.0.0
+To install it, use: :code:`ansible-galaxy collection install ansible.netcommon`.
+
+To use it in a playbook, specify: ``ansible.netcommon.enable``.
+
+New in ansible.netcommon 1.0.0
 
 .. contents::
    :local:
@@ -17,7 +22,12 @@ Version added: 1.0.0
 
 Synopsis
 --------
+
 - This become plugins allows elevated permissions on a remote network device.
+
+
+
+
 
 
 
@@ -27,57 +37,73 @@ Parameters
 
 .. raw:: html
 
-    <table  border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="1">Parameter</th>
-            <th>Choices/<font color="blue">Defaults</font></th>
-                <th>Configuration</th>
-            <th width="100%">Comments</th>
-        </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>become_pass</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">-</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                    <td>
-                            <div> ini entries:
-                                    <p>[enable_become_plugin]<br>password = VALUE</p>
-                            </div>
-                                <div>env:ANSIBLE_BECOME_PASS</div>
-                                <div>env:ANSIBLE_ENABLE_PASS</div>
-                                <div>var: ansible_become_password</div>
-                                <div>var: ansible_become_pass</div>
-                                <div>var: ansible_enable_pass</div>
-                    </td>
-                <td>
-                        <div>password</div>
-                </td>
-            </tr>
-    </table>
-    <br/>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th><p>Parameter</p></th>
+    <th><p>Comments</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-become_pass"></div>
+      <p style="display: inline;"><strong>become_pass</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-become_pass" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+
+    </td>
+    <td valign="top">
+      <p>password</p>
+      <p style="margin-top: 8px;"><b>Configuration:</b></p>
+      <ul>
+      <li>
+        <p>INI entry</p>
+        <pre>[enable_become_plugin]
+  password = VALUE</pre>
+
+      </li>
+      <li>
+        <p>Environment variable: <code>ANSIBLE_BECOME_PASS</code></p>
+
+      </li>
+      <li>
+        <p>Environment variable: <code>ANSIBLE_ENABLE_PASS</code></p>
+
+      </li>
+      <li>
+        <p>Variable: ansible_become_password</p>
+
+      </li>
+      <li>
+        <p>Variable: ansible_become_pass</p>
+
+      </li>
+      <li>
+        <p>Variable: ansible_enable_pass</p>
+
+      </li>
+      </ul>
+    </td>
+  </tr>
+  </tbody>
+  </table>
+
+
 
 
 Notes
 -----
 
-.. note::
-   - enable is really implemented in the network connection handler and as such can only be used with network connections.
-   - This plugin ignores the 'become_exe' and 'become_user' settings as it uses an API and not an executable.
+- enable is really implemented in the network connection handler and as such can only be used with network connections.
+- This plugin ignores the 'become\_exe' and 'become\_user' settings as it uses an API and not an executable.
 
 
 
 
 
-
-
-Status
-------
 
 
 Authors
@@ -88,3 +114,9 @@ Authors
 
 .. hint::
     Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.
+
+Collection links
+~~~~~~~~~~~~~~~~
+
+* `Issue Tracker <https://github.com/ansible-collections/ansible.netcommon/issues>`__
+* `Repository (Sources) <https://github.com/ansible-collections/ansible.netcommon>`__

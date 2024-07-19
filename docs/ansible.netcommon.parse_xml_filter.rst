@@ -1,14 +1,19 @@
-.. _ansible.netcommon.parse_xml_filter:
 
+.. Created with antsibull-docs 2.9.0
 
-***************************
-ansible.netcommon.parse_xml
-***************************
+ansible.netcommon.parse_xml filter -- The parse\_xml filter plugin.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-**The parse_xml filter plugin.**
+This filter plugin is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
 
+It is not included in ``ansible-core``.
+To check whether it is installed, run ``ansible-galaxy collection list``.
 
-Version added: 1.0.0
+To install it, use: :code:`ansible-galaxy collection install ansible.netcommon`.
+
+To use it in a playbook, specify: ``ansible.netcommon.parse_xml``.
+
+New in ansible.netcommon 1.0.0
 
 .. contents::
    :local:
@@ -17,76 +22,80 @@ Version added: 1.0.0
 
 Synopsis
 --------
+
 - This filter will load the spec file and pass the command output through it, returning JSON output.
 - The YAML spec file defines how to parse the CLI output.
 
 
 
 
-Parameters
-----------
+
+
+
+
+Keyword parameters
+------------------
+
+This describes keyword parameters of the filter. These are the values ``key1=value1``, ``key2=value2`` and so on in the following
+example: ``input | ansible.netcommon.parse_xml(key1=value1, key2=value2, ...)``
 
 .. raw:: html
 
-    <table  border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="1">Parameter</th>
-            <th>Choices/<font color="blue">Defaults</font></th>
-                <th>Configuration</th>
-            <th width="100%">Comments</th>
-        </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>output</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">raw</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>This source xml on which parse_xml invokes.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>tmpl</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>The spec file should be valid formatted YAML. It defines how to parse the XML output and return JSON data.</div>
-                        <div>For example <code>xml_data | ansible.netcommon.parse_xml(template.yml</code>), in this case <code>xml_data</code> represents xml data option.</div>
-                </td>
-            </tr>
-    </table>
-    <br/>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th><p>Parameter</p></th>
+    <th><p>Comments</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-output"></div>
+      <p style="display: inline;"><strong>output</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-output" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">any</span>
+        / <span style="color: red;">required</span>
+      </p>
+
+    </td>
+    <td valign="top">
+      <p>This source xml on which parse_xml invokes.</p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-tmpl"></div>
+      <p style="display: inline;"><strong>tmpl</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-tmpl" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+
+    </td>
+    <td valign="top">
+      <p>The spec file should be valid formatted YAML. It defines how to parse the XML output and return JSON data.</p>
+      <p>For example <code class='docutils literal notranslate'>xml_data | ansible.netcommon.parse_xml(template.yml</code>), in this case <code class='docutils literal notranslate'>xml_data</code> represents xml data option.</p>
+    </td>
+  </tr>
+  </tbody>
+  </table>
+
+
 
 
 Notes
 -----
 
-.. note::
-   - To convert the XML output of a network device command into structured JSON output.
-
+- To convert the XML output of a network device command into structured JSON output.
 
 
 Examples
 --------
 
 .. code-block:: yaml
+
 
     # Using parse_xml
 
@@ -209,8 +218,7 @@ Examples
 
 
 
-Status
-------
+
 
 
 Authors
@@ -221,3 +229,9 @@ Authors
 
 .. hint::
     Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.
+
+Collection links
+~~~~~~~~~~~~~~~~
+
+* `Issue Tracker <https://github.com/ansible-collections/ansible.netcommon/issues>`__
+* `Repository (Sources) <https://github.com/ansible-collections/ansible.netcommon>`__

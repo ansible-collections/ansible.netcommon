@@ -1,14 +1,19 @@
-.. _ansible.netcommon.vlan_expander_filter:
 
+.. Created with antsibull-docs 2.9.0
 
-*******************************
-ansible.netcommon.vlan_expander
-*******************************
+ansible.netcommon.vlan_expander filter -- The vlan\_expander filter plugin.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-**The vlan_expander filter plugin.**
+This filter plugin is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
 
+It is not included in ``ansible-core``.
+To check whether it is installed, run ``ansible-galaxy collection list``.
 
-Version added: 2.3.0
+To install it, use: :code:`ansible-galaxy collection install ansible.netcommon`.
+
+To use it in a playbook, specify: ``ansible.netcommon.vlan_expander``.
+
+New in ansible.netcommon 2.3.0
 
 .. contents::
    :local:
@@ -17,58 +22,65 @@ Version added: 2.3.0
 
 Synopsis
 --------
-- Expand shorthand list of VLANs to list all VLANs. Inverse of vlan_parser
-- Using the parameters below - ``vlans_data | ansible.netcommon.vlan_expander``
+
+- Expand shorthand list of VLANs to list all VLANs. Inverse of vlan\_parser
+- Using the parameters below - \ :literal:`vlans\_data | ansible.netcommon.vlan\_expander`\
 
 
 
 
-Parameters
-----------
+
+
+
+
+Keyword parameters
+------------------
+
+This describes keyword parameters of the filter. These are the values ``key1=value1``, ``key2=value2`` and so on in the following
+example: ``input | ansible.netcommon.vlan_expander(key1=value1, key2=value2, ...)``
 
 .. raw:: html
 
-    <table  border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="1">Parameter</th>
-            <th>Choices/<font color="blue">Defaults</font></th>
-                <th>Configuration</th>
-            <th width="100%">Comments</th>
-        </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>data</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>This option represents a string containing the range of vlans.</div>
-                </td>
-            </tr>
-    </table>
-    <br/>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th><p>Parameter</p></th>
+    <th><p>Comments</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-data"></div>
+      <p style="display: inline;"><strong>data</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-data" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+        / <span style="color: red;">required</span>
+      </p>
+
+    </td>
+    <td valign="top">
+      <p>This option represents a string containing the range of vlans.</p>
+    </td>
+  </tr>
+  </tbody>
+  </table>
+
+
 
 
 Notes
 -----
 
-.. note::
-   - The filter plugin extends vlans when data provided in range or comma separated.
-
+- The filter plugin extends vlans when data provided in range or comma separated.
 
 
 Examples
 --------
 
 .. code-block:: yaml
+
 
     # Using vlan_expander
 
@@ -105,8 +117,7 @@ Examples
 
 
 
-Status
-------
+
 
 
 Authors
@@ -117,3 +128,9 @@ Authors
 
 .. hint::
     Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.
+
+Collection links
+~~~~~~~~~~~~~~~~
+
+* `Issue Tracker <https://github.com/ansible-collections/ansible.netcommon/issues>`__
+* `Repository (Sources) <https://github.com/ansible-collections/ansible.netcommon>`__
