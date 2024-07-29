@@ -1,14 +1,19 @@
-git+https://github.com/ansible-community/pytest-ansible-units.git
-coverage
-pytest-xdist
-
-# Needed for tox -e linters
-black==23.1.0 ; python_version > '3.6'
+# For ansible-tox-linters
+black==23.3.0
 flake8
 yamllint
 
+# Unit test runner
+pytest-ansible
+pytest-xdist
+pytest-cov
+
 # The following are 3rd party libs for cli_parse
 ntc_templates
-# 21.4 changed the output of an error message we check in tests
+# 21.4 changed the output of an error message we checked in the tests
 pyats >= 21.4 ; python_version < '3.11'
-genie >= 21.4 ; python_version < '3.11'
+# fix genie version for python version less than 3.11
+genie == 24.3 ; python_version < '3.11'
+# use the latest genie version for every Python version greater than 3.11
+genie
+passlib

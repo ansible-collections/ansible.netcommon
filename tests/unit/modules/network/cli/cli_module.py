@@ -5,6 +5,7 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import json
@@ -15,6 +16,7 @@ from ansible_collections.ansible.netcommon.tests.unit.modules.utils import (
     AnsibleFailJson,
     ModuleTestCase,
 )
+
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures")
 fixture_data = {}
@@ -39,9 +41,7 @@ def load_fixture(name):
 
 
 class TestCliModule(ModuleTestCase):
-    def execute_module(
-        self, failed=False, changed=False, commands=None, sort=True
-    ):
+    def execute_module(self, failed=False, changed=False, commands=None, sort=True):
         self.load_fixtures(commands)
 
         if failed:
@@ -59,9 +59,7 @@ class TestCliModule(ModuleTestCase):
                     result["commands"],
                 )
             else:
-                self.assertEqual(
-                    commands, result["commands"], result["commands"]
-                )
+                self.assertEqual(commands, result["commands"], result["commands"])
 
         return result
 

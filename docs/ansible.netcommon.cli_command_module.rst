@@ -167,7 +167,7 @@ Examples
       ansible.netcommon.cli_command:
         command: commit replace
         prompt: This commit will replace or remove the entire running configuration
-        answer: yes
+        answer: "yes"
 
     - name: run command expecting user confirmation
       ansible.netcommon.cli_command:
@@ -178,27 +178,38 @@ Examples
 
     - name: run config mode command and handle prompt/answer
       ansible.netcommon.cli_command:
-        command: '{{ item }}'
+        command: "{{ item }}"
         prompt:
-        - Exit with uncommitted changes
+          - Exit with uncommitted changes
         answer: y
       loop:
-      - configure
-      - set system syslog file test any any
-      - exit
+        - configure
+        - set system syslog file test any any
+        - exit
 
     - name: multiple prompt, multiple answer (mandatory check for all prompts)
       ansible.netcommon.cli_command:
         command: copy sftp sftp://user@host//user/test.img
         check_all: true
         prompt:
-        - Confirm download operation
-        - Password
-        - Do you want to change that to the standby image
+          - Confirm download operation
+          - Password
+          - Do you want to change that to the standby image
         answer:
-        - y
-        - <password>
-        - y
+          - y
+          - <password>
+          - y
+
+    - name: Simple regexp match for multiple prompt, multiple answer(mandatory check for all prompts)
+      ansible.netcommon.cli_command:
+        command: reload in 5
+        check_all: true
+        prompt:
+          - Save\?
+          - confirm
+        answer:
+          - n
+          - y
 
 
 

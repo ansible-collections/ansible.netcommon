@@ -1,0 +1,8 @@
+---
+profile: production
+exclude_paths:
+  - changelogs/changelog.yaml
+  - tests/unit/plugins/action/network/test_network.py
+skip_list:
+  # ansible-lint does not like the `import-3.11` ignore in tests/sanity/ignore-*.txt
+  - sanity[cannot-ignore]

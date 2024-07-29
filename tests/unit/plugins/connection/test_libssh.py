@@ -5,16 +5,20 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 from unittest.mock import MagicMock, patch
 
 import pytest
+
 from ansible.errors import AnsibleError, AnsibleFileNotFound
 from ansible.module_utils._text import to_bytes
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
+
 from ansible_collections.ansible.netcommon.plugins.connection import libssh
+
 
 pylibsshext = pytest.importorskip("pylibsshext")
 
@@ -81,9 +85,7 @@ def test_libssh_exec_command(mocked_super, conn):
     mock_chan = MagicMock()
     mock_chan.request_shell = MagicMock()
     mock_chan.exec_command = MagicMock()
-    mock_chan.exec_command.return_value = MagicMock(
-        returncode=0, stdout="echo hello", stderr=""
-    )
+    mock_chan.exec_command.return_value = MagicMock(returncode=0, stdout="echo hello", stderr="")
 
     attr = {"new_channel.return_value": mock_chan}
     mock_ssh = MagicMock(**attr)

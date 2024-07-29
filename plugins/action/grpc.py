@@ -5,6 +5,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 from ansible_collections.ansible.netcommon.plugins.action.network import (
@@ -22,8 +23,7 @@ class ActionModule(ActionNetworkModule):
             return {
                 "failed": True,
                 "msg": "Connection type %s is not valid for grpc module. "
-                "Valid connection type is grpc"
-                % self._play_context.connection,
+                "Valid connection type is grpc" % self._play_context.connection,
             }
 
         result = super(ActionModule, self).run(task_vars=task_vars)

@@ -7,6 +7,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 
@@ -152,18 +153,21 @@ output:
 
 import ast
 
+
 try:
     from lxml.etree import tostring
 except ImportError:
     from xml.etree.ElementTree import tostring
 
 from ansible.module_utils.basic import AnsibleModule
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     remove_namespaces,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
     dispatch,
 )
+
 
 try:
     import jxmlease
@@ -209,9 +213,7 @@ def get_xml_request(module, request, xmlns, content):
                 "It can be installed using `pip install jxmlease`"
             )
 
-        payload = jxmlease.XMLDictNode(content).emit_xml(
-            pretty=False, full_document=False
-        )
+        payload = jxmlease.XMLDictNode(content).emit_xml(pretty=False, full_document=False)
         if xmlns is None:
             return "<%s>%s</%s>" % (request, payload, request)
         else:
@@ -222,9 +224,7 @@ def get_xml_request(module, request, xmlns, content):
                 request,
             )
 
-    module.fail_json(
-        msg="unsupported content data-type `%s`" % type(content).__name__
-    )
+    module.fail_json(msg="unsupported content data-type `%s`" % type(content).__name__)
 
 
 def main():
@@ -236,9 +236,7 @@ def main():
         display=dict(choices=["json", "pretty", "xml"]),
     )
 
-    module = AnsibleModule(
-        argument_spec=argument_spec, supports_check_mode=True
-    )
+    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
 
     rpc = module.params["rpc"]
     xmlns = module.params["xmlns"]

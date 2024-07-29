@@ -7,83 +7,84 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 
 DOCUMENTATION = """
 module: netconf_get
 author:
-- Ganesh Nalawade (@ganeshrn)
-- Sven Wisotzky (@wisotzky)
+  - Ganesh Nalawade (@ganeshrn)
+  - Sven Wisotzky (@wisotzky)
 short_description: Fetch configuration/state data from NETCONF enabled network devices.
 description:
-- NETCONF is a network management protocol developed and standardized by the IETF.
-  It is documented in RFC 6241.
-- This module allows the user to fetch configuration and state data from NETCONF enabled
-  network devices.
+  - NETCONF is a network management protocol developed and standardized by the IETF.
+    It is documented in RFC 6241.
+  - This module allows the user to fetch configuration and state data from NETCONF enabled
+    network devices.
 version_added: 1.0.0
 extends_documentation_fragment:
-- ansible.netcommon.network_agnostic
+  - ansible.netcommon.network_agnostic
 options:
   source:
     description:
-    - This argument specifies the datastore from which configuration data should be
-      fetched. Valid values are I(running), I(candidate) and I(startup). If the C(source)
-      value is not set both configuration and state information are returned in response
-      from running datastore.
+      - This argument specifies the datastore from which configuration data should be
+        fetched. Valid values are I(running), I(candidate) and I(startup). If the C(source)
+        value is not set both configuration and state information are returned in response
+        from running datastore.
     type: str
     choices:
-    - running
-    - candidate
-    - startup
+      - running
+      - candidate
+      - startup
   filter:
     description:
-    - This argument specifies the string which acts as a filter to restrict the
-      portions of the data to be are retrieved from the remote device. If this option
-      is not specified entire configuration or state data is returned in result depending
-      on the value of C(source) option. The C(filter) value can be either XML string
-      or XPath or JSON string or native python dictionary, if the filter is in XPath
-      format the NETCONF server running on remote host should support xpath capability
-      else it will result in an error. If the filter is in JSON format the xmltodict library
-      should be installed on the control node for JSON to XML conversion.
+      - This argument specifies the string which acts as a filter to restrict the
+        portions of the data to be are retrieved from the remote device. If this option
+        is not specified entire configuration or state data is returned in result depending
+        on the value of C(source) option. The C(filter) value can be either XML string
+        or XPath or JSON string or native python dictionary, if the filter is in XPath
+        format the NETCONF server running on remote host should support xpath capability
+        else it will result in an error. If the filter is in JSON format the xmltodict library
+        should be installed on the control node for JSON to XML conversion.
     type: raw
   display:
     description:
-    - Encoding scheme to use when serializing output from the device. The option I(json)
-      will serialize the output as JSON data. If the option value is I(json) it requires
-      jxmlease to be installed on control node. The option I(pretty) is similar to
-      received XML response but is using human readable format (spaces, new lines).
-      The option value I(xml) is similar to received XML response but removes all
-      XML namespaces.
+      - Encoding scheme to use when serializing output from the device. The option I(json)
+        will serialize the output as JSON data. If the option value is I(json) it requires
+        jxmlease to be installed on control node. The option I(pretty) is similar to
+        received XML response but is using human readable format (spaces, new lines).
+        The option value I(xml) is similar to received XML response but removes all
+        XML namespaces.
     type: str
     choices:
-    - json
-    - pretty
-    - xml
-    - native
+      - json
+      - pretty
+      - xml
+      - native
   lock:
     description:
-    - Instructs the module to explicitly lock the datastore specified as C(source).
-      If no I(source) is defined, the I(running) datastore will be locked. By setting
-      the option value I(always) is will explicitly lock the datastore mentioned in
-      C(source) option. By setting the option value I(never) it will not lock the
-      C(source) datastore. The value I(if-supported) allows better interworking with
-      NETCONF servers, which do not support the (un)lock operation for all supported
-      datastores.
+      - Instructs the module to explicitly lock the datastore specified as C(source).
+        If no I(source) is defined, the I(running) datastore will be locked. By setting
+        the option value I(always) is will explicitly lock the datastore mentioned in
+        C(source) option. By setting the option value I(never) it will not lock the
+        C(source) datastore. The value I(if-supported) allows better interworking with
+        NETCONF servers, which do not support the (un)lock operation for all supported
+        datastores.
     type: str
     default: never
     choices:
-    - never
-    - always
-    - if-supported
+      - never
+      - always
+      - if-supported
 requirements:
-- ncclient (>=v0.5.2)
-- jxmlease (for display=json)
-- xmltodict (for display=native)
+  - ncclient (>=v0.5.2)
+  - jxmlease (for display=json)
+  - xmltodict (for display=native)
 notes:
-- This module requires the NETCONF system service be enabled on the remote device
-  being managed.
-- This module supports the use of connection=netconf
+  - This module requires the NETCONF system service be enabled on the remote device
+    being managed.
+  - This module supports the use of connection=netconf
 """
 
 EXAMPLES = """
@@ -138,12 +139,12 @@ EXAMPLES = """
 - name: "get configuration with json filter string and native output (using xmltodict)"
   netconf_get:
     filter: |
-              {
-                  "interface-configurations": {
-                      "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-                      "interface-configuration": null
-                  }
-              }
+      {
+          "interface-configurations": {
+              "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
+              "interface-configuration": null
+          }
+      }
     display: native
 
 - name: Define the Cisco IOSXR interface filter
@@ -161,15 +162,16 @@ EXAMPLES = """
 
 - name: "get configuration with direct native filter type"
   ansible.netcommon.netconf_get:
-    filter: {
-            "interface-configurations": {
+    filter:
+      {
+        "interface-configurations":
+          {
             "@xmlns": "http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg",
-            "interface-configuration": null
+            "interface-configuration": null,
+          },
       }
-    }
     display: native
   register: result
-
 
 # Make a round-trip interface description change, diff the before and after
 # this demonstrates the use of the native display format and several utilities
@@ -193,8 +195,8 @@ EXAMPLES = """
 - name: Update the description
   ansible.utils.update_fact:
     updates:
-    - path: pre.output.data.interfaces.interface.config.description
-      value: "Configured by ansible {{ 100 | random }}"
+      - path: pre.output.data.interfaces.interface.config.description
+        value: "Configured by ansible {{ 100 | random }}"
   register: updated
 
 - name: Apply the new configuration
@@ -214,7 +216,6 @@ EXAMPLES = """
   ansible.utils.fact_diff:
     before: "{{ pre.output.data|ansible.utils.to_paths }}"
     after: "{{ post.output.data|ansible.utils.to_paths }}"
-
 # TASK [Show the differences between the pre and post configurations] ********
 # --- before
 # +++ after
@@ -237,25 +238,27 @@ EXAMPLES = """
 RETURN = """
 stdout:
   description: The raw XML string containing configuration or state data
-               received from the underlying ncclient library.
+    received from the underlying ncclient library.
   returned: always apart from low-level errors (such as action plugin)
   type: str
-  sample: '...'
+  sample: "..."
 stdout_lines:
   description: The value of stdout split into a list
   returned: always apart from low-level errors (such as action plugin)
   type: list
-  sample: ['...', '...']
+  sample: ["...", "..."]
 output:
-  description: Based on the value of display option will return either the set of
-               transformed XML to JSON format from the RPC response with type dict
-               or pretty XML string response (human-readable) or response with
-               namespace removed from XML string.
-  returned: If the display format is selected as I(json) it is returned as dict type
-            and the conversion is done using jxmlease python library. If the display
-            format is selected as I(native) it is returned as dict type and the conversion
-            is done using xmltodict python library. If the display format is xml or pretty
-            it is returned as a string apart from low-level errors (such as action plugin).
+  description:
+    Based on the value of display option will return either the set of
+    transformed XML to JSON format from the RPC response with type dict
+    or pretty XML string response (human-readable) or response with
+    namespace removed from XML string.
+  returned:
+    If the display format is selected as I(json) it is returned as dict type
+    and the conversion is done using jxmlease python library. If the display
+    format is selected as I(native) it is returned as dict type and the conversion
+    is done using xmltodict python library. If the display format is xml or pretty
+    it is returned as a string apart from low-level errors (such as action plugin).
   type: complex
   contains:
     formatted_output:
@@ -270,6 +273,7 @@ except ImportError:
 
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     remove_namespaces,
 )
@@ -283,6 +287,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data impor
     validate_and_normalize_data,
     xml_to_dict,
 )
+
 
 try:
     import jxmlease
@@ -298,14 +303,10 @@ def main():
         source=dict(choices=["running", "candidate", "startup"]),
         filter=dict(type="raw"),
         display=dict(choices=["json", "pretty", "xml", "native"]),
-        lock=dict(
-            default="never", choices=["never", "always", "if-supported"]
-        ),
+        lock=dict(default="never", choices=["never", "always", "if-supported"]),
     )
 
-    module = AnsibleModule(
-        argument_spec=argument_spec, supports_check_mode=True
-    )
+    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
 
     capabilities = get_capabilities(module)
     operations = capabilities["device_operations"]
@@ -340,25 +341,21 @@ def main():
             pass
     elif filter_type:
         module.fail_json(
-            msg="Invalid filter type detected %s for filter value %s"
-            % (filter_type, filter)
+            msg="Invalid filter type detected %s for filter value %s" % (filter_type, filter)
         )
 
     lock = module.params["lock"]
     display = module.params["display"]
 
     if source == "candidate" and not operations.get("supports_commit", False):
-        module.fail_json(
-            msg="candidate source is not supported on this device"
-        )
+        module.fail_json(msg="candidate source is not supported on this device")
 
     if source == "startup" and not operations.get("supports_startup", False):
         module.fail_json(msg="startup source is not supported on this device")
 
     if filter_type == "xpath" and not operations.get("supports_xpath", False):
         module.fail_json(
-            msg="filter value '%s' of type xpath is not supported on this device"
-            % filter
+            msg="filter value '%s' of type xpath is not supported on this device" % filter
         )
 
     # If source is None, NETCONF <get> operation is issued, reading config/state data
@@ -373,8 +370,7 @@ def main():
     else:
         # lock is requested (always/if-supported) but not supported => issue warning
         module.warn(
-            "lock operation on '%s' source is not supported on this device"
-            % (source or "running")
+            "lock operation on '%s' source is not supported on this device" % (source or "running")
         )
         execute_lock = lock == "always"
 

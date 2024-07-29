@@ -6,12 +6,15 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
+
 from ansible.playbook.play_context import PlayContext
+
 
 pytest.importorskip("ncclient")
 
@@ -29,9 +32,8 @@ def import_mock(name, *args):
 
 with patch("builtins.__import__", side_effect=import_mock):
     from ansible.plugins.loader import connection_loader
-    from ansible_collections.ansible.netcommon.plugins.connection import (
-        netconf,
-    )
+
+    from ansible_collections.ansible.netcommon.plugins.connection import netconf
 
 
 def test_netconf_init():
@@ -43,9 +45,7 @@ def test_netconf_init():
     assert conn._connected is False
 
 
-@patch(
-    "ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader"
-)
+@patch("ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader")
 def test_netconf__connect(mock_netconf_loader):
     pc = PlayContext()
     conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")

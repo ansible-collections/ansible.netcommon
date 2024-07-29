@@ -5,7 +5,9 @@ This is the content templates parser for use with the cli_parse module and actio
 The parser functionality used by the network resource modules is leveraged here.
 
 """
+
 from __future__ import absolute_import, division, print_function
+
 
 __metaclass__ = type
 
@@ -21,7 +23,7 @@ DOCUMENTATION = """
 """
 
 EXAMPLES = """
-- name: "Run command and parse with native"
+- name: "Run command and parse with content_templates"
   ansible.utils.cli_parse:
     command: "show bgp summary"
     parser:
@@ -31,16 +33,15 @@ EXAMPLES = """
 
 """
 from ansible.module_utils._text import to_native
+from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parsertemplate import (
     CliParserTemplate,
-)
-from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
-    CliParserBase,
 )
 
 
 class CliParser(CliParserBase):
-    """The native parser class
+    """The content_templates parser class
     Convert raw text to structured data using the resource module parser
     """
 
@@ -62,9 +63,7 @@ class CliParser(CliParserBase):
         """
 
         template_contents = kwargs["template_contents"]
-        parser = CliParserTemplate(
-            lines=self._task_args.get("text", "").splitlines()
-        )
+        parser = CliParserTemplate(lines=self._task_args.get("text", "").splitlines())
         try:
             template_obj = list(eval(template_contents))
         except Exception as exc:
@@ -73,8 +72,7 @@ class CliParser(CliParserBase):
         try:
             parser.PARSERS = template_obj
             out = {"parsed": parser.parse()}
-            print(out)
             return out
         except Exception as exc:
-            msg = "Native parser returned an error while parsing. Error: {err}"
+            msg = "An error occurred during content_templates parsing. Error: {err}"
             return {"errors": [msg.format(err=to_native(exc))]}

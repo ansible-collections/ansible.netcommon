@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import hashlib
@@ -16,6 +17,7 @@ from ansible.module_utils.connection import Connection, ConnectionError
 from ansible.module_utils.six.moves.urllib.parse import urlsplit
 from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
+
 
 display = Display()
 
@@ -94,9 +96,7 @@ class ActionModule(ActionBase):
         if dest is None:
             dest = src_file_path_name
         try:
-            changed = self._handle_existing_file(
-                conn, output_file, dest, proto, sock_timeout
-            )
+            changed = self._handle_existing_file(conn, output_file, dest, proto, sock_timeout)
             if changed is False:
                 result["changed"] = changed
                 result["destination"] = dest
@@ -105,9 +105,7 @@ class ActionModule(ActionBase):
                     os.remove(output_file)
                 return result
         except Exception as exc:
-            result["msg"] = (
-                "Warning: %s idempotency check failed. Check dest" % exc
-            )
+            result["msg"] = "Warning: %s idempotency check failed. Check dest" % exc
 
         try:
             conn.copy_file(
@@ -121,9 +119,7 @@ class ActionModule(ActionBase):
                 if network_os == "iosxr":
                     # IOSXR sometimes closes socket prematurely after completion
                     # of file transfer
-                    result[
-                        "msg"
-                    ] = "Warning: iosxr scp server pre close issue. Please check dest"
+                    result["msg"] = "Warning: iosxr scp server pre close issue. Please check dest"
             else:
                 result["failed"] = True
                 result["msg"] = "Exception received: %s" % exc
@@ -154,7 +150,7 @@ class ActionModule(ActionBase):
             )
         except ConnectionError as exc:
             error = to_text(exc)
-            if error.endswith("No such file or directory"):
+            if error.endswith("No such file or directory") or "File doesn't exist" in error:
                 if os.path.exists(tmp_source_file):
                     os.remove(tmp_source_file)
                 return True
@@ -187,9 +183,7 @@ class ActionModule(ActionBase):
         if os.path.isabs(src) or urlsplit("src").scheme:
             source = src
         else:
-            source = self._loader.path_dwim_relative(
-                working_path, "templates", src
-            )
+            source = self._loader.path_dwim_relative(working_path, "templates", src)
             if not source:
                 source = self._loader.path_dwim_relative(working_path, src)
 
@@ -211,9 +205,7 @@ class ActionModule(ActionBase):
         if os.path.isabs(src) or urlsplit("src").scheme:
             source = src
         else:
-            source = self._loader.path_dwim_relative(
-                working_path, "templates", src
-            )
+            source = self._loader.path_dwim_relative(working_path, "templates", src)
             if not source:
                 source = self._loader.path_dwim_relative(working_path, src)
 
@@ -258,8 +250,6 @@ class ActionModule(ActionBase):
             display.vvvv("Getting network OS from fact")
             network_os = task_vars["ansible_facts"]["network_os"]
         else:
-            raise AnsibleError(
-                "ansible_network_os must be specified on this host"
-            )
+            raise AnsibleError("ansible_network_os must be specified on this host")
 
         return network_os

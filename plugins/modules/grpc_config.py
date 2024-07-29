@@ -7,6 +7,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 
@@ -77,39 +78,38 @@ notes:
 """
 
 EXAMPLES = """
-  - name: Merge static route config
-    ansible.netcommon.grpc_config:
-      config:
-        Cisco-IOS-XR-ip-static-cfg:router-static:
-          default-vrf:
-            address-family:
-              vrfipv4:
-                vrf-unicast:
-                  vrf-prefixes:
-                    vrf-prefix:
-                      - prefix: "1.2.3.6"
-                        prefix-length: 32
-                        vrf-route:
-                          vrf-next-hop-table:
-                            vrf-next-hop-next-hop-address:
-                              - next-hop-address: "10.0.2.2"
+- name: Merge static route config
+  ansible.netcommon.grpc_config:
+    config:
+      Cisco-IOS-XR-ip-static-cfg:router-static:
+        default-vrf:
+          address-family:
+            vrfipv4:
+              vrf-unicast:
+                vrf-prefixes:
+                  vrf-prefix:
+                    - prefix: "1.2.3.6"
+                      prefix-length: 32
+                      vrf-route:
+                        vrf-next-hop-table:
+                          vrf-next-hop-next-hop-address:
+                            - next-hop-address: "10.0.2.2"
+    state: merged
 
-      state: merged
+- name: Merge bgp config
+  ansible.netcommon.grpc_config:
+    config: "{{ lookup('file', 'bgp.json')  }}"
+    state: merged
 
-  - name: Merge bgp config
-    ansible.netcommon.grpc_config:
-      config: "{{ lookup('file', 'bgp.json')  }}"
-      state: merged
+- name: Find diff
+  diff: true
+  ansible.netcommon.grpc_config:
+    config: "{{ lookup('file', 'bgp_start.yml')  }}"
+    state: merged
 
-  - name: Find diff
-    diff: True
-    ansible.netcommon.grpc_config:
-      config: "{{ lookup('file', 'bgp_start.yml')  }}"
-      state: merged
-
-  - name: Backup running config
-    ansible.netcommon.grpc_config:
-       backup: yes
+- name: Backup running config
+  ansible.netcommon.grpc_config:
+    backup: true
 """
 
 RETURN = """
@@ -141,6 +141,7 @@ import json
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_diff,
 )
@@ -152,6 +153,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grp
     sanitize_content,
     validate_config,
 )
+
 
 try:
     import yaml
@@ -198,9 +200,7 @@ def main():
         ]:
             if not module.check_mode:
                 response, err = run_cli(module, "show running-config", "text")
-                before = to_text(
-                    response, errors="surrogate_then_replace"
-                ).strip()
+                before = to_text(response, errors="surrogate_then_replace").strip()
 
         if module._diff or module.check_mode:
             before_diff = validate_config(module, config)
@@ -220,9 +220,7 @@ def main():
                 output = delete_config(module, config)
             if state:
                 response, err = run_cli(module, "show running-config", "text")
-                after = to_text(
-                    response, errors="surrogate_then_replace"
-                ).strip()
+                after = to_text(response, errors="surrogate_then_replace").strip()
             if before:
                 before = sanitize_content(before)
             if after:
@@ -236,9 +234,7 @@ def main():
                         "after": after_diff,
                     }
     except ConnectionError as exc:
-        module.fail_json(
-            msg=to_text(exc, errors="surrogate_then_replace"), code=exc.code
-        )
+        module.fail_json(msg=to_text(exc, errors="surrogate_then_replace"), code=exc.code)
 
     result["stdout"] = output
 

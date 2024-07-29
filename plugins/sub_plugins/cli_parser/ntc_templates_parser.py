@@ -10,6 +10,7 @@ https://github.com/networktocode/ntc-templates
 """
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -42,9 +43,8 @@ EXAMPLES = r"""
 
 from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
-from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
-    CliParserBase,
-)
+from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
+
 
 try:
     from ntc_templates.parse import parse_output
@@ -89,13 +89,9 @@ class CliParser(CliParserBase):
         if not network_os:
             ano = self._task_vars.get("ansible_network_os", "").split(".")[-1]
             network_os = ANSIBLE_NETWORK_OS[ano]
-            self._debug(
-                "OS set to {os} using ansible_network_os".format(os=network_os)
-            )
+            self._debug("OS set to {os} using ansible_network_os".format(os=network_os))
         if not network_os:
-            errors.append(
-                "Either 'parser/os' needs to be specified or 'ansible_network_os' set."
-            )
+            errors.append("Either 'parser/os' needs to be specified or 'ansible_network_os' set.")
         command = self._task_args.get("parser").get("command")
         if not command:
             errors.append("'command' needs to be specified.")
@@ -124,9 +120,7 @@ class CliParser(CliParserBase):
         platform = res["network_os"]
         command = res["command"]
         try:
-            parsed = parse_output(
-                platform=platform, command=command, data=cli_output
-            )
+            parsed = parse_output(platform=platform, command=command, data=cli_output)
             return {"parsed": parsed}
         except Exception as exc:
             return {"errors": [to_native(exc)]}

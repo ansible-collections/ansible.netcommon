@@ -4,21 +4,23 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import os
 import tempfile
+
 from unittest.mock import MagicMock
 
 import pytest
+
 from ansible.errors import AnsibleError
 from ansible.playbook.role import Role
 from ansible.playbook.task import Task
 from ansible.plugins.loader import action_loader
 from ansible.template import Templar
-from ansible_collections.ansible.netcommon.tests.unit.mock.loader import (
-    DictDataLoader,
-)
+
+from ansible_collections.ansible.netcommon.tests.unit.mock.loader import DictDataLoader
 
 
 @pytest.fixture
@@ -63,8 +65,9 @@ def test_backup_options(plugin, backup_dir, backup_file, role_path):
 
     # This doesn't need to be conditional, but doing so tests the equivalent
     # `if backup_options:` in the action plugin itself.
+    backup_options = None
     if backup_dir or backup_file:
-        plugin._task.args["backup_options"] = {
+        backup_options = {
             "dir_path": backup_dir,
             "filename": backup_file,
         }
@@ -79,7 +82,7 @@ def test_backup_options(plugin, backup_dir, backup_file, role_path):
 
     try:
         # result is updated in place, nothing is returned
-        plugin._handle_backup_option(result, task_vars)
+        plugin._handle_backup_option(result, task_vars, backup_options)
         assert not result.get("failed")
 
         with open(result["backup_path"]) as backup_file_obj:
@@ -97,9 +100,7 @@ def test_backup_options(plugin, backup_dir, backup_file, role_path):
         else:
             backup_path = os.path.join(
                 backup_path,
-                "example.com_config.{0}@{1}".format(
-                    result["date"], result["time"]
-                ),
+                "example.com_config.{0}@{1}".format(result["date"], result["time"]),
             )
 
         # check that expected and returned backup paths match
@@ -108,7 +109,7 @@ def test_backup_options(plugin, backup_dir, backup_file, role_path):
         if backup_file:
             # check for idempotency
             result = {"__backup__": content}
-            plugin._handle_backup_option(result, task_vars)
+            plugin._handle_backup_option(result, task_vars, backup_options)
             assert not result.get("failed")
             assert result["changed"] is False
 
@@ -120,10 +121,8 @@ def test_backup_options(plugin, backup_dir, backup_file, role_path):
 def test_backup_no_content(plugin):
     result = {}
     task_vars = {}
-    with pytest.raises(
-        AnsibleError, match="Failed while reading configuration backup"
-    ):
-        plugin._handle_backup_option(result, task_vars)
+    with pytest.raises(AnsibleError, match="Failed while reading configuration backup"):
+        plugin._handle_backup_option(result, task_vars, backup_options=None)
 
 
 def test_backup_options_error(plugin):
@@ -131,13 +130,11 @@ def test_backup_options_error(plugin):
     task_vars = {}
 
     with tempfile.NamedTemporaryFile() as existing_file:
-        plugin._task.args = {
-            "backup_options": {
-                "dir_path": existing_file.name,
-                "filename": "backup_file",
-            }
+        backup_options = {
+            "dir_path": existing_file.name,
+            "filename": "backup_file",
         }
-        plugin._handle_backup_option(result, task_vars)
+        plugin._handle_backup_option(result, task_vars, backup_options)
 
     assert result["failed"] is True
     assert result["msg"] == (

@@ -4,6 +4,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -23,6 +24,7 @@ options:
     - Specifies the remote device FQDN or IP address to establish the HTTP(S) connection
       to.
     default: inventory_hostname
+    type: string
     vars:
     - name: inventory_hostname
     - name: ansible_host
@@ -43,6 +45,7 @@ options:
     description:
     - Configures the device platform network operating system.  This value is used
       to load the correct httpapi plugin to communicate with the remote device
+    type: string
     vars:
     - name: ansible_network_os
   remote_user:
@@ -51,6 +54,7 @@ options:
       is first established.  If the remote_user is not specified, the connection will
       use the username of the logged in user.
     - Can be configured from the CLI via the C(--user) or C(-u) options.
+    type: string
     ini:
     - section: defaults
       key: remote_user
@@ -62,6 +66,7 @@ options:
     description:
     - Configures the user password used to authenticate to the remote device when
       needed for the device API.
+    type: string
     vars:
     - name: ansible_password
     - name: ansible_httpapi_pass
@@ -76,6 +81,34 @@ options:
     - When specified, I(password) is ignored.
     vars:
     - name: ansible_httpapi_session_key
+  ca_path:
+    description:
+      - Path to CA cert bundle to use.
+    type: path
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_ca_path
+  client_cert:
+    description:
+      - PEM formatted certificate chain file to be used for SSL client
+        authentication. This file can also include the key as well, and if the key
+        is included, I(client_key) is not required
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_client_cert
+  client_key:
+    description:
+      - PEM formatted file that contains the private key to be used for SSL client
+        authentication. If I(client_cert) contains both the certificate and key,
+        this option is not required.
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_client_key
+  http_agent:
+    description: User-Agent to use in the request.
+    version_added: 5.2.0
+    vars:
+      - name: ansible_httpapi_http_agent
   use_ssl:
     type: boolean
     description:
@@ -133,6 +166,7 @@ options:
       escalation.  Typically the become_method value is set to C(enable) but could
       be defined as other values.
     default: sudo
+    type: string
     ini:
     - section: privilege_escalation
       key: become_method
@@ -143,6 +177,7 @@ options:
   platform_type:
     description:
     - Set type of platform.
+    type: string
     env:
     - name: ANSIBLE_PLATFORM_TYPE
     vars:
@@ -161,12 +196,11 @@ from ansible.playbook.play_context import PlayContext
 from ansible.plugins.connection import ensure_connect
 from ansible.plugins.loader import httpapi_loader
 from ansible.release import __version__ as ANSIBLE_CORE_VERSION
+
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
-from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import (
-    Version,
-)
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
 
 
 class Connection(NetworkConnectionBase):
@@ -176,9 +210,7 @@ class Connection(NetworkConnectionBase):
     has_pipelining = True
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(Connection, self).__init__(
-            play_context, new_stdin, *args, **kwargs
-        )
+        super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
 
         self._auth = None
         if self._network_os:
@@ -206,8 +238,7 @@ class Connection(NetworkConnectionBase):
                 )
             else:
                 raise AnsibleConnectionFailure(
-                    "unable to load API plugin for platform type %s"
-                    % platform_type
+                    "unable to load API plugin for platform type %s" % platform_type
                 )
 
         else:
@@ -257,9 +288,7 @@ class Connection(NetworkConnectionBase):
             if self.get_option("session_key"):
                 self._auth = self.get_option("session_key")
             else:
-                self.httpapi.login(
-                    self.get_option("remote_user"), self.get_option("password")
-                )
+                self.httpapi.login(self.get_option("remote_user"), self.get_option("password"))
 
     def close(self):
         """
@@ -278,10 +307,14 @@ class Connection(NetworkConnectionBase):
         Sends the command to the device over api
         """
         url_kwargs = dict(
+            headers={},
+            use_proxy=self.get_option("use_proxy"),
             timeout=self.get_option("persistent_command_timeout"),
             validate_certs=self.get_option("validate_certs"),
-            use_proxy=self.get_option("use_proxy"),
-            headers={},
+            http_agent=self.get_option("http_agent"),
+            client_cert=self.get_option("client_cert"),
+            client_key=self.get_option("client_key"),
+            ca_path=self.get_option("ca_path"),
         )
         url_kwargs.update(kwargs)
 
@@ -310,8 +343,7 @@ class Connection(NetworkConnectionBase):
         try:
             url = self._url + path
             self._log_messages(
-                "send url '%s' with data '%s' and kwargs '%s'"
-                % (url, data, url_kwargs)
+                "send url '%s' with data '%s' and kwargs '%s'" % (url, data, url_kwargs)
             )
             response = open_url(url, data=data, **url_kwargs)
         except HTTPError as exc:
@@ -328,9 +360,7 @@ class Connection(NetworkConnectionBase):
             response = is_handled
         except URLError as exc:
             raise AnsibleConnectionFailure(
-                "Could not connect to {0}: {1}".format(
-                    self._url + path, exc.reason
-                )
+                "Could not connect to {0}: {1}".format(self._url + path, exc.reason)
             )
 
         response_buffer = BytesIO()

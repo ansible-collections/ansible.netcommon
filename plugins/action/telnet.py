@@ -5,15 +5,18 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
-import telnetlib
 from time import sleep
 
 from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.six import text_type
 from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
+
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.compat import telnetlib
+
 
 display = Display()
 
@@ -23,9 +26,7 @@ class ActionModule(ActionBase):
 
     def run(self, tmp=None, task_vars=None):
         if self._task.environment and any(self._task.environment):
-            self._display.warning(
-                "The telnet task does not support the environment keyword"
-            )
+            self._display.warning("The telnet task does not support the environment keyword")
 
         result = super(ActionModule, self).run(tmp, task_vars)
         del tmp  # tmp no longer has any effect
@@ -38,15 +39,9 @@ class ActionModule(ActionBase):
             result["changed"] = True
             result["failed"] = False
 
-            host = to_text(
-                self._task.args.get("host", self._play_context.remote_addr)
-            )
-            user = to_text(
-                self._task.args.get("user", self._play_context.remote_user)
-            )
-            password = to_text(
-                self._task.args.get("password", self._play_context.password)
-            )
+            host = to_text(self._task.args.get("host", self._play_context.remote_addr))
+            user = to_text(self._task.args.get("user", self._play_context.remote_user))
+            password = to_text(self._task.args.get("password", self._play_context.password))
 
             # FIXME, default to play_context?
             port = int(self._task.args.get("port", 23))
@@ -54,17 +49,17 @@ class ActionModule(ActionBase):
             pause = int(self._task.args.get("pause", 1))
 
             send_newline = self._task.args.get("send_newline", False)
+            clrf = self._task.args.get("clrf", False)
 
-            login_prompt = to_text(
-                self._task.args.get("login_prompt", "login: ")
-            )
-            password_prompt = to_text(
-                self._task.args.get("password_prompt", "Password: ")
-            )
+            login_prompt = to_text(self._task.args.get("login_prompt", "login: "))
+            password_prompt = to_text(self._task.args.get("password_prompt", "Password: "))
             prompts = self._task.args.get("prompts", ["\\$ "])
-            commands = self._task.args.get("command") or self._task.args.get(
-                "commands"
-            )
+            commands = self._task.args.get("command") or self._task.args.get("commands")
+
+            if clrf:
+                line_ending = "\r\n"
+            else:
+                line_ending = "\n"
 
             if isinstance(commands, text_type):
                 commands = commands.split(",")
@@ -75,35 +70,34 @@ class ActionModule(ActionBase):
                 self.output = bytes()
                 try:
                     if send_newline:
-                        self.tn.write(b"\n")
+                        self.tn.write(to_bytes(line_ending))
 
                     self.await_prompts([login_prompt], timeout)
-                    self.tn.write(to_bytes(user + "\n"))
+                    display.vvvvv(">>>user: %s" % user)
+                    self.tn.write(to_bytes(user + line_ending))
 
                     if password:
                         self.await_prompts([password_prompt], timeout)
-                        self.tn.write(to_bytes(password + "\n"))
+                        display.vvvvv(">>>password: %s" % password)
+                        self.tn.write(to_bytes(password + line_ending))
 
                     self.await_prompts(prompts, timeout)
 
                     for cmd in commands:
                         display.vvvvv(">>> %s" % cmd)
-                        self.tn.write(to_bytes(cmd + "\n"))
+                        self.tn.write(to_bytes(cmd + line_ending))
                         self.await_prompts(prompts, timeout)
                         display.vvvvv("<<< %s" % cmd)
                         sleep(pause)
 
-                    self.tn.write(b"exit\n")
+                    self.tn.write(to_bytes("exit" + line_ending))
 
                 except EOFError as e:
                     result["failed"] = True
                     result["msg"] = "Telnet action failed: %s" % to_text(e)
                 except TimeoutError as e:
                     result["failed"] = True
-                    result["msg"] = (
-                        "Telnet timed out trying to find prompt(s): '%s'"
-                        % to_text(e)
-                    )
+                    result["msg"] = "Telnet timed out trying to find prompt(s): '%s'" % to_text(e)
                 finally:
                     if self.tn:
                         self.tn.close()
@@ -116,9 +110,7 @@ class ActionModule(ActionBase):
         return result
 
     def await_prompts(self, prompts, timeout):
-        index, match, out = self.tn.expect(
-            list(map(to_bytes, prompts)), timeout=timeout
-        )
+        index, match, out = self.tn.expect(list(map(to_bytes, prompts)), timeout=timeout)
         self.output += out
         if not match:
             raise TimeoutError(prompts)

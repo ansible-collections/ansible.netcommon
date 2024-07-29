@@ -11,6 +11,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 # Networking tools for network modules only
@@ -20,8 +21,10 @@ import json
 import operator
 import re
 import socket
+
 from copy import deepcopy
 from functools import reduce  # forward compatibility for Python 3
+from io import StringIO
 from itertools import chain
 
 from ansible.module_utils import basic
@@ -29,6 +32,7 @@ from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.common._collections_compat import Mapping
 from ansible.module_utils.parsing.convert_bool import boolean
 from ansible.module_utils.six import iteritems, string_types
+
 
 try:
     from jinja2 import Environment, StrictUndefined
@@ -51,9 +55,7 @@ except ImportError:
     HAS_YAML = False
 
 OPERATORS = frozenset(["ge", "gt", "eq", "neq", "lt", "le"])
-ALIASES = frozenset(
-    [("min", "ge"), ("max", "le"), ("exactly", "eq"), ("neq", "ne")]
-)
+ALIASES = frozenset([("min", "ge"), ("max", "le"), ("exactly", "eq"), ("neq", "ne")])
 
 OPTION_METADATA = (
     "type",
@@ -125,9 +127,7 @@ def sort_list(val):
             if len(set(sorted_keys)) != 1:
                 raise ValueError("dictionaries do not match")
 
-            return sorted(
-                val, key=lambda d: tuple(d[k] for k in sorted_keys[0])
-            )
+            return sorted(val, key=lambda d: tuple(d[k] for k in sorted_keys[0]))
         return sorted(val)
     return val
 
@@ -162,9 +162,7 @@ class Entity(object):
         * default - default value
     """
 
-    def __init__(
-        self, module, attrs=None, args=None, keys=None, from_argspec=False
-    ):
+    def __init__(self, module, attrs=None, args=None, keys=None, from_argspec=False):
         args = [] if args is None else args
 
         self._attributes = attrs or {}
@@ -184,9 +182,7 @@ class Entity(object):
         for name, attr in iteritems(self._attributes):
             if attr.get("read_from"):
                 if attr["read_from"] not in self._module.argument_spec:
-                    module.fail_json(
-                        msg="argument %s does not exist" % attr["read_from"]
-                    )
+                    module.fail_json(msg="argument %s does not exist" % attr["read_from"])
                 spec = self._module.argument_spec.get(attr["read_from"])
                 for key, value in iteritems(spec):
                     if key not in attr:
@@ -217,9 +213,7 @@ class Entity(object):
         if strict:
             unknown = set(value).difference(self.attr_names)
             if unknown:
-                self._module.fail_json(
-                    msg="invalid keys: %s" % ",".join(unknown)
-                )
+                self._module.fail_json(msg="invalid keys: %s" % ",".join(unknown))
 
         for name, attr in iteritems(self._attributes):
             if value.get(name) is None:
@@ -237,16 +231,12 @@ class Entity(object):
                         else:
                             fallback_args = item
                     try:
-                        value[name] = fallback_strategy(
-                            *fallback_args, **fallback_kwargs
-                        )
+                        value[name] = fallback_strategy(*fallback_args, **fallback_kwargs)
                     except basic.AnsibleFallbackNotFound:
                         continue
 
             if attr.get("required") and value.get(name) is None:
-                self._module.fail_json(
-                    msg="missing required attribute %s" % name
-                )
+                self._module.fail_json(msg="missing required attribute %s" % name)
 
             if "choices" in attr:
                 if value[name] not in attr["choices"]:
@@ -257,9 +247,7 @@ class Entity(object):
 
             if value[name] is not None:
                 value_type = attr.get("type", "str")
-                type_checker = self._module._CHECK_ARGUMENT_TYPES_DISPATCHER[
-                    value_type
-                ]
+                type_checker = self._module._CHECK_ARGUMENT_TYPES_DISPATCHER[value_type]
                 type_checker(value[name])
             elif value.get(name):
                 value[name] = self._module.params[name]
@@ -272,19 +260,12 @@ class EntityCollection(Entity):
 
     def __call__(self, iterable, strict=True):
         if iterable is None:
-            iterable = [
-                super(EntityCollection, self).__call__(
-                    self._module.params, strict
-                )
-            ]
+            iterable = [super(EntityCollection, self).__call__(self._module.params, strict)]
 
         if not isinstance(iterable, (list, tuple)):
             self._module.fail_json(msg="value must be an iterable")
 
-        return [
-            (super(EntityCollection, self).__call__(i, strict))
-            for i in iterable
-        ]
+        return [(super(EntityCollection, self).__call__(i, strict)) for i in iterable]
 
 
 class ComplexList(EntityCollection):
@@ -488,12 +469,12 @@ def load_provider(spec, args):
     provider = args.get("provider") or {}
     for key, value in iteritems(spec):
         if key not in provider:
-            if "fallback" in value:
+            try:
+                # Get fallback if defined, and valid
                 provider[key] = _fallback(value["fallback"])
-            elif "default" in value:
-                provider[key] = value["default"]
-            else:
-                provider[key] = None
+            except (basic.AnsibleFallbackNotFound, KeyError):
+                # Get default if defined, otherwise set to None
+                provider[key] = value.get("default")
     if "authorize" in provider:
         # Coerce authorize to provider if a string has somehow snuck in.
         provider["authorize"] = boolean(provider["authorize"] or False)
@@ -511,10 +492,8 @@ def _fallback(fallback):
             kwargs = item
         else:
             args = item
-    try:
-        return strategy(*args, **kwargs)
-    except basic.AnsibleFallbackNotFound:
-        pass
+
+    return strategy(*args, **kwargs)
 
 
 def generate_dict(spec):
@@ -621,11 +600,7 @@ def remove_empties(cfg_dict):
             child_val = remove_empties(val)
             if child_val:
                 dct = {key: child_val}
-        elif (
-            isinstance(val, list)
-            and val
-            and all(isinstance(x, dict) for x in val)
-        ):
+        elif isinstance(val, list) and val and all(isinstance(x, dict) for x in val):
             child_val = [remove_empties(x) for x in val]
             if child_val:
                 dct = {key: child_val}
@@ -745,7 +720,7 @@ def extract_argspec(doc_obj, argpsec):
 
 # TODO: Support extends_documentation_fragment
 def convert_doc_to_ansible_module_kwargs(doc):
-    doc_obj = yaml.load(str(doc), SafeLoader)
+    doc_obj = yaml.load(StringIO(doc), SafeLoader)
     argspec = {}
     spec = {}
     extract_argspec(doc_obj, argspec)

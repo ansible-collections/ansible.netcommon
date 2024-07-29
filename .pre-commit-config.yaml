@@ -1,13 +1,12 @@
 ---
 repos:
   - repo: https://github.com/ansible-network/collection_prep
-    rev: 1.1.0
+    rev: 1.1.1
     hooks:
-      - id: autoversion
       - id: update-docs
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.4.0
+    rev: v4.6.0
     hooks:
       - id: check-merge-conflict
       - id: debug-statements
@@ -15,8 +14,8 @@ repos:
       - id: no-commit-to-branch
       - id: trailing-whitespace
 
-  - repo: https://github.com/pre-commit/mirrors-prettier
-    rev: "v3.0.0-alpha.6"
+  - repo: https://github.com/pycontribs/mirrors-prettier
+    rev: "v3.3.3"
     hooks:
       - id: prettier
         additional_dependencies:
@@ -24,12 +23,17 @@ repos:
           - prettier-plugin-toml
 
   - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
+    rev: 5.13.2
     hooks:
       - id: isort
         args: ["--filter-files"]
 
   - repo: https://github.com/psf/black
-    rev: 23.1.0
+    rev: 24.4.2
     hooks:
       - id: black
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.0
+    hooks:
+      - id: flake8

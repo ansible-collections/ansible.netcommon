@@ -11,9 +11,11 @@
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import re
+
 from copy import deepcopy
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.rm_base.resource_module_base import (
@@ -27,10 +29,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     validate_config as _validate_config,
 )
 
+
 try:
-    from ansible.module_utils.common.parameters import (
-        _list_no_log_values as list_no_log_values,
-    )
+    from ansible.module_utils.common.parameters import _list_no_log_values as list_no_log_values
 except ImportError:
     # TODO: Remove this import when we no longer support ansible < 2.11
     from ansible.module_utils.common.parameters import list_no_log_values
@@ -51,9 +52,7 @@ class NetworkTemplate(RmEngineBase):
     def _deepformat(self, tmplt, data):
         wtmplt = deepcopy(tmplt)
         if isinstance(tmplt, str):
-            res = self._template(
-                value=tmplt, variables=data, fail_on_undefined=False
-            )
+            res = self._template(value=tmplt, variables=data, fail_on_undefined=False)
             return res
         if isinstance(tmplt, dict):
             for tkey, tval in tmplt.items():
@@ -79,9 +78,7 @@ class NetworkTemplate(RmEngineBase):
                 cap = re.match(parser["getval"], line)
                 if cap:
                     capdict = cap.groupdict()
-                    capdict = dict(
-                        (k, v) for k, v in capdict.items() if v is not None
-                    )
+                    capdict = dict((k, v) for k, v in capdict.items() if v is not None)
                     if parser.get("shared"):
                         shared = dict_merge(shared, capdict)
                     vals = dict_merge(capdict, shared)
@@ -100,9 +97,7 @@ class NetworkTemplate(RmEngineBase):
             if callable(tmplt):
                 res = tmplt(data)
             else:
-                res = self._template(
-                    value=tmplt, variables=data, fail_on_undefined=False
-                )
+                res = self._template(value=tmplt, variables=data, fail_on_undefined=False)
         except KeyError:
             return None
 
@@ -125,8 +120,7 @@ class NetworkTemplate(RmEngineBase):
         """render"""
         if negate:
             tmplt = (
-                self.get_parser(parser_name).get("remval")
-                or self.get_parser(parser_name)["setval"]
+                self.get_parser(parser_name).get("remval") or self.get_parser(parser_name)["setval"]
             )
         else:
             tmplt = self.get_parser(parser_name)["setval"]
@@ -136,7 +130,5 @@ class NetworkTemplate(RmEngineBase):
     def validate_config(self, spec, data, redact=False):
         validated_data = _validate_config(spec, data)
         if redact:
-            self._module.no_log_values.update(
-                list_no_log_values(spec, validated_data)
-            )
+            self._module.no_log_values.update(list_no_log_values(spec, validated_data))
         return validated_data

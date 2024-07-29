@@ -10,6 +10,7 @@ https://developer.cisco.com/docs/pyats/#!parsing-device-output
 """
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -42,9 +43,8 @@ EXAMPLES = r"""
 
 from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
-from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import (
-    CliParserBase,
-)
+from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
+
 
 try:
     from genie.conf.base import Device
@@ -90,9 +90,7 @@ class CliParser(CliParserBase):
         """
         errors = []
         if not self._task_args.get("parser").get("command"):
-            errors.append(
-                "The pyats parser requires parser/command be provided."
-            )
+            errors.append("The pyats parser requires parser/command be provided.")
         return errors
 
     def _transform_ansible_network_os(self):
@@ -106,9 +104,7 @@ class CliParser(CliParserBase):
         if ane == "ios":
             self._debug("ansible_network_os was ios, using iosxe.")
             ane = "iosxe"
-        self._debug(
-            "OS set to '{ane}' using 'ansible_network_os'.".format(ane=ane)
-        )
+        self._debug("OS set to '{ane}' using 'ansible_network_os'.".format(ane=ane))
         return ane
 
     def parse(self, *_args, **_kwargs):
@@ -130,10 +126,7 @@ class CliParser(CliParserBase):
             return {"errors": errors}
 
         command = self._task_args.get("parser").get("command")
-        network_os = (
-            self._task_args.get("parser").get("os")
-            or self._transform_ansible_network_os()
-        )
+        network_os = self._task_args.get("parser").get("os") or self._transform_ansible_network_os()
         cli_output = self._task_args.get("text")
 
         device = Device("new_device", os=network_os)
@@ -144,13 +137,5 @@ class CliParser(CliParserBase):
             parsed = device.parse(command, output=cli_output)
         except Exception as exc:
             msg = "The pyats library return an error for '{cmd}' for '{os}'. Error: {err}."
-            return {
-                "errors": [
-                    (
-                        msg.format(
-                            cmd=command, os=network_os, err=to_native(exc)
-                        )
-                    )
-                ]
-            }
+            return {"errors": [(msg.format(cmd=command, os=network_os, err=to_native(exc)))]}
         return {"parsed": parsed}

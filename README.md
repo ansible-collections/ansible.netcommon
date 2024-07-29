@@ -1,15 +1,17 @@
 
 
 # Ansible Network Collection for Common Code (netcommon)
-[![CI](https://zuul-ci.org/gated.svg)](https://dashboard.zuul.ansible.com/t/ansible/builds?project=ansible-collections%2Fansible.netcommon) <!--[![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/ansible.netcommon)](https://codecov.io/gh/ansible-collections/ansible.netcommon)-->
+[![CI](https://zuul-ci.org/gated.svg)](https://ansible.softwarefactory-project.io/zuul/builds?project=ansible-collections%2Fansible.netcommon) <!--[![Codecov](https://img.shields.io/codecov/c/github/ansible-collections/ansible.netcommon)](https://codecov.io/gh/ansible-collections/ansible.netcommon)-->
+[![Codecov](https://codecov.io/gh/ansible-collections/ansible.netcommon/branch/main/graph/badge.svg)](https://codecov.io/gh/ansible-collections/ansible.netcommon)
+[![CI](https://github.com/ansible-collections/ansible.netcommon/actions/workflows/tests.yml/badge.svg?branch=main&event=schedule)](https://github.com/ansible-collections/ansible.netcommon/actions/workflows/tests.yml)
 
 The Ansible ``ansible.netcommon`` collection includes common content to help automate the management of network, security, and cloud devices.
-This includes  connection plugins, such as ``network_cli``, ``httpapi``, and ``netconf``.
+This includes connection plugins, such as ``network_cli``, ``httpapi``, and ``netconf``.
 
 <!--start requires_ansible-->
 ## Ansible version compatibility
 
-This collection has been tested against following Ansible versions: **>=2.9.10**.
+This collection has been tested against following Ansible versions: **>=2.15.0**.
 
 For collections that support Ansible 2.9, please ensure you update your `network_os` to use the
 fully qualified collection name (for example, `cisco.ios.ios`).
@@ -26,6 +28,11 @@ Name | Description
 --- | ---
 [ansible.netcommon.enable](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.enable_become.rst)|Switch to elevated permissions on a network device
 
+### Cliconf plugins
+Name | Description
+--- | ---
+[ansible.netcommon.default](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.default_cliconf.rst)|General purpose cliconf plugin for new platforms
+
 ### Connection plugins
 Name | Description
 --- | ---
@@ -39,21 +46,15 @@ Name | Description
 ### Filter plugins
 Name | Description
 --- | ---
+[ansible.netcommon.comp_type5](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.comp_type5_filter.rst)|The comp_type5 filter plugin.
+[ansible.netcommon.hash_salt](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.hash_salt_filter.rst)|The hash_salt filter plugin.
+[ansible.netcommon.parse_cli](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.parse_cli_filter.rst)|parse_cli filter plugin.
+[ansible.netcommon.parse_cli_textfsm](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.parse_cli_textfsm_filter.rst)|parse_cli_textfsm filter plugin.
+[ansible.netcommon.parse_xml](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.parse_xml_filter.rst)|The parse_xml filter plugin.
 [ansible.netcommon.pop_ace](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.pop_ace_filter.rst)|Remove ace entries from a acl source of truth.
-
-### Network filter plugins
-Filters for working with output from network devices
-
-Name | Description
---- | ---
-ansible.netcommon.comp_type5|ansible.netcommon comp_type5 filter plugin
-ansible.netcommon.hash_salt|ansible.netcommon hash_salt filter plugin
-ansible.netcommon.parse_cli|ansible.netcommon parse_cli filter plugin
-ansible.netcommon.parse_cli_textfsm|ansible.netcommon parse_cli_textfsm filter plugin
-ansible.netcommon.parse_xml|ansible.netcommon parse_xml filter plugin
-ansible.netcommon.type5_pw|ansible.netcommon type5_pw filter plugin
-ansible.netcommon.vlan_expander|ansible.netcommon vlan_expander filter plugin
-ansible.netcommon.vlan_parser|Input: Unsorted list of vlan integers
+[ansible.netcommon.type5_pw](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.type5_pw_filter.rst)|The type5_pw filter plugin.
+[ansible.netcommon.vlan_expander](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.vlan_expander_filter.rst)|The vlan_expander filter plugin.
+[ansible.netcommon.vlan_parser](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.vlan_parser_filter.rst)|The vlan_parser filter plugin.
 
 ### Httpapi plugins
 Name | Description
@@ -68,8 +69,10 @@ Name | Description
 ### Modules
 Name | Description
 --- | ---
+[ansible.netcommon.cli_backup](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.cli_backup_module.rst)|Back up device configuration from network devices over network_cli
 [ansible.netcommon.cli_command](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.cli_command_module.rst)|Run a cli command on cli-based network devices
 [ansible.netcommon.cli_config](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.cli_config_module.rst)|Push text based configuration to network devices over network_cli
+[ansible.netcommon.cli_restore](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.cli_restore_module.rst)|Restore device configuration to network devices over network_cli
 [ansible.netcommon.grpc_config](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.grpc_config_module.rst)|Fetch configuration/state data from gRPC enabled target hosts.
 [ansible.netcommon.grpc_get](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.grpc_get_module.rst)|Fetch configuration/state data from gRPC enabled target hosts.
 [ansible.netcommon.net_get](https://github.com/ansible-collections/ansible.netcommon/blob/main/docs/ansible.netcommon.net_get_module.rst)|Copy a file from a network device to Ansible Controller
@@ -103,10 +106,7 @@ collections:
 
 The most common use case for this collection is to include it as a dependency in a network device-specific collection. Use the Fully Qualified Collection Name (FQCN) when referring to content in this collection (for example, `ansible.netcommon.network_cli`).
 
-See the [Vyos collection](https://github.com/ansible-collections/vyos) for an example of this.
-
-
-**NOTE**: For Ansible 2.9, you may not see deprecation warnings when you run your playbooks with this collection. Use this documentation to track when a module is deprecated.
+See the [Vyos collection](https://github.com/ansible-collections/vyos.vyos) for an example of this.
 
 ### See Also:
 
