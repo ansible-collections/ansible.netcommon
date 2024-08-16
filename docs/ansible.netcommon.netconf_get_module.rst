@@ -1,14 +1,21 @@
-.. _ansible.netcommon.netconf_get_module:
 
+.. Created with antsibull-docs 2.9.0
 
-*****************************
-ansible.netcommon.netconf_get
-*****************************
+ansible.netcommon.netconf_get module -- Fetch configuration/state data from NETCONF enabled network devices.
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-**Fetch configuration/state data from NETCONF enabled network devices.**
+This module is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
 
+It is not included in ``ansible-core``.
+To check whether it is installed, run ``ansible-galaxy collection list``.
 
-Version added: 1.0.0
+To install it, use: :code:`ansible-galaxy collection install ansible.netcommon`.
+You need further requirements to be able to use this module,
+see `Requirements <ansible_collections.ansible.netcommon.netconf_get_module_requirements_>`_ for details.
+
+To use it in a playbook, specify: ``ansible.netcommon.netconf_get``.
+
+New in ansible.netcommon 1.0.0
 
 .. contents::
    :local:
@@ -17,18 +24,25 @@ Version added: 1.0.0
 
 Synopsis
 --------
+
 - NETCONF is a network management protocol developed and standardized by the IETF. It is documented in RFC 6241.
 - This module allows the user to fetch configuration and state data from NETCONF enabled network devices.
 
 
 
+.. _ansible_collections.ansible.netcommon.netconf_get_module_requirements:
+
 Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- ncclient (>=v0.5.2)
+- ncclient (\>=v0.5.2)
 - jxmlease (for display=json)
 - xmltodict (for display=native)
+
+
+
+
 
 
 Parameters
@@ -36,106 +50,107 @@ Parameters
 
 .. raw:: html
 
-    <table  border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="1">Parameter</th>
-            <th>Choices/<font color="blue">Defaults</font></th>
-            <th width="100%">Comments</th>
-        </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>display</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>json</li>
-                                    <li>pretty</li>
-                                    <li>xml</li>
-                                    <li>native</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Encoding scheme to use when serializing output from the device. The option <em>json</em> will serialize the output as JSON data. If the option value is <em>json</em> it requires jxmlease to be installed on control node. The option <em>pretty</em> is similar to received XML response but is using human readable format (spaces, new lines). The option value <em>xml</em> is similar to received XML response but removes all XML namespaces.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>filter</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">raw</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>This argument specifies the string which acts as a filter to restrict the portions of the data to be are retrieved from the remote device. If this option is not specified entire configuration or state data is returned in result depending on the value of <code>source</code> option. The <code>filter</code> value can be either XML string or XPath or JSON string or native python dictionary, if the filter is in XPath format the NETCONF server running on remote host should support xpath capability else it will result in an error. If the filter is in JSON format the xmltodict library should be installed on the control node for JSON to XML conversion.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>lock</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>never</b>&nbsp;&larr;</div></li>
-                                    <li>always</li>
-                                    <li>if-supported</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Instructs the module to explicitly lock the datastore specified as <code>source</code>. If no <em>source</em> is defined, the <em>running</em> datastore will be locked. By setting the option value <em>always</em> is will explicitly lock the datastore mentioned in <code>source</code> option. By setting the option value <em>never</em> it will not lock the <code>source</code> datastore. The value <em>if-supported</em> allows better interworking with NETCONF servers, which do not support the (un)lock operation for all supported datastores.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>source</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>running</li>
-                                    <li>candidate</li>
-                                    <li>startup</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>This argument specifies the datastore from which configuration data should be fetched. Valid values are <em>running</em>, <em>candidate</em> and <em>startup</em>. If the <code>source</code> value is not set both configuration and state information are returned in response from running datastore.</div>
-                </td>
-            </tr>
-    </table>
-    <br/>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th><p>Parameter</p></th>
+    <th><p>Comments</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-display"></div>
+      <p style="display: inline;"><strong>display</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-display" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Encoding scheme to use when serializing output from the device. The option <em>json</em> will serialize the output as JSON data. If the option value is <em>json</em> it requires jxmlease to be installed on control node. The option <em>pretty</em> is similar to received XML response but is using human readable format (spaces, new lines). The option value <em>xml</em> is similar to received XML response but removes all XML namespaces.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code>&#34;json&#34;</code></p></li>
+        <li><p><code>&#34;pretty&#34;</code></p></li>
+        <li><p><code>&#34;xml&#34;</code></p></li>
+        <li><p><code>&#34;native&#34;</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-filter"></div>
+      <p style="display: inline;"><strong>filter</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-filter" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">any</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This argument specifies the string which acts as a filter to restrict the portions of the data to be are retrieved from the remote device. If this option is not specified entire configuration or state data is returned in result depending on the value of <code class='docutils literal notranslate'>source</code> option. The <code class='docutils literal notranslate'>filter</code> value can be either XML string or XPath or JSON string or native python dictionary, if the filter is in XPath format the NETCONF server running on remote host should support xpath capability else it will result in an error. If the filter is in JSON format the xmltodict library should be installed on the control node for JSON to XML conversion.</p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-lock"></div>
+      <p style="display: inline;"><strong>lock</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-lock" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Instructs the module to explicitly lock the datastore specified as <code class='docutils literal notranslate'>source</code>. If no <em>source</em> is defined, the <em>running</em> datastore will be locked. By setting the option value <em>always</em> is will explicitly lock the datastore mentioned in <code class='docutils literal notranslate'>source</code> option. By setting the option value <em>never</em> it will not lock the <code class='docutils literal notranslate'>source</code> datastore. The value <em>if-supported</em> allows better interworking with NETCONF servers, which do not support the (un)lock operation for all supported datastores.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code style="color: blue;"><b>&#34;never&#34;</b></code> <span style="color: blue;">← (default)</span></p></li>
+        <li><p><code>&#34;always&#34;</code></p></li>
+        <li><p><code>&#34;if-supported&#34;</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-source"></div>
+      <p style="display: inline;"><strong>source</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-source" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>This argument specifies the datastore from which configuration data should be fetched. Valid values are <em>running</em>, <em>candidate</em> and <em>startup</em>. If the <code class='docutils literal notranslate'>source</code> value is not set both configuration and state information are returned in response from running datastore.</p>
+      <p style="margin-top: 8px;"><b">Choices:</b></p>
+      <ul>
+        <li><p><code>&#34;running&#34;</code></p></li>
+        <li><p><code>&#34;candidate&#34;</code></p></li>
+        <li><p><code>&#34;startup&#34;</code></p></li>
+      </ul>
+
+    </td>
+  </tr>
+  </tbody>
+  </table>
+
+
 
 
 Notes
 -----
 
-.. note::
-   - This module requires the NETCONF system service be enabled on the remote device being managed.
-   - This module supports the use of connection=netconf
-   - This module is supported on ``ansible_network_os`` network platforms. See the :ref:`Network Platform Options <platform_options>` for details.
-
+- This module requires the NETCONF system service be enabled on the remote device being managed.
+- This module supports the use of connection=netconf
+- This module is supported on \ :literal:`ansible\_network\_os`\  network platforms. See the :ref:\`Network Platform Options \<platform\_options\>\` for details.
 
 
 Examples
 --------
 
 .. code-block:: yaml
+
 
     - name: Get running configuration and state data
       ansible.netcommon.netconf_get:
@@ -285,90 +300,87 @@ Examples
 
 
 
+
+
 Return Values
 -------------
-Common return values are documented `here <https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html#common-return-values>`_, the following are the fields unique to this module:
+The following are the fields unique to this module:
 
 .. raw:: html
 
-    <table border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="2">Key</th>
-            <th>Returned</th>
-            <th width="100%">Description</th>
-        </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>output</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">complex</span>
-                    </div>
-                </td>
-                <td>If the display format is selected as <em>json</em> it is returned as dict type and the conversion is done using jxmlease python library. If the display format is selected as <em>native</em> it is returned as dict type and the conversion is done using xmltodict python library. If the display format is xml or pretty it is returned as a string apart from low-level errors (such as action plugin).</td>
-                <td>
-                            <div>Based on the value of display option will return either the set of transformed XML to JSON format from the RPC response with type dict or pretty XML string response (human-readable) or response with namespace removed from XML string.</div>
-                    <br/>
-                </td>
-            </tr>
-                                <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>formatted_output</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>Contains formatted response received from remote host as per the value in display format.</div>
-                    <br/>
-                </td>
-            </tr>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th colspan="2"><p>Key</p></th>
+    <th><p>Description</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="return-output"></div>
+      <p style="display: inline;"><strong>output</strong></p>
+      <a class="ansibleOptionLink" href="#return-output" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">complex</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Based on the value of display option will return either the set of transformed XML to JSON format from the RPC response with type dict or pretty XML string response (human-readable) or response with namespace removed from XML string.</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> If the display format is selected as <em>json</em> it is returned as dict type and the conversion is done using jxmlease python library. If the display format is selected as <em>native</em> it is returned as dict type and the conversion is done using xmltodict python library. If the display format is xml or pretty it is returned as a string apart from low-level errors (such as action plugin).</p>
+    </td>
+  </tr>
+  <tr>
+    <td></td>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="return-output/formatted_output"></div>
+      <p style="display: inline;"><strong>formatted_output</strong></p>
+      <a class="ansibleOptionLink" href="#return-output/formatted_output" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>Contains formatted response received from remote host as per the value in display format.</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> success</p>
+    </td>
+  </tr>
 
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>stdout</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always apart from low-level errors (such as action plugin)</td>
-                <td>
-                            <div>The raw XML string containing configuration or state data received from the underlying ncclient library.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">...</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>stdout_lines</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                    </div>
-                </td>
-                <td>always apart from low-level errors (such as action plugin)</td>
-                <td>
-                            <div>The value of stdout split into a list</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;...&#x27;, &#x27;...&#x27;]</div>
-                </td>
-            </tr>
-    </table>
-    <br/><br/>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="return-stdout"></div>
+      <p style="display: inline;"><strong>stdout</strong></p>
+      <a class="ansibleOptionLink" href="#return-stdout" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The raw XML string containing configuration or state data received from the underlying ncclient library.</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> always apart from low-level errors (such as action plugin)</p>
+      <p style="margin-top: 8px; color: blue; word-wrap: break-word; word-break: break-all;"><b style="color: black;">Sample:</b> <code>&#34;...&#34;</code></p>
+    </td>
+  </tr>
+  <tr>
+    <td colspan="2" valign="top">
+      <div class="ansibleOptionAnchor" id="return-stdout_lines"></div>
+      <p style="display: inline;"><strong>stdout_lines</strong></p>
+      <a class="ansibleOptionLink" href="#return-stdout_lines" title="Permalink to this return value"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">list</span>
+        / <span style="color: purple;">elements=string</span>
+      </p>
+    </td>
+    <td valign="top">
+      <p>The value of stdout split into a list</p>
+      <p style="margin-top: 8px;"><b>Returned:</b> always apart from low-level errors (such as action plugin)</p>
+      <p style="margin-top: 8px; color: blue; word-wrap: break-word; word-break: break-all;"><b style="color: black;">Sample:</b> <code>[&#34;...&#34;, &#34;...&#34;]</code></p>
+    </td>
+  </tr>
+  </tbody>
+  </table>
 
 
-Status
-------
 
 
 Authors
@@ -376,3 +388,11 @@ Authors
 
 - Ganesh Nalawade (@ganeshrn)
 - Sven Wisotzky (@wisotzky)
+
+
+
+Collection links
+~~~~~~~~~~~~~~~~
+
+* `Issue Tracker <https://github.com/ansible-collections/ansible.netcommon/issues>`__
+* `Repository (Sources) <https://github.com/ansible-collections/ansible.netcommon>`__

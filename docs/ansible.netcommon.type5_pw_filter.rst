@@ -1,14 +1,19 @@
-.. _ansible.netcommon.type5_pw_filter:
 
+.. Created with antsibull-docs 2.9.0
 
-**************************
-ansible.netcommon.type5_pw
-**************************
+ansible.netcommon.type5_pw filter -- The type5\_pw filter plugin.
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-**The type5_pw filter plugin.**
+This filter plugin is part of the `ansible.netcommon collection <https://galaxy.ansible.com/ui/repo/published/ansible/netcommon/>`_ (version 6.1.0).
 
+It is not included in ``ansible-core``.
+To check whether it is installed, run ``ansible-galaxy collection list``.
 
-Version added: 1.0.0
+To install it, use: :code:`ansible-galaxy collection install ansible.netcommon`.
+
+To use it in a playbook, specify: ``ansible.netcommon.type5_pw``.
+
+New in ansible.netcommon 1.0.0
 
 .. contents::
    :local:
@@ -17,75 +22,79 @@ Version added: 1.0.0
 
 Synopsis
 --------
+
 - Filter plugin to produce cisco type5 hashed password.
-- Using the parameters below - ``xml_data | ansible.netcommon.type5_pw(template.yml``)
+- Using the parameters below - \ :literal:`xml\_data | ansible.netcommon.type5\_pw(template.yml`\ )
 
 
 
 
-Parameters
-----------
+
+
+
+
+Keyword parameters
+------------------
+
+This describes keyword parameters of the filter. These are the values ``key1=value1``, ``key2=value2`` and so on in the following
+example: ``input | ansible.netcommon.type5_pw(key1=value1, key2=value2, ...)``
 
 .. raw:: html
 
-    <table  border=0 cellpadding=0 class="documentation-table">
-        <tr>
-            <th colspan="1">Parameter</th>
-            <th>Choices/<font color="blue">Defaults</font></th>
-                <th>Configuration</th>
-            <th width="100%">Comments</th>
-        </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>password</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>The password to be hashed.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>salt</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                    <td>
-                    </td>
-                <td>
-                        <div>Mention the salt to hash the password.</div>
-                </td>
-            </tr>
-    </table>
-    <br/>
+  <table style="width: 100%;">
+  <thead>
+    <tr>
+    <th><p>Parameter</p></th>
+    <th><p>Comments</p></th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-password"></div>
+      <p style="display: inline;"><strong>password</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-password" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+        / <span style="color: red;">required</span>
+      </p>
+
+    </td>
+    <td valign="top">
+      <p>The password to be hashed.</p>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top">
+      <div class="ansibleOptionAnchor" id="parameter-salt"></div>
+      <p style="display: inline;"><strong>salt</strong></p>
+      <a class="ansibleOptionLink" href="#parameter-salt" title="Permalink to this option"></a>
+      <p style="font-size: small; margin-bottom: 0;">
+        <span style="color: purple;">string</span>
+      </p>
+
+    </td>
+    <td valign="top">
+      <p>Mention the salt to hash the password.</p>
+    </td>
+  </tr>
+  </tbody>
+  </table>
+
+
 
 
 Notes
 -----
 
-.. note::
-   - The filter plugin generates cisco type5 hashed password.
-
+- The filter plugin generates cisco type5 hashed password.
 
 
 Examples
 --------
 
 .. code-block:: yaml
+
 
     # Using type5_pw
 
@@ -113,8 +122,7 @@ Examples
 
 
 
-Status
-------
+
 
 
 Authors
@@ -125,3 +133,9 @@ Authors
 
 .. hint::
     Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.
+
+Collection links
+~~~~~~~~~~~~~~~~
+
+* `Issue Tracker <https://github.com/ansible-collections/ansible.netcommon/issues>`__
+* `Repository (Sources) <https://github.com/ansible-collections/ansible.netcommon>`__
