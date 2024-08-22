@@ -72,6 +72,9 @@ class Connection(ConnectionBase):
             "starting connection from persistent connection plugin",
             host=self._play_context.remote_addr,
         )
+        display.warning(
+            "connection local support from netcommon is deprecated and will be removed at 01-01-2027"
+        )
         variables = {"ansible_command_timeout": self.get_option("persistent_command_timeout")}
         socket_path = start_connection(self._play_context, variables, self._task_uuid)
         display.vvvv(
