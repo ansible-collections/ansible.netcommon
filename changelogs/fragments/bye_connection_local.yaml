@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - ansible.netcommon.persistent - Deprecate connection local in favour of network_cli.
