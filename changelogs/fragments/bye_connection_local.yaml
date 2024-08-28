@@ -1,3 +1,4 @@
 ---
 minor_changes:
-  - ansible.netcommon.persistent - Deprecate connection local in favour of network_cli.
+  - ansible.netcommon.persistent - Connection local is marked deprecated dependent colletions are adviced to move to proper connection plugin, complete support of connection local will be removed in a release 01-01-2027.
+  - Cleaning up already deprecated code in netconf action class.
