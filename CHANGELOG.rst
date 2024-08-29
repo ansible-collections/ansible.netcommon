@@ -4,6 +4,23 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v7.1.0
+======
+
+Minor Changes
+-------------
+
+- ansible.netcommon.persistent - Connection local is marked deprecated and all dependent collections are advised to move to a proper connection plugin, complete support of connection local will be removed in a release after 01-01-2027.
+
+Bugfixes
+--------
+
+- Updated the error message for the content_templates parser to include the correct parser name and detailed error information.
+
+Documentation Changes
+---------------------
+
+- Add a simple regexp match example for multiple prompt with multiple answers. This example could be used to for restarting a network device with a delay.
 
 v7.0.0
 ======
@@ -12,7 +29,6 @@ Release Summary
 ---------------
 
 Starting from this release, the minimum `ansible-core` version this collection requires is `2.15.0`. The last known version compatible with ansible-core<2.15 is v6.1.3.
-
 
 Major Changes
 -------------
