@@ -73,7 +73,9 @@ class Connection(ConnectionBase):
             host=self._play_context.remote_addr,
         )
         display.deprecated(
-            "support for connection local has been deprecated from ansible.netcommon and will be removed in a release after 01-01-2027"
+            msg="support for connection local has been deprecated",
+            date="2027-01-01",
+            collection_name="ansible.netcommon",
         )
         variables = {"ansible_command_timeout": self.get_option("persistent_command_timeout")}
         socket_path = start_connection(self._play_context, variables, self._task_uuid)
