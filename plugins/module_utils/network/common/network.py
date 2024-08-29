@@ -202,8 +202,8 @@ def get_resource_connection(module):
     if network_api == "netconf":
         module._connection = NetconfConnection(module._socket_path)
     elif network_api == "local":
-        # This isn't supported, but we shouldn't fail here.
-        # Set the connection to a fake connection so it fails sensibly.
+        # not accessible code alert can be taken out at around  01-01-2027,
+        # when connection local is removed
         module._connection = LocalResourceConnection(module)
     else:
         module._connection = Connection(module._socket_path)
