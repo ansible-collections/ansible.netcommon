@@ -154,11 +154,8 @@ Examples
         vrf: prod
         count: 20
 
-    - Note:
-        - For targets running Python, use the M(ansible.builtin.shell) module along with ping command instead.
-        - Example:
-            name: ping
-            shell: ping -c 1 <remote-ip>
+    - name: Use the ping command instead of an ansible module
+      ansible.builtin.shell: ping -c 1 <remote-ip-or-hostname>
 
 
 
