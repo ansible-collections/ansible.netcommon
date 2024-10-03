@@ -403,10 +403,9 @@ diff:
 
 """
 
-from ansible.module_utils._text import to_text
+from ansible.module_utils._text import to_native, to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection, ConnectionError
-from ansible.module_utils._text import to_native, to_text
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
     get_capabilities,
