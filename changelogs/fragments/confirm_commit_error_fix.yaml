@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - Confirmed commit results in Failure becuase of wrongly provided type
+    (https://github.com/ansible-collections/ansible.netcommon/issues/551)
