@@ -276,4 +276,4 @@ Status
 Authors
 ~~~~~~~
 
-- Nathaniel Case (@Qalthos)
+- Katherine Case (@Qalthos)
