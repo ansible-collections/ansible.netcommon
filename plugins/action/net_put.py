@@ -64,6 +64,11 @@ class ActionModule(ActionBase):
         if mode is None:
             mode = "binary"
 
+        # Check if the file is present in destination or not
+        check_destination = self._task.args.get("check_destination")
+        if check_destination is None:
+            check_destination = True
+
         if mode == "text":
             try:
                 self._handle_src_option(convert_data=False)
@@ -95,17 +100,19 @@ class ActionModule(ActionBase):
 
         if dest is None:
             dest = src_file_path_name
-        try:
-            changed = self._handle_existing_file(conn, output_file, dest, proto, sock_timeout)
-            if changed is False:
-                result["changed"] = changed
-                result["destination"] = dest
-                if mode == "text":
-                    # Cleanup tmp file expanded wih ansible vars
-                    os.remove(output_file)
-                return result
-        except Exception as exc:
-            result["msg"] = "Warning: %s idempotency check failed. Check dest" % exc
+
+        if check_destination:
+            try:
+                changed = self._handle_existing_file(conn, output_file, dest, proto, sock_timeout)
+                if changed is False:
+                    result["changed"] = changed
+                    result["destination"] = dest
+                    if mode == "text":
+                        # Cleanup tmp file expanded wih ansible vars
+                        os.remove(output_file)
+                    return result
+            except Exception as exc:
+                result["msg"] = "Warning: %s idempotency check failed. Check dest" % exc
 
         try:
             conn.copy_file(
@@ -114,6 +121,7 @@ class ActionModule(ActionBase):
                 proto=proto,
                 timeout=sock_timeout,
             )
+            changed = True
         except Exception as exc:
             if to_text(exc) == "No response from server":
                 if network_os == "iosxr":

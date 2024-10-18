@@ -31,10 +31,19 @@ options:
   protocol:
     description:
     - Protocol used to transfer file.
+    - The choice scp is deprecated, use sftp instead. The scp option would be removed
+      after 2028-01-01.
     default: scp
     choices:
     - scp
     - sftp
+  check_destination:
+    description:
+    - Enabling this check for the file in the destination if the file exists or not and
+      only copy the file if it does not exist.
+    type: bool
+    default: true
+    required: false
   dest:
     description:
     - Specifies the destination file. The path to destination file can either be the
@@ -64,15 +73,31 @@ notes:
 """
 
 EXAMPLES = """
-- name: copy file from ansible controller to a network device
+- name: Copy file from ansible controller to a network device (defaults to scp)
   ansible.netcommon.net_put:
     src: running_cfg_ios1.txt
 
-- name: copy file at root dir of flash in slot 3 of sw1(ios)
+# changed: [Appliance] => changed=true
+#   destination: running_cfg_sw1.txt
+
+- name: Copy file at root dir of flash in slot 3 of sw1(ios)
   ansible.netcommon.net_put:
     src: running_cfg_sw1.txt
     protocol: sftp
     dest: flash3:/running_cfg_sw1.txt
+
+# changed: [Appliance] => changed=true
+#   destination: running_cfg_sw1.txt
+
+- name: Copy file from ansible controller to a network device (does not check destination)
+  ansible.netcommon.net_put:
+    src: running_cfg_sw1.txt
+    protocol: scp
+    dest: ios_running_cfg_sw1.txt
+    check_destination: false
+
+# changed: [Appliance] => changed=true
+#   destination: ios_running_cfg_sw1.txt
 """
 
 RETURN = """
