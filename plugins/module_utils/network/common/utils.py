@@ -684,15 +684,15 @@ class Template:
             if not fail_on_undefined:
                 return None
             raise
-        
+
         if value is not None:
-    # Special handling for values starting with +
-            if isinstance(value, str) and value.startswith('+'):
+            # Special handling for values starting with +
+            if isinstance(value, str) and value.startswith("+"):
                 return value  # Keep the + prefix intact
             return str(value)  # Convert everything else to string
         else:
             return None
-        
+
     def contains_vars(self, data):
         if isinstance(data, string_types):
             for marker in (
