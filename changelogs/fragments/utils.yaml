@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Simplifies value handling by returning direct string conversion instead of using ast.literal_eval
