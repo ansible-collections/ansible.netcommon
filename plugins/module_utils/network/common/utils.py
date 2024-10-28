@@ -685,11 +685,8 @@ class Template:
                 return None
             raise
 
-        if value:
-            try:
-                return ast.literal_eval(value)
-            except Exception:
-                return str(value)
+        if value is not None:
+            return str(value)  # Ensuring we returning it as a string
         else:
             return None
 
