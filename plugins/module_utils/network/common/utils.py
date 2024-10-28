@@ -685,11 +685,11 @@ class Template:
                 return None
             raise
 
-        if value:
-            try:
-                return ast.literal_eval(value)
-            except Exception:
-                return str(value)
+        if value is not None:
+            # Special handling for values starting with +
+            if isinstance(value, str) and value.startswith("+"):
+                return value  # Keep the + prefix intact
+            return str(value)  # Convert everything else to string
         else:
             return None
 
