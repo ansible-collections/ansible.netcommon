@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - network.common.utils - Preserves plus prefix in value conversion while maintaining string handling

@@ -686,6 +686,8 @@ class Template:
             raise
 
         if value:
+            if isinstance(value, str) and value.startswith('+'):
+                return value
             try:
                 return ast.literal_eval(value)
             except Exception:
