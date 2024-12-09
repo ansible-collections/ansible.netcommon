@@ -15,7 +15,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/pycontribs/mirrors-prettier
-    rev: "v3.3.3"
+    rev: "v3.4.2"
     hooks:
       - id: prettier
         additional_dependencies:
