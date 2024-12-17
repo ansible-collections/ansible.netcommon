@@ -15,5 +15,5 @@ pyats >= 21.4 ; python_version < '3.11'
 # fix genie version for python version less than 3.11
 genie == 24.3 ; python_version < '3.11'
 # use the latest genie version for every Python version greater than 3.11 and less than 3.13
-genie ; python_version < '3.13' and python_version > '3.11'
+genie ; python_version < '3.13' and python_version >= '3.11'
 passlib
