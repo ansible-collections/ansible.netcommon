@@ -93,10 +93,12 @@ from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_cli_textfs
     parse_cli_textfsm,
 )
 
+
 try:
     from jinja2.filters import pass_environment
 except ImportError:
     from jinja2.filters import environmentfilter as pass_environment
+
 from ansible.utils.display import Display
 
 
@@ -105,8 +107,8 @@ def _parse_cli_textfsm(*args, **kwargs):
     """parse textfsm"""
     display = Display()
     display.warning(
-      "The 'parse_cli_textfsm' filter is deprecated and will be removed in a future release "
-      "after 2027-02-01. Use 'ansible.utils.cli_parse' instead."
+        "The 'parse_cli_textfsm' filter is deprecated and will be removed in a future release "
+        "after 2027-02-01. Use 'ansible.utils.cli_parse' instead."
     )
     keys = ["value", "template"]
     data = dict(zip(keys, args[1:]))

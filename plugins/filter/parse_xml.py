@@ -167,10 +167,12 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_xml import parse_xml
 
+
 try:
     from jinja2.filters import pass_environment
 except ImportError:
     from jinja2.filters import environmentfilter as pass_environment
+
 from ansible.utils.display import Display
 
 
@@ -180,8 +182,8 @@ def _parse_xml(*args, **kwargs):
 
     display = Display()
     display.warning(
-      "The 'parse_xml' filter is deprecated and will be removed in a future release "
-      "after 2027-02-01. Use 'ansible.utils.cli_parse' instead."
+        "The 'parse_xml' filter is deprecated and will be removed in a future release "
+        "after 2027-02-01. Use 'ansible.utils.cli_parse' instead."
     )
     keys = ["output", "tmpl"]
     data = dict(zip(keys, args[1:]))
