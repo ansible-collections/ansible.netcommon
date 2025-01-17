@@ -1,0 +1,6 @@
+---
+deprecated_features:
+  - "`parse_cli` filter plugin is deprecated and will be removed in a future release after 2027-02-01. Use `ansible.utils.cli_parse` as a replacement."
+  - "`parse_cli_textfsm` filter plugin is deprecated and will be removed in a future release after 2027-02-01. Use `ansible.utils.cli_parse` with the `ansible.utils.textfsm_parser` parser as a replacement."
+  - "`parse_xml` filter plugin is deprecated and will be removed in a future release after 2027-02-01. Use `ansible.utils.cli_parse` with the `ansible.utils.xml_parser` parser as a replacement."
+  - "Added deprecation warnings for the above plugins, displayed when running respective filter plugins."
