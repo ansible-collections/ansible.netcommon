@@ -430,6 +430,6 @@ class Connection(NetworkConnectionBase):
         )
 
     def close(self):
-        if self._manager:
+        if self._manager.connected:
             self._manager.close_session()
         super(Connection, self).close()
