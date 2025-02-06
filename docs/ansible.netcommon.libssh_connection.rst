@@ -150,7 +150,7 @@ Parameters
                                 <div>var: ansible_libssh_key_exchange_algorithms</div>
                     </td>
                 <td>
-                        <div>Set the key exchange method to be used as a comma-separated list (e.g., &quot;ecdh-sha2-nistp256,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1&quot;).</div>
+                        <div>Set the key exchange method as a comma-separated list (e.g., &quot;ecdh-sha2-nistp256,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1&quot;).</div>
                         <div>The list can be prepended by +,-,^ which will append, remove or move to the beginning (prioritizing) of the default list respectively. Giving an empty list after + and ^ will cause error.</div>
                 </td>
             </tr>

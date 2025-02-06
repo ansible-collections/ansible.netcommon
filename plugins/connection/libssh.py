@@ -123,7 +123,7 @@ DOCUMENTATION = """
           - name: ansible_libssh_hostkeys
       key_exchange_algorithms:
         description:
-          - Set the key exchange method to be used as a comma-separated list (e.g., "ecdh-sha2-nistp256,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1").
+          - Set the key exchange method as a comma-separated list (e.g., "ecdh-sha2-nistp256,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1").
           - The list can be prepended by +,-,^ which will append, remove or move to the beginning (prioritizing) of the default list respectively.
             Giving an empty list after + and ^ will cause error.
         type: str
