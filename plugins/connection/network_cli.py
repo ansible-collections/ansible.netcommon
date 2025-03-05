@@ -335,6 +335,8 @@ except ImportError:
     HAS_SCP = False
 display = Display()
 
+REGEX_MAX_LENGTH = 1024
+
 
 def ensure_connect(func):
     @wraps(func)
@@ -1092,7 +1094,7 @@ class Connection(NetworkConnectionBase):
                 "Prompts provided: %s" % (to_text(exc), prompts)
             )
         for index, regex in enumerate(prompts_regex):
-            match = regex.search(resp)
+            match = regex.search(resp[-REGEX_MAX_LENGTH:])
             if match:
                 self._matched_cmd_prompt = match.group()
                 self._log_messages("matched command prompt: %s" % self._matched_cmd_prompt)
@@ -1132,7 +1134,7 @@ class Connection(NetworkConnectionBase):
     def _find_error(self, response):
         """Searches the buffered response for a matching error condition"""
         for stderr_regex in self._terminal_stderr_re:
-            if stderr_regex.search(response):
+            if stderr_regex.search(response[-REGEX_MAX_LENGTH:]):
                 self._log_messages(
                     "matched error regex (terminal_stderr_re) '%s' from response '%s'"
                     % (stderr_regex.pattern, response)
@@ -1149,7 +1151,7 @@ class Connection(NetworkConnectionBase):
     def _find_prompt(self, response):
         """Searches the buffered response for a matching command prompt"""
         for stdout_regex in self._terminal_stdout_re:
-            match = stdout_regex.search(response)
+            match = stdout_regex.search(response[-REGEX_MAX_LENGTH:])
             if match:
                 self._matched_pattern = stdout_regex.pattern
                 self._matched_prompt = match.group()
