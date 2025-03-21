@@ -280,8 +280,10 @@ class MyAddPolicy(object):
                 )
 
             inp = to_text(
-                display.prompt_until(AUTHENTICITY_MSG % (hostname, message, key_type, fingerprint), private=False),
-                errors='surrogate_or_strict'
+                display.prompt_until(
+                    AUTHENTICITY_MSG % (hostname, message, key_type, fingerprint), private=False
+                ),
+                errors="surrogate_or_strict",
             )
 
             self.connection.connection_unlock()
