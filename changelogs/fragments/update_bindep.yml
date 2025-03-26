@@ -1,0 +1,3 @@
+---
+trivial:
+  - Update bindep.txt to remove unnecessary dependencies for CentOS/RHEL 8 and 9.
