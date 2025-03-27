@@ -1,3 +1,0 @@
-bugfixes:
-  - "libssh connection plugin - stop using long-deprecated and now removed internal field from ansible-core's base connection plugin class
-    (https://github.com/ansible-collections/ansible.netcommon/issues/522, https://github.com/ansible-collections/ansible.netcommon/issues/690, https://github.com/ansible-collections/ansible.netcommon/pull/691)."

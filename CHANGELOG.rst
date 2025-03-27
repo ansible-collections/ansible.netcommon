@@ -4,6 +4,32 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v7.2.0
+======
+
+Minor Changes
+-------------
+
+- Exposes new libssh options to configure publickey_accepted_algorithms and hostkeys. This requires ansible-pylibssh v1.1.0 or higher.
+
+Deprecated Features
+-------------------
+
+- Added deprecation warnings for the above plugins, displayed when running respective filter plugins.
+- `parse_cli_textfsm` filter plugin is deprecated and will be removed in a future release after 2027-02-01. Use `ansible.utils.cli_parse` with the `ansible.utils.textfsm_parser` parser as a replacement.
+- `parse_cli` filter plugin is deprecated and will be removed in a future release after 2027-02-01. Use `ansible.utils.cli_parse` as a replacement.
+- `parse_xml` filter plugin is deprecated and will be removed in a future release after 2027-02-01. Use `ansible.utils.cli_parse` with the `ansible.utils.xml_parser` parser as a replacement.
+
+Bugfixes
+--------
+
+- libssh connection plugin - stop using long-deprecated and now removed internal field from ansible-core's base connection plugin class (https://github.com/ansible-collections/ansible.netcommon/issues/522, https://github.com/ansible-collections/ansible.netcommon/issues/690, https://github.com/ansible-collections/ansible.netcommon/pull/691).
+
+Documentation Changes
+---------------------
+
+- Includes a new support related section in the README.
+
 v7.1.0
 ======
 
