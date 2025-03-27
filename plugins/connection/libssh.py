@@ -216,14 +216,10 @@ import logging
 import os
 import re
 import socket
-import sys
-
-from termios import TCIFLUSH, tcflush
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError, AnsibleFileNotFound
 from ansible.module_utils._text import to_bytes, to_native, to_text
 from ansible.module_utils.basic import missing_required_lib
-from ansible.module_utils.six.moves import input
 from ansible.plugins.connection import ConnectionBase
 from ansible.utils.display import Display
 
@@ -262,8 +258,7 @@ class MyAddPolicy(object):
     local L{HostKeys} object, and saving it.  This is used by L{SSHClient}.
     """
 
-    def __init__(self, new_stdin, connection):
-        self._new_stdin = new_stdin
+    def __init__(self, connection):
         self.connection = connection
         self._options = connection._options
 
@@ -284,15 +279,12 @@ class MyAddPolicy(object):
                     AUTHENTICITY_MSG.rsplit("\n", 2)[0] % (hostname, message, key_type, fingerprint)
                 )
 
-            self.connection.connection_lock()
-            old_stdin = sys.stdin
-            sys.stdin = self._new_stdin
-
-            # clear out any premature input on sys.stdin
-            tcflush(sys.stdin, TCIFLUSH)
-
-            inp = input(AUTHENTICITY_MSG % (hostname, message, key_type, fingerprint))
-            sys.stdin = old_stdin
+            inp = to_text(
+                display.prompt_until(
+                    AUTHENTICITY_MSG % (hostname, message, key_type, fingerprint), private=False
+                ),
+                errors="surrogate_or_strict",
+            )
 
             self.connection.connection_unlock()
             if inp not in ["yes", "y", ""]:
@@ -430,7 +422,7 @@ class Connection(ConnectionBase):
             if self.get_option("hostkeys"):
                 ssh_connect_kwargs["hostkeys"] = self.get_option("hostkeys")
 
-            self.ssh.set_missing_host_key_policy(MyAddPolicy(self._new_stdin, self))
+            self.ssh.set_missing_host_key_policy(MyAddPolicy(self))
 
             self.ssh.connect(
                 host=remote_addr.lower(),
