@@ -1,3 +1,0 @@
----
-minor_changes:
-  - "Exposes new libssh options to configure publickey_accepted_algorithms and hostkeys. This requires ansible-pylibssh v1.1.0 or higher."
