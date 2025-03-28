@@ -134,6 +134,29 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>key_exchange_algorithms</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[libssh_connection]<br>key_exchange_algorithms = VALUE</p>
+                            </div>
+                                <div>env:ANSIBLE_LIBSSH_KEY_EXCHANGE_ALGORITHMS</div>
+                                <div>var: ansible_libssh_key_exchange_algorithms</div>
+                    </td>
+                <td>
+                        <div>Set the key exchange method as a comma-separated list (e.g., &quot;ecdh-sha2-nistp256,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1&quot;).</div>
+                        <div>The list can be prepended by +,-,^ which will append, remove or move to the beginning (prioritizing) of the default list respectively. Giving an empty list after + and ^ will cause error.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>look_for_keys</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
