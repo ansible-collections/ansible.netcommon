@@ -22,6 +22,7 @@ description:
   - This filter will load the spec file and pass the command output
     through it, returning JSON output.
   - The YAML spec file defines how to parse the CLI output.
+  - This plugin is deprecated and will be removed in a future release after 2027-02-01, please Use ansible.utils.cli_parse instead.
 notes:
   - To convert the XML output of a network device command into structured JSON output.
 options:
@@ -172,11 +173,18 @@ try:
 except ImportError:
     from jinja2.filters import environmentfilter as pass_environment
 
+from ansible.utils.display import Display
+
 
 @pass_environment
 def _parse_xml(*args, **kwargs):
-    """Extend vlan data"""
+    """parse xml"""
 
+    display = Display()
+    display.warning(
+        "The 'parse_xml' filter is deprecated and will be removed in a future release "
+        "after 2027-02-01. Use 'ansible.utils.cli_parse' instead."
+    )
     keys = ["output", "tmpl"]
     data = dict(zip(keys, args[1:]))
     data.update(kwargs)

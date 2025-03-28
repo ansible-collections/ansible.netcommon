@@ -19,6 +19,7 @@ Synopsis
 --------
 - The filter plugins converts the output of a network device CLI command into structured JSON output.
 - Using the parameters below - ``xml_data | ansible.netcommon.parse_cli(template.yml``)
+- This plugin is deprecated and will be removed in a future release after 2027-02-01, please Use ansible.utils.cli_parse instead.
 
 
 

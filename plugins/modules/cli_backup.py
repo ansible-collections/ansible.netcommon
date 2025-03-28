@@ -13,7 +13,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 module: cli_backup
-author: Kate Case (@Qalthos)
+author: Katherine Case (@Qalthos)
 short_description: Back up device configuration from network devices over network_cli
 description:
 - This module provides platform agnostic way of backing up text based configuration from
