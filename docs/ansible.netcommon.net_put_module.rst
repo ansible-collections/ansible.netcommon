@@ -42,6 +42,25 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>check_destination</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Enabling this check for the file in the destination if the file exists or not and only copy the file if it does not exist.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>dest</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -91,6 +110,7 @@ Parameters
                 </td>
                 <td>
                         <div>Protocol used to transfer file.</div>
+                        <div>The choice scp is deprecated, use sftp instead. The scp option would be removed after 2028-01-01.</div>
                 </td>
             </tr>
             <tr>
@@ -129,15 +149,31 @@ Examples
 
 .. code-block:: yaml
 
-    - name: copy file from ansible controller to a network device
+    - name: Copy file from ansible controller to a network device (defaults to scp)
       ansible.netcommon.net_put:
         src: running_cfg_ios1.txt
 
-    - name: copy file at root dir of flash in slot 3 of sw1(ios)
+    # changed: [Appliance] => changed=true
+    #   destination: running_cfg_sw1.txt
+
+    - name: Copy file at root dir of flash in slot 3 of sw1(ios)
       ansible.netcommon.net_put:
         src: running_cfg_sw1.txt
         protocol: sftp
         dest: flash3:/running_cfg_sw1.txt
+
+    # changed: [Appliance] => changed=true
+    #   destination: running_cfg_sw1.txt
+
+    - name: Copy file from ansible controller to a network device (does not check destination)
+      ansible.netcommon.net_put:
+        src: running_cfg_sw1.txt
+        protocol: scp
+        dest: ios_running_cfg_sw1.txt
+        check_destination: false
+
+    # changed: [Appliance] => changed=true
+    #   destination: ios_running_cfg_sw1.txt
 
 
 
