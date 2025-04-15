@@ -842,3 +842,15 @@ releases:
       - libssh_pubkey_algo.yml
       - update_bindep.yml
     release_date: "2025-03-27"
+  8.0.0:
+    changes:
+      major_changes:
+        - Bumping `requires_ansible` to `>=2.16.0`, since previous ansible-core versions
+          are EoL now.
+      release_summary:
+        "With this release, the minimum required version of `ansible-core`
+        for this collection is `2.16.0`. The last version known to be compatible with
+        `ansible-core` versions below `2.16` is v7.2.0."
+    fragments:
+      - bump216.yml
+    release_date: "2025-04-11"
