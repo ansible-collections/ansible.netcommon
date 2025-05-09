@@ -1,5 +1,7 @@
 import unittest
+
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import Template
+
 
 class TestNetworkTemplate(unittest.TestCase):
     def setUp(self):
@@ -20,5 +22,6 @@ class TestNetworkTemplate(unittest.TestCase):
         result = self.template("{{ value }}", {"value": "[1, 2, 3]"})
         self.assertEqual(result, [1, 2, 3])
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
