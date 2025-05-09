@@ -132,3 +132,12 @@ def sanitize_xml(data):
                 if key not in IGNORE_XML_ATTRIBUTE:
                     attribute.pop(key)
     return to_text(tostring(tree), errors="surrogate_then_replace").strip()
+
+def copy_config(module, source, target):
+    conn = get_connection(module)
+    try:
+        response = conn.copy_config(source=source, target=target)
+    except ConnectionError as e:
+        module.fail_json(msg=to_text(e, errors="surrogate_then_replace").strip())
+    return response
+

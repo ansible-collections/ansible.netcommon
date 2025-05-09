@@ -598,7 +598,7 @@ def main():
             conn.validate(target)
         if source:
             if not module.check_mode:
-                conn.copy(source, target)
+                conn.copy_config(source, target)
             result["changed"] = True
         elif delete:
             if not module.check_mode:
