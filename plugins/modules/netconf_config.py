@@ -691,7 +691,7 @@ def main():
                         "after": sanitized_after,
                     }
         elif not config and commit:
-          if not module.check_mode:
+            if not module.check_mode:
                 confirm_timeout = confirm if confirm > 0 else None
                 commit_rpc = f"""
                 <commit xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
@@ -700,8 +700,8 @@ def main():
                 </commit>
                 """
                 response = conn.dispatch(commit_rpc.strip())
-          else:
-              conn.discard_changes()
+            else:
+                conn.discard_changes()
 
     except ConnectionError as e:
         module.fail_json(msg=to_text(e, errors="surrogate_then_replace").strip())
