@@ -812,3 +812,45 @@ releases:
       - readme_communication.yml
       - update_error_msg.yaml
     release_date: "2024-08-29"
+  7.2.0:
+    changes:
+      bugfixes:
+        - libssh connection plugin - stop using long-deprecated and now removed internal
+          field from ansible-core's base connection plugin class (https://github.com/ansible-collections/ansible.netcommon/issues/522,
+          https://github.com/ansible-collections/ansible.netcommon/issues/690, https://github.com/ansible-collections/ansible.netcommon/pull/691).
+      deprecated_features:
+        - Added deprecation warnings for the above plugins, displayed when running respective
+          filter plugins.
+        - "`parse_cli_textfsm` filter plugin is deprecated and will be removed in a
+          future release after 2027-02-01. Use `ansible.utils.cli_parse` with the `ansible.utils.textfsm_parser`
+          parser as a replacement."
+        - "`parse_cli` filter plugin is deprecated and will be removed in a future release
+          after 2027-02-01. Use `ansible.utils.cli_parse` as a replacement."
+        - "`parse_xml` filter plugin is deprecated and will be removed in a future release
+          after 2027-02-01. Use `ansible.utils.cli_parse` with the `ansible.utils.xml_parser`
+          parser as a replacement."
+      doc_changes:
+        - Includes a new support related section in the README.
+      minor_changes:
+        - Exposes new libssh options to configure publickey_accepted_algorithms and
+          hostkeys. This requires ansible-pylibssh v1.1.0 or higher.
+    fragments:
+      - 691-libssh-connection.yml
+      - add_support_section.yaml
+      - deprecate_parsing_filter_plugins.yaml
+      - ignore_219.yaml
+      - libssh_pubkey_algo.yml
+      - update_bindep.yml
+    release_date: "2025-03-27"
+  8.0.0:
+    changes:
+      major_changes:
+        - Bumping `requires_ansible` to `>=2.16.0`, since previous ansible-core versions
+          are EoL now.
+      release_summary:
+        "With this release, the minimum required version of `ansible-core`
+        for this collection is `2.16.0`. The last version known to be compatible with
+        `ansible-core` versions below `2.16` is v7.2.0."
+    fragments:
+      - bump216.yml
+    release_date: "2025-04-11"
