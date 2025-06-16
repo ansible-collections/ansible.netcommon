@@ -1,7 +1,0 @@
----
-bugfixes:
-  - "Connection can be lost from control plane reset or device restart. meta:
-    reset_connection task will attempt to send a session_close RPC to a dead
-    connection and ncclient will raise an exception preventing the connection
-    socket_path from being closed out.
-    (https://github.com/ansible-collections/ansible.netcommon/issues/348)"
