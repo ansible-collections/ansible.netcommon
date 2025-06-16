@@ -1,0 +1,3 @@
+---
+trivial:
+  - "Fixes unit tests execution by updating set_module_args to automatically patch module arguments using the new patch_module_args for ansible 2.19"

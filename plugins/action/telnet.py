@@ -49,14 +49,14 @@ class ActionModule(ActionBase):
             pause = int(self._task.args.get("pause", 1))
 
             send_newline = self._task.args.get("send_newline", False)
-            clrf = self._task.args.get("clrf", False)
+            crlf = self._task.args.get("crlf", False)
 
             login_prompt = to_text(self._task.args.get("login_prompt", "login: "))
             password_prompt = to_text(self._task.args.get("password_prompt", "Password: "))
             prompts = self._task.args.get("prompts", ["\\$ "])
             commands = self._task.args.get("command") or self._task.args.get("commands")
 
-            if clrf:
+            if crlf:
                 line_ending = "\r\n"
             else:
                 line_ending = "\n"
