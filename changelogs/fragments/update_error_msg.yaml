@@ -1,3 +1,0 @@
----
-trivial:
-  - Updated the error message for the content_templates parser to include the correct parser name and detailed error information.

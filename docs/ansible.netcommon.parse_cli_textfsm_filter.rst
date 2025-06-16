@@ -19,6 +19,7 @@ Synopsis
 --------
 - The network filters also support parsing the output of a CLI command using the TextFSM library. To parse the CLI output with TextFSM use this filter.
 - Using the parameters below - ``data | ansible.netcommon.parse_cli_textfsm(template.yml``)
+- This plugin is deprecated and will be removed in a future release after 2027-02-01, please Use ansible.utils.cli_parse instead.
 
 
 

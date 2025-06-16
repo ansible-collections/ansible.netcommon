@@ -72,6 +72,11 @@ class Connection(ConnectionBase):
             "starting connection from persistent connection plugin",
             host=self._play_context.remote_addr,
         )
+        display.deprecated(
+            msg="support for connection local has been deprecated",
+            date="2027-01-01",
+            collection_name="ansible.netcommon",
+        )
         variables = {"ansible_command_timeout": self.get_option("persistent_command_timeout")}
         socket_path = start_connection(self._play_context, variables, self._task_uuid)
         display.vvvv(

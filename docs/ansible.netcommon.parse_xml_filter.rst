@@ -19,6 +19,7 @@ Synopsis
 --------
 - This filter will load the spec file and pass the command output through it, returning JSON output.
 - The YAML spec file defines how to parse the CLI output.
+- This plugin is deprecated and will be removed in a future release after 2027-02-01, please Use ansible.utils.cli_parse instead.
 
 
 
