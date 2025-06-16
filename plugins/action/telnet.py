@@ -48,6 +48,7 @@ class ActionModule(ActionBase):
             timeout = int(self._task.args.get("timeout", 120))
             pause = int(self._task.args.get("pause", 1))
 
+            send_carriage_return = self._task.args.get("send_carriage_return", False)
             send_newline = self._task.args.get("send_newline", False)
             clrf = self._task.args.get("clrf", False)
 
@@ -69,6 +70,8 @@ class ActionModule(ActionBase):
 
                 self.output = bytes()
                 try:
+                    if send_carriage_return:
+                        self.tn.write(b"\r")
                     if send_newline:
                         self.tn.write(to_bytes(line_ending))
 
