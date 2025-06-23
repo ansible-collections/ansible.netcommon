@@ -137,5 +137,5 @@ class CliParser(CliParserBase):
             parsed = device.parse(command, output=cli_output)
         except Exception as exc:
             msg = "The pyats library return an error for '{cmd}' for '{os}'. Error: {err}."
-            return {"errors": [(msg.format(cmd=command, os=network_os, err=to_native(exc)))]}
+            return {"errors": [msg.format(cmd=command, os=network_os, err=to_native(exc))]}
         return {"parsed": parsed}
