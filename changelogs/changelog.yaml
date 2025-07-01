@@ -848,9 +848,22 @@ releases:
         - Bumping `requires_ansible` to `>=2.16.0`, since previous ansible-core versions
           are EoL now.
       release_summary:
-        "With this release, the minimum required version of `ansible-core`
+        With this release, the minimum required version of `ansible-core`
         for this collection is `2.16.0`. The last version known to be compatible with
-        `ansible-core` versions below `2.16` is v7.2.0."
+        `ansible-core` versions below `2.16` is v7.2.0.
     fragments:
       - bump216.yml
     release_date: "2025-04-11"
+  8.0.1:
+    changes:
+      bugfixes:
+        - (#633) Fixed typo in ansible.netcommon.telnet parameter crlf (was clrf by
+          mistake)
+        - netconf - Adds check for netconf session_close RPC happens only if connection
+          is alive.
+    fragments:
+      - data_tag.yml
+      - fix_ci.yaml
+      - netconf_reset_connection.yaml
+      - telnet_crlf_parameter.yml
+    release_date: "2025-07-01"

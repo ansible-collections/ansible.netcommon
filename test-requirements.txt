@@ -7,7 +7,6 @@ yamllint
 pytest-ansible
 pytest-xdist
 pytest-cov
-typing-extensions
 
 # The following are 3rd party libs for cli_parse
 ntc_templates
