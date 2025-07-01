@@ -4,6 +4,15 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.0.1
+======
+
+Bugfixes
+--------
+
+- (#633) Fixed typo in ansible.netcommon.telnet parameter crlf (was clrf by mistake)
+- netconf - Adds check for netconf session_close RPC happens only if connection is alive.
+
 v8.0.0
 ======
 
