@@ -1,0 +1,6 @@
+---
+bugfixes:
+  - Fixed `network.py` action plugin to use internal `_execute_module()` method
+    for compatibility with Ansible-core 2.19+'s direct module execution changes.
+    This prevents deserialization errors (`No start of json char found`) when
+    `import_modules=True` is used with network modules like `ios_command`.

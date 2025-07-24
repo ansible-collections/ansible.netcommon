@@ -20,7 +20,7 @@ from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
 from ansible.release import __version__ as ansible_version
-from distutils.version import LooseVersion
+from packaging.version import Version as LooseVersion
 
 display = Display()
 
