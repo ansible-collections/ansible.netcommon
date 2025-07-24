@@ -283,17 +283,14 @@ class ActionModule(_ActionModule):
         }
 
         # Patch for ansible-core 2.19+ compatibility
-
         def is_version_ge(current, baseline):
             def safe_split(v):
                 return [int(part) for part in v.split(".") if part.isdigit()]
-
             return safe_split(current) >= safe_split(baseline)
 
+        # Determine the profile string safely
         if is_version_ge(ansible_version, "2.19.0"):
-            profile = (
-                self._task._role or {}
-            )  # or task_vars.get('_data_context_profile') if available
+            profile = getattr(self._task._role, "name", "legacy")
             data = self._parse_returned_data(dict_out, profile)
         else:
             data = self._parse_returned_data(dict_out)
