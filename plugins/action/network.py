@@ -275,24 +275,12 @@ class ActionModule(_ActionModule):
         :param task_vars: The vars provided to the task
         :type task_vars: dict
         """
-        import copy
+        import copy, json
+        import ansible.module_utils.basic as mod_utils
 
-        from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
-
-        # build an AnsibleModule that doesn't load params
-        class PatchedAnsibleModule(_AnsibleModule):
-            def _load_params(self):
-                pass
-
-        # update the task args w/ all the magic vars
         self._update_module_args(self._task.action, self._task.args, task_vars)
-
-        # set the params of the ansible module cause we're not using stdin
-        # use a copy so the module doesn't change the original task args
-        PatchedAnsibleModule.params = copy.deepcopy(self._task.args)
-
-        # give the module our revised AnsibleModule
-        module.AnsibleModule = PatchedAnsibleModule
+        mod_utils._ANSIBLE_ARGS = json.dumps({"ANSIBLE_MODULE_ARGS": copy.deepcopy(self._task.args)}).encode("utf-8")
+        mod_utils._ANSIBLE_PROFILE = "legacy"
 
     def _exec_module(self, module):
         """exec the module's main() since modules
@@ -338,7 +326,12 @@ class ActionModule(_ActionModule):
             "stderr": stderr,
             "stderr_lines": stderr.splitlines(),
         }
-        data = self._parse_returned_data(dict_out)
+        try:
+            data = self._parse_returned_data(dict_out, "legacy")
+            # The second argument is present and required since ansible-core 2.19
+        except TypeError:
+            # Fallback for ansible-core 2.18 and before
+            data = self._parse_returned_data(dict_out)
         # Clean up the response like action _execute_module
         remove_internal_keys(data)
 
