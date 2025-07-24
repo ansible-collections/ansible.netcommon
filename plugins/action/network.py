@@ -17,9 +17,9 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves.urllib.parse import urlsplit
 from ansible.plugins.action.normal import ActionModule as _ActionModule
-from ansible.release import __version__ as ansible_version
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
+from ansible.vars.clean import remove_internal_keys
 
 
 display = Display()
@@ -253,7 +253,6 @@ class ActionModule(_ActionModule):
         import sys
 
         from ansible.module_utils._text import to_native
-        from ansible.vars.clean import remove_internal_keys
 
         # preserve previous stdout, replace with buffer
         sys_stdout = sys.stdout
@@ -283,17 +282,14 @@ class ActionModule(_ActionModule):
         }
 
         # Patch for ansible-core 2.19+ compatibility
-        def is_version_ge(current, baseline):
-            def safe_split(v):
-                return [int(part) for part in v.split(".") if part.isdigit()]
-            return safe_split(current) >= safe_split(baseline)
-
-        # Determine the profile string safely
-        if is_version_ge(ansible_version, "2.19.0"):
+        try:
+            # Try the new signature with profile parameter
             profile = getattr(self._task._role, "name", "legacy")
             data = self._parse_returned_data(dict_out, profile)
-        else:
+        except TypeError:
+            # Fallback for older versions that don't support the profile parameter
             data = self._parse_returned_data(dict_out)
+
         # Clean up the response like action _execute_module
         remove_internal_keys(data)
 
