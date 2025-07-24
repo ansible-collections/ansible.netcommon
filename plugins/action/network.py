@@ -41,52 +41,26 @@ class ActionModule(_ActionModule):
 
         # attempt to run using dexec
         if dexec_eligible:
-            # find and load the module
-            filename, module = self._find_load_module()
-            display.vvvv(
-                "{prefix} found {action}  at {fname}".format(
-                    prefix=DEXEC_PREFIX,
-                    action=self._task.action,
-                    fname=filename,
-                ),
-                host,
-            )
-            # not using AnsibleModule, return to normal run (eg eos_bgp)
-            if getattr(module, "AnsibleModule", None):
-                # patch and update the module
-                self._patch_update_module(module, task_vars)
-                display.vvvv(
-                    "{prefix} running {module}".format(
-                        prefix=DEXEC_PREFIX, module=self._task.action
-                    ),
-                    host,
-                )
-                # execute the module, collect result
-                result = self._exec_module(module)
-                display.vvvv("{prefix} complete".format(prefix=DEXEC_PREFIX), host)
-                display.vvvvv(
-                    "{prefix} Result: {result}".format(prefix=DEXEC_PREFIX, result=result),
-                    host,
-                )
+            try:
+                filename, module = self._find_load_module()
+                display.vvvv(f"{DEXEC_PREFIX} found {self._task.action} at {filename}", host)
 
-            else:
+                if hasattr(module, "main"):
+                    display.vvvv(f"{DEXEC_PREFIX} executing {self._task.action}", host)
+                    result = self._execute_module(module_name=self._task.action, task_vars=task_vars)
+                    display.vvvv(f"{DEXEC_PREFIX} execution complete", host)
+                else:
+                    display.vvvv(f"{DEXEC_PREFIX} {self._task.action} does not define main(), falling back", host)
+                    dexec_eligible = False
+            except Exception as e:
+                display.warning(f"{DEXEC_PREFIX} direct execution failed: {to_text(e)}. Falling back.", host)
                 dexec_eligible = False
-                display.vvvv(
-                    "{prefix} {module} doesn't support direct execution, disabled".format(
-                        prefix=DEXEC_PREFIX, module=self._task.action
-                    ),
-                    host,
-                )
 
         if not dexec_eligible:
-            result = super(ActionModule, self).run(task_vars=task_vars)
+            result = super(ActionModule, self).run(tmp=tmp, task_vars=task_vars)
 
         if config_module and self._task.args.get("backup") and not result.get("failed"):
-            self._handle_backup_option(
-                result,
-                task_vars,
-                self._task.args.get("backup_options"),
-            )
+            self._handle_backup_option(result, task_vars, self._task.args.get("backup_options"))
 
         return result
 
@@ -169,11 +143,7 @@ class ActionModule(_ActionModule):
             with open(source, "r") as f:
                 template_data = to_text(f.read())
         except IOError as e:
-            raise AnsibleError(
-                "unable to load src file {0}, I/O error({1}): {2}".format(
-                    source, e.errno, e.strerror
-                )
-            )
+            raise AnsibleError(f"unable to load src file {source}, I/O error({e.errno}): {e.strerror}")
 
         # Create a template search path in the following order:
         # [working_path, self_role_path, dependent_role_paths, dirname(source)]
@@ -213,29 +183,20 @@ class ActionModule(_ActionModule):
 
         # log early about dexec
         if dexec:
-            display.vvvv("{prefix} enabled".format(prefix=DEXEC_PREFIX), host)
+            display.vvvv(f"{DEXEC_PREFIX} enabled", host)
 
             # disable dexec when not PY3
             if not PY3:
                 dexec = False
-                display.vvvv(
-                    "{prefix} disabled for when not Python 3".format(prefix=DEXEC_PREFIX),
-                    host=host,
-                )
+                display.vvvv(f"{DEXEC_PREFIX} disabled for Python 2", host)
 
             # disable dexec when running async
             if self._task.async_val:
                 dexec = False
-                display.vvvv(
-                    "{prefix} disabled for a task using async".format(prefix=DEXEC_PREFIX),
-                    host=host,
-                )
+                display.vvvv(f"{DEXEC_PREFIX} disabled for async task", host)
         else:
-            display.vvvv("{prefix} disabled".format(prefix=DEXEC_PREFIX), host)
-            display.vvvv(
-                "{prefix} module execution time may be extended".format(prefix=DEXEC_PREFIX),
-                host,
-            )
+            display.vvvv(f"{DEXEC_PREFIX} disabled", host)
+            display.vvvv(f"{DEXEC_PREFIX} module execution time may be extended", host)
 
         return dexec
 
@@ -266,40 +227,6 @@ class ActionModule(_ActionModule):
             )
             module = importlib.import_module(fullname)
         return filename, module
-
-    def _patch_update_module(self, module, task_vars):
-        """Update a module instance, replacing it's AnsibleModule
-        with one that doesn't load params
-
-        :param module: An loaded module
-        :type module: A module file that was loaded
-        :param task_vars: The vars provided to the task
-        :type task_vars: dict
-        """
-        import copy
-
-        from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
-        from ansible.release import __version__ as ansible_version
-        from distutils.version import LooseVersion
-
-        self._update_module_args(self._task.action, self._task.args, task_vars)
-
-        args_copy = copy.deepcopy(self._task.args)
-
-        kwargs = {
-            'argument_spec': {},
-        }
-
-        # Add profile only for core >= 2.19
-        if LooseVersion(ansible_version) >= LooseVersion("2.19.0"):
-            kwargs['profile'] = self._task._role or {}
-
-        # Instantiate a real, compliant AnsibleModule (do not override _load_params)
-        instance = _AnsibleModule(**kwargs)
-        instance.params = args_copy
-
-        # Inject it into the module
-        module.AnsibleModule = lambda *args, **kw: instance
 
     def _exec_module(self, module):
         """exec the module's main() since modules
