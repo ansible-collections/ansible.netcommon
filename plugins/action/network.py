@@ -338,7 +338,7 @@ class ActionModule(_ActionModule):
             "stderr": stderr,
             "stderr_lines": stderr.splitlines(),
         }
-        data = self._parse_returned_data(dict_out)
+        data = self._parse_returned_data(dict_out, 'legacy')
         # Clean up the response like action _execute_module
         remove_internal_keys(data)
 
