@@ -277,7 +277,7 @@ class ActionModule(_ActionModule):
         """
         import copy, json
         import ansible.module_utils.basic as mod_utils
-
+        # update the task args w/ all the magic vars
         self._update_module_args(self._task.action, self._task.args, task_vars)
         mod_utils._ANSIBLE_ARGS = json.dumps({"ANSIBLE_MODULE_ARGS": copy.deepcopy(self._task.args)}).encode("utf-8")
         mod_utils._ANSIBLE_PROFILE = "legacy"
