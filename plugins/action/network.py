@@ -20,7 +20,6 @@ from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
 from ansible.release import __version__ as ansible_version
-from packaging.version import Version as LooseVersion
 
 display = Display()
 
@@ -272,8 +271,15 @@ class ActionModule(_ActionModule):
             "stderr": stderr,
             "stderr_lines": stderr.splitlines(),
         }
+
         # Patch for ansible-core 2.19+ compatibility
-        if LooseVersion(ansible_version) >= LooseVersion("2.19.0"):
+
+        def is_version_ge(current, baseline):
+            def safe_split(v):
+                return [int(part) for part in v.split('.') if part.isdigit()]
+            return safe_split(current) >= safe_split(baseline)
+
+        if is_version_ge(ansible_version, "2.19.0"):
             profile = self._task._role or {}  # or task_vars.get('_data_context_profile') if available
             data = self._parse_returned_data(dict_out, profile)
         else:
