@@ -19,7 +19,8 @@ from ansible.module_utils.six.moves.urllib.parse import urlsplit
 from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
-
+from ansible.release import __version__ as ansible_version
+from distutils.version import LooseVersion
 
 display = Display()
 
@@ -278,21 +279,27 @@ class ActionModule(_ActionModule):
         import copy
 
         from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
+        from ansible.release import __version__ as ansible_version
+        from distutils.version import LooseVersion
 
-        # build an AnsibleModule that doesn't load params
-        class PatchedAnsibleModule(_AnsibleModule):
-            def _load_params(self):
-                pass
-
-        # update the task args w/ all the magic vars
         self._update_module_args(self._task.action, self._task.args, task_vars)
 
-        # set the params of the ansible module cause we're not using stdin
-        # use a copy so the module doesn't change the original task args
-        PatchedAnsibleModule.params = copy.deepcopy(self._task.args)
+        args_copy = copy.deepcopy(self._task.args)
 
-        # give the module our revised AnsibleModule
-        module.AnsibleModule = PatchedAnsibleModule
+        kwargs = {
+            'argument_spec': {},
+        }
+
+        # Add profile only for core >= 2.19
+        if LooseVersion(ansible_version) >= LooseVersion("2.19.0"):
+            kwargs['profile'] = self._task._role or {}
+
+        # Instantiate a real, compliant AnsibleModule (do not override _load_params)
+        instance = _AnsibleModule(**kwargs)
+        instance.params = args_copy
+
+        # Inject it into the module
+        module.AnsibleModule = lambda *args, **kw: instance
 
     def _exec_module(self, module):
         """exec the module's main() since modules
@@ -338,7 +345,12 @@ class ActionModule(_ActionModule):
             "stderr": stderr,
             "stderr_lines": stderr.splitlines(),
         }
-        data = self._parse_returned_data(dict_out)
+        # Patch for ansible-core 2.19+ compatibility
+        if LooseVersion(ansible_version) >= LooseVersion("2.19.0"):
+            profile = self._task._role or {}  # or task_vars.get('_data_context_profile') if available
+            data = self._parse_returned_data(dict_out, profile)
+        else:
+            data = self._parse_returned_data(dict_out)
         # Clean up the response like action _execute_module
         remove_internal_keys(data)
 
