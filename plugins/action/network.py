@@ -283,7 +283,6 @@ class ActionModule(_ActionModule):
 
         # Patch for ansible-core 2.19+ compatibility
         try:
-            # Try the new signature with profile parameter
             profile = getattr(self._task._role, "name", "legacy")
             data = self._parse_returned_data(dict_out, profile)
         except TypeError:
