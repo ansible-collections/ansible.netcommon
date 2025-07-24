@@ -17,9 +17,10 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves.urllib.parse import urlsplit
 from ansible.plugins.action.normal import ActionModule as _ActionModule
+from ansible.release import __version__ as ansible_version
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
-from ansible.release import __version__ as ansible_version
+
 
 display = Display()
 
@@ -46,13 +47,20 @@ class ActionModule(_ActionModule):
 
                 if hasattr(module, "main"):
                     display.vvvv(f"{DEXEC_PREFIX} executing {self._task.action}", host)
-                    result = self._execute_module(module_name=self._task.action, task_vars=task_vars)
+                    result = self._execute_module(
+                        module_name=self._task.action, task_vars=task_vars
+                    )
                     display.vvvv(f"{DEXEC_PREFIX} execution complete", host)
                 else:
-                    display.vvvv(f"{DEXEC_PREFIX} {self._task.action} does not define main(), falling back", host)
+                    display.vvvv(
+                        f"{DEXEC_PREFIX} {self._task.action} does not define main(), falling back",
+                        host,
+                    )
                     dexec_eligible = False
             except Exception as e:
-                display.warning(f"{DEXEC_PREFIX} direct execution failed: {to_text(e)}. Falling back.", host)
+                display.warning(
+                    f"{DEXEC_PREFIX} direct execution failed: {to_text(e)}. Falling back.", host
+                )
                 dexec_eligible = False
 
         if not dexec_eligible:
@@ -142,7 +150,9 @@ class ActionModule(_ActionModule):
             with open(source, "r") as f:
                 template_data = to_text(f.read())
         except IOError as e:
-            raise AnsibleError(f"unable to load src file {source}, I/O error({e.errno}): {e.strerror}")
+            raise AnsibleError(
+                f"unable to load src file {source}, I/O error({e.errno}): {e.strerror}"
+            )
 
         # Create a template search path in the following order:
         # [working_path, self_role_path, dependent_role_paths, dirname(source)]
@@ -276,11 +286,14 @@ class ActionModule(_ActionModule):
 
         def is_version_ge(current, baseline):
             def safe_split(v):
-                return [int(part) for part in v.split('.') if part.isdigit()]
+                return [int(part) for part in v.split(".") if part.isdigit()]
+
             return safe_split(current) >= safe_split(baseline)
 
         if is_version_ge(ansible_version, "2.19.0"):
-            profile = self._task._role or {}  # or task_vars.get('_data_context_profile') if available
+            profile = (
+                self._task._role or {}
+            )  # or task_vars.get('_data_context_profile') if available
             data = self._parse_returned_data(dict_out, profile)
         else:
             data = self._parse_returned_data(dict_out)
