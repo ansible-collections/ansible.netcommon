@@ -41,6 +41,7 @@ class ActionModule(_ActionModule):
         dexec_eligible = False
         # attempt to run using dexec
         if dexec_eligible:
+            # find and load the module
             filename, module = self._find_load_module()
             display.vvvv(
                 "{prefix} found {action}  at {fname}".format(
@@ -50,6 +51,7 @@ class ActionModule(_ActionModule):
                 ),
                 host,
             )
+            # not using AnsibleModule, return to normal run (eg eos_bgp)
             if getattr(module, "AnsibleModule", None):
                 self._patch_update_module(module, task_vars)
                 display.vvvv(
@@ -58,6 +60,7 @@ class ActionModule(_ActionModule):
                     ),
                     host,
                 )
+                # execute the module, collect result
                 result = self._exec_module(module)
                 display.vvvv("{prefix} complete".format(prefix=DEXEC_PREFIX), host)
                 display.vvvvv(
@@ -259,6 +262,33 @@ class ActionModule(_ActionModule):
             )
             module = importlib.import_module(fullname)
         return filename, module
+
+    def _patch_update_module(self, module, task_vars):
+        """Update a module instance, replacing it's AnsibleModule
+        with one that doesn't load params
+        :param module: An loaded module
+        :type module: A module file that was loaded
+        :param task_vars: The vars provided to the task
+        :type task_vars: dict
+        """
+        import copy
+
+        from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
+
+        # build an AnsibleModule that doesn't load params
+        class PatchedAnsibleModule(_AnsibleModule):
+            def _load_params(self):
+                pass
+
+        # update the task args w/ all the magic vars
+        self._update_module_args(self._task.action, self._task.args, task_vars)
+
+        # set the params of the ansible module cause we're not using stdin
+        # use a copy so the module doesn't change the original task args
+        PatchedAnsibleModule.params = copy.deepcopy(self._task.args)
+
+        # give the module our revised AnsibleModule
+        module.AnsibleModule = PatchedAnsibleModule
 
     def _exec_module(self, module):
         """exec the module's main() since modules
