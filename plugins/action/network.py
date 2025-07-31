@@ -309,6 +309,7 @@ class ActionModule(_ActionModule):
         import sys
 
         from ansible.module_utils._text import to_native
+        from ansible.vars.clean import remove_internal_keys
 
         # preserve previous stdout, replace with buffer
         sys_stdout = sys.stdout
