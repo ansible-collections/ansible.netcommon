@@ -20,6 +20,7 @@ from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
 
+
 display = Display()
 
 DEXEC_PREFIX = "ANSIBLE_NETWORK_IMPORT_MODULES:"
