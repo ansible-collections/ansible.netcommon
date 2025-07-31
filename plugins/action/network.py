@@ -53,6 +53,7 @@ class ActionModule(_ActionModule):
             )
             # not using AnsibleModule, return to normal run (eg eos_bgp)
             if getattr(module, "AnsibleModule", None):
+                # patch and update the module
                 self._patch_update_module(module, task_vars)
                 display.vvvv(
                     "{prefix} running {module}".format(
@@ -168,7 +169,9 @@ class ActionModule(_ActionModule):
                 template_data = to_text(f.read())
         except IOError as e:
             raise AnsibleError(
-                f"unable to load src file {source}, I/O error({e.errno}): {e.strerror}"
+                "unable to load src file {0}, I/O error({1}): {2}".format(
+                    source, e.errno, e.strerror
+                )
             )
 
         # Create a template search path in the following order:
