@@ -1,5 +1,4 @@
 ---
 bugfixes:
-  - Fixed network.py action plugin to use internal `_execute_module()` for compatibility with Ansible-core 2.19+ direct module execution.
-    Resolves errors like `No start of json char found` and `ActionBase._parse_returned_data() missing 1 required positional argument 'profile'`
-    when `import_modules=True` is used.
+  - Temporarily disabled direct module execution in `network.py` action plugin for compatibility with ansible-core 2.19+.
+    Prevents errors like `No start of json char found` and `ActionBase._parse_returned_data() missing 1 required positional argument 'profile'`.

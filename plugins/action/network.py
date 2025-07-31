@@ -39,35 +39,51 @@ class ActionModule(_ActionModule):
         host = task_vars["ansible_host"]
         dexec_eligible = self._check_dexec_eligibility(host)
 
+        # Temporary disabling of direct execution
+        dexec_eligible = False
         # attempt to run using dexec
         if dexec_eligible:
-            try:
-                filename, module = self._find_load_module()
-                display.vvvv(f"{DEXEC_PREFIX} found {self._task.action} at {filename}", host)
-
-                if hasattr(module, "main"):
-                    display.vvvv(f"{DEXEC_PREFIX} executing {self._task.action}", host)
-                    result = self._execute_module(
-                        module_name=self._task.action, task_vars=task_vars
-                    )
-                    display.vvvv(f"{DEXEC_PREFIX} execution complete", host)
-                else:
-                    display.vvvv(
-                        f"{DEXEC_PREFIX} {self._task.action} does not define main(), falling back",
-                        host,
-                    )
-                    dexec_eligible = False
-            except Exception as e:
-                display.warning(
-                    f"{DEXEC_PREFIX} direct execution failed: {to_text(e)}. Falling back.", host
+            filename, module = self._find_load_module()
+            display.vvvv(
+                "{prefix} found {action}  at {fname}".format(
+                    prefix=DEXEC_PREFIX,
+                    action=self._task.action,
+                    fname=filename,
+                ),
+                host,
+            )
+            if getattr(module, "AnsibleModule", None):
+                self._patch_update_module(module, task_vars)
+                display.vvvv(
+                    "{prefix} running {module}".format(
+                        prefix=DEXEC_PREFIX, module=self._task.action
+                    ),
+                    host,
                 )
+                result = self._exec_module(module)
+                display.vvvv("{prefix} complete".format(prefix=DEXEC_PREFIX), host)
+                display.vvvvv(
+                    "{prefix} Result: {result}".format(prefix=DEXEC_PREFIX, result=result),
+                    host,
+                )
+            else:
                 dexec_eligible = False
+                display.vvvv(
+                    "{prefix} {module} doesn't support direct execution, disabled".format(
+                        prefix=DEXEC_PREFIX, module=self._task.action
+                    ),
+                    host,
+                )
 
         if not dexec_eligible:
-            result = super(ActionModule, self).run(tmp=tmp, task_vars=task_vars)
+            result = super(ActionModule, self).run(task_vars=task_vars)
 
         if config_module and self._task.args.get("backup") and not result.get("failed"):
-            self._handle_backup_option(result, task_vars, self._task.args.get("backup_options"))
+            self._handle_backup_option(
+                result,
+                task_vars,
+                self._task.args.get("backup_options"),
+            )
 
         return result
 
@@ -192,20 +208,29 @@ class ActionModule(_ActionModule):
 
         # log early about dexec
         if dexec:
-            display.vvvv(f"{DEXEC_PREFIX} enabled", host)
+            display.vvvv("{prefix} enabled".format(prefix=DEXEC_PREFIX), host)
 
             # disable dexec when not PY3
             if not PY3:
                 dexec = False
-                display.vvvv(f"{DEXEC_PREFIX} disabled for Python 2", host)
+                display.vvvv(
+                    "{prefix} disabled for when not Python 3".format(prefix=DEXEC_PREFIX),
+                    host=host,
+                )
 
             # disable dexec when running async
             if self._task.async_val:
                 dexec = False
-                display.vvvv(f"{DEXEC_PREFIX} disabled for async task", host)
+                display.vvvv(
+                    "{prefix} disabled for a task using async".format(prefix=DEXEC_PREFIX),
+                    host=host,
+                )
         else:
-            display.vvvv(f"{DEXEC_PREFIX} disabled", host)
-            display.vvvv(f"{DEXEC_PREFIX} module execution time may be extended", host)
+            display.vvvv("{prefix} disabled".format(prefix=DEXEC_PREFIX), host)
+            display.vvvv(
+                "{prefix} module execution time may be extended".format(prefix=DEXEC_PREFIX),
+                host,
+            )
 
         return dexec
 
@@ -281,13 +306,7 @@ class ActionModule(_ActionModule):
             "stderr_lines": stderr.splitlines(),
         }
 
-        # Patch for ansible-core 2.19+ compatibility
-        try:
-            profile = getattr(self._task._role, "name", "legacy")
-            data = self._parse_returned_data(dict_out, profile)
-        except TypeError:
-            # Fallback for older versions that don't support the profile parameter
-            data = self._parse_returned_data(dict_out)
+        data = self._parse_returned_data(dict_out)
 
         # Clean up the response like action _execute_module
         remove_internal_keys(data)
