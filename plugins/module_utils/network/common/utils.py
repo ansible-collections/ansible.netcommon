@@ -619,7 +619,9 @@ def validate_config(spec, data):
     :return:
     """
     params = basic._ANSIBLE_ARGS
-    basic._ANSIBLE_PROFILE = "legacy" # added to make the 2.19 _load_param work as it expects a profile
+    basic._ANSIBLE_PROFILE = (
+        "legacy"  # added to make the 2.19 _load_param work as it expects a profile
+    )
     basic._ANSIBLE_ARGS = to_bytes(json.dumps({"ANSIBLE_MODULE_ARGS": data}))
     validated_data = basic.AnsibleModule(spec).params
     basic._ANSIBLE_ARGS = params
