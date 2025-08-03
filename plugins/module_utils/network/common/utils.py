@@ -626,7 +626,7 @@ def validate_config(spec, data):
     # validated_data = basic.AnsibleModule(spec).params
     # basic._ANSIBLE_ARGS = params
     # return validated_data
-    
+
     # works with 2.19 and older
     class PatchedAnsibleModule(basic.AnsibleModule):
         def _load_params(self):
@@ -635,6 +635,7 @@ def validate_config(spec, data):
     validated_data = PatchedAnsibleModule(spec).params
 
     return validated_data
+
 
 def search_obj_in_list(name, lst, key="name"):
     if not lst:
