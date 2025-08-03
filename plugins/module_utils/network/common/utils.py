@@ -618,15 +618,23 @@ def validate_config(spec, data):
     :param data: Data to be validated
     :return:
     """
-    params = basic._ANSIBLE_ARGS
-    basic._ANSIBLE_PROFILE = (
-        "legacy"  # added to make the 2.19 _load_param work as it expects a profile
-    )
-    basic._ANSIBLE_ARGS = to_bytes(json.dumps({"ANSIBLE_MODULE_ARGS": data}))
-    validated_data = basic.AnsibleModule(spec).params
-    basic._ANSIBLE_ARGS = params
-    return validated_data
+    # params = basic._ANSIBLE_ARGS
+    # basic._ANSIBLE_PROFILE = (
+    #     "legacy"  # added to make the 2.19 _load_param work as it expects a profile
+    # )
+    # basic._ANSIBLE_ARGS = to_bytes(json.dumps({"ANSIBLE_MODULE_ARGS": data}))
+    # validated_data = basic.AnsibleModule(spec).params
+    # basic._ANSIBLE_ARGS = params
+    # return validated_data
+    
+    # works with 2.19 and older
+    class PatchedAnsibleModule(basic.AnsibleModule):
+        def _load_params(self):
+            self.params = deepcopy(data)
 
+    validated_data = PatchedAnsibleModule(spec).params
+
+    return validated_data
 
 def search_obj_in_list(name, lst, key="name"):
     if not lst:
