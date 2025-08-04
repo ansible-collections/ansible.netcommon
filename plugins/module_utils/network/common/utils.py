@@ -611,6 +611,78 @@ def remove_empties(cfg_dict):
     return final_cfg
 
 
+class PatchedAnsibleModule(basic.AnsibleModule):
+    """
+    A patched version of AnsibleModule that provides flexible parameter loading
+    and result recording capabilities for different use cases.
+
+    This consolidates the multiple PatchedAnsibleModule implementations that
+    were scattered across different files.
+    """
+
+    def __init__(
+        self,
+        argument_spec,
+        bypass_checks=False,
+        no_log=False,
+        mutually_exclusive=None,
+        required_together=None,
+        required_one_of=None,
+        add_file_common_args=False,
+        supports_check_mode=False,
+        required_if=None,
+        required_by=None,
+        data=None,
+        load_params=True,
+        record_result_func=None,
+    ):
+        """
+        Initialize PatchedAnsibleModule with custom behaviors. Suplements the direct
+        execution changes and behavior in 2.19+ and also works for previous versions.
+
+        :param data: Custom data to load instead of normal params
+        :param load_params: Whether to load params at all (False for action plugins)
+        :param record_result_func: Custom function to handle results
+        """
+        self._custom_data = data
+        self._load_params_flag = load_params
+        self._record_result_func = record_result_func
+        super(PatchedAnsibleModule, self).__init__(
+            argument_spec,
+            bypass_checks,
+            no_log,
+            mutually_exclusive,
+            required_together,
+            required_one_of,
+            add_file_common_args,
+            supports_check_mode,
+            required_if,
+            required_by,
+        )
+
+    def _load_params(self):
+        """Override param loading based on configuration"""
+        if not self._load_params_flag:
+            # Don't load params (action plugin use case)
+            pass
+        elif self._custom_data is not None:
+            # Load custom data (validation use case)
+            self.params = deepcopy(self._custom_data)
+        else:
+            # Normal behavior
+            super(PatchedAnsibleModule, self)._load_params()
+
+    def _record_module_result(self, o):
+        """Override result recording if custom function provided"""
+        if self._record_result_func:
+            self._record_result_func(o)
+        else:
+            # Try to call parent method if it exists (2.19.1+)
+            parent_class = super(PatchedAnsibleModule, self)
+            if hasattr(parent_class, "_record_module_result"):
+                parent_class._record_module_result(o)
+
+
 def validate_config(spec, data):
     """
     Validate if the input data against the AnsibleModule spec format
@@ -618,21 +690,8 @@ def validate_config(spec, data):
     :param data: Data to be validated
     :return:
     """
-    # params = basic._ANSIBLE_ARGS
-    # basic._ANSIBLE_PROFILE = (
-    #     "legacy"  # added to make the 2.19 _load_param work as it expects a profile
-    # )
-    # basic._ANSIBLE_ARGS = to_bytes(json.dumps({"ANSIBLE_MODULE_ARGS": data}))
-    # validated_data = basic.AnsibleModule(spec).params
-    # basic._ANSIBLE_ARGS = params
-    # return validated_data
-
     # works with 2.19 and older
-    class PatchedAnsibleModule(basic.AnsibleModule):
-        def _load_params(self):
-            self.params = deepcopy(data)
-
-    validated_data = PatchedAnsibleModule(spec).params
+    validated_data = PatchedAnsibleModule(spec, data=data).params
 
     return validated_data
 

@@ -277,26 +277,33 @@ class ActionModule(_ActionModule):
         """
         import copy
 
-        from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
-
-        # build an AnsibleModule that doesn't load params
-        class PatchedAnsibleModule(_AnsibleModule):
-            def _load_params(self):
-                pass
-
-            def _record_module_result(self, o):
-                """Override new 2.19.1+ hook to directly record the module result as a module attr."""
-                module._raw_result = o
+        from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+            PatchedAnsibleModule,
+        )
 
         # update the task args w/ all the magic vars
         self._update_module_args(self._task.action, self._task.args, task_vars)
 
+        # Define a result recording function for the module
+        def record_result(o):
+            """Record the module result as a module attr."""
+            module._raw_result = o
+
+        # Create a class that inherits from our consolidated PatchedAnsibleModule
+        # but doesn't load params and can record results
+        class NetworkPatchedAnsibleModule(PatchedAnsibleModule):
+            def __init__(self, *args, **kwargs):
+                # Don't load params, provide custom result recording
+                super(NetworkPatchedAnsibleModule, self).__init__(
+                    *args, load_params=False, record_result_func=record_result, **kwargs
+                )
+
         # set the params of the ansible module cause we're not using stdin
         # use a copy so the module doesn't change the original task args
-        PatchedAnsibleModule.params = copy.deepcopy(self._task.args)
+        NetworkPatchedAnsibleModule.params = copy.deepcopy(self._task.args)
 
         # give the module our revised AnsibleModule
-        module.AnsibleModule = PatchedAnsibleModule
+        module.AnsibleModule = NetworkPatchedAnsibleModule
 
     def _exec_module(self, module):
         """exec the module's main() since modules
