@@ -1,6 +1,6 @@
 ---
 minor_changes:
-  - 'PatchedAnsibleModule implementations moved to one place and reused with overrides when AnsibleModule invoked for network modules.'
-  - 'Override new 2.19.1+ AnsibleModule._record_module_result hook in network action plugin to bypass module result serialization when direct execution is enabled'
+  - "PatchedAnsibleModule implementations moved to one place and reused with overrides when AnsibleModule invoked for network modules."
+  - "Override new 2.19.1+ AnsibleModule._record_module_result hook in network action plugin to bypass module result serialization when direct execution is enabled"
 bugfixes:
-  - 'Improved error handling in PatchedAnsibleModule._record_module_result method for better compatibility with core<=2.18'
+  - "Improved error handling in PatchedAnsibleModule._record_module_result method for better compatibility with core<=2.18"
