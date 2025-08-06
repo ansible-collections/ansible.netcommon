@@ -296,7 +296,7 @@ class ActionModule(_ActionModule):
                     host,
                 )
                 pass
-            
+
             def _record_module_result(self, o):
                 """Record the module result as a module attr for network action plugins."""
                 module._raw_result = o
