@@ -614,72 +614,56 @@ class PatchedAnsibleModule(basic.AnsibleModule):
     """
     A patched version of AnsibleModule that provides flexible parameter loading
     and result recording capabilities for different use cases.
-
-    This consolidates the multiple PatchedAnsibleModule implementations that
-    were scattered across different files.
     """
 
-    def __init__(
-        self,
-        argument_spec,
-        bypass_checks=False,
-        no_log=False,
-        mutually_exclusive=None,
-        required_together=None,
-        required_one_of=None,
-        add_file_common_args=False,
-        supports_check_mode=False,
-        required_if=None,
-        required_by=None,
-        data=None,
-        load_params=True,
-        record_result_func=None,
-    ):
+    def __init__(self, *args, data=None, **kwargs):
         """
-        Initialize PatchedAnsibleModule with custom behaviors. Suplements the direct
+        Initialize PatchedAnsibleModule with custom behaviors. Supplements the direct
         execution changes and behavior in 2.19+ and also works for previous versions.
 
-        :param data: Custom data to load instead of normal params
-        :param load_params: Whether to load params at all (False for action plugins)
-        :param record_result_func: Custom function to handle results
+        :param data: Custom data dict to load instead of normal params (validation use case)
+        :type data: dict or None
+
+        All other arguments are passed through to the parent AnsibleModule constructor.
         """
+        # Input validation for our custom parameter
+        if data is not None and not isinstance(data, dict):
+            raise TypeError("data parameter must be a dictionary")
+
         self._custom_data = data
-        self._load_params_flag = load_params
-        self._record_result_func = record_result_func
-        super(PatchedAnsibleModule, self).__init__(
-            argument_spec,
-            bypass_checks,
-            no_log,
-            mutually_exclusive,
-            required_together,
-            required_one_of,
-            add_file_common_args,
-            supports_check_mode,
-            required_if,
-            required_by,
-        )
+        super(PatchedAnsibleModule, self).__init__(*args, **kwargs)
 
     def _load_params(self):
-        """Override param loading based on configuration"""
-        if not self._load_params_flag:
-            # Don't load params (action plugin use case)
-            pass
-        elif self._custom_data is not None:
+        """
+        Override param loading based on configuration.
+
+        Two modes of operation:
+        1. Custom data loading (data provided) - for validation use case
+        2. Normal loading (default) - standard AnsibleModule behavior
+        """
+        if self._custom_data is not None:
             # Load custom data (validation use case)
             self.params = deepcopy(self._custom_data)
         else:
-            # Normal behavior
+            # Normal behavior - delegate to parent
             super(PatchedAnsibleModule, self)._load_params()
 
     def _record_module_result(self, o):
-        """Override result recording if custom function provided"""
-        if self._record_result_func:
-            self._record_result_func(o)
-        else:
-            # Try to call parent method if it exists (2.19.1+)
-            parent_class = super(PatchedAnsibleModule, self)
-            if hasattr(parent_class, "_record_module_result"):
+        """
+        Override result recording with fallback to parent implementation.
+
+        Subclasses can override this method to provide custom result recording behavior.
+
+        :param o: Module result to record
+        """
+        # Try to call parent method if it exists (2.19.1+)
+        parent_class = super(PatchedAnsibleModule, self)
+        if hasattr(parent_class, "_record_module_result"):
+            try:
                 parent_class._record_module_result(o)
+            except Exception:
+                # TODO handle any parent method issues for compatibility
+                pass
 
 
 def validate_config(spec, data):

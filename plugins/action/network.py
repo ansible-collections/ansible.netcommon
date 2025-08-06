@@ -284,19 +284,16 @@ class ActionModule(_ActionModule):
         # update the task args w/ all the magic vars
         self._update_module_args(self._task.action, self._task.args, task_vars)
 
-        # Define a result recording function for the module
-        def record_result(o):
-            """Record the module result as a module attr."""
-            module._raw_result = o
-
         # Create a class that inherits from our consolidated PatchedAnsibleModule
         # but doesn't load params and can record results
         class NetworkPatchedAnsibleModule(PatchedAnsibleModule):
-            def __init__(self, *args, **kwargs):
-                # Don't load params, provide custom result recording
-                super(NetworkPatchedAnsibleModule, self).__init__(
-                    *args, load_params=False, record_result_func=record_result, **kwargs
-                )
+            def _load_params(self):
+                """Don't load params for action plugin use case - params set externally"""
+                pass
+
+            def _record_module_result(self, o):
+                """Record the module result as a module attr for network action plugins."""
+                module._raw_result = o
 
         # set the params of the ansible module cause we're not using stdin
         # use a copy so the module doesn't change the original task args
