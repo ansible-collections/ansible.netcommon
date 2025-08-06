@@ -53,7 +53,7 @@ class ActionModule(_ActionModule):
             # not using AnsibleModule, return to normal run (eg eos_bgp)
             if getattr(module, "AnsibleModule", None):
                 # patch and update the module
-                self._patch_update_module(module, task_vars)
+                self._patch_update_module(module, task_vars, host)
                 display.vvvv(
                     "{prefix} running {module}".format(
                         prefix=DEXEC_PREFIX, module=self._task.action
@@ -266,7 +266,7 @@ class ActionModule(_ActionModule):
             module = importlib.import_module(fullname)
         return filename, module
 
-    def _patch_update_module(self, module, task_vars):
+    def _patch_update_module(self, module, task_vars, host):
         """Update a module instance, replacing it's AnsibleModule
         with one that doesn't load params
 
@@ -289,8 +289,14 @@ class ActionModule(_ActionModule):
         class NetworkPatchedAnsibleModule(PatchedAnsibleModule):
             def _load_params(self):
                 """Don't load params for action plugin use case - params set externally"""
+                display.vvvv(
+                    "{prefix} _load_params skipped for action plugin in direct execution".format(
+                        prefix=DEXEC_PREFIX
+                    ),
+                    host,
+                )
                 pass
-
+            
             def _record_module_result(self, o):
                 """Record the module result as a module attr for network action plugins."""
                 module._raw_result = o
@@ -301,6 +307,12 @@ class ActionModule(_ActionModule):
 
         # give the module our revised AnsibleModule
         module.AnsibleModule = NetworkPatchedAnsibleModule
+        display.vvvv(
+            "{prefix} revised AnsibleModule created for {module}".format(
+                prefix=DEXEC_PREFIX, module=self._task.action
+            ),
+            host,
+        )
 
     def _exec_module(self, module):
         """exec the module's main() since modules
