@@ -17,6 +17,7 @@ __metaclass__ = type
 # Networking tools for network modules only
 
 import ast
+import json
 import operator
 import re
 import socket
@@ -27,7 +28,7 @@ from io import StringIO
 from itertools import chain
 
 from ansible.module_utils import basic
-from ansible.module_utils._text import to_text
+from ansible.module_utils._text import to_bytes, to_text
 from ansible.module_utils.common._collections_compat import Mapping
 from ansible.module_utils.parsing.convert_bool import boolean
 from ansible.module_utils.six import iteritems, string_types
@@ -610,62 +611,6 @@ def remove_empties(cfg_dict):
     return final_cfg
 
 
-class PatchedAnsibleModule(basic.AnsibleModule):
-    """
-    A patched version of AnsibleModule that provides flexible parameter loading
-    and result recording capabilities for different use cases.
-    """
-
-    def __init__(self, *args, data=None, **kwargs):
-        """
-        Initialize PatchedAnsibleModule with custom behaviors. Supplements the direct
-        execution changes and behavior in 2.19+ and also works for previous versions.
-
-        :param data: Custom data dict to load instead of normal params (validation use case)
-        :type data: dict or None
-
-        All other arguments are passed through to the parent AnsibleModule constructor.
-        """
-        # Input validation for our custom parameter
-        if data is not None and not isinstance(data, dict):
-            raise TypeError("data parameter must be a dictionary")
-
-        self._custom_data = data
-        super(PatchedAnsibleModule, self).__init__(*args, **kwargs)
-
-    def _load_params(self):
-        """
-        Override param loading based on configuration.
-
-        Two modes of operation:
-        1. Custom data loading (data provided) - for validation use case
-        2. Normal loading (default) - standard AnsibleModule behavior
-        """
-        if self._custom_data is not None:
-            # Load custom data (validation use case)
-            self.params = deepcopy(self._custom_data)
-        else:
-            # Normal behavior - delegate to parent
-            super(PatchedAnsibleModule, self)._load_params()
-
-    def _record_module_result(self, o):
-        """
-        Override result recording with fallback to parent implementation.
-
-        Subclasses can override this method to provide custom result recording behavior.
-
-        :param o: Module result to record
-        """
-        # Try to call parent method if it exists (2.19.1+)
-        parent_class = super(PatchedAnsibleModule, self)
-        if hasattr(parent_class, "_record_module_result"):
-            try:
-                parent_class._record_module_result(o)
-            except Exception:
-                # TODO handle any parent method issues for compatibility
-                pass
-
-
 def validate_config(spec, data):
     """
     Validate if the input data against the AnsibleModule spec format
@@ -673,11 +618,13 @@ def validate_config(spec, data):
     :param data: Data to be validated
     :return:
     """
-    # works with 2.19 and older
-    validated_data = PatchedAnsibleModule(spec, data=data).params
+    class DirectValidationModule(basic.AnsibleModule):
+        def _load_params(self):
+            self.params = deepcopy(data)
+
+    validated_data = DirectValidationModule(spec).params
 
     return validated_data
-
 
 def search_obj_in_list(name, lst, key="name"):
     if not lst:

@@ -53,7 +53,7 @@ class ActionModule(_ActionModule):
             # not using AnsibleModule, return to normal run (eg eos_bgp)
             if getattr(module, "AnsibleModule", None):
                 # patch and update the module
-                self._patch_update_module(module, task_vars, host)
+                self._patch_update_module(module, task_vars)
                 display.vvvv(
                     "{prefix} running {module}".format(
                         prefix=DEXEC_PREFIX, module=self._task.action
@@ -277,16 +277,10 @@ class ActionModule(_ActionModule):
         """
         import copy
 
-        from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-            PatchedAnsibleModule,
-        )
+        from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
 
-        # update the task args w/ all the magic vars
-        self._update_module_args(self._task.action, self._task.args, task_vars)
-
-        # Create a class that inherits from our consolidated PatchedAnsibleModule
-        # but doesn't load params and can record results
-        class NetworkPatchedAnsibleModule(PatchedAnsibleModule):
+        # build an AnsibleModule that doesn't load params
+        class DirectExecutionModule(_AnsibleModule):
             def _load_params(self):
                 """Don't load params for action plugin use case - params set externally"""
                 display.vvvv(
@@ -298,21 +292,18 @@ class ActionModule(_ActionModule):
                 pass
 
             def _record_module_result(self, o):
-                """Record the module result as a module attr for network action plugins."""
+                """Override new 2.19.1+ hook to directly record the module result as a module attr."""
                 module._raw_result = o
+
+        # update the task args w/ all the magic vars
+        self._update_module_args(self._task.action, self._task.args, task_vars)
 
         # set the params of the ansible module cause we're not using stdin
         # use a copy so the module doesn't change the original task args
-        NetworkPatchedAnsibleModule.params = copy.deepcopy(self._task.args)
+        DirectExecutionModule.params = copy.deepcopy(self._task.args)
 
         # give the module our revised AnsibleModule
-        module.AnsibleModule = NetworkPatchedAnsibleModule
-        display.vvvv(
-            "{prefix} revised AnsibleModule created for {module}".format(
-                prefix=DEXEC_PREFIX, module=self._task.action
-            ),
-            host,
-        )
+        module.AnsibleModule = DirectExecutionModule
 
     def _exec_module(self, module):
         """exec the module's main() since modules
