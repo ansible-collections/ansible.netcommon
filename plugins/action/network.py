@@ -43,7 +43,7 @@ class ActionModule(_ActionModule):
             # find and load the module
             filename, module = self._find_load_module()
             display.vvvv(
-                "{prefix} found {action}  at {fname}".format(
+                "{prefix} found {action} at {fname}".format(
                     prefix=DEXEC_PREFIX,
                     action=self._task.action,
                     fname=filename,
@@ -53,7 +53,7 @@ class ActionModule(_ActionModule):
             # not using AnsibleModule, return to normal run (eg eos_bgp)
             if getattr(module, "AnsibleModule", None):
                 # patch and update the module
-                self._patch_update_module(module, task_vars)
+                self._patch_update_module(module, task_vars, host)
                 display.vvvv(
                     "{prefix} running {module}".format(
                         prefix=DEXEC_PREFIX, module=self._task.action
