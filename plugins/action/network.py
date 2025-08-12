@@ -43,7 +43,7 @@ class ActionModule(_ActionModule):
             # find and load the module
             filename, module = self._find_load_module()
             display.vvvv(
-                "{prefix} found {action}  at {fname}".format(
+                "{prefix} found {action} at {fname}".format(
                     prefix=DEXEC_PREFIX,
                     action=self._task.action,
                     fname=filename,
@@ -53,7 +53,7 @@ class ActionModule(_ActionModule):
             # not using AnsibleModule, return to normal run (eg eos_bgp)
             if getattr(module, "AnsibleModule", None):
                 # patch and update the module
-                self._patch_update_module(module, task_vars)
+                self._patch_update_module(module, task_vars, host)
                 display.vvvv(
                     "{prefix} running {module}".format(
                         prefix=DEXEC_PREFIX, module=self._task.action
@@ -266,7 +266,7 @@ class ActionModule(_ActionModule):
             module = importlib.import_module(fullname)
         return filename, module
 
-    def _patch_update_module(self, module, task_vars):
+    def _patch_update_module(self, module, task_vars, host):
         """Update a module instance, replacing it's AnsibleModule
         with one that doesn't load params
 
@@ -280,19 +280,30 @@ class ActionModule(_ActionModule):
         from ansible.module_utils.basic import AnsibleModule as _AnsibleModule
 
         # build an AnsibleModule that doesn't load params
-        class PatchedAnsibleModule(_AnsibleModule):
+        class DirectExecutionModule(_AnsibleModule):
             def _load_params(self):
+                """Don't load params for action plugin use case - params set externally"""
+                display.vvvv(
+                    "{prefix} _load_params skipped for action plugin in direct execution".format(
+                        prefix=DEXEC_PREFIX
+                    ),
+                    host,
+                )
                 pass
+
+            def _record_module_result(self, o):
+                """Override new 2.19.1+ hook to directly record the module result as a module attr."""
+                module._raw_result = o
 
         # update the task args w/ all the magic vars
         self._update_module_args(self._task.action, self._task.args, task_vars)
 
         # set the params of the ansible module cause we're not using stdin
         # use a copy so the module doesn't change the original task args
-        PatchedAnsibleModule.params = copy.deepcopy(self._task.args)
+        DirectExecutionModule.params = copy.deepcopy(self._task.args)
 
         # give the module our revised AnsibleModule
-        module.AnsibleModule = PatchedAnsibleModule
+        module.AnsibleModule = DirectExecutionModule
 
     def _exec_module(self, module):
         """exec the module's main() since modules
@@ -309,36 +320,45 @@ class ActionModule(_ActionModule):
         import io
         import sys
 
-        from ansible.module_utils._text import to_native
         from ansible.vars.clean import remove_internal_keys
 
-        # preserve previous stdout, replace with buffer
+        # preserve stdout/stderr to swap and restore later, create private buffers to capture
         sys_stdout = sys.stdout
-        sys.stdout = io.StringIO()
+        sys_stderr = sys.stderr
+        captured_stdout = io.StringIO()
+        captured_stderr = io.StringIO()
 
-        stdout = ""
-        stderr = ""
-        # run the module, catch the SystemExit so we continue
         try:
-            module.main()
+            # temporarily swap stdout/stderr with private buffers
+            sys.stdout = captured_stdout
+            sys.stderr = captured_stderr
+
+            module.main()  # allow unhandled module exceptions to fly; handled by TE to preserve as much error detail as possible
         except SystemExit:
-            # module exited cleanly
-            stdout = sys.stdout.getvalue()
-        except Exception as exc:
-            # dirty module or connection traceback
-            stderr = to_native(exc)
+            pass  # module exited cleanly
+        finally:
+            # restore stdout/stderr
+            sys.stdout = sys_stdout
+            sys.stderr = sys_stderr
 
-        # restore stdout & stderr
-        sys.stdout = sys_stdout
+        try:
+            # if 2.19.1+, anything using fail_json/exit_json from the patched module should have recorded _raw_result
+            data = module._raw_result
+        except AttributeError:
+            # if _raw_result is not available, results should be on stdout/stderr
+            stdout = captured_stdout.getvalue()
+            stderr = captured_stderr.getvalue()
 
-        # parse the response
-        dict_out = {
-            "stdout": stdout,
-            "stdout_lines": stdout.splitlines(),
-            "stderr": stderr,
-            "stderr_lines": stderr.splitlines(),
-        }
-        data = self._parse_returned_data(dict_out)
+            dict_out = {
+                "stdout": stdout,
+                "stdout_lines": stdout.splitlines(),
+                "stderr": stderr,
+                "stderr_lines": stderr.splitlines(),
+            }
+
+            # parse the response
+            data = self._parse_returned_data(dict_out)
+
         # Clean up the response like action _execute_module
         remove_internal_keys(data)
 

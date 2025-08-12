@@ -17,7 +17,6 @@ __metaclass__ = type
 # Networking tools for network modules only
 
 import ast
-import json
 import operator
 import re
 import socket
@@ -28,7 +27,7 @@ from io import StringIO
 from itertools import chain
 
 from ansible.module_utils import basic
-from ansible.module_utils._text import to_bytes, to_text
+from ansible.module_utils._text import to_text
 from ansible.module_utils.common._collections_compat import Mapping
 from ansible.module_utils.parsing.convert_bool import boolean
 from ansible.module_utils.six import iteritems, string_types
@@ -618,10 +617,13 @@ def validate_config(spec, data):
     :param data: Data to be validated
     :return:
     """
-    params = basic._ANSIBLE_ARGS
-    basic._ANSIBLE_ARGS = to_bytes(json.dumps({"ANSIBLE_MODULE_ARGS": data}))
-    validated_data = basic.AnsibleModule(spec).params
-    basic._ANSIBLE_ARGS = params
+
+    class DirectValidationModule(basic.AnsibleModule):
+        def _load_params(self):
+            self.params = deepcopy(data)
+
+    validated_data = DirectValidationModule(spec).params
+
     return validated_data
 
 
