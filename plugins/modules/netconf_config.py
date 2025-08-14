@@ -403,7 +403,7 @@ diff:
 
 """
 
-from ansible.module_utils._text import to_text
+from ansible.module_utils._text import to_native, to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection, ConnectionError
 
@@ -488,7 +488,7 @@ def main():
     source = module.params["source_datastore"]
     delete = module.params["delete"]
     confirm_commit = module.params["confirm_commit"]
-    confirm = module.params["confirm"]
+    confirm = to_text(module.params["confirm"], error="surrogate_or_strict")
     validate = module.params["validate"]
     save = module.params["save"]
     filter = module.params["get_filter"]
