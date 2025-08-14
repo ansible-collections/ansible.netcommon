@@ -4,6 +4,20 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.1.0
+======
+
+Minor Changes
+-------------
+
+- Changes to supplement direct execution of Ansible module in validate_config(utils.py) and _patch_update_module(network.py) added.
+- Override new 2.19.1+ AnsibleModule._record_module_result hook in network action plugin to bypass module result serialization when direct execution is enabled
+
+Bugfixes
+--------
+
+- Improved error handling in DirectExecutionModule._record_module_result method for better compatibility with core<=2.18
+
 v8.0.1
 ======
 
