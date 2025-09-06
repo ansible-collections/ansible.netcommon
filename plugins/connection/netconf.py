@@ -264,7 +264,7 @@ class Connection(NetworkConnectionBase):
         """Updates the play context information for the connection"""
         pc_data = to_bytes(pc_data)
         pc_data = cPickle.loads(pc_data, encoding="bytes")
-        
+
         play_context = PlayContext()
         play_context.deserialize(pc_data)
         self._play_context = play_context

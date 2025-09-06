@@ -15,9 +15,9 @@ nodes:
         limit-resource port-channel minimum 0 maximum 511
         limit-resource m4route-mem minimum 58 maximum 58
         limit-resource m6route-mem minimum 8 maximum 8
-      
+
       feature netconf
-      
+
       no password strength-check
       username admin password 5 $5$AADOBF$GVXUV2cvmlZH42xDu6wnqfBpV9gXF61WGVNrGF5Gk6C role network-admin
       username cisco password 5 $5$CIMENF$8Bp9rf4gXUX.KMwU7RqMR2HqdxA3289SBMdkMydwaA2 role network-admin
@@ -33,146 +33,146 @@ nodes:
       rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
       rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
       rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
-      
+
       vlan 1
-      
+
       vrf context management
         ip name-server 192.168.255.1
         ip route 0.0.0.0/0 192.168.255.1
-      
+
       interface Ethernet1/1
-      
+
       interface Ethernet1/2
-      
+
       interface Ethernet1/3
-      
+
       interface Ethernet1/4
-      
+
       interface Ethernet1/5
-      
+
       interface Ethernet1/6
-      
+
       interface Ethernet1/7
-      
+
       interface Ethernet1/8
-      
+
       interface Ethernet1/9
-      
+
       interface Ethernet1/10
-      
+
       interface Ethernet1/11
-      
+
       interface Ethernet1/12
-      
+
       interface Ethernet1/13
-      
+
       interface Ethernet1/14
-      
+
       interface Ethernet1/15
-      
+
       interface Ethernet1/16
-      
+
       interface Ethernet1/17
-      
+
       interface Ethernet1/18
-      
+
       interface Ethernet1/19
-      
+
       interface Ethernet1/20
-      
+
       interface Ethernet1/21
-      
+
       interface Ethernet1/22
-      
+
       interface Ethernet1/23
-      
+
       interface Ethernet1/24
-      
+
       interface Ethernet1/25
-      
+
       interface Ethernet1/26
-      
+
       interface Ethernet1/27
-      
+
       interface Ethernet1/28
-      
+
       interface Ethernet1/29
-      
+
       interface Ethernet1/30
-      
+
       interface Ethernet1/31
-      
+
       interface Ethernet1/32
-      
+
       interface Ethernet1/33
-      
+
       interface Ethernet1/34
-      
+
       interface Ethernet1/35
-      
+
       interface Ethernet1/36
-      
+
       interface Ethernet1/37
-      
+
       interface Ethernet1/38
-      
+
       interface Ethernet1/39
-      
+
       interface Ethernet1/40
-      
+
       interface Ethernet1/41
-      
+
       interface Ethernet1/42
-      
+
       interface Ethernet1/43
-      
+
       interface Ethernet1/44
-      
+
       interface Ethernet1/45
-      
+
       interface Ethernet1/46
-      
+
       interface Ethernet1/47
-      
+
       interface Ethernet1/48
-      
+
       interface Ethernet1/49
-      
+
       interface Ethernet1/50
-      
+
       interface Ethernet1/51
-      
+
       interface Ethernet1/52
-      
+
       interface Ethernet1/53
-      
+
       interface Ethernet1/54
-      
+
       interface Ethernet1/55
-      
+
       interface Ethernet1/56
-      
+
       interface Ethernet1/57
-      
+
       interface Ethernet1/58
-      
+
       interface Ethernet1/59
-      
+
       interface Ethernet1/60
-      
+
       interface Ethernet1/61
-      
+
       interface Ethernet1/62
-      
+
       interface Ethernet1/63
-      
+
       interface Ethernet1/64
-      
+
       interface mgmt0
         ip address dhcp
         vrf member management
       icam monitor scale
-      
+
       line console
         exec-timeout 0
       line vty
@@ -180,7 +180,7 @@ nodes:
       event manager applet BOOTCONFIG
         event syslog pattern "Configured from vty"
         action 1.0 cli python bootflash:set_boot.py
-      
+
       no logging console
     cpu_limit: null
     cpus: null
@@ -219,25 +219,25 @@ nodes:
     configuration: |2-
       hostname iosxr
       domain name ansible.com
-      
+
       interface MgmtEth0/RP0/CPU0/0
        ipv4 address dhcp
        no shutdown
       exit
-      
+
       aaa authentication login default local
-      
+
       line default
        login authentication default
        transport input ssh
       exit
-      
+
       router static
        address-family ipv4 unicast
         0.0.0.0/0 192.168.255.1
        exit
       exit
-      
+
       ssh timeout 100
       ssh server v2
       grpc
@@ -298,175 +298,175 @@ nodes:
       !
       !
       aaa authentication login default local
-      !         
-      !         
+      !
+      !
       aaa session-id common
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
+      !
+      !
+      !
+      !
+      !
+      !
+      !
+      !
+      !
+      !
+      !
+      !
       ip domain name ansible.com
-      !         
-      !         
-      !         
+      !
+      !
+      !
       login on-success log
-      !         
-      !         
+      !
+      !
       subscriber templating
-      !         
-      pae       
-      !         
-      !         
+      !
+      pae
+      !
+      !
       crypto pki trustpoint SLA-TrustPoint
        enrollment pkcs12
        revocation-check crl
        hash sha256
-      !         
+      !
       crypto pki trustpoint TP-self-signed-2143900133
        enrollment selfsigned
        subject-name cn=IOS-Self-Signed-Certificate-2143900133
        revocation-check none
        rsakeypair TP-self-signed-2143900133
        hash sha256
-      !         
-      !         
+      !
+      !
       crypto pki certificate chain SLA-TrustPoint
        certificate ca 01
-        30820321 30820209 A0030201 02020101 300D0609 2A864886 F70D0101 0B050030 
-        32310E30 0C060355 040A1305 43697363 6F312030 1E060355 04031317 43697363 
-        6F204C69 63656E73 696E6720 526F6F74 20434130 1E170D31 33303533 30313934 
-        3834375A 170D3338 30353330 31393438 34375A30 32310E30 0C060355 040A1305 
-        43697363 6F312030 1E060355 04031317 43697363 6F204C69 63656E73 696E6720 
-        526F6F74 20434130 82012230 0D06092A 864886F7 0D010101 05000382 010F0030 
-        82010A02 82010100 A6BCBD96 131E05F7 145EA72C 2CD686E6 17222EA1 F1EFF64D 
-        CBB4C798 212AA147 C655D8D7 9471380D 8711441E 1AAF071A 9CAE6388 8A38E520 
-        1C394D78 462EF239 C659F715 B98C0A59 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE 
-        4AA4E80D DB6FD1C9 60B1FD18 FFC69C96 6FA68957 A2617DE7 104FDC5F EA2956AC 
-        7390A3EB 2B5436AD C847A2C5 DAB553EB 69A9A535 58E9F3E3 C0BD23CF 58BD7188 
-        68E69491 20F320E7 948E71D7 AE3BCC84 F10684C7 4BC8E00F 539BA42B 42C68BB7 
-        C7479096 B4CB2D62 EA2F505D C7B062A4 6811D95B E8250FC4 5D5D5FB8 8F27D191 
-        C55F0D76 61F9A4CD 3D992327 A8BB03BD 4E6D7069 7CBADF8B DF5F4368 95135E44 
-        DFC7C6CF 04DD7FD1 02030100 01A34230 40300E06 03551D0F 0101FF04 04030201 
-        06300F06 03551D13 0101FF04 05300301 01FF301D 0603551D 0E041604 1449DC85 
-        4B3D31E5 1B3E6A17 606AF333 3D3B4C73 E8300D06 092A8648 86F70D01 010B0500 
-        03820101 00507F24 D3932A66 86025D9F E838AE5C 6D4DF6B0 49631C78 240DA905 
-        604EDCDE FF4FED2B 77FC460E CD636FDB DD44681E 3A5673AB 9093D3B1 6C9E3D8B 
-        D98987BF E40CBD9E 1AECA0C2 2189BB5C 8FA85686 CD98B646 5575B146 8DFC66A8 
-        467A3DF4 4D565700 6ADF0F0D CF835015 3C04FF7C 21E878AC 11BA9CD2 55A9232C 
-        7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB E973DE7F 5BDDEB86 C71E3B49 1765308B 
-        5FB0DA06 B92AFE7F 494E8A9E 07B85737 F3A58BE1 1A48A229 C37C1E69 39F08678 
-        80DDCD16 D6BACECA EEBC7CF9 8428787B 35202CDC 60E4616A B623CDBD 230E3AFB 
-        418616A9 4093E049 4D10AB75 27E86F73 932E35B5 8862FDAE 0275156F 719BB2F0 
+        30820321 30820209 A0030201 02020101 300D0609 2A864886 F70D0101 0B050030
+        32310E30 0C060355 040A1305 43697363 6F312030 1E060355 04031317 43697363
+        6F204C69 63656E73 696E6720 526F6F74 20434130 1E170D31 33303533 30313934
+        3834375A 170D3338 30353330 31393438 34375A30 32310E30 0C060355 040A1305
+        43697363 6F312030 1E060355 04031317 43697363 6F204C69 63656E73 696E6720
+        526F6F74 20434130 82012230 0D06092A 864886F7 0D010101 05000382 010F0030
+        82010A02 82010100 A6BCBD96 131E05F7 145EA72C 2CD686E6 17222EA1 F1EFF64D
+        CBB4C798 212AA147 C655D8D7 9471380D 8711441E 1AAF071A 9CAE6388 8A38E520
+        1C394D78 462EF239 C659F715 B98C0A59 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE
+        4AA4E80D DB6FD1C9 60B1FD18 FFC69C96 6FA68957 A2617DE7 104FDC5F EA2956AC
+        7390A3EB 2B5436AD C847A2C5 DAB553EB 69A9A535 58E9F3E3 C0BD23CF 58BD7188
+        68E69491 20F320E7 948E71D7 AE3BCC84 F10684C7 4BC8E00F 539BA42B 42C68BB7
+        C7479096 B4CB2D62 EA2F505D C7B062A4 6811D95B E8250FC4 5D5D5FB8 8F27D191
+        C55F0D76 61F9A4CD 3D992327 A8BB03BD 4E6D7069 7CBADF8B DF5F4368 95135E44
+        DFC7C6CF 04DD7FD1 02030100 01A34230 40300E06 03551D0F 0101FF04 04030201
+        06300F06 03551D13 0101FF04 05300301 01FF301D 0603551D 0E041604 1449DC85
+        4B3D31E5 1B3E6A17 606AF333 3D3B4C73 E8300D06 092A8648 86F70D01 010B0500
+        03820101 00507F24 D3932A66 86025D9F E838AE5C 6D4DF6B0 49631C78 240DA905
+        604EDCDE FF4FED2B 77FC460E CD636FDB DD44681E 3A5673AB 9093D3B1 6C9E3D8B
+        D98987BF E40CBD9E 1AECA0C2 2189BB5C 8FA85686 CD98B646 5575B146 8DFC66A8
+        467A3DF4 4D565700 6ADF0F0D CF835015 3C04FF7C 21E878AC 11BA9CD2 55A9232C
+        7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB E973DE7F 5BDDEB86 C71E3B49 1765308B
+        5FB0DA06 B92AFE7F 494E8A9E 07B85737 F3A58BE1 1A48A229 C37C1E69 39F08678
+        80DDCD16 D6BACECA EEBC7CF9 8428787B 35202CDC 60E4616A B623CDBD 230E3AFB
+        418616A9 4093E049 4D10AB75 27E86F73 932E35B5 8862FDAE 0275156F 719BB2F0
         D697DF7F 28
               quit
       crypto pki certificate chain TP-self-signed-2143900133
        certificate self-signed 01
-        30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 0B050030 
-        31312F30 2D060355 04030C26 494F532D 53656C66 2D536967 6E65642D 43657274 
-        69666963 6174652D 32313433 39303031 3333301E 170D3235 30393033 31343136 
-        30355A17 0D333530 39303331 34313630 355A3031 312F302D 06035504 030C2649 
-        4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 31343339 
-        30303133 33308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201 
-        0A028201 010089F6 23FFFA9D 14B87C4B 4AB133B5 B8C9EF27 00C1CD06 75F625E7 
-        B86E451C 821308E7 35C35B5F B5F71D1C FBDA5967 543A1024 3863B40E 129FBD08 
-        EF72915B 0D15ACB0 2E847913 856D8D67 2273B2B7 93F61AA4 237C8B4F 65E288D5 
-        8D89B76C E5DDE45B DA1552FF 129CD587 A1E125EC A909378D E89A231D CE9FFE45 
-        BAD08DA4 798A7971 D0E3F94D A70EBB80 EC57E483 505F9E2B DDBF8FF0 65973587 
-        C83AA68A BC5CD162 718F5928 9B76DDFD 4444F24B D5E8186C 2F4DFB01 1DA1BCE3 
-        32EBF413 B562E785 DE025D89 CE9FBD80 E3070099 4E336012 14E24D4E 02F11353 
-        87012240 F21E7773 55DEA3A0 335C75CA FCC860C5 ACD23AFE 26E45690 2231A5F7 
-        8BAE1D3C 7B690203 010001A3 53305130 1D060355 1D0E0416 04145B72 79CABCF2 
-        4E49043B A321FFF3 BB8AE725 5872301F 0603551D 23041830 1680145B 7279CABC 
-        F24E4904 3BA321FF F3BB8AE7 25587230 0F060355 1D130101 FF040530 030101FF 
-        300D0609 2A864886 F70D0101 0B050003 82010100 3B06640A 205AC0FE EA4BDA88 
-        070FF97B B10F3D4A 7945193C 50401FA0 2D6405E2 A9A861F6 86ADF876 EF84DD71 
-        8F9B5EF8 674FAB17 19278F95 3A794036 4946D0DF 1EF64812 9D59743C B3E5E398 
-        152BDAAF E7FA5B42 B0A6BC73 9CE856C4 59778F07 6EAE68BC 14E8DC52 7BFE23EF 
-        451B010F FE070EB4 5F9D050E 25AE1242 684A4746 F0A37E42 55163CE9 9108A0EC 
-        2BB388DB 61ECD68D 6D1CA21B 82786BD7 85D176D3 C90B5D5E 8EBFEEC9 3FC2DACB 
-        5F7A967F 417A2E65 025F2967 0BD041B3 8EECF4F6 D7172D7A A15CBA59 D83BAF17 
-        F928C6D0 A3649770 5DE73AED 95AAAF3C F955AB6F 654F6DDD 51DE7225 CB178139 
+        30820330 30820218 A0030201 02020101 300D0609 2A864886 F70D0101 0B050030
+        31312F30 2D060355 04030C26 494F532D 53656C66 2D536967 6E65642D 43657274
+        69666963 6174652D 32313433 39303031 3333301E 170D3235 30393033 31343136
+        30355A17 0D333530 39303331 34313630 355A3031 312F302D 06035504 030C2649
+        4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D32 31343339
+        30303133 33308201 22300D06 092A8648 86F70D01 01010500 0382010F 00308201
+        0A028201 010089F6 23FFFA9D 14B87C4B 4AB133B5 B8C9EF27 00C1CD06 75F625E7
+        B86E451C 821308E7 35C35B5F B5F71D1C FBDA5967 543A1024 3863B40E 129FBD08
+        EF72915B 0D15ACB0 2E847913 856D8D67 2273B2B7 93F61AA4 237C8B4F 65E288D5
+        8D89B76C E5DDE45B DA1552FF 129CD587 A1E125EC A909378D E89A231D CE9FFE45
+        BAD08DA4 798A7971 D0E3F94D A70EBB80 EC57E483 505F9E2B DDBF8FF0 65973587
+        C83AA68A BC5CD162 718F5928 9B76DDFD 4444F24B D5E8186C 2F4DFB01 1DA1BCE3
+        32EBF413 B562E785 DE025D89 CE9FBD80 E3070099 4E336012 14E24D4E 02F11353
+        87012240 F21E7773 55DEA3A0 335C75CA FCC860C5 ACD23AFE 26E45690 2231A5F7
+        8BAE1D3C 7B690203 010001A3 53305130 1D060355 1D0E0416 04145B72 79CABCF2
+        4E49043B A321FFF3 BB8AE725 5872301F 0603551D 23041830 1680145B 7279CABC
+        F24E4904 3BA321FF F3BB8AE7 25587230 0F060355 1D130101 FF040530 030101FF
+        300D0609 2A864886 F70D0101 0B050003 82010100 3B06640A 205AC0FE EA4BDA88
+        070FF97B B10F3D4A 7945193C 50401FA0 2D6405E2 A9A861F6 86ADF876 EF84DD71
+        8F9B5EF8 674FAB17 19278F95 3A794036 4946D0DF 1EF64812 9D59743C B3E5E398
+        152BDAAF E7FA5B42 B0A6BC73 9CE856C4 59778F07 6EAE68BC 14E8DC52 7BFE23EF
+        451B010F FE070EB4 5F9D050E 25AE1242 684A4746 F0A37E42 55163CE9 9108A0EC
+        2BB388DB 61ECD68D 6D1CA21B 82786BD7 85D176D3 C90B5D5E 8EBFEEC9 3FC2DACB
+        5F7A967F 417A2E65 025F2967 0BD041B3 8EECF4F6 D7172D7A A15CBA59 D83BAF17
+        F928C6D0 A3649770 5DE73AED 95AAAF3C F955AB6F 654F6DDD 51DE7225 CB178139
         74042356 6976EBB8 6CFD01D7 5726917A 10F13A9A
               quit
-      !         
-      !         
+      !
+      !
       license udi pid C8000V sn 9TYB2BVCTEE
       memory free low-watermark processor 201711
       diagnostic bootup level minimal
-      !         
+      !
       remote-management
-      !         
-      !         
-      !         
+      !
+      !
+      !
       username ansible privilege 15 secret 9 $9$OWTrVj9K1pvYMk$Yk8C08a96MaHS0NXKemcdtr.wm50p/TyyseSUfKS1/w
       username cisco privilege 15 secret 9 $9$4kwcYNnc81prn.$7/DIFt5FkKa2H.2b8TwzW5G9Y9x8ZW3gU/fVB9eLaDk
-      !         
+      !
       redundancy
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
+      !
+      !
+      !
+      !
+      !
+      !
+      !
+      !
       interface GigabitEthernet1
        ip address dhcp
        negotiation auto
-      !         
+      !
       interface GigabitEthernet2
        no ip address
-       shutdown 
+       shutdown
        negotiation auto
-      !         
+      !
       interface GigabitEthernet3
        no ip address
-       shutdown 
+       shutdown
        negotiation auto
-      !         
+      !
       interface GigabitEthernet4
        no ip address
-       shutdown 
+       shutdown
        negotiation auto
-      !         
+      !
       ip forward-protocol nd
-      !         
+      !
       ip http server
       ip http authentication local
       ip http secure-server
       ip ssh bulk-mode 131072
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
+      !
+      !
+      !
+      !
+      !
+      !
+      !
       control-plane
-      !         
-      !         
+      !
+      !
       line con 0
        stopbits 1
       line aux 0
       line vty 0 4
        transport input ssh
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      !         
-      restconf  
-      end       
+      !
+      !
+      !
+      !
+      !
+      !
+      !
+      restconf
+      end
     cpu_limit: null
     cpus: null
     data_volume: null
