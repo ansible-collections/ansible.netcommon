@@ -18,15 +18,16 @@ import string
 from ansible.errors import AnsibleFilterError
 from ansible.module_utils._text import to_text
 
+
 try:
     # old import
     HAS_PASSLIB_OR_CRYPT = True
-    from ansible.utils.encrypt import random_password, passlib_or_crypt
+    from ansible.utils.encrypt import passlib_or_crypt, random_password
 except ImportError:
     # To use do_encrypt from 2.20
     HAS_PASSLIB_OR_CRYPT = False
-    from ansible.utils.encrypt import random_password, do_encrypt
-    
+    from ansible.utils.encrypt import do_encrypt, random_password
+
 string_types = (str,)
 
 
