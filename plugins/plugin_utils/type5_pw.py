@@ -20,6 +20,7 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.six import string_types
 from ansible.utils import encrypt
 
+
 def _raise_error(msg):
     raise AnsibleFilterError(msg)
 
