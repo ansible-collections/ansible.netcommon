@@ -21,7 +21,7 @@ from xml.etree.ElementTree import fromstring
 from ansible.errors import AnsibleFilterError
 from ansible.module_utils._text import to_native
 from ansible.module_utils.common._collections_compat import Mapping
-from ansible.module_utils.six import iteritems, string_types
+from ansible.module_utils.six import string_types
 from ansible.utils.display import Display
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import Template
@@ -57,7 +57,7 @@ def _extract_param(template, root, attrs, value):
     for element in root.findall(attrs["top"]):
         entry = dict()
         item_dict = dict()
-        for param, param_xpath in iteritems(param_to_xpath_map):
+        for param, param_xpath in param_to_xpath_map.items():
             fields = None
             try:
                 fields = element.findall(param_xpath)
@@ -90,7 +90,7 @@ def _extract_param(template, root, attrs, value):
                     item_dict[param] = None
 
         if isinstance(value, Mapping):
-            for item_key, item_value in iteritems(value):
+            for item_key, item_value in value.items():
                 entry[item_key] = template(item_value, {"item": item_dict})
         else:
             entry = template(value, {"item": item_dict})
@@ -134,7 +134,7 @@ def parse_xml(output, tmpl):
     spec = yaml.safe_load(tmpl_content)
     obj = {}
 
-    for name, attrs in iteritems(spec["keys"]):
+    for name, attrs in spec["keys"].items():
         value = attrs["value"]
 
         try:

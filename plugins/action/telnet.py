@@ -11,7 +11,7 @@ __metaclass__ = type
 from time import sleep
 
 from ansible.module_utils._text import to_bytes, to_text
-from ansible.module_utils.six import text_type
+from ansible.module_utils.six import string_types
 from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
 
@@ -61,7 +61,7 @@ class ActionModule(ActionBase):
             else:
                 line_ending = "\n"
 
-            if isinstance(commands, text_type):
+            if isinstance(commands, string_types):
                 commands = commands.split(",")
 
             if isinstance(commands, list) and commands:
