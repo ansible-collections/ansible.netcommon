@@ -1,5 +1,5 @@
 ---
-name: Integration-simple
+name: "Integration tests 💻"
 on:
   pull_request_target:
     branches: [main]
