@@ -5,6 +5,7 @@ __metaclass__ = type
 import io
 
 import yaml
+
 from ansible.parsing.yaml.dumper import AnsibleDumper
 from ansible.parsing.yaml.loader import AnsibleLoader
 
@@ -81,7 +82,6 @@ class YamlTestUtils(object):
 
         stream_obj_from_stream = io.StringIO()
         stream_obj_from_string = io.StringIO()
-
 
         yaml.dump(obj_from_stream, stream_obj_from_stream, Dumper=AnsibleDumper)
         yaml.dump(obj_from_stream, stream_obj_from_string, Dumper=AnsibleDumper)
