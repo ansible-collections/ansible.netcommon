@@ -17,8 +17,6 @@ import os
 
 from ansible.errors import AnsibleFilterError
 from ansible.module_utils._text import to_native
-from ansible.module_utils.six import string_types
-
 
 try:
     import textfsm
@@ -27,6 +25,7 @@ try:
 except ImportError:
     HAS_TEXTFSM = False
 
+string_types = str,
 
 def _raise_error(msg):
     raise AnsibleFilterError(msg)

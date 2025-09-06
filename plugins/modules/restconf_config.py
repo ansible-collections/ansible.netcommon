@@ -125,13 +125,13 @@ import json
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import ConnectionError
-from ansible.module_utils.six import string_types
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_diff,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.restconf import restconf
 
+string_types = str,
 
 def main():
     """entry point for module execution"""

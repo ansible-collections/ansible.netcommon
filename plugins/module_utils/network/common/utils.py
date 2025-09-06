@@ -30,9 +30,8 @@ from ansible.module_utils import basic
 from ansible.module_utils._text import to_text
 from ansible.module_utils.common._collections_compat import Mapping
 from ansible.module_utils.parsing.convert_bool import boolean
-from ansible.module_utils.six import string_types
 
-
+string_types = str,
 try:
     from jinja2 import Environment, StrictUndefined
     from jinja2.exceptions import UndefinedError
