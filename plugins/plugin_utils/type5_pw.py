@@ -26,6 +26,7 @@ try:
 except ImportError:
     # To use do_encrypt from 2.20
     from ansible.utils.encrypt import random_password
+
     HAS_PASSLIB_OR_CRYPT = False
 
 string_types = (str,)
