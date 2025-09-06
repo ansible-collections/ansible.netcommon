@@ -25,7 +25,8 @@ from ansible.utils.display import Display
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import Template
 
-string_types = str,
+
+string_types = (str,)
 
 try:
     import yaml

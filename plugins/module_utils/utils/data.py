@@ -19,7 +19,7 @@ from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
 
 
-string_types = str,
+string_types = (str,)
 try:
     HAS_LXML = True
     from lxml import etree

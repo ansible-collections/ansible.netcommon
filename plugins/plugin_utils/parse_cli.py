@@ -30,7 +30,8 @@ try:
 except ImportError:
     HAS_YAML = False
 
-string_types = str,
+string_types = (str,)
+
 
 def _raise_error(msg):
     raise AnsibleFilterError(msg)

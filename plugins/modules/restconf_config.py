@@ -131,7 +131,9 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.restconf import restconf
 
-string_types = str,
+
+string_types = (str,)
+
 
 def main():
     """entry point for module execution"""

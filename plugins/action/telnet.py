@@ -16,6 +16,7 @@ from ansible.utils.display import Display
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.compat import telnetlib
 
+
 text_type = str
 display = Display()
 

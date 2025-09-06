@@ -19,7 +19,9 @@ from ansible.errors import AnsibleFilterError
 from ansible.module_utils._text import to_text
 from ansible.utils import encrypt
 
-string_types = str,
+
+string_types = (str,)
+
 
 def _raise_error(msg):
     raise AnsibleFilterError(msg)

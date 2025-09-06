@@ -23,8 +23,10 @@ from ansible.module_utils.six.moves import zip
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 
+
 text_type = str
-string_types = str,
+string_types = (str,)
+
 
 class FailedConditionsError(Exception):
     def __init__(self, msg, failed_conditions):
