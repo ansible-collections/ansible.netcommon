@@ -18,8 +18,7 @@ import string
 from ansible.errors import AnsibleFilterError
 from ansible.module_utils._text import to_text
 from ansible.module_utils.six import string_types
-from ansible.utils.encrypt import passlib_or_crypt, random_password
-
+from ansible.utils import encrypt
 
 def _raise_error(msg):
     raise AnsibleFilterError(msg)
@@ -39,10 +38,10 @@ def type5_pw(password, salt=None):
             % (type(salt).__name__)
         )
     elif not salt:
-        salt = random_password(length=4, chars=salt_chars)
+        salt = encrypt.random_password(length=4, chars=salt_chars)
     elif not set(salt) <= set(salt_chars):
         _raise_error("type5_pw salt used inproper characters, must be one of %s" % (salt_chars))
 
-    encrypted_password = passlib_or_crypt(password, "md5_crypt", salt=salt)
+    encrypted_password = encrypt.passlib_or_crypt(password, "md5_crypt", salt=salt)
 
     return encrypted_password
