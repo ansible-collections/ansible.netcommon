@@ -2,3 +2,5 @@
 trivial:
   - Fix sanity issues and remove old python 2.x imports and dependencies.
   - Fix lint issues for lab files for CML based integration testing.
+  - Handles imports of passlib_or_crypt to do_encrypt for ansible-core 2.20 or above
+  - Update github workflow names for better clarity.
