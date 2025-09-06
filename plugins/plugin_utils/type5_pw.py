@@ -26,7 +26,6 @@ try:
 except ImportError:
     # To use do_encrypt from 2.20
     HAS_PASSLIB_OR_CRYPT = False
-    from ansible.utils.encrypt import do_encrypt, random_password
 
 string_types = (str,)
 
@@ -56,6 +55,7 @@ def type5_pw(password, salt=None):
     if HAS_PASSLIB_OR_CRYPT:
         encrypted_password = passlib_or_crypt(password, "md5_crypt", salt=salt)
     else:
+        from ansible.utils.encrypt import do_encrypt
         encrypted_password = do_encrypt(password, "md5_crypt", salt=salt)
 
     return encrypted_password
