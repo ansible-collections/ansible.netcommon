@@ -157,7 +157,6 @@ from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils._text import to_bytes, to_native, to_text
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.parsing.convert_bool import BOOLEANS_FALSE, BOOLEANS_TRUE
-from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import cPickle
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.connection import ensure_connect
@@ -264,10 +263,8 @@ class Connection(NetworkConnectionBase):
     def update_play_context(self, pc_data):
         """Updates the play context information for the connection"""
         pc_data = to_bytes(pc_data)
-        if PY3:
-            pc_data = cPickle.loads(pc_data, encoding="bytes")
-        else:
-            pc_data = cPickle.loads(pc_data)
+        pc_data = cPickle.loads(pc_data, encoding="bytes")
+
         play_context = PlayContext()
         play_context.deserialize(pc_data)
         self._play_context = play_context

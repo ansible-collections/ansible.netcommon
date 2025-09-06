@@ -14,7 +14,6 @@ The facts base class
 this contains methods common to all facts subsets
 """
 from ansible.module_utils._text import to_text
-from ansible.module_utils.six import iteritems
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.network import (
     get_resource_connection,
@@ -150,6 +149,6 @@ class FactsBase(object):
                 facts.update(inst.facts)
                 self._warnings.extend(inst.warnings)
 
-            for key, value in iteritems(facts):
+            for key, value in facts.itmes():
                 key = "ansible_net_%s" % key
                 self.ansible_facts[key] = value

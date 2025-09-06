@@ -19,10 +19,13 @@ import shlex
 import time
 
 from ansible.module_utils.parsing.convert_bool import BOOLEANS_FALSE, BOOLEANS_TRUE
-from ansible.module_utils.six import string_types, text_type
 from ansible.module_utils.six.moves import zip
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
+
+
+text_type = str
+string_types = (str,)
 
 
 class FailedConditionsError(Exception):

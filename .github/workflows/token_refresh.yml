@@ -1,5 +1,5 @@
 ---
-name: refresh_automation_hub_token
+name: "AH Token Refresh 🔧"
 on:  # yamllint disable-line rule:truthy
   schedule:
     - cron: '0 0 * * *'

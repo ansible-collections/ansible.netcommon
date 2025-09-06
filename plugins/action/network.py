@@ -14,7 +14,6 @@ import time
 
 from ansible.errors import AnsibleError
 from ansible.module_utils._text import to_text
-from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves.urllib.parse import urlsplit
 from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
@@ -213,14 +212,6 @@ class ActionModule(_ActionModule):
         # log early about dexec
         if dexec:
             display.vvvv("{prefix} enabled".format(prefix=DEXEC_PREFIX), host)
-
-            # disable dexec when not PY3
-            if not PY3:
-                dexec = False
-                display.vvvv(
-                    "{prefix} disabled for when not Python 3".format(prefix=DEXEC_PREFIX),
-                    host=host,
-                )
 
             # disable dexec when running async
             if self._task.async_val:
