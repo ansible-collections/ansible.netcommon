@@ -17,7 +17,6 @@ __metaclass__ = type
 # Networking tools for network modules only
 
 import ast
-import json
 import operator
 import re
 import socket
@@ -28,12 +27,12 @@ from io import StringIO
 from itertools import chain
 
 from ansible.module_utils import basic
-from ansible.module_utils._text import to_bytes, to_text
+from ansible.module_utils._text import to_text
 from ansible.module_utils.common._collections_compat import Mapping
 from ansible.module_utils.parsing.convert_bool import boolean
-from ansible.module_utils.six import iteritems, string_types
 
 
+string_types = (str,)
 try:
     from jinja2 import Environment, StrictUndefined
     from jinja2.exceptions import UndefinedError
@@ -179,12 +178,12 @@ class Entity(object):
 
         _has_key = False
 
-        for name, attr in iteritems(self._attributes):
+        for name, attr in self._attributes.items():
             if attr.get("read_from"):
                 if attr["read_from"] not in self._module.argument_spec:
                     module.fail_json(msg="argument %s does not exist" % attr["read_from"])
                 spec = self._module.argument_spec.get(attr["read_from"])
-                for key, value in iteritems(spec):
+                for key, value in spec.items():
                     if key not in attr:
                         attr[key] = value
 
@@ -199,7 +198,7 @@ class Entity(object):
 
     def to_dict(self, value):
         obj = {}
-        for name, attr in iteritems(self._attributes):
+        for name, attr in self._attributes.items():
             if attr.get("key"):
                 obj[name] = value
             else:
@@ -215,7 +214,7 @@ class Entity(object):
             if unknown:
                 self._module.fail_json(msg="invalid keys: %s" % ",".join(unknown))
 
-        for name, attr in iteritems(self._attributes):
+        for name, attr in self._attributes.items():
             if value.get(name) is None:
                 value[name] = attr.get("default")
 
@@ -300,7 +299,7 @@ def dict_diff(base, comparable):
 
     updates = dict()
 
-    for key, value in iteritems(base):
+    for key, value in base.items():
         if isinstance(value, dict):
             item = comparable.get(key)
             if item is not None:
@@ -339,7 +338,7 @@ def dict_merge(base, other):
 
     combined = dict()
 
-    for key, value in iteritems(deepcopy(base)):
+    for key, value in deepcopy(base).items():
         if isinstance(value, dict):
             if key in other:
                 item = other.get(key)
@@ -467,7 +466,7 @@ def validate_prefix(prefix):
 
 def load_provider(spec, args):
     provider = args.get("provider") or {}
-    for key, value in iteritems(spec):
+    for key, value in spec.items():
         if key not in provider:
             try:
                 # Get fallback if defined, and valid
@@ -508,7 +507,7 @@ def generate_dict(spec):
     if not spec:
         return obj
 
-    for key, val in iteritems(spec):
+    for key, val in spec.items():
         if "default" in val:
             dct = {key: val["default"]}
         elif "type" in val and val["type"] == "dict":
@@ -594,7 +593,7 @@ def remove_empties(cfg_dict):
     if not cfg_dict:
         return final_cfg
 
-    for key, val in iteritems(cfg_dict):
+    for key, val in cfg_dict.items():
         dct = None
         if isinstance(val, dict):
             child_val = remove_empties(val)
@@ -618,10 +617,13 @@ def validate_config(spec, data):
     :param data: Data to be validated
     :return:
     """
-    params = basic._ANSIBLE_ARGS
-    basic._ANSIBLE_ARGS = to_bytes(json.dumps({"ANSIBLE_MODULE_ARGS": data}))
-    validated_data = basic.AnsibleModule(spec).params
-    basic._ANSIBLE_ARGS = params
+
+    class DirectValidationModule(basic.AnsibleModule):
+        def _load_params(self):
+            self.params = deepcopy(data)
+
+    validated_data = DirectValidationModule(spec).params
+
     return validated_data
 
 
@@ -707,7 +709,7 @@ class Template:
 
 def extract_argspec(doc_obj, argpsec):
     options_obj = doc_obj.get("options")
-    for okey, ovalue in iteritems(options_obj):
+    for okey, ovalue in options_obj.items():
         argpsec[okey] = {}
         for metakey in list(ovalue):
             if metakey == "suboptions":
