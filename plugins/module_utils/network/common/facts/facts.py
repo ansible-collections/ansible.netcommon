@@ -149,6 +149,6 @@ class FactsBase(object):
                 facts.update(inst.facts)
                 self._warnings.extend(inst.warnings)
 
-            for key, value in facts.itmes():
+            for key, value in facts.items():
                 key = "ansible_net_%s" % key
                 self.ansible_facts[key] = value
