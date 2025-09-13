@@ -12,8 +12,8 @@ from abc import abstractmethod
 from functools import wraps
 
 from ansible.errors import AnsibleError
-from ansible.module_utils.common.text.converters import to_native
 from ansible.module_utils.basic import missing_required_lib
+from ansible.module_utils.common.text.converters import to_native
 
 # Needed to satisfy PluginLoader's required_base_class
 from ansible.plugins.netconf import NetconfBase as NetconfBaseBase

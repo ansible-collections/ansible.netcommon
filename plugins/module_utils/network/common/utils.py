@@ -30,6 +30,7 @@ from ansible.module_utils import basic
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.parsing.convert_bool import boolean
 
+
 try:
     from collections.abc import Mapping
 except ImportError:

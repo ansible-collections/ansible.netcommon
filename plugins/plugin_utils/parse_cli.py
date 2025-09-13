@@ -15,6 +15,7 @@ __metaclass__ = type
 
 import os
 import re
+
 from collections.abc import Mapping
 
 from ansible.errors import AnsibleFilterError

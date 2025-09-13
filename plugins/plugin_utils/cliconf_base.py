@@ -9,8 +9,8 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from abc import abstractmethod
-from functools import wraps
 from collections.abc import Mapping
+from functools import wraps
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils.common.text.converters import to_bytes, to_text

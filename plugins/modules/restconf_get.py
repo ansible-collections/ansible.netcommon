@@ -83,8 +83,8 @@ response:
 
 """
 
-from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.connection import ConnectionError
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.restconf import restconf

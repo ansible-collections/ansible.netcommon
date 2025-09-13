@@ -15,8 +15,8 @@ __metaclass__ = type
 
 import os
 import traceback
-from collections.abc import Mapping
 
+from collections.abc import Mapping
 from xml.etree.ElementTree import fromstring
 
 from ansible.errors import AnsibleFilterError
