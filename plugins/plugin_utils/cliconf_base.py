@@ -10,10 +10,10 @@ __metaclass__ = type
 
 from abc import abstractmethod
 from functools import wraps
+from collections.abc import Mapping
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
-from ansible.module_utils._text import to_bytes, to_text
-from ansible.module_utils.common._collections_compat import Mapping
+from ansible.module_utils.common.text.converters import to_bytes, to_text
 
 # Needed to satisfy PluginLoader's required_base_class
 from ansible.plugins.cliconf import CliconfBase as CliconfBaseBase

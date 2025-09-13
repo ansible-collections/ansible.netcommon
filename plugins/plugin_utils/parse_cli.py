@@ -15,10 +15,10 @@ __metaclass__ = type
 
 import os
 import re
+from collections.abc import Mapping
 
 from ansible.errors import AnsibleFilterError
-from ansible.module_utils._text import to_native
-from ansible.module_utils.common._collections_compat import Mapping
+from ansible.module_utils.common.text.converters import to_native
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import Template
 

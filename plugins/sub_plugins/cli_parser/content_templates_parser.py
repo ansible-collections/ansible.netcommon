@@ -32,7 +32,7 @@ EXAMPLES = """
   register: ios_bgp_health
 
 """
-from ansible.module_utils._text import to_native
+from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parsertemplate import (

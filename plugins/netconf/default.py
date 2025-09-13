@@ -29,7 +29,7 @@ options:
 """
 import json
 
-from ansible.module_utils._text import to_text
+from ansible.module_utils.common.text.converters import to_text
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.netconf_base import NetconfBase
 
