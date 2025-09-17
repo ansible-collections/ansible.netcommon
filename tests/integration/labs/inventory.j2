@@ -1,0 +1,12 @@
+[cli]
+nxos ansible_host={{ ansible_host }} ansible_user=ansible ansible_password=ansible ansible_connection=ansible.netcommon.network_cli ansible_network_os=cisco.nxos.nxos ansible_ssh_port={{ nxos_ssh_port }} ansible_httpapi_port={{ nxos_http_port }} ansible_network_cli_ssh_type={{ ansible_network_cli_ssh_type }}
+
+[netconf]
+iosxr ansible_host={{ ansible_host }} ansible_user=ansible ansible_password=ansible ansible_connection=ansible.netcommon.netconf ansible_network_os=cisco.iosxr.iosxr ansible_netconf_port={{ iosxr_netconf_port }}
+nxos ansible_host={{ ansible_host }} ansible_user=ansible ansible_password=ansible ansible_connection=ansible.netcommon.netconf ansible_network_os=cisco.nxos.nxos ansible_netconf_port={{ nxos_netconf_port }}
+
+[grpc]
+iosxr ansible_host={{ ansible_host }} ansible_user=ansible ansible_password=ansible ansible_connection=ansible.netcommon.grpc ansible_network_os=cisco.iosxr.iosxr ansible_grpc_port={{ iosxr_grpc_port }}
+
+[restconf]
+iosxe ansible_host={{ ansible_host }} ansible_user=ansible ansible_password=ansible ansible_connection=ansible.netcommon.httpapi ansible_network_os=cisco.ios.ios ansible_httpapi_use_ssl=true ansible_httpapi_validate_certs=false ansible_httpapi_port={{ iosxe_http_port }}

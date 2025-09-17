@@ -16,9 +16,20 @@ __metaclass__ = type
 import string
 
 from ansible.errors import AnsibleFilterError
-from ansible.module_utils._text import to_text
-from ansible.module_utils.six import string_types
-from ansible.utils.encrypt import passlib_or_crypt, random_password
+from ansible.module_utils.common.text.converters import to_text
+
+
+try:
+    # old import
+    HAS_PASSLIB_OR_CRYPT = True
+    from ansible.utils.encrypt import passlib_or_crypt, random_password
+except ImportError:
+    # To use do_encrypt from 2.20
+    from ansible.utils.encrypt import random_password
+
+    HAS_PASSLIB_OR_CRYPT = False
+
+string_types = (str,)
 
 
 def _raise_error(msg):
@@ -43,6 +54,11 @@ def type5_pw(password, salt=None):
     elif not set(salt) <= set(salt_chars):
         _raise_error("type5_pw salt used inproper characters, must be one of %s" % (salt_chars))
 
-    encrypted_password = passlib_or_crypt(password, "md5_crypt", salt=salt)
+    if HAS_PASSLIB_OR_CRYPT:
+        encrypted_password = passlib_or_crypt(password, "md5_crypt", salt=salt)
+    else:
+        from ansible.utils.encrypt import do_encrypt
+
+        encrypted_password = do_encrypt(password, "md5_crypt", salt=salt)
 
     return encrypted_password

@@ -22,6 +22,7 @@ description:
   - The filter plugins converts the output of a network device
     CLI command into structured JSON output.
   - Using the parameters below - C(xml_data | ansible.netcommon.parse_cli(template.yml))
+  - This plugin is deprecated and will be removed in a future release after 2027-02-01, please Use ansible.utils.cli_parse instead.
 notes:
   - The parse_cli filter will load the spec file and pass the command output through it,
     returning JSON output. The YAML spec file defines how to parse the CLI output
@@ -141,11 +142,17 @@ try:
 except ImportError:
     from jinja2.filters import environmentfilter as pass_environment
 
+from ansible.utils.display import Display
+
 
 @pass_environment
 def _parse_cli(*args, **kwargs):
-    """Extend vlan data"""
-
+    """parse cli"""
+    display = Display()
+    display.warning(
+        "The 'parse_cli' filter is deprecated and will be removed in a future release "
+        "after 2027-02-01. Use 'ansible.utils.cli_parse' instead."
+    )
     keys = ["output", "tmpl"]
     data = dict(zip(keys, args[1:]))
     data.update(kwargs)
