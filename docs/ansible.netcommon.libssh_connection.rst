@@ -199,6 +199,26 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>private_key_passphrase</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                    <td>
+                                <div>var: ansible_private_key_password</div>
+                                <div>var: ansible_private_key_passphrase</div>
+                    </td>
+                <td>
+                        <div>Passphrase used to unlock the private key specified by the <code>ansible_private_key_file</code> attribute.</div>
+                        <div>This is required if the private key is encrypted with a passphrase.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>proxy_command</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
