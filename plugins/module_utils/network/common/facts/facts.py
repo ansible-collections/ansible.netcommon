@@ -13,7 +13,7 @@ __metaclass__ = type
 The facts base class
 this contains methods common to all facts subsets
 """
-from ansible.module_utils._text import to_text
+from ansible.module_utils.common.text.converters import to_text
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.network import (
     get_resource_connection,
