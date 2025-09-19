@@ -168,7 +168,7 @@ jobs:
         run: |
           echo "Inventory path: ${{ steps.render_inventory.outputs.inventory_path }}"
           echo
-          cat "${{ steps.render_inventory.outputs.inventory_path }}"
+          # cat "${{ steps.render_inventory.outputs.inventory_path }}"
 
       - name: Run ansible-test network-integration
         run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" -vvvv
