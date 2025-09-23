@@ -1,0 +1,4 @@
+bugfixes:
+  - Avoid merging module_defaults for all ansible.netcommon.grpc_* modules.
+trivial:
+  - Remove dependency on the NETWORK_GROUP_MODULES configuration for ansible.netcommon.netconf_* modules.
