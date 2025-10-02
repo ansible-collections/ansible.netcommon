@@ -184,6 +184,7 @@ options:
     - name: ansible_platform_type
 """
 
+import os
 from io import BytesIO
 
 from ansible.errors import AnsibleConnectionFailure
@@ -371,6 +372,45 @@ class Connection(NetworkConnectionBase):
         response_buffer.seek(0)
 
         return response, response_buffer
+
+    def send_file(self, path, filename, chunk_size=-1, retries=0, **kwargs):
+        start = 0
+        tries = 0
+        total_size = os.stat(filename).st_size
+        with open(filename, "rb") as fileobj:
+            while True:
+                if retries > tries:
+                    raise ConnectionError(
+                        "Failed to upload file too many times."
+                    )
+
+                file_slice = fileobj.read(chunk_size)
+                if not file_slice:
+                    break
+
+                slice_size = len(file_slice)
+                end = start + slice_size
+                headers = {
+                    "Content-Range": "{0}-{1}/{2}".format(
+                        start, end - 1, total_size
+                    ),
+                    "Content-Type": kwargs.pop(
+                        "Content-Type", "application/octet-stream"
+                    ),
+                }
+                try:
+                    response, response_data = self.send(
+                        path, file_slice, headers=headers, **kwargs
+                    )
+                except HTTPError:
+                    # Try that again
+                    start = 0
+                    fileobj.seek(0)
+                    tries += 1
+                    continue
+                start = end
+
+        return True
 
     def transport_test(self, connect_timeout):
         """This method enables wait_for_connection to work.
