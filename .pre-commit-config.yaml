@@ -1,7 +1,7 @@
 ---
 repos:
   - repo: https://github.com/ansible-network/collection_prep
-    rev: da78082ea59b03ad16cd7dbee267f53e8ff50bb5
+    rev: 1.1.2
     hooks:
       - id: update-docs
 
@@ -23,7 +23,7 @@ repos:
           - prettier-plugin-toml
 
   - repo: https://github.com/PyCQA/isort
-    rev: 6.1.0
+    rev: 7.0.0
     hooks:
       - id: isort
         args: ["--filter-files"]
