@@ -11,6 +11,7 @@ __metaclass__ = type
 from unittest import TestCase
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
+from tests.unit.plugins.filter.plugin_utils.test_do_encrypt_utils import get_expected_md5_crypt
 
 
 class TestType5_pw(TestCase):
@@ -22,10 +23,10 @@ class TestType5_pw(TestCase):
         salt = "nTc1"
         args = [password, salt]
         result = type5_pw(*args)
-        self.assertEqual(
-            "$1$nTc1$Z28sUTcWfXlvVe2x.3XAa.TESTPASS",
-            result + "TESTPASS",
-        )
+        # Uses helper to abstract passlib->do_encrypt swap (core PR 85970)
+        expected = get_expected_md5_crypt(password, salt)
+
+        self.assertEqual(result, expected)
 
     def test_type5_pw_plugin_2(self):
         password = "cisco"
