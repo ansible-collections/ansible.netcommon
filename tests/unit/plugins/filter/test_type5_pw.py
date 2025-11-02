@@ -11,7 +11,7 @@ __metaclass__ = type
 from unittest import TestCase
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
-from tests.unit.plugins.filter.plugin_utils.test_do_encrypt_utils import get_expected_md5_crypt
+from tests.unit.plugins.plugin_utils.test_do_encrypt_utils import get_expected_md5_crypt
 
 
 class TestType5_pw(TestCase):
