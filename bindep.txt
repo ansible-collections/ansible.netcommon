@@ -13,7 +13,7 @@ python3-Cython [compile platform:fedora-35 platform:rhel-9]
 
 # ansible-pylibssh (runtime)
 libssh [platform:rpm]
-libssh [platform:dpkg]
+libssh-4 [platform:dpkg]
 
 # ncclient
 python3-six [platform:centos-9 platform:rhel-9]
