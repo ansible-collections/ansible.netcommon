@@ -326,7 +326,6 @@ class Connection(NetworkConnectionBase):
         self.queue_message("log", "ssh connection done, starting ncclient")
 
         allow_agent = True
-
         if self._play_context.password is not None:
             allow_agent = False
         setattr(self._play_context, "allow_agent", allow_agent)
