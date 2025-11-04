@@ -47,6 +47,18 @@ options:
     - name: ANSIBLE_REMOTE_PORT
     vars:
     - name: ansible_port
+  use_libssh:
+    type: bool
+    description:
+    - specifies weather to use libssh for netconf connection or not
+    default: true
+    ini:
+    - section: defaults
+      key: netconf_libssh
+    env:
+    - name: ANSIBLE_NETCONF_LIBSSH
+    vars:
+    - name: ansible_netconf_libssh
   network_os:
     description:
     - Configures the device platform network operating system.  This value is used
