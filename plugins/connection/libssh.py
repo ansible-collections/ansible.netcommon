@@ -112,7 +112,7 @@ DOCUMENTATION = """
         default: ''
         description:
             - List of algorithms to forward to SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES.
-        type: string
+        type: str
         env:
           - name: ANSIBLE_LIBSSH_PUBLICKEY_ALGORITHMS
         ini:
@@ -122,13 +122,26 @@ DOCUMENTATION = """
       hostkeys:
         default: ''
         description: Set the preferred server host key types as a comma-separated list (e.g., ssh-rsa,ssh-dss,ecdh-sha2-nistp256).
-        type: string
+        type: str
         env:
           - name: ANSIBLE_LIBSSH_HOSTKEYS
         ini:
           - {key: hostkeys, section: libssh_connection}
         vars:
           - name: ansible_libssh_hostkeys
+      key_exchange_algorithms:
+        description:
+          - Set the key exchange method as a comma-separated list (e.g., "ecdh-sha2-nistp256,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1").
+          - The list can be prepended by +,-,^ which will append, remove or move to the beginning (prioritizing) of the default list respectively.
+            Giving an empty list after + and ^ will cause error.
+        type: str
+        env:
+          - name: ANSIBLE_LIBSSH_KEY_EXCHANGE_ALGORITHMS
+        ini:
+          - key: key_exchange_algorithms
+            section: libssh_connection}
+        vars:
+          - name: ansible_libssh_key_exchange_algorithms
       host_key_checking:
         description: 'Set this to "False" if you want to avoid host key checking by the underlying tools Ansible uses to connect to the host'
         type: boolean
@@ -429,6 +442,11 @@ class Connection(ConnectionBase):
 
             if self.get_option("hostkeys"):
                 ssh_connect_kwargs["hostkeys"] = self.get_option("hostkeys")
+
+            if self.get_option("key_exchange_algorithms"):
+                ssh_connect_kwargs["key_exchange_algorithms"] = self.get_option(
+                    "key_exchange_algorithms"
+                )
 
             self.ssh.set_missing_host_key_policy(MyAddPolicy(self))
 
