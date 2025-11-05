@@ -9,7 +9,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from unittest import TestCase
+
 from ansible import release as ansible_release
+
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import comp_type5
 
 
