@@ -393,7 +393,7 @@ class Connection(NetworkConnectionBase):
                 hostkey_verify=self.get_option("host_key_checking"),
                 look_for_keys=self.get_option("look_for_keys"),
                 device_params=device_params,
-                use_libssh=True,
+                use_libssh=self.get_option("use_libssh"),
                 allow_agent=self._play_context.allow_agent,
                 timeout=self.get_option("persistent_connect_timeout"),
                 ssh_config=self._ssh_config,
