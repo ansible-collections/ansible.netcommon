@@ -1,3 +1,0 @@
----
-minor_changes:
-  - "Exposes new libssh option to configure key_exchange_algorithms. This requires ansible-pylibssh v1.3.0 or higher."

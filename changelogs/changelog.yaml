@@ -880,3 +880,24 @@ releases:
     fragments:
       - data_tagging_2_19.yaml
     release_date: "2025-08-14"
+  8.2.0:
+    changes:
+      bugfixes:
+        - Added support for private key passphrase in libssh connection plugin, when
+          using encrypted private keys specified by the C(ansible_private_key_file)
+          attribute.
+        - Avoid legacy imports deprecated in ansible-core 2.20 (https://github.com/ansible-collections/ansible.netcommon/pull/720).
+        - Avoid merging module_defaults for all ansible.netcommon.grpc_* modules.
+        - Set libssh logging level to DEBUG when Ansible verbosity is greater than 3,
+          to aid in troubleshooting connection issues.
+      minor_changes:
+        - Exposes new libssh option to configure key_exchange_algorithms. This requires
+          ansible-pylibssh v1.3.0 or higher.
+    fragments:
+      - 720-ansible-core-2.20.yml
+      - fix_721_private_key.yml
+      - fix_grpc_module_defaults.yaml
+      - fix_sanity_220_devel.yaml
+      - fix_typo_error.yaml
+      - key_exchange_algo.yml
+    release_date: "2025-11-06"

@@ -4,6 +4,22 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.2.0
+======
+
+Minor Changes
+-------------
+
+- Exposes new libssh option to configure key_exchange_algorithms. This requires ansible-pylibssh v1.3.0 or higher.
+
+Bugfixes
+--------
+
+- Added support for private key passphrase in libssh connection plugin, when using encrypted private keys specified by the C(ansible_private_key_file) attribute.
+- Avoid legacy imports deprecated in ansible-core 2.20 (https://github.com/ansible-collections/ansible.netcommon/pull/720).
+- Avoid merging module_defaults for all ansible.netcommon.grpc_* modules.
+- Set libssh logging level to DEBUG when Ansible verbosity is greater than 3, to aid in troubleshooting connection issues.
+
 v8.1.0
 ======
 
