@@ -139,7 +139,7 @@ DOCUMENTATION = """
           - name: ANSIBLE_LIBSSH_KEY_EXCHANGE_ALGORITHMS
         ini:
           - key: key_exchange_algorithms
-            section: libssh_connection}
+            section: libssh_connection
         vars:
           - name: ansible_libssh_key_exchange_algorithms
       host_key_checking:

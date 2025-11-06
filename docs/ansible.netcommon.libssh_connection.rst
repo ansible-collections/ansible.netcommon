@@ -144,7 +144,7 @@ Parameters
                 </td>
                     <td>
                             <div> ini entries:
-                                    <p>[libssh_connection}]<br>key_exchange_algorithms = VALUE</p>
+                                    <p>[libssh_connection]<br>key_exchange_algorithms = VALUE</p>
                             </div>
                                 <div>env:ANSIBLE_LIBSSH_KEY_EXCHANGE_ALGORITHMS</div>
                                 <div>var: ansible_libssh_key_exchange_algorithms</div>
