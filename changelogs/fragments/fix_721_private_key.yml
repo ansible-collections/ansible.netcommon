@@ -1,0 +1,3 @@
+bugfixes:
+  - "Added support for private key passphrase in libssh connection plugin, when using encrypted private keys specified by the C(ansible_private_key_file) attribute."
+  - "Set libssh logging level to DEBUG when Ansible verbosity is greater than 3, to aid in troubleshooting connection issues."

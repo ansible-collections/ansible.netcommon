@@ -1,0 +1,186 @@
+---
+name: "Integration tests 💻"
+"on":
+  pull_request_target:
+    branches: [main]
+    types:
+      - labeled
+      - opened
+      - reopened
+      - synchronize
+    paths:
+      - "plugins/**"
+      - "tests/integration/**"
+  workflow_dispatch:
+jobs:
+  lab-create:
+    uses: ansible/ansible-content-actions/.github/workflows/cml_lab_create.yaml@main
+    with:
+      topology_path: tests/integration/labs/multi.yaml
+      # lab_title_override: "Optional custom lab title"
+    secrets:
+      virl_host: ${{ secrets.VIRL_HOST }}
+      virl_username: ${{ secrets.VIRL_USERNAME }}
+      virl_password: ${{ secrets.VIRL_PASSWORD }}
+
+  integration-tests:
+    needs: lab-create
+    name: "libssh & ansible-core ${{ matrix.ansible_version }}"
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request || contains(github.event.pull_request.labels.*.name, 'safe to test') }}
+    env:
+      PY_COLORS: "1"
+      source_directory: "./source"
+      ANSIBLE_COLLECTIONS_PATHS: "/home/runner/collections:~/.ansible/collections:/usr/share/ansible/collections"
+      CLI_SSH_TYPE: libssh
+    strategy:
+      fail-fast: true
+      matrix:
+        ansible_version: ["devel"]
+    steps:
+      - name: Checkout the collection repository
+        uses: ansible-network/github_actions/.github/actions/checkout_dependency@main
+        with:
+          path: ${{ env.source_directory }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: "0"
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Show pip list before installs
+        run: |
+          python3 -m pip --version
+          python3 -m pip list | sort
+
+      - name: Upgrade pip and wheel
+        run: python3 -m pip install --upgrade pip wheel ansible-pylibssh paramiko genie passlib scp ncclient ntc_templates pyats
+
+      - name: Show pip list after base deps install
+        run: |
+          python3 -m pip list | sort
+
+      - name: Check libssh version
+        run: dpkg -l | grep libssh
+
+      - name: Checkout ansible-core (${{ matrix.ansible_version }}) - Branch
+        uses: actions/checkout@v4
+        with:
+          repository: ansible/ansible
+          ref: ${{ matrix.ansible_version }}
+          path: ansible-core-source
+        if: ${{ contains(matrix.ansible_version, 'devel') || contains(matrix.ansible_version, 'milestone') }}
+
+      - name: Install ansible-core (${{ matrix.ansible_version }}) - Branch
+        run: python3 -m pip install ./ansible-core-source --disable-pip-version-check
+        if: ${{ contains(matrix.ansible_version, 'devel') || contains(matrix.ansible_version, 'milestone') }}
+
+      - name: Show pip list after ansible-core install
+        run: |
+          python3 -m pip list | sort
+
+      - name: Read collection metadata from galaxy.yml
+        id: identify
+        uses: ansible-network/github_actions/.github/actions/identify_collection@main
+        with:
+          source_path: ${{ env.source_directory }}
+
+      - name: Build and install the collection
+        uses: ansible-network/github_actions/.github/actions/build_install_collection@main
+        with:
+          install_python_dependencies: true
+          source_path: ${{ env.source_directory }}
+          collection_path: ${{ steps.identify.outputs.collection_path }}
+          tar_file: ${{ steps.identify.outputs.tar_file }}
+          ansible_version: ${{ matrix.ansible_version }}
+
+      - name: Print the ansible version
+        run: ansible --version
+
+      - name: Debug lab_nodes input
+        shell: bash
+        env:
+          LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
+        run: |
+          echo 'LAB_NODES (raw):'
+          echo "$LAB_NODES"
+          echo
+
+      - name: Generate inventory from lab_nodes and template
+        id: render_inventory
+        shell: bash
+        working-directory: ${{ steps.identify.outputs.collection_path }}
+        env:
+          LAB_NODES_JSON: ${{ needs.lab-create.outputs.lab_nodes_json }}
+          RUNNER_TEMP: ${{ runner.temp }}
+          CLI_SSH_TYPE: ${{ env.CLI_SSH_TYPE }}
+        run: |
+          set -euo pipefail
+          if ! command -v jq >/dev/null 2>&1; then
+            sudo apt-get update -y >/dev/null 2>&1 || true
+            sudo apt-get install -y jq >/dev/null 2>&1 || true
+          fi
+          # Extract DHCP IPs for each node
+          nxos_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.nxos // empty')
+          iosxr_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.iosxr // empty')
+          iosxe_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.iosxe // empty')
+
+          if [ -z "$nxos_ip" ] || [ -z "$iosxr_ip" ] || [ -z "$iosxe_ip" ]; then
+            echo "Missing one or more required nodes (nxos, iosxr, iosxe) in LAB_NODES_JSON"
+            echo "Available keys:" $(echo "$LAB_NODES_JSON" | jq -r '.nodes | keys | join(", ")')
+            exit 1
+          fi
+
+          # Compute ports from last octet of each DHCP IP
+          nxos_last_octet="${nxos_ip##*.}"
+          nxos_ssh_port=$((nxos_last_octet + 2000))
+          nxos_https_port=$((nxos_last_octet + 4000))
+          nxos_http_port=$((nxos_last_octet + 8000))
+          nxos_netconf_port=$((nxos_last_octet + 3000))
+
+          iosxr_last_octet="${iosxr_ip##*.}"
+          iosxr_ssh_port=$((iosxr_last_octet + 2000))
+          iosxr_https_port=$((iosxr_last_octet + 4000))
+          iosxr_http_port=$((iosxr_last_octet + 8000))
+          iosxr_netconf_port=$((iosxr_last_octet + 3000))
+          iosxr_grpc_port=57400
+
+          iosxe_last_octet="${iosxe_ip##*.}"
+          iosxe_ssh_port=$((iosxe_last_octet + 2000))
+          iosxe_https_port=$((iosxe_last_octet + 4000))
+          iosxe_http_port=$((iosxe_last_octet + 8000))
+          iosxe_netconf_port=$((iosxe_last_octet + 3000))
+
+          # Destination host for port-forwarded access
+          dest_host="54.190.208.146"
+          out_file="$RUNNER_TEMP/inventory-${{ matrix.ansible_version }}.ini"
+          ansible localhost -c local -m template -a "src=tests/integration/labs/inventory.j2 dest=$out_file mode=0644" \
+            -e "ansible_host=$dest_host ansible_network_cli_ssh_type=$CLI_SSH_TYPE \
+            nxos_ssh_port=$nxos_ssh_port nxos_http_port=$nxos_http_port nxos_netconf_port=$nxos_netconf_port \
+            iosxr_netconf_port=$iosxr_netconf_port iosxr_grpc_port=$iosxr_grpc_port \
+            iosxe_http_port=$iosxe_http_port"
+          echo "inventory_path=$out_file" >> "$GITHUB_OUTPUT"
+
+      - name: Debug inventory
+        shell: bash
+        run: |
+          echo "Inventory path: ${{ steps.render_inventory.outputs.inventory_path }}"
+          echo
+          # cat "${{ steps.render_inventory.outputs.inventory_path }}"
+
+      - name: Run ansible-test network-integration
+        run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" -vvvv
+        working-directory: ${{ steps.identify.outputs.collection_path }}
+        env:
+          LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
+
+  lab-destroy:
+    if: ${{ always() }}
+    needs: integration-tests
+    uses: ansible/ansible-content-actions/.github/workflows/cml_lab_destroy.yaml@main
+    secrets:
+      virl_host: ${{ secrets.VIRL_HOST }}
+      virl_username: ${{ secrets.VIRL_USERNAME }}
+      virl_password: ${{ secrets.VIRL_PASSWORD }}
