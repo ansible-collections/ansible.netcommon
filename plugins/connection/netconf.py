@@ -326,7 +326,7 @@ class Connection(NetworkConnectionBase):
         self.queue_message("log", "ssh connection done, starting ncclient")
 
         allow_agent = True
-        use_libssh=self.get_option("use_libssh")
+        use_libssh = self.get_option("use_libssh")
 
         if self._play_context.password is not None:
             allow_agent = False
@@ -398,13 +398,13 @@ class Connection(NetworkConnectionBase):
             )
             # use_libssh option is only supported with ncclient >= 0.7.0
             if use_libssh:
-              warnings.warn("ncclient >= 0.7.0 does not support ssh_config file option while using libssh as a transport")
-              params['use_libssh'] = use_libssh
+                warnings.warn(
+                    "ncclient >= 0.7.0 does not support ssh_config file option while using libssh as a transport"
+                )
+                params["use_libssh"] = use_libssh
             else:
-              params['look_for_keys']=self.get_option("look_for_keys")
-              params['ssh_config']=self._ssh_config
-
-
+                params["look_for_keys"] = self.get_option("look_for_keys")
+                params["ssh_config"] = self._ssh_config
 
             # sock is only supported by ncclient >= 0.6.10, and will error if
             # included on older versions. We check the version in
