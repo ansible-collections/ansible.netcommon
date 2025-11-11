@@ -5,3 +5,4 @@ paramiko
 xmltodict
 grpcio
 protobuf
+ssh-python

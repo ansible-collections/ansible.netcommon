@@ -358,6 +358,32 @@ Parameters
                         <div>Can be configured from the CLI via the <code>--user</code> or <code>-u</code> options.</div>
                 </td>
             </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>use_libssh</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[defaults]<br>netconf_libssh = yes</p>
+                            </div>
+                                <div>env:ANSIBLE_NETCONF_LIBSSH</div>
+                                <div>var: ansible_netconf_libssh</div>
+                    </td>
+                <td>
+                        <div>specifies weather to use libssh for netconf connection or not</div>
+                </td>
+            </tr>
     </table>
     <br/>
 
