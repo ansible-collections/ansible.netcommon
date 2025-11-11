@@ -2,7 +2,6 @@
 # (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see LICENSES/GPL-3.0-or-later.txt or https://www.gnu.org/licenses/gpl-3.0.txt)
 # SPDX-License-Identifier: GPL-3.0-or-later
-
 from __future__ import absolute_import, division, print_function
 
 
@@ -164,6 +163,7 @@ options:
 import json
 import logging
 import os
+import warnings
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils.basic import missing_required_lib
@@ -326,6 +326,7 @@ class Connection(NetworkConnectionBase):
         self.queue_message("log", "ssh connection done, starting ncclient")
 
         allow_agent = True
+        use_libssh=self.get_option("use_libssh")
 
         if self._play_context.password is not None:
             allow_agent = False
@@ -391,13 +392,20 @@ class Connection(NetworkConnectionBase):
                 password=self._play_context.password,
                 key_filename=self.key_filename,
                 hostkey_verify=self.get_option("host_key_checking"),
-                look_for_keys=self.get_option("look_for_keys"),
                 device_params=device_params,
-                use_libssh=self.get_option("use_libssh"),
                 allow_agent=self._play_context.allow_agent,
                 timeout=self.get_option("persistent_connect_timeout"),
-                ssh_config=self._ssh_config,
             )
+            # use_libssh option is only supported with ncclient >= 0.7.0
+            if use_libssh:
+              warnings.warn("ncclient >= 0.7.0 does not support ssh_config file option while using libssh as a transport")
+              params['use_libssh'] = use_libssh
+            else:
+              params['look_for_keys']=self.get_option("look_for_keys")
+              params['ssh_config']=self._ssh_config
+
+
+
             # sock is only supported by ncclient >= 0.6.10, and will error if
             # included on older versions. We check the version in
             # _get_proxy_command, so if this returns a value, the version is
