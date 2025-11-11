@@ -164,7 +164,6 @@ options:
 import json
 import logging
 import os
-import warnings
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils.basic import missing_required_lib
