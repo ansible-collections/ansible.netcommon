@@ -1,5 +1,5 @@
 ---
-- debug: msg="START restconf_get iosxe/basic.yaml on connection={{ ansible_connection }} for network_os={{ ansible_network_os }}"
+- debug: msg="START restconf_get iosxe/basic.yaml on at connection={{ ansible_connection }} for network_os={{ ansible_network_os }}"
 
 - name: set interface variables
   set_fact:
