@@ -7,12 +7,12 @@
 
 - include_vars: "{{playbook_dir }}/targets/netconf_config/tests/junos/fixtures/invalid_config.yml"
 
-- name: syslog file config- setup
+- name: Syslog file config - setup
   junipernetworks.junos.junos_config:
     lines:
       - delete system syslog file test_netconf_config
 
-- name: configure syslog file
+- name: Configure syslog file
   register: result
   ansible.netcommon.netconf_config:
     content: "{{ syslog_config }}"
@@ -22,7 +22,7 @@
       - result.changed == true
       - "'<name>test_netconf_config</name>' in result.diff.after"
 
-- name: configure syslog file (idempotent)
+- name: Configure syslog file (idempotent)
   register: result
   ansible.netcommon.netconf_config:
     content: "{{ syslog_config }}"
@@ -31,7 +31,7 @@
     that:
       - result.changed == false
 
-- name: replace default operation fail
+- name: Replace default operation fail
   register: result
   ignore_errors: true
   ansible.netcommon.netconf_config:
@@ -43,7 +43,7 @@
       - result.failed == true
       - "'Missing mandatory statement' in result.msg"
 
-- name: replace syslog config with operation key in content
+- name: Replace syslog config with operation key in content
   register: result
   ansible.netcommon.netconf_config:
     content: "{{ syslog_config_replace }}"
@@ -52,7 +52,7 @@
     that:
       - result.changed == true
 
-- name: test content value in xml format rooted in <config> tag
+- name: Test content value in XML format rooted in <config> tag
   register: result
   ignore_errors: true
   ansible.netcommon.netconf_config:
@@ -63,7 +63,7 @@
       - result.failed == true
       - "'content value should have XML string with config tag as the root node' in result.msg"
 
-- name: test backup
+- name: Test backup
   register: result
   ansible.netcommon.netconf_config:
     content: "{{ syslog_config }}"
@@ -73,12 +73,12 @@
     that:
       - "'backup_path' in result"
 
-- name: syslog file config- teardown
+- name: Syslog file config - teardown
   junipernetworks.junos.junos_config:
     lines:
       - delete system syslog file test_netconf_config
 
-- name: save config
+- name: Save config
   register: result
   ansible.netcommon.netconf_config:
     backup: true

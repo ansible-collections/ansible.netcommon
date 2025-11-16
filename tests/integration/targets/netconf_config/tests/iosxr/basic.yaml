@@ -1,8 +1,10 @@
 ---
 - debug: msg="START netconf_config iosxr/basic.yaml on connection={{ ansible_connection }}"
 
-- name: setup
+- name: Setup task for netconf config iosxr
   connection: ansible.netcommon.network_cli
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
   cisco.iosxr.iosxr_config:
     commands:
       - no description
@@ -14,9 +16,9 @@
 - name: Sleep for 30 seconds and continue with play
   wait_for:
     timeout: 30
-  connection: local
+  delegate_to: localhost
 
-- name: save config test
+- name: Save config test
   register: result
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
@@ -26,7 +28,7 @@
     that:
       - "'backup_path' in result"
 
-- name: test confirm commit
+- name: Test confirm commit
   ansible.netcommon.netconf_config:
     target: "candidate"
     error_option: "rollback-on-error"
@@ -47,7 +49,7 @@
     that:
       - "result['failed'] == false"
 
-- name: "test invalid JSON string format configuration"
+- name: Test invalid JSON string format configuration
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
     content: |
@@ -81,7 +83,7 @@
       - result.failed == true
       - "'Value of content option is invalid as per the identified format xml' in result.msg"
 
-- name: "configure using JSON string format configuration"
+- name: Configure using JSON string format configuration
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
     format: json
@@ -115,7 +117,7 @@
       - result.changed == true
       - "'<description>test for ansible Loopback999</description>' in result.diff.after"
 
-- name: setup - teardown
+- name: Setup - teardown
   connection: ansible.netcommon.network_cli
   cisco.iosxr.iosxr_config:
     commands:
@@ -125,7 +127,7 @@
       - interface Loopback999
     match: none
 
-- name: "configure using direct native format configuration"
+- name: Configure using direct native format configuration
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
     format: json
@@ -163,7 +165,7 @@
       - result.changed == true
       - "'<description>test for ansible Loopback999</description>' in result.diff.after"
 
-- name: setup - teardown
+- name: Setup - teardown
   connection: ansible.netcommon.network_cli
   cisco.iosxr.iosxr_config:
     commands:
@@ -174,5 +176,4 @@
     match: none
 
 - debug:
-    msg="END netconf_config iosxr/basic.yaml on connection={{ ansible_connection
-    }}"
+    msg="END netconf_config iosxr/basic.yaml on connection={{ ansible_connection}}"

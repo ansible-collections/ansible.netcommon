@@ -3,7 +3,7 @@
     msg="START netconf_get junos/basic.yaml on connection={{ ansible_connection
     }}"
 
-- name: Configure syslog file - setup
+- name: Configure syslog file - Setup
   register: result
   junipernetworks.junos.junos_config:
     lines:
@@ -59,7 +59,7 @@
       - "'<login>' not in result.stdout"
       - "'<interface>' not in result.stdout"
 
-- name: get configuration and state data in json format
+- name: Get configuration and state data in JSON format
   register: result
   ansible.netcommon.netconf_get:
     source: running
@@ -69,7 +69,7 @@
     that:
       - "{{ result['output']['rpc-reply']['data']['configuration'] is defined}}"
 
-- name: get configuration and state data in xml pretty format
+- name: Get configuration and state data in XML pretty format
   register: result
   ansible.netcommon.netconf_get:
     source: running
@@ -79,7 +79,7 @@
     that:
       - "{{ result['output'] is defined}}"
 
-- name: get configuration data in xml with namespace stripped
+- name: Get configuration data in XML with namespace stripped
   register: result
   ansible.netcommon.netconf_get:
     source: running
@@ -90,7 +90,7 @@
       - "{{ result['output'] is defined}}"
       - "{{ 'xmlns' not in result.output }}"
 
-- name: get configuration and state data without datastore lock
+- name: Get configuration and state data without datastore lock
   register: result
   ansible.netcommon.netconf_get:
     lock: never
@@ -100,7 +100,7 @@
       - "'<database-status-information>' in result.stdout"
       - "'</configuration>' in result.stdout"
 
-- name: get configuration and state data and lock data-store if supported
+- name: Get configuration and state data and lock datastore if supported
   register: result
   ansible.netcommon.netconf_get:
     lock: if-supported
@@ -121,7 +121,7 @@
       - "'filter value \\'configuration/state\\' of type xpath is not supported'\
         \ in result.msg"
 
-- name: Configure syslog file - teardown
+- name: Configure syslog file - Teardown
   junipernetworks.junos.junos_config:
     lines:
       - delete system syslog file test1 any any

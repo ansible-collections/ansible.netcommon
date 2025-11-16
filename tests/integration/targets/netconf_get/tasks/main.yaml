@@ -1,11 +1,11 @@
 ---
-- name: Run junos netconf_get tests
+- name: Run Junos NETCONF get tests
   ansible.builtin.include_tasks: junos.yaml
   when: ansible_network_os == 'junipernetworks.junos.junos'
   tags:
     - netconf
 
-- name: Run iosxr netconf_get tests
+- name: Run IOS-XR NETCONF get tests
   ansible.builtin.include_tasks: iosxr.yaml
   when: ansible_network_os == 'cisco.iosxr.iosxr'
   tags:

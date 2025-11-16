@@ -1,13 +1,15 @@
 ---
-- name: Start tasks
+- name: Start prepare junos tests
   ansible.builtin.debug:
     msg: "START prepare_junos_tests/main.yaml"
 
 - name: Ensure netconf is enabled
-  connection: ansible.netcommon.network_cli
-  tags: netconf
   junipernetworks.junos.junos_netconf:
     state: present
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  tags:
+    - netconf
 
 - name: Wait for netconf server to come up
   delegate_to: localhost
