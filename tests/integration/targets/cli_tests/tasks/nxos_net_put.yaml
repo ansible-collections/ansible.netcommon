@@ -3,14 +3,14 @@
   ansible.builtin.shell: |
     python3 -c "with open('{{ test_file_path }}', 'wb') as f: f.write(b'\x00' * 5242880)"
   vars:
-    test_file_path: '{{ playbook_dir }}/test_5mb_file.bin'
+    test_file_path: "{{ playbook_dir }}/test_5mb_file.bin"
   delegate_to: localhost
   register: file_generation
   changed_when: false
 
 - name: Verify test file was created
   ansible.builtin.stat:
-    path: '{{ playbook_dir }}/test_5mb_file.bin'
+    path: "{{ playbook_dir }}/test_5mb_file.bin"
   delegate_to: localhost
   register: file_stat
 
@@ -19,14 +19,14 @@
     that:
       - file_stat.stat.size >= 5000000
       - file_stat.stat.size <= 6000000
-    fail_msg: 'File size is not approximately 5MB. Actual size: {{ file_stat.stat.size }} bytes'
+    fail_msg: "File size is not approximately 5MB. Actual size: {{ file_stat.stat.size }} bytes"
 
 - name: Transfer 5MB file to NXOS device using net_put
   vars:
     ansible_connection: ansible.netcommon.network_cli
   ansible.netcommon.net_put:
-    src: '{{ playbook_dir }}/test_5mb_file.bin'
-    dest: 'bootflash:/test_5mb_file.bin'
+    src: "{{ playbook_dir }}/test_5mb_file.bin"
+    dest: "bootflash:/test_5mb_file.bin"
     protocol: sftp
     mode: binary
   register: net_put_result
@@ -36,10 +36,10 @@
     that:
       - net_put_result.changed == true
       - net_put_result.destination is defined
-    fail_msg: 'File transfer failed'
+    fail_msg: "File transfer failed"
 
 - name: Cleanup - Remove test file from controller
   ansible.builtin.file:
-    path: '{{ playbook_dir }}/test_5mb_file.bin'
+    path: "{{ playbook_dir }}/test_5mb_file.bin"
     state: absent
   delegate_to: localhost
