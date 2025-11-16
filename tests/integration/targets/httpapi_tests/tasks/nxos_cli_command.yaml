@@ -3,5 +3,5 @@
   vars:
     ansible_connection: ansible.netcommon.httpapi
   cisco.nxos.nxos_command:
-    commands: 
+    commands:
       - show version
