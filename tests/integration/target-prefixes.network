@@ -1,3 +1,4 @@
 cli
 netconf
-grpc
+restconf
+httpapi

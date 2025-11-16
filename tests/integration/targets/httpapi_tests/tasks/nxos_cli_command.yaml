@@ -1,0 +1,7 @@
+---
+- name: Run show version
+  vars:
+    ansible_connection: ansible.netcommon.httpapi
+  cisco.nxos.nxos_command:
+    commands: 
+      - show version

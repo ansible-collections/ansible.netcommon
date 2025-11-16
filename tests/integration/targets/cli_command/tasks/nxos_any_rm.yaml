@@ -1,0 +1,30 @@
+---
+- name: Run a resource module to update configuration
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.network_resource:
+    os_name: cisco.nxos.nxos
+    name: nxos_interfaces
+    config:
+      - name: Ethernet1/1
+        description: Configured by Ansible
+    state: merged
+  register: result
+
+- name: Revert the changes that the RM might have made
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.network_resource:
+    os_name: cisco.nxos.nxos
+    name: nxos_interfaces
+    config: "{{ result['before'] }}"
+    state: replaced
+
+- name: Revert the changes that the RM might have made (IDEMPOTENT)
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.network_resource:
+    os_name: cisco.nxos.nxos
+    name: nxos_interfaces
+    config: "{{ result['before'] }}"
+    state: replaced
