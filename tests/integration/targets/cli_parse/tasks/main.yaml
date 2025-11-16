@@ -37,7 +37,6 @@
   when: "os in ['nxos']"
   tags:
     - pyats
-
 # - name: Run textfsm parser tests
 #   ansible.builtin.include_tasks: "{{ os | lower }}_textfsm.yaml"
 #   vars:
