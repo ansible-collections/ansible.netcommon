@@ -175,5 +175,4 @@
       - interface Loopback999
     match: none
 
-- debug:
-    msg="END netconf_config iosxr/basic.yaml on connection={{ ansible_connection}}"
+- debug: msg="END netconf_config iosxr/basic.yaml on connection={{ ansible_connection}}"
