@@ -45,7 +45,6 @@ jobs:
     if: ${{ !github.event.pull_request || contains(github.event.pull_request.labels.*.name, 'safe to test') }}
     env:
       PY_COLORS: "1"
-      source_directory: "./source"
       ANSIBLE_COLLECTIONS_PATHS: "/home/runner/collections:~/.ansible/collections:/usr/share/ansible/collections"
       CLI_SSH_TYPE: libssh
     strategy:
@@ -53,13 +52,6 @@ jobs:
       matrix:  #  There is no official support for matrix here as multiple applaince are needed per run, test against one core version.
         ansible_version: ${{ github.event_name == 'workflow_dispatch' && fromJSON(format('["{0}"]', github.event.inputs.ansible_version)) || fromJSON('["devel"]') }}
     steps:
-      - name: Checkout the collection repository
-        uses: ansible-network/github_actions/.github/actions/checkout_dependency@main
-        with:
-          path: ${{ env.source_directory }}
-          ref: ${{ github.event.pull_request.head.sha || github.ref }}
-          fetch-depth: "0"
-
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:
@@ -93,8 +85,46 @@ jobs:
         run: python3 -m pip install ./ansible-core-source --disable-pip-version-check
         if: ${{ contains(matrix.ansible_version, 'devel') || contains(matrix.ansible_version, 'milestone') }}
 
-      - name: Install cisco.nxos as dependency needed for tests - Source
-        run: ansible-galaxy collection install git+https://github.com/ansible-collections/cisco.nxos.git,main --force
+      - name: Create collections directory structure
+        run: |
+          mkdir -p /home/runner/collections/ansible_collections/cisco
+          mkdir -p /home/runner/collections/ansible_collections/ansible
+
+      - name: Clone cisco.nxos collection (main branch)
+        run: |
+          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.nxos.git /home/runner/collections/ansible_collections/cisco/nxos
+
+      - name: Clone netcommon collection (PR branch or repo)
+        run: |
+          if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ]; then
+            REPO_URL="${{ github.event.pull_request.head.repo.full_name }}"
+            BRANCH_REF="${{ github.event.pull_request.head.sha }}"
+            IS_SHA=true
+          else
+            REPO_URL="${{ github.repository }}"
+            BRANCH_REF="${{ github.ref_name }}"
+            IS_SHA=false
+          fi
+          echo "Cloning netcommon from git+https://github.com/${REPO_URL}.git, ref: ${BRANCH_REF}"
+          if [ "$IS_SHA" = "true" ]; then
+            # For SHA, clone with more depth to ensure we get the commit
+            git clone --depth=100 --no-single-branch https://github.com/${REPO_URL}.git /home/runner/collections/ansible_collections/ansible/netcommon
+            cd /home/runner/collections/ansible_collections/ansible/netcommon
+            git fetch origin ${BRANCH_REF} || git fetch --unshallow || true
+            git checkout ${BRANCH_REF}
+          else
+            # For branch name, use standard shallow clone
+            git clone --depth=1 --branch ${BRANCH_REF} https://github.com/${REPO_URL}.git /home/runner/collections/ansible_collections/ansible/netcommon
+          fi
+
+      - name: Install Python dependencies from collections
+        run: |
+          if [ -f "/home/runner/collections/ansible_collections/cisco/nxos/requirements.txt" ]; then
+            python3 -m pip install -r /home/runner/collections/ansible_collections/cisco/nxos/requirements.txt
+          fi
+          if [ -f "/home/runner/collections/ansible_collections/ansible/netcommon/requirements.txt" ]; then
+            python3 -m pip install -r /home/runner/collections/ansible_collections/ansible/netcommon/requirements.txt
+          fi
 
       - name: DEBUG Show pip list after ansible-core install
         run: |
@@ -104,22 +134,7 @@ jobs:
         id: identify
         uses: ansible-network/github_actions/.github/actions/identify_collection@main
         with:
-          source_path: ${{ env.source_directory }}
-
-      - name: Install collection from PR branch via ansible-galaxy
-        run: |
-          if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ]; then
-            REPO_URL="${{ github.event.pull_request.head.repo.full_name }}"
-            BRANCH_REF="${{ github.event.pull_request.head.sha }}"
-          else
-            REPO_URL="${{ github.repository }}"
-            BRANCH_REF="${{ github.ref_name }}"
-          fi
-          echo "Installing collection from git+https://github.com/${REPO_URL}.git,${BRANCH_REF}"
-          ansible-galaxy collection install git+https://github.com/${REPO_URL}.git,${BRANCH_REF} --force
-          if [ -f "${{ env.source_directory }}/requirements.txt" ]; then
-            python3 -m pip install -r "${{ env.source_directory }}/requirements.txt"
-          fi
+          source_path: /home/runner/collections/ansible_collections/ansible/netcommon
 
       - name: Generate inventory from lab_nodes and template
         id: render_inventory
