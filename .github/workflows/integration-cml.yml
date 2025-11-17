@@ -12,6 +12,21 @@ name: "Integration tests 💻"
       - "plugins/**"
       - "tests/integration/**"
   workflow_dispatch:
+    inputs:
+      ansible_version:
+        description: "Ansible core version to test"
+        required: true
+        type: choice
+        options:
+          - "2.15"
+          - "2.16"
+          - "2.17"
+          - "2.18"
+          - "2.19"
+          - "2.20"
+          - "milestone"
+          - "devel"
+        default: "devel"
 jobs:
   lab-create:
     uses: ansible/ansible-content-actions/.github/workflows/cml_lab_create.yaml@main
@@ -35,14 +50,14 @@ jobs:
       CLI_SSH_TYPE: libssh
     strategy:
       fail-fast: true
-      matrix: # There is no official support for matrix here as multiple applaince are needed per run, test against one core version.
-        ansible_version: ["devel"]
+      matrix:  #  There is no official support for matrix here as multiple applaince are needed per run, test against one core version.
+        ansible_version: ${{ github.event_name == 'workflow_dispatch' && fromJSON(format('["{0}"]', github.event.inputs.ansible_version)) || fromJSON('["devel"]') }}
     steps:
       - name: Checkout the collection repository
         uses: ansible-network/github_actions/.github/actions/checkout_dependency@main
         with:
           path: ${{ env.source_directory }}
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
           fetch-depth: "0"
 
       - name: Set up Python 3.12
@@ -62,6 +77,10 @@ jobs:
         run: |
           python3 -m pip list | sort
 
+      - name: Install ansible-core (${{ matrix.ansible_version }}) - Stable version
+        run: python3 -m pip install "ansible~=${{ matrix.ansible_version }}.0" --disable-pip-version-check
+        if: ${{ !contains(matrix.ansible_version, 'devel') && !contains(matrix.ansible_version, 'milestone') }}
+
       - name: Checkout ansible-core (${{ matrix.ansible_version }}) - Branch
         uses: actions/checkout@v4
         with:
@@ -75,7 +94,7 @@ jobs:
         if: ${{ contains(matrix.ansible_version, 'devel') || contains(matrix.ansible_version, 'milestone') }}
 
       - name: Install cisco.nxos as dependency needed for tests - Source
-        run: ansible-galaxy collection install git+https://github.com/ansible-collections/cisco.nxos.git@main --force
+        run: ansible-galaxy collection install git+https://github.com/ansible-collections/cisco.nxos.git,main --force
 
       - name: DEBUG Show pip list after ansible-core install
         run: |
