@@ -35,7 +35,7 @@ jobs:
       CLI_SSH_TYPE: libssh
     strategy:
       fail-fast: true
-      matrix:
+      matrix: # There is no official support for matrix here as multiple applaince are needed per run, test against one core version.
         ansible_version: ["devel"]
     steps:
       - name: Checkout the collection repository
@@ -50,20 +50,17 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Show pip list before installs
+      - name: DEBUG Show pip list before installs
         run: |
           python3 -m pip --version
           python3 -m pip list | sort
 
       - name: Upgrade pip and wheel
-        run: python3 -m pip install --upgrade pip wheel ansible-pylibssh paramiko genie passlib scp ncclient ntc_templates pyats
+        run: python3 -m pip install --upgrade pip wheel ansible-pylibssh paramiko genie passlib scp ncclient ntc_templates pyats jxmlease
 
-      - name: Show pip list after base deps install
+      - name: DEBUG Show pip list after base deps install
         run: |
           python3 -m pip list | sort
-
-      - name: Check libssh version
-        run: dpkg -l | grep libssh
 
       - name: Checkout ansible-core (${{ matrix.ansible_version }}) - Branch
         uses: actions/checkout@v4
@@ -77,7 +74,10 @@ jobs:
         run: python3 -m pip install ./ansible-core-source --disable-pip-version-check
         if: ${{ contains(matrix.ansible_version, 'devel') || contains(matrix.ansible_version, 'milestone') }}
 
-      - name: Show pip list after ansible-core install
+      - name: Install cisco.nxos as dependency needed for tests - Source
+        run: ansible-galaxy collection install git+https://github.com/ansible-collections/cisco.nxos.git@main --force
+
+      - name: DEBUG Show pip list after ansible-core install
         run: |
           python3 -m pip list | sort
 
@@ -95,18 +95,6 @@ jobs:
           collection_path: ${{ steps.identify.outputs.collection_path }}
           tar_file: ${{ steps.identify.outputs.tar_file }}
           ansible_version: ${{ matrix.ansible_version }}
-
-      - name: Print the ansible version
-        run: ansible --version
-
-      - name: Debug lab_nodes input
-        shell: bash
-        env:
-          LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
-        run: |
-          echo 'LAB_NODES (raw):'
-          echo "$LAB_NODES"
-          echo
 
       - name: Generate inventory from lab_nodes and template
         id: render_inventory
@@ -163,12 +151,28 @@ jobs:
             iosxe_http_port=$iosxe_http_port"
           echo "inventory_path=$out_file" >> "$GITHUB_OUTPUT"
 
-      - name: Debug inventory
+      - name: DEBUG Print the ansible version
+        run: ansible --version
+
+      - name: DEBUG lab_nodes input
+        shell: bash
+        env:
+          LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
+        run: |
+          echo 'LAB_NODES (raw):'
+          echo "$LAB_NODES"
+          echo
+
+      - name: DEBUG inventory
         shell: bash
         run: |
           echo "Inventory path: ${{ steps.render_inventory.outputs.inventory_path }}"
           echo
-          # cat "${{ steps.render_inventory.outputs.inventory_path }}"
+          cat "${{ steps.render_inventory.outputs.inventory_path }}"
+
+      - name: DEBUG libssh and pylibssh versions
+        shell: bash
+        run: python -c "from pylibsshext import __full_version__; print(__full_version__)"
 
       - name: Run ansible-test network-integration
         run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" -vvvv
