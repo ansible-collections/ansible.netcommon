@@ -106,14 +106,20 @@ jobs:
         with:
           source_path: ${{ env.source_directory }}
 
-      - name: Build and install the collection
-        uses: ansible-network/github_actions/.github/actions/build_install_collection@main
-        with:
-          install_python_dependencies: true
-          source_path: ${{ env.source_directory }}
-          collection_path: ${{ steps.identify.outputs.collection_path }}
-          tar_file: ${{ steps.identify.outputs.tar_file }}
-          ansible_version: ${{ matrix.ansible_version }}
+      - name: Install collection from PR branch via ansible-galaxy
+        run: |
+          if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ]; then
+            REPO_URL="${{ github.event.pull_request.head.repo.full_name }}"
+            BRANCH_REF="${{ github.event.pull_request.head.sha }}"
+          else
+            REPO_URL="${{ github.repository }}"
+            BRANCH_REF="${{ github.ref_name }}"
+          fi
+          echo "Installing collection from git+https://github.com/${REPO_URL}.git,${BRANCH_REF}"
+          ansible-galaxy collection install git+https://github.com/${REPO_URL}.git,${BRANCH_REF} --force
+          if [ -f "${{ env.source_directory }}/requirements.txt" ]; then
+            python3 -m pip install -r "${{ env.source_directory }}/requirements.txt"
+          fi
 
       - name: Generate inventory from lab_nodes and template
         id: render_inventory
