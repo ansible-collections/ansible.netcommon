@@ -18,7 +18,6 @@
 - name: Run a config module test - network_cli
   ansible.builtin.include_tasks: "{{ os | lower }}_cli_config.yaml"
   when: "os in ['nxos']"
-
 # - name: Run a net_put module test - network_cli
 #   ansible.builtin.include_tasks: "{{ os | lower }}_net_put.yaml"
 #   when: "os in ['nxos']"
