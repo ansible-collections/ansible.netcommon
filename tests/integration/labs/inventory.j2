@@ -9,4 +9,4 @@ iosxr ansible_host={{ ansible_host }} ansible_user=cisco ansible_password=cisco 
 iosxe ansible_host={{ ansible_host }} ansible_user=ansible ansible_password=ansible ansible_connection=ansible.netcommon.httpapi ansible_network_os=ansible.netcommon.restconf ansible_httpapi_use_ssl=true ansible_httpapi_validate_certs=false ansible_httpapi_port={{ iosxe_http_port }} ansible_ssh_port={{ iosxe_ssh_port }}
 
 [httpapi]
-nxos ansible_host={{ ansible_host }} ansible_user=cisco ansible_password=cisco ansible_connection=ansible.netcommon.network_cli ansible_network_os=cisco.nxos.nxos ansible_ssh_port=2100 ansible_httpapi_port={{ nxos_http_port }}
+nxos ansible_host={{ ansible_host }} ansible_user=cisco ansible_password=cisco ansible_connection=ansible.netcommon.network_cli ansible_network_os=cisco.nxos.nxos ansible_ssh_port={{ nxos_ssh_port }} ansible_httpapi_port={{ nxos_http_port }}
