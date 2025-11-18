@@ -94,6 +94,14 @@ jobs:
         run: |
           git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.nxos.git /home/runner/collections/ansible_collections/cisco/nxos
 
+      - name: Clone cisco.ios collection (main branch)
+        run: |
+          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.ios.git /home/runner/collections/ansible_collections/cisco/ios
+
+      - name: Clone cisco.iosxr collection (main branch)
+        run: |
+          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.iosxr.git /home/runner/collections/ansible_collections/cisco/iosxr
+
       - name: Clone ansible.utils collection (main branch)
         run: |
           git clone --depth=1 --branch main https://github.com/ansible-collections/ansible.utils.git /home/runner/collections/ansible_collections/ansible/utils
