@@ -5,8 +5,8 @@ nodes:
     configuration: |2-
 
       !Command: show running-config
-      !Running configuration last done at: Mon Feb 12 07:11:33 2025
-      !Time: Mon Feb 12 07:11:33 2025
+      !Running configuration last done at: Mon Feb 12 07:11:33 2024
+      !Time: Mon Feb 12 07:11:33 2024
 
       version 10.3(1) Bios:version
       hostname R1
@@ -17,17 +17,19 @@ nodes:
         limit-resource m4route-mem minimum 58 maximum 58
         limit-resource m6route-mem minimum 8 maximum 8
 
+      feature nxapi
       feature netconf
 
       no password strength-check
-      username admin password 5 $5$AADOBF$GVXUV2cvmlZH42xDu6wnqfBpV9gXF61WGVNrGF5Gk6C role network-admin
+      username admin password 5 $5$AADOBF$GVXUV2cvmlZH42xDu6wnqfBpV9gXF61WGVNrGF5Gk6C  role network-admin
       username cisco password 5 $5$CIMENF$8Bp9rf4gXUX.KMwU7RqMR2HqdxA3289SBMdkMydwaA2 role network-admin
       username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
-      username ansible password 5 $5$GHBNKA$8ccD8KWjmP6NzxzkIRufl7giaUWjrhAn4SRrVWYZ4R1 role network-admin
+      username ansible password 5 $5$GHBNKA$8ccD8KWjmP6NzxzkIRufl7giaUWjrhAn4SRrVWYZ4R1  role network-admin
       username ansible passphrase  lifetime 99999 warntime 14 gracetime 3
+      ssh key rsa 2048
       ip domain-lookup
       snmp-server user admin network-admin auth md5 040F90283AEB9A92CCAF81F5CDA2639FFFCD priv aes-128 006084272498F8CD8F98DE888DEC6899C6D0 localizedV2key
-      snmp-server user cisco network-admin auth md5 52037503238659150F9683A8903CCC697295 priv aes-128 374266513BD2520E4693A1999A2F8E793CCF localizedV2key
+      snmp-server user cisco network-admin auth md5 52037503238659150F9683A8903CCC697295 priv aes-128 374266513BD2520E4693A1999A2F8E793CCF localizedV2key      
       snmp-server user ansible network-admin auth md5 5207BA419F48B4EB39149FDC00BE411BC828 priv aes-128 041EED4A876CACFD7656EA885CE15D3CE108 localizedV2key
       rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
       rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
@@ -40,6 +42,7 @@ nodes:
       vrf context management
         ip name-server 192.168.255.1
         ip route 0.0.0.0/0 192.168.255.1
+      nxapi http port 80
 
       interface Ethernet1/1
 
@@ -178,9 +181,7 @@ nodes:
         exec-timeout 0
       line vty
         exec-timeout 0
-      event manager applet BOOTCONFIG
-        event syslog pattern "Configured from vty"
-        action 1.0 cli python bootflash:set_boot.py
+      boot nxos bootflash:/nxos64-cs.10.3.1.F.bin
 
       no logging console
     cpu_limit: null
