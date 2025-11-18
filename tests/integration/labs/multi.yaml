@@ -3,14 +3,13 @@ annotations: []
 nodes:
   - boot_disk_size: null
     configuration: |2-
-
       !Command: show running-config
-      !Running configuration last done at: Mon Feb 12 07:11:33 2024
-      !Time: Mon Feb 12 07:11:33 2024
+      !Running configuration last done at: Tue Nov 18 07:12:09 2025
+      !Time: Tue Nov 18 07:23:05 2025
 
-      version 10.3(1) Bios:version
-      hostname R1
-      vdc R1 id 1
+      version 10.4(2) Bios:version
+      hostname testnxos
+      vdc testnxos id 1
         limit-resource vlan minimum 16 maximum 4094
         limit-resource vrf minimum 2 maximum 4096
         limit-resource port-channel minimum 0 maximum 511
@@ -22,14 +21,13 @@ nodes:
 
       no password strength-check
       username admin password 5 $5$AADOBF$GVXUV2cvmlZH42xDu6wnqfBpV9gXF61WGVNrGF5Gk6C  role network-admin
-      username cisco password 5 $5$CIMENF$8Bp9rf4gXUX.KMwU7RqMR2HqdxA3289SBMdkMydwaA2 role network-admin
+      username cisco password 5 $5$JDAGKP$xq8ldgUvOKxCXVFRVZwPoxbG7/qFnmWJ9UoiUpZuZwD  role network-admin
       username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
       username ansible password 5 $5$GHBNKA$8ccD8KWjmP6NzxzkIRufl7giaUWjrhAn4SRrVWYZ4R1  role network-admin
       username ansible passphrase  lifetime 99999 warntime 14 gracetime 3
-      ssh key rsa 2048
       ip domain-lookup
       snmp-server user admin network-admin auth md5 040F90283AEB9A92CCAF81F5CDA2639FFFCD priv aes-128 006084272498F8CD8F98DE888DEC6899C6D0 localizedV2key
-      snmp-server user cisco network-admin auth md5 52037503238659150F9683A8903CCC697295 priv aes-128 374266513BD2520E4693A1999A2F8E793CCF localizedV2key
+      snmp-server user cisco network-admin auth md5 495336A9A9C95E642E4E27331C80964B2464 priv aes-128 005122F7FA9646642534607B1AB8DF123F76 localizedV2key
       snmp-server user ansible network-admin auth md5 5207BA419F48B4EB39149FDC00BE411BC828 priv aes-128 041EED4A876CACFD7656EA885CE15D3CE108 localizedV2key
       rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
       rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
@@ -44,7 +42,9 @@ nodes:
         ip route 0.0.0.0/0 192.168.255.1
       nxapi http port 80
 
+
       interface Ethernet1/1
+        description Configured by CI automation
 
       interface Ethernet1/2
 
@@ -175,13 +175,19 @@ nodes:
       interface mgmt0
         ip address dhcp
         vrf member management
+
+      interface loopback888
+        description test for ansible
+        shutdown
       icam monitor scale
 
       line console
         exec-timeout 0
       line vty
         exec-timeout 0
-      boot nxos bootflash:/nxos64-cs.10.3.1.F.bin
+      event manager applet BOOTCONFIG
+        event syslog pattern "Configured from vty"
+        action 1.0 cli python bootflash:set_boot.py
 
       no logging console
     cpu_limit: null
@@ -220,35 +226,97 @@ nodes:
   - boot_disk_size: null
     configuration: |2-
       hostname iosxr
+      banner login @this is my banner from
+      NETCONF that contains multiline
+      string@
       domain name ansible.com
-
-      username ansible password ansible
-
-      interface MgmtEth0/RP0/CPU0/0
-       ipv4 address dhcp
-       no shutdown
-      exit
-
+      username ansible
+       secret 10 $6$ROTr90qrxWRj690.$N5VswuwGS4t/8SfCWA8lFSHDPGmIobK9daN/8HZL4IUaacihIPz1bFNpJdEiSuEgM6tVfDruWpLrU/YU.8CqZ.
+      !
+      username cisco
+       group root-lr
+       group cisco-support
+       password 7 094F471A1A0A
+      !
+      username admin
+       group root-lr
+       group cisco-support
+       password 7 094F471A1A0A
+      !
+      username lab
+       group root-lr
+       group cisco-support
+       password 7 104D000A0618
+      !
+      username root
+       group root-lr
+       group cisco-support
+      !
       aaa authentication login default local
-
+      grpc
+       port 57777
+       no-tls
+      !
       line default
        login authentication default
        transport input ssh
-      exit
-
+      !
+      snmp-server user myuser mygroup v3 auth sha encrypted 011E1F054E1F0E1F205F5D priv aes 128 encrypted 0702385C5C000F15160118
+      key chain my_fips_keychain
+       key 1
+        key-string password 11584D48180046010B382E692B3B34305E1717101241564A57
+        cryptographic-algorithm HMAC-SHA1-20
+       !
+      !
+      call-home
+       service active
+       contact smart-licensing
+       profile CiscoTAC-1
+        active
+        destination transport-method email disable
+        destination transport-method http
+       !
+      !
+      netconf-yang agent
+       ssh
+      !
+      interface Loopback888
+       description test for ansible
+       shutdown
+      !
+      interface Loopback999
+       shutdown
+      !
+      interface MgmtEth0/RP0/CPU0/0
+       ipv4 address dhcp
+      !
+      interface GigabitEthernet0/0/0/0
+       carrier-delay down 50
+       shutdown
+       dampening 21
+      !
       router static
        address-family ipv4 unicast
         0.0.0.0/0 192.168.255.1
-       exit
-      exit
-
+       !
+      !
+      router ospfv3 myprocess
+       area 1
+       !
+      !
+      netconf agent tty
+       session timeout 1440
+      !
+      crypto ca trustpoint msiox
+      !
       ssh timeout 100
+      ssh server algorithms cipher aes128-ctr aes192-ctr aes256-ctr
+      ssh server algorithms key-exchange ecdh-sha2-nistp256 ecdh-sha2-nistp384
       ssh server v2
-      grpc
-       port 57400
-       no-tls
-       service-layer
-      netconf-yang agent ssh
+      ssh server vrf default
+      ssh server netconf vrf default
+      ssh server netconf vrf Mgmt-intf
+      crypto fips-mode
       end
     cpu_limit: null
     cpus: null
