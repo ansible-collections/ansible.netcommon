@@ -136,6 +136,15 @@ jobs:
         with:
           source_path: /home/runner/collections/ansible_collections/ansible/netcommon
 
+      - name: DEBUG lab_nodes input
+        shell: bash
+        env:
+          LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
+        run: |
+          echo 'LAB_NODES (raw):'
+          echo "$LAB_NODES"
+          echo
+
       - name: Generate inventory from lab_nodes and template
         id: render_inventory
         shell: bash
@@ -193,15 +202,6 @@ jobs:
 
       - name: DEBUG Print the ansible version
         run: ansible --version
-
-      - name: DEBUG lab_nodes input
-        shell: bash
-        env:
-          LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
-        run: |
-          echo 'LAB_NODES (raw):'
-          echo "$LAB_NODES"
-          echo
 
       - name: DEBUG inventory
         shell: bash
