@@ -94,6 +94,10 @@ jobs:
         run: |
           git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.nxos.git /home/runner/collections/ansible_collections/cisco/nxos
 
+      - name: Clone ansible.utils collection (main branch)
+        run: |
+          git clone --depth=1 --branch main https://github.com/ansible-collections/ansible.utils.git /home/runner/collections/ansible_collections/ansible/utils
+
       - name: Clone netcommon collection (PR branch or repo)
         run: |
           if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ]; then
