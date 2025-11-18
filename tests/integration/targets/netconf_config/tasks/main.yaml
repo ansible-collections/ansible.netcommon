@@ -10,7 +10,7 @@
   when: ansible_network_os == 'cisco.iosxr.iosxr'
   tags:
     - netconf
-# Tests disabled https://community.cisco.com/t5/network-management/netconf-get-config-error-wrong-document-namespaces-not-specified/m-p/3382633
+# # Tests disabled https://community.cisco.com/t5/network-management/netconf-get-config-error-wrong-document-namespaces-not-specified/m-p/3382633
 # - name: Run NX-OS NETCONF config tests
 #   ansible.builtin.include_tasks: nxos.yaml
 #   when: ansible_network_os == 'cisco.nxos.nxos'
