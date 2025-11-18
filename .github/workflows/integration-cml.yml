@@ -197,7 +197,7 @@ jobs:
             -e "ansible_host=$dest_host ansible_network_cli_ssh_type=$CLI_SSH_TYPE \
             nxos_ssh_port=$nxos_ssh_port nxos_http_port=$nxos_http_port nxos_netconf_port=$nxos_netconf_port \
             iosxr_netconf_port=$iosxr_netconf_port iosxr_grpc_port=$iosxr_grpc_port \
-            iosxe_http_port=$iosxe_http_port"
+            iosxe_http_port=$iosxe_http_port iosxr_ssh_port=$iosxr_ssh_port"
           echo "inventory_path=$out_file" >> "$GITHUB_OUTPUT"
 
       - name: DEBUG Print the ansible version
