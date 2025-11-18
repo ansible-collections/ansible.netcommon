@@ -1,5 +1,5 @@
 ---
-- name: Run a resource module to update configuration
+- name: Run a Resource module to update configuration
   vars:
     ansible_connection: ansible.netcommon.network_cli
   ansible.netcommon.network_resource:
