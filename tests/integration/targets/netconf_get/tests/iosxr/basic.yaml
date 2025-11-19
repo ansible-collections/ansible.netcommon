@@ -3,8 +3,9 @@
     msg="START netconf_get iosxr/basic.yaml on connection={{ ansible_connection
     }}"
 
-- name: setup interface
-  connection: ansible.netcommon.network_cli
+- name: Setup interface
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
   cisco.iosxr.iosxr_config:
     commands:
       - description this is test interface Loopback999
@@ -13,9 +14,10 @@
       - interface Loopback999
     match: none
 
-- name: get running interface confiugration with filter
+- name: Get running interface configuration with filter
   register: result
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     filter: <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"></interface-configurations>
@@ -25,10 +27,10 @@
       - "'<description>this is test interface Loopback999</description>' in result.stdout"
       - "'<usernames>' not in result.stdout"
 
-- name: test lock=never, get-config, running interface confiugration with filter
-    without lock
+- name: Test lock=never, get-config, running interface configuration with filter without lock
   register: result
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     lock: never
@@ -39,10 +41,10 @@
       - "'<description>this is test interface Loopback999</description>' in result.stdout"
       - "'<usernames>' not in result.stdout"
 
-- name: test lock=if-supported, get-config, running interface confiugration with
-    filter without lock
+- name: Test lock=if-supported, get-config, running interface configuration with filter without lock
   register: result
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     lock: if-supported
@@ -56,7 +58,8 @@
 - name: Failure scenario, fetch config from startup
   register: result
   ignore_errors: true
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: startup
 
@@ -64,9 +67,10 @@
     that:
       - "'startup source is not supported' in result.msg"
 
-- name: test get, information from running datastore without lock
+- name: Test get, information from running datastore without lock
   register: result
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     lock: never
     filter: <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"></interface-configurations>
@@ -75,9 +79,10 @@
     that:
       - "'<description>this is test interface Loopback999</description>' in result.stdout"
 
-- name: test get, information from running datastore with lock if supported
+- name: Test get, information from running datastore with lock if supported
   register: result
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     lock: if-supported
     filter: <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"></interface-configurations>
@@ -86,9 +91,10 @@
     that:
       - "'<description>this is test interface Loopback999</description>' in result.stdout"
 
-- name: get configuration and state data in json format
+- name: Get configuration and state data in JSON format
   register: result
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     display: json
@@ -97,9 +103,10 @@
     that:
       - "{{ result['output']['data']['aaa'] is defined}}"
 
-- name: get configuration data in xml pretty format
+- name: Get configuration data in XML pretty format
   register: result
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     display: pretty
@@ -108,9 +115,10 @@
     that:
       - "{{ result['output'] is defined}}"
 
-- name: get configuration data in xml with namespace stripped
+- name: Get configuration data in XML with namespace stripped
   register: result
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     source: running
     display: xml
@@ -123,7 +131,8 @@
 - name: Failure scenario, unsupported filter
   register: result
   ignore_errors: true
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     filter: configuration/state
 
@@ -133,7 +142,8 @@
         \ in result.msg"
 
 - name: "get configuration with json filter and native output (using xmltodict)"
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     filter: |
       {
@@ -160,7 +170,8 @@
         interface-configuration: null
 
 - name: "get configuration with native filter type using set_facts"
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     filter: "{{ filter }}"
     display: native
@@ -174,7 +185,8 @@
       - "{{ result['output']['data']['interface-configurations']['interface-configuration'] is defined }}"
 
 - name: "get configuration with direct native filter type"
-  connection: ansible.netcommon.netconf
+  vars:
+    ansible_connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_get:
     filter:
       {
@@ -194,8 +206,9 @@
       - "{{ result['output']['data']['@xmlns:nc'] == 'urn:ietf:params:xml:ns:netconf:base:1.0' }}"
       - "{{ result['output']['data']['interface-configurations']['interface-configuration'] is defined }}"
 
-- name: setup - teardown
-  connection: ansible.netcommon.network_cli
+- name: Setup - teardown
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
   cisco.iosxr.iosxr_config:
     commands:
       - no description

@@ -1,0 +1,8 @@
+---
+- name: Configure hostname on NXOS device
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.cli_config:
+    config: |
+      hostname foo
+      feature nxapi

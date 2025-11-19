@@ -13,3 +13,6 @@ ntc_templates
 pyats
 genie
 passlib
+
+# for integration tests
+jxmlease
