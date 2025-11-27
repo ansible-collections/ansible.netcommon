@@ -323,7 +323,7 @@ SFTP_CONNECTION_CACHE = {}
 
 
 class Connection(ConnectionBase):
-    """SSH based connections with Paramiko"""
+    """SSH based connections with Libssh"""
 
     transport = "ansible.netcommon.libssh"
     _log_channel = None
