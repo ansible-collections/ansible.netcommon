@@ -1,8 +1,8 @@
 annotations:
-  - border_color: '#472B2B'
+  - border_color: "#472B2B"
     border_radius: 0
-    border_style: ''
-    color: '#203130FF'
+    border_style: ""
+    color: "#203130FF"
     thickness: 1
     type: rectangle
     x1: -1160.0
@@ -10,10 +10,10 @@ annotations:
     x2: 400.0
     y2: 640.0
     z_index: 0
-  - border_color: '#808080FF'
+  - border_color: "#808080FF"
     border_radius: 0
     border_style: 4,2
-    color: '#7393CC87'
+    color: "#7393CC87"
     thickness: 1
     type: rectangle
     x1: -760.0
@@ -21,10 +21,10 @@ annotations:
     x2: 800.0
     y2: 640.0
     z_index: 1
-  - border_color: '#808080FF'
+  - border_color: "#808080FF"
     border_radius: 0
-    border_style: ''
-    color: '#FFFFFFA6'
+    border_style: ""
+    color: "#FFFFFFA6"
     thickness: 1
     type: rectangle
     x1: 40.0
@@ -32,9 +32,9 @@ annotations:
     x2: 400.0
     y2: 640.0
     z_index: 2
-  - border_color: '#00000000'
-    border_style: ''
-    color: '#110606'
+  - border_color: "#00000000"
+    border_style: ""
+    color: "#110606"
     rotation: 0
     text_bold: false
     text_content: |-
