@@ -25,22 +25,17 @@ jobs:
       test_command: "pip install passlib && pytest tests/unit -v --cov-report xml --cov=./"
     secrets:
       SONAR_TOKEN: ${{ secrets.ANSIBLE_COLLECTIONS_ORG_SONAR_TOKEN_CICD_BOT }}
-
   changelog:
     uses: ansible/ansible-content-actions/.github/workflows/changelog.yaml@main
-
+    if: github.event_name == 'pull_request_target'
   build-import:
     uses: ansible/ansible-content-actions/.github/workflows/build_import.yaml@main
-
   ansible-lint:
     uses: ansible/ansible-content-actions/.github/workflows/ansible_lint.yaml@main
-
   sanity:
     uses: ansible/ansible-content-actions/.github/workflows/sanity.yaml@main
-
   unit-galaxy:
     uses: ansible/ansible-content-actions/.github/workflows/unit.yaml@main
-
   unit-source:
     uses: ansible-network/github_actions/.github/workflows/unit_source.yml@main
     with:
@@ -53,9 +48,9 @@ jobs:
       - changelog
       - build-import
       - sanity
-      - ansible-lint
       - unit-galaxy
       - unit-source
+      - ansible-lint
       - sonar
     runs-on: ubuntu-latest
     steps:
@@ -65,7 +60,7 @@ jobs:
           '${{ needs.changelog.result }}',
           '${{ needs.sanity.result }}',
           '${{ needs.unit-galaxy.result }}',
-          '${{ needs.unit-source.result }}',
           '${{ needs.ansible-lint.result }}',
+          '${{ needs.unit-source.result }}',
           '${{ needs.sonar.result }}'
           ])"
