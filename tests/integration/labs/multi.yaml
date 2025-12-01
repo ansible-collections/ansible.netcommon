@@ -1,195 +1,248 @@
----
-annotations: []
+annotations:
+  - border_color: '#472B2B'
+    border_radius: 0
+    border_style: ''
+    color: '#203130FF'
+    thickness: 1
+    type: rectangle
+    x1: -1160.0
+    y1: -560.0
+    x2: 400.0
+    y2: 640.0
+    z_index: 0
+  - border_color: '#808080FF'
+    border_radius: 0
+    border_style: 4,2
+    color: '#7393CC87'
+    thickness: 1
+    type: rectangle
+    x1: -760.0
+    y1: -560.0
+    x2: 800.0
+    y2: 640.0
+    z_index: 1
+  - border_color: '#808080FF'
+    border_radius: 0
+    border_style: ''
+    color: '#FFFFFFA6'
+    thickness: 1
+    type: rectangle
+    x1: 40.0
+    y1: -560.0
+    x2: 400.0
+    y2: 640.0
+    z_index: 2
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#110606'
+    rotation: 0
+    text_bold: false
+    text_content: |-
+      Ansible netcommon automation upstream tests for CML.
+      iosxr - needed for netconf
+      nxos - needed for network_cli and httpapi (netconf is disabled)
+      ios - needed for restconf and network_cli (grpc on hold)
+    text_font: monospace
+    text_italic: false
+    text_size: 12
+    text_unit: pt
+    thickness: 1
+    type: text
+    x1: -600.0
+    y1: -480.0
+    z_index: 3
 nodes:
   - boot_disk_size: null
-    configuration: |2-
-      !Command: show running-config
-      !Running configuration last done at: Tue Nov 18 07:12:09 2025
-      !Time: Tue Nov 18 07:23:05 2025
+    configuration:
+      - name: nxos_config.txt
+        content: |-
+          !Command: show running-config
+          !Running configuration last done at: Tue Nov 18 07:12:09 2025
+          !Time: Tue Nov 18 07:23:05 2025
 
-      version 10.4(2) Bios:version
-      hostname testnxos
-      vdc testnxos id 1
-        limit-resource vlan minimum 16 maximum 4094
-        limit-resource vrf minimum 2 maximum 4096
-        limit-resource port-channel minimum 0 maximum 511
-        limit-resource m4route-mem minimum 58 maximum 58
-        limit-resource m6route-mem minimum 8 maximum 8
+          version 10.4(2) Bios:version
+          hostname testnxos
+          vdc testnxos id 1
+            limit-resource vlan minimum 16 maximum 4094
+            limit-resource vrf minimum 2 maximum 4096
+            limit-resource port-channel minimum 0 maximum 511
+            limit-resource m4route-mem minimum 58 maximum 58
+            limit-resource m6route-mem minimum 8 maximum 8
 
-      feature nxapi
-      feature netconf
+          feature nxapi
+          feature netconf
 
-      no password strength-check
-      username admin password 5 $5$AADOBF$GVXUV2cvmlZH42xDu6wnqfBpV9gXF61WGVNrGF5Gk6C  role network-admin
-      username cisco password 5 $5$JDAGKP$xq8ldgUvOKxCXVFRVZwPoxbG7/qFnmWJ9UoiUpZuZwD  role network-admin
-      username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
-      username ansible password 5 $5$GHBNKA$8ccD8KWjmP6NzxzkIRufl7giaUWjrhAn4SRrVWYZ4R1  role network-admin
-      username ansible passphrase  lifetime 99999 warntime 14 gracetime 3
-      ip domain-lookup
-      snmp-server user admin network-admin auth md5 040F90283AEB9A92CCAF81F5CDA2639FFFCD priv aes-128 006084272498F8CD8F98DE888DEC6899C6D0 localizedV2key
-      snmp-server user cisco network-admin auth md5 495336A9A9C95E642E4E27331C80964B2464 priv aes-128 005122F7FA9646642534607B1AB8DF123F76 localizedV2key
-      snmp-server user ansible network-admin auth md5 5207BA419F48B4EB39149FDC00BE411BC828 priv aes-128 041EED4A876CACFD7656EA885CE15D3CE108 localizedV2key
-      rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
-      rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
-      rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
-      rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
-      rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
+          no password strength-check
+          username admin password 5 $5$AADOBF$GVXUV2cvmlZH42xDu6wnqfBpV9gXF61WGVNrGF5Gk6C  role network-admin
+          username cisco password 5 $5$JDAGKP$xq8ldgUvOKxCXVFRVZwPoxbG7/qFnmWJ9UoiUpZuZwD  role network-admin
+          username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
+          username ansible password 5 $5$GHBNKA$8ccD8KWjmP6NzxzkIRufl7giaUWjrhAn4SRrVWYZ4R1  role network-admin
+          username ansible passphrase  lifetime 99999 warntime 14 gracetime 3
+          ip domain-lookup
+          snmp-server user admin network-admin auth md5 040F90283AEB9A92CCAF81F5CDA2639FFFCD priv aes-128 006084272498F8CD8F98DE888DEC6899C6D0 localizedV2key
+          snmp-server user cisco network-admin auth md5 495336A9A9C95E642E4E27331C80964B2464 priv aes-128 005122F7FA9646642534607B1AB8DF123F76 localizedV2key
+          snmp-server user ansible network-admin auth md5 5207BA419F48B4EB39149FDC00BE411BC828 priv aes-128 041EED4A876CACFD7656EA885CE15D3CE108 localizedV2key
+          rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
+          rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
+          rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
+          rmon event 4 log trap public description WARNING(4) owner PMON@WARNING
+          rmon event 5 log trap public description INFORMATION(5) owner PMON@INFO
 
-      vlan 1
+          vlan 1
 
-      vrf context management
-        ip name-server 192.168.255.1
-        ip route 0.0.0.0/0 192.168.255.1
-      nxapi http port 80
+          vrf context management
+            ip name-server 192.168.255.1
+            ip route 0.0.0.0/0 192.168.255.1
+          nxapi http port 80
 
 
-      interface Ethernet1/1
-        description Configured by CI automation
+          interface Ethernet1/1
+            description Configured by CI automation
 
-      interface Ethernet1/2
+          interface Ethernet1/2
 
-      interface Ethernet1/3
+          interface Ethernet1/3
 
-      interface Ethernet1/4
+          interface Ethernet1/4
 
-      interface Ethernet1/5
+          interface Ethernet1/5
 
-      interface Ethernet1/6
+          interface Ethernet1/6
 
-      interface Ethernet1/7
+          interface Ethernet1/7
 
-      interface Ethernet1/8
+          interface Ethernet1/8
 
-      interface Ethernet1/9
+          interface Ethernet1/9
 
-      interface Ethernet1/10
+          interface Ethernet1/10
 
-      interface Ethernet1/11
+          interface Ethernet1/11
 
-      interface Ethernet1/12
+          interface Ethernet1/12
 
-      interface Ethernet1/13
+          interface Ethernet1/13
 
-      interface Ethernet1/14
+          interface Ethernet1/14
 
-      interface Ethernet1/15
+          interface Ethernet1/15
 
-      interface Ethernet1/16
+          interface Ethernet1/16
 
-      interface Ethernet1/17
+          interface Ethernet1/17
 
-      interface Ethernet1/18
+          interface Ethernet1/18
 
-      interface Ethernet1/19
+          interface Ethernet1/19
 
-      interface Ethernet1/20
+          interface Ethernet1/20
 
-      interface Ethernet1/21
+          interface Ethernet1/21
 
-      interface Ethernet1/22
+          interface Ethernet1/22
 
-      interface Ethernet1/23
+          interface Ethernet1/23
 
-      interface Ethernet1/24
+          interface Ethernet1/24
 
-      interface Ethernet1/25
+          interface Ethernet1/25
 
-      interface Ethernet1/26
+          interface Ethernet1/26
 
-      interface Ethernet1/27
+          interface Ethernet1/27
 
-      interface Ethernet1/28
+          interface Ethernet1/28
 
-      interface Ethernet1/29
+          interface Ethernet1/29
 
-      interface Ethernet1/30
+          interface Ethernet1/30
 
-      interface Ethernet1/31
+          interface Ethernet1/31
 
-      interface Ethernet1/32
+          interface Ethernet1/32
 
-      interface Ethernet1/33
+          interface Ethernet1/33
 
-      interface Ethernet1/34
+          interface Ethernet1/34
 
-      interface Ethernet1/35
+          interface Ethernet1/35
 
-      interface Ethernet1/36
+          interface Ethernet1/36
 
-      interface Ethernet1/37
+          interface Ethernet1/37
 
-      interface Ethernet1/38
+          interface Ethernet1/38
 
-      interface Ethernet1/39
+          interface Ethernet1/39
 
-      interface Ethernet1/40
+          interface Ethernet1/40
 
-      interface Ethernet1/41
+          interface Ethernet1/41
 
-      interface Ethernet1/42
+          interface Ethernet1/42
 
-      interface Ethernet1/43
+          interface Ethernet1/43
 
-      interface Ethernet1/44
+          interface Ethernet1/44
 
-      interface Ethernet1/45
+          interface Ethernet1/45
 
-      interface Ethernet1/46
+          interface Ethernet1/46
 
-      interface Ethernet1/47
+          interface Ethernet1/47
 
-      interface Ethernet1/48
+          interface Ethernet1/48
 
-      interface Ethernet1/49
+          interface Ethernet1/49
 
-      interface Ethernet1/50
+          interface Ethernet1/50
 
-      interface Ethernet1/51
+          interface Ethernet1/51
 
-      interface Ethernet1/52
+          interface Ethernet1/52
 
-      interface Ethernet1/53
+          interface Ethernet1/53
 
-      interface Ethernet1/54
+          interface Ethernet1/54
 
-      interface Ethernet1/55
+          interface Ethernet1/55
 
-      interface Ethernet1/56
+          interface Ethernet1/56
 
-      interface Ethernet1/57
+          interface Ethernet1/57
 
-      interface Ethernet1/58
+          interface Ethernet1/58
 
-      interface Ethernet1/59
+          interface Ethernet1/59
 
-      interface Ethernet1/60
+          interface Ethernet1/60
 
-      interface Ethernet1/61
+          interface Ethernet1/61
 
-      interface Ethernet1/62
+          interface Ethernet1/62
 
-      interface Ethernet1/63
+          interface Ethernet1/63
 
-      interface Ethernet1/64
+          interface Ethernet1/64
 
-      interface mgmt0
-        ip address dhcp
-        vrf member management
+          interface mgmt0
+            ip address dhcp
+            vrf member management
 
-      interface loopback888
-        description test for ansible
-        shutdown
-      icam monitor scale
+          interface loopback888
+            description test for ansible
+            shutdown
+          icam monitor scale
 
-      line console
-        exec-timeout 0
-      line vty
-        exec-timeout 0
-      event manager applet BOOTCONFIG
-        event syslog pattern "Configured from vty"
-        action 1.0 cli python bootflash:set_boot.py
+          line console
+            exec-timeout 0
+          line vty
+            exec-timeout 0
+          event manager applet BOOTCONFIG
+            event syslog pattern "Configured from vty"
+            action 1.0 cli python bootflash:set_boot.py
 
-      no logging console
+          no logging console
     cpu_limit: null
     cpus: null
     data_volume: null
@@ -201,8 +254,8 @@ nodes:
     parameters: {}
     ram: null
     tags: []
-    x: -840
-    y: -200
+    x: -1040
+    y: -240
     interfaces:
       - id: i0
         label: Loopback0
@@ -224,100 +277,102 @@ nodes:
         slot: 3
         type: physical
   - boot_disk_size: null
-    configuration: |2-
-      hostname iosxr
-      banner login @this is my banner from
-      NETCONF that contains multiline
-      string@
-      domain name ansible.com
-      username ansible
-       secret 10 $6$ROTr90qrxWRj690.$N5VswuwGS4t/8SfCWA8lFSHDPGmIobK9daN/8HZL4IUaacihIPz1bFNpJdEiSuEgM6tVfDruWpLrU/YU.8CqZ.
-      !
-      username cisco
-       group root-lr
-       group cisco-support
-       password 7 094F471A1A0A
-      !
-      username admin
-       group root-lr
-       group cisco-support
-       password 7 094F471A1A0A
-      !
-      username lab
-       group root-lr
-       group cisco-support
-       password 7 104D000A0618
-      !
-      username root
-       group root-lr
-       group cisco-support
-      !
-      aaa authentication login default local
-      grpc
-       port 57777
-       no-tls
-      !
-      line default
-       login authentication default
-       transport input ssh
-      !
-      snmp-server user myuser mygroup v3 auth sha encrypted 011E1F054E1F0E1F205F5D priv aes 128 encrypted 0702385C5C000F15160118
-      key chain my_fips_keychain
-       key 1
-        key-string password 11584D48180046010B382E692B3B34305E1717101241564A57
-        cryptographic-algorithm HMAC-SHA1-20
-       !
-      !
-      call-home
-       service active
-       contact smart-licensing
-       profile CiscoTAC-1
-        active
-        destination transport-method email disable
-        destination transport-method http
-       !
-      !
-      netconf-yang agent
-       ssh
-      !
-      interface Loopback888
-       description test for ansible
-       shutdown
-      !
-      interface Loopback999
-       shutdown
-      !
-      interface MgmtEth0/RP0/CPU0/0
-       ipv4 address dhcp
-      !
-      interface GigabitEthernet0/0/0/0
-       carrier-delay down 50
-       shutdown
-       dampening 21
-      !
-      router static
-       address-family ipv4 unicast
-        0.0.0.0/0 192.168.255.1
-       !
-      !
-      router ospfv3 myprocess
-       area 1
-       !
-      !
-      netconf agent tty
-       session timeout 1440
-      !
-      crypto ca trustpoint msiox
-      !
-      ssh timeout 100
-      ssh server algorithms cipher aes128-ctr aes192-ctr aes256-ctr
-      ssh server algorithms key-exchange ecdh-sha2-nistp256 ecdh-sha2-nistp384
-      ssh server v2
-      ssh server vrf default
-      ssh server netconf vrf default
-      ssh server netconf vrf Mgmt-intf
-      crypto fips-mode
-      end
+    configuration:
+      - name: iosxr_config.txt
+        content: |-
+          hostname iosxr
+          banner login @this is my banner from
+          NETCONF that contains multiline
+          string@
+          domain name ansible.com
+          username ansible
+           secret 10 $6$ROTr90qrxWRj690.$N5VswuwGS4t/8SfCWA8lFSHDPGmIobK9daN/8HZL4IUaacihIPz1bFNpJdEiSuEgM6tVfDruWpLrU/YU.8CqZ.
+          !
+          username cisco
+           group root-lr
+           group cisco-support
+           password 7 094F471A1A0A
+          !
+          username admin
+           group root-lr
+           group cisco-support
+           password 7 094F471A1A0A
+          !
+          username lab
+           group root-lr
+           group cisco-support
+           password 7 104D000A0618
+          !
+          username root
+           group root-lr
+           group cisco-support
+          !
+          aaa authentication login default local
+          grpc
+           port 57777
+           no-tls
+          !
+          line default
+           login authentication default
+           transport input ssh
+          !
+          snmp-server user myuser mygroup v3 auth sha encrypted 011E1F054E1F0E1F205F5D priv aes 128 encrypted 0702385C5C000F15160118
+          key chain my_fips_keychain
+           key 1
+            key-string password 11584D48180046010B382E692B3B34305E1717101241564A57
+            cryptographic-algorithm HMAC-SHA1-20
+           !
+          !
+          call-home
+           service active
+           contact smart-licensing
+           profile CiscoTAC-1
+            active
+            destination transport-method email disable
+            destination transport-method http
+           !
+          !
+          netconf-yang agent
+           ssh
+          !
+          interface Loopback888
+           description test for ansible
+           shutdown
+          !
+          interface Loopback999
+           shutdown
+          !
+          interface MgmtEth0/RP0/CPU0/0
+           ipv4 address dhcp
+          !
+          interface GigabitEthernet0/0/0/0
+           carrier-delay down 50
+           shutdown
+           dampening 21
+          !
+          router static
+           address-family ipv4 unicast
+            0.0.0.0/0 192.168.255.1
+           !
+          !
+          router ospfv3 myprocess
+           area 1
+           !
+          !
+          netconf agent tty
+           session timeout 1440
+          !
+          crypto ca trustpoint msiox
+          !
+          ssh timeout 100
+          ssh server algorithms cipher aes128-ctr aes192-ctr aes256-ctr
+          ssh server algorithms key-exchange ecdh-sha2-nistp256 ecdh-sha2-nistp384
+          ssh server v2
+          ssh server vrf default
+          ssh server netconf vrf default
+          ssh server netconf vrf Mgmt-intf
+          crypto fips-mode
+          end
     cpu_limit: null
     cpus: null
     data_volume: null
@@ -352,146 +407,148 @@ nodes:
         slot: 3
         type: physical
   - boot_disk_size: null
-    configuration: |2-
-      service timestamps debug datetime msec
-      service timestamps log datetime msec
-      platform qfp utilization monitor load 80
-      platform punt-keepalive disable-kernel-core
-      platform sslvpn use-pd
-      platform console serial
-      !
-      hostname cisco
-      !
-      boot-start-marker
-      boot-end-marker
-      !
-      !
-      no aaa new-model
-      !
-      !
-      !
-      !
-      !
-      !
-      !
-      !
-      !
-      !
-      !
-      !
-      ip domain name ansible.com
-      !
-      !
-      !
-      login on-success log
-      !
-      !
-      subscriber templating
-      !
-      pae
-      !
-      !
-      crypto pki trustpoint SLA-TrustPoint
-       enrollment pkcs12
-       revocation-check crl
-       hash sha256
-      !
-      !
-      crypto pki certificate chain SLA-TrustPoint
-       certificate ca 01
-        30820321 30820209 A0030201 02020101 300D0609 2A864886 F70D0101 0B050030
-        32310E30 0C060355 040A1305 43697363 6F312030 1E060355 04031317 43697363
-        6F204C69 63656E73 696E6720 526F6F74 20434130 1E170D31 33303533 30313934
-        3834375A 170D3338 30353330 31393438 34375A30 32310E30 0C060355 040A1305
-        43697363 6F312030 1E060355 04031317 43697363 6F204C69 63656E73 696E6720
-        526F6F74 20434130 82012230 0D06092A 864886F7 0D010101 05000382 010F0030
-        82010A02 82010100 A6BCBD96 131E05F7 145EA72C 2CD686E6 17222EA1 F1EFF64D
-        CBB4C798 212AA147 C655D8D7 9471380D 8711441E 1AAF071A 9CAE6388 8A38E520
-        1C394D78 462EF239 C659F715 B98C0A59 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE
-        4AA4E80D DB6FD1C9 60B1FD18 FFC69C96 6FA68957 A2617DE7 104FDC5F EA2956AC
-        7390A3EB 2B5436AD C847A2C5 DAB553EB 69A9A535 58E9F3E3 C0BD23CF 58BD7188
-        68E69491 20F320E7 948E71D7 AE3BCC84 F10684C7 4BC8E00F 539BA42B 42C68BB7
-        C7479096 B4CB2D62 EA2F505D C7B062A4 6811D95B E8250FC4 5D5D5FB8 8F27D191
-        C55F0D76 61F9A4CD 3D992327 A8BB03BD 4E6D7069 7CBADF8B DF5F4368 95135E44
-        DFC7C6CF 04DD7FD1 02030100 01A34230 40300E06 03551D0F 0101FF04 04030201
-        06300F06 03551D13 0101FF04 05300301 01FF301D 0603551D 0E041604 1449DC85
-        4B3D31E5 1B3E6A17 606AF333 3D3B4C73 E8300D06 092A8648 86F70D01 010B0500
-        03820101 00507F24 D3932A66 86025D9F E838AE5C 6D4DF6B0 49631C78 240DA905
-        604EDCDE FF4FED2B 77FC460E CD636FDB DD44681E 3A5673AB 9093D3B1 6C9E3D8B
-        D98987BF E40CBD9E 1AECA0C2 2189BB5C 8FA85686 CD98B646 5575B146 8DFC66A8
-        467A3DF4 4D565700 6ADF0F0D CF835015 3C04FF7C 21E878AC 11BA9CD2 55A9232C
-        7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB E973DE7F 5BDDEB86 C71E3B49 1765308B
-        5FB0DA06 B92AFE7F 494E8A9E 07B85737 F3A58BE1 1A48A229 C37C1E69 39F08678
-        80DDCD16 D6BACECA EEBC7CF9 8428787B 35202CDC 60E4616A B623CDBD 230E3AFB
-        418616A9 4093E049 4D10AB75 27E86F73 932E35B5 8862FDAE 0275156F 719BB2F0
-        D697DF7F 28
-              quit
-      !
-      !
-      license udi pid C8000V sn 9EGHOCL6VW2
-      memory free low-watermark processor 201711
-      diagnostic bootup level minimal
-      !
-      !
-      !
-      username ansible privilege 15 secret 9 $9$VslpRow9omMy..$5zvxcxrJqLeDd0qEe.5FANSAeLgz9LLAzMiAjieb/nc
-      !
-      redundancy
-      !
-      !
-      !
-      !
-      !
-      !
-      !
-      !
-      interface GigabitEthernet1
-       ip address dhcp
-       no shutdown
-       negotiation auto
-      !
-      interface GigabitEthernet2
-       no ip address
-       shutdown
-       negotiation auto
-      !
-      interface GigabitEthernet3
-       no ip address
-       shutdown
-       negotiation auto
-      !
-      interface GigabitEthernet4
-       no ip address
-       shutdown
-       negotiation auto
-      !
-      ip forward-protocol nd
-      !
-      ip http server
-      ip http secure-server
-      ip ssh bulk-mode 131072
-      !
-      !
-      !
-      !
-      !
-      control-plane
-      !
-      !
-      line con 0
-       stopbits 1
-      line aux 0
-      line vty 0 4
-       login local
-       transport input ssh
-      !
-      !
-      !
-      !
-      !
-      !
-      !
-      end
+    configuration:
+      - name: iosxe_config.txt
+        content: |-
+          service timestamps debug datetime msec
+          service timestamps log datetime msec
+          platform qfp utilization monitor load 80
+          platform punt-keepalive disable-kernel-core
+          platform sslvpn use-pd
+          platform console serial
+          !
+          hostname cisco
+          !
+          boot-start-marker
+          boot-end-marker
+          !
+          !
+          no aaa new-model
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          ip domain name ansible.com
+          !
+          !
+          !
+          login on-success log
+          !
+          !
+          subscriber templating
+          !
+          pae
+          !
+          !
+          crypto pki trustpoint SLA-TrustPoint
+           enrollment pkcs12
+           revocation-check crl
+           hash sha256
+          !
+          !
+          crypto pki certificate chain SLA-TrustPoint
+           certificate ca 01
+            30820321 30820209 A0030201 02020101 300D0609 2A864886 F70D0101 0B050030
+            32310E30 0C060355 040A1305 43697363 6F312030 1E060355 04031317 43697363
+            6F204C69 63656E73 696E6720 526F6F74 20434130 1E170D31 33303533 30313934
+            3834375A 170D3338 30353330 31393438 34375A30 32310E30 0C060355 040A1305
+            43697363 6F312030 1E060355 04031317 43697363 6F204C69 63656E73 696E6720
+            526F6F74 20434130 82012230 0D06092A 864886F7 0D010101 05000382 010F0030
+            82010A02 82010100 A6BCBD96 131E05F7 145EA72C 2CD686E6 17222EA1 F1EFF64D
+            CBB4C798 212AA147 C655D8D7 9471380D 8711441E 1AAF071A 9CAE6388 8A38E520
+            1C394D78 462EF239 C659F715 B98C0A59 5BBB5CBD 0CFEBEA3 700A8BF7 D8F256EE
+            4AA4E80D DB6FD1C9 60B1FD18 FFC69C96 6FA68957 A2617DE7 104FDC5F EA2956AC
+            7390A3EB 2B5436AD C847A2C5 DAB553EB 69A9A535 58E9F3E3 C0BD23CF 58BD7188
+            68E69491 20F320E7 948E71D7 AE3BCC84 F10684C7 4BC8E00F 539BA42B 42C68BB7
+            C7479096 B4CB2D62 EA2F505D C7B062A4 6811D95B E8250FC4 5D5D5FB8 8F27D191
+            C55F0D76 61F9A4CD 3D992327 A8BB03BD 4E6D7069 7CBADF8B DF5F4368 95135E44
+            DFC7C6CF 04DD7FD1 02030100 01A34230 40300E06 03551D0F 0101FF04 04030201
+            06300F06 03551D13 0101FF04 05300301 01FF301D 0603551D 0E041604 1449DC85
+            4B3D31E5 1B3E6A17 606AF333 3D3B4C73 E8300D06 092A8648 86F70D01 010B0500
+            03820101 00507F24 D3932A66 86025D9F E838AE5C 6D4DF6B0 49631C78 240DA905
+            604EDCDE FF4FED2B 77FC460E CD636FDB DD44681E 3A5673AB 9093D3B1 6C9E3D8B
+            D98987BF E40CBD9E 1AECA0C2 2189BB5C 8FA85686 CD98B646 5575B146 8DFC66A8
+            467A3DF4 4D565700 6ADF0F0D CF835015 3C04FF7C 21E878AC 11BA9CD2 55A9232C
+            7CA7B7E6 C1AF74F6 152E99B7 B1FCF9BB E973DE7F 5BDDEB86 C71E3B49 1765308B
+            5FB0DA06 B92AFE7F 494E8A9E 07B85737 F3A58BE1 1A48A229 C37C1E69 39F08678
+            80DDCD16 D6BACECA EEBC7CF9 8428787B 35202CDC 60E4616A B623CDBD 230E3AFB
+            418616A9 4093E049 4D10AB75 27E86F73 932E35B5 8862FDAE 0275156F 719BB2F0
+            D697DF7F 28
+                  quit
+          !
+          !
+          license udi pid C8000V sn 9EGHOCL6VW2
+          memory free low-watermark processor 201711
+          diagnostic bootup level minimal
+          !
+          !
+          !
+          username ansible privilege 15 secret 9 $9$VslpRow9omMy..$5zvxcxrJqLeDd0qEe.5FANSAeLgz9LLAzMiAjieb/nc
+          !
+          redundancy
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          interface GigabitEthernet1
+           ip address dhcp
+           no shutdown
+           negotiation auto
+          !
+          interface GigabitEthernet2
+           no ip address
+           shutdown
+           negotiation auto
+          !
+          interface GigabitEthernet3
+           no ip address
+           shutdown
+           negotiation auto
+          !
+          interface GigabitEthernet4
+           no ip address
+           shutdown
+           negotiation auto
+          !
+          ip forward-protocol nd
+          !
+          ip http server
+          ip http secure-server
+          ip ssh bulk-mode 131072
+          !
+          !
+          !
+          !
+          !
+          control-plane
+          !
+          !
+          line con 0
+           stopbits 1
+          line aux 0
+          line vty 0 4
+           login local
+           transport input ssh
+          !
+          !
+          !
+          !
+          !
+          !
+          !
+          end
     cpu_limit: null
     cpus: null
     data_volume: null
@@ -504,7 +561,7 @@ nodes:
     ram: null
     tags: []
     x: -1040
-    y: -40
+    y: -80
     interfaces:
       - id: i0
         label: Loopback0
@@ -539,7 +596,7 @@ nodes:
     ram: null
     tags: []
     x: -680
-    y: -200
+    y: -240
     interfaces:
       - id: i0
         label: port0
@@ -587,7 +644,7 @@ nodes:
     ram: null
     tags: []
     x: 320
-    y: -200
+    y: -240
     interfaces:
       - id: i0
         label: port
@@ -623,7 +680,7 @@ links:
     conditioning: {}
     label: slave-switch-port3<->iosxe-GigabitEthernet1
 lab:
-  description: netcommon upstream test lab
-  notes: netcommon upstream test lab
-  title: netcommon upstream test lab
+  description: Upstream lab to test ansible.netcommon
+  notes: Netcommon upstream test lab
+  title: Ansible Netcommon Test Lab
   version: 0.2.2
