@@ -24,8 +24,6 @@ jobs:
       galaxy_dependencies: |
         git+https://github.com/ansible-collections/ansible.utils.git
       test_command: "pip install passlib && pytest tests/unit -v --cov-report xml --cov=./"
-    secrets:
-      SONAR_TOKEN: ${{ secrets[format('{0}', vars.SONAR_TOKEN_SECRET_NAME)] }}
 
   changelog:
     uses: ansible/ansible-content-actions/.github/workflows/changelog.yaml@main
