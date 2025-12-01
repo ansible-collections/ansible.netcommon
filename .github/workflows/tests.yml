@@ -17,7 +17,7 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   sonar:
     name: SonarCloud
-    if: github.event_name == 'push' || github.event_name == 'pull_request_target'
+    if: github.event_name == 'push' || github.event_name == 'pull_request'
     uses: ansible/ansible-content-actions/.github/workflows/sonarcloud.yaml@main
     with:
       python_version: "3.12"
