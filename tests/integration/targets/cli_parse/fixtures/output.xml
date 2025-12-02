@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rpc-reply message-id="urn:uuid:0cadb4e8-5bba-47f4-986e-72906227007f">
+	<data>
+		<ntp>
+			<nodes>
+				<node>
+					<node>0/0/CPU0</node>
+					<associations>
+						<is-ntp-enabled>true</is-ntp-enabled>
+						<sys-leap>ntp-leap-no-warning</sys-leap>
+						<peer-summary-info>
+							<peer-info-common>
+								<host-mode>ntp-mode-client</host-mode>
+								<is-configured>true</is-configured>
+								<address>10.1.1.1</address>
+								<reachability>0</reachability>
+							</peer-info-common>
+							<time-since>-1</time-since>
+						</peer-summary-info>
+						<peer-summary-info>
+							<peer-info-common>
+								<host-mode>ntp-mode-client</host-mode>
+								<is-configured>true</is-configured>
+								<address>172.16.252.29</address>
+								<reachability>255</reachability>
+							</peer-info-common>
+							<time-since>991</time-since>
+						</peer-summary-info>
+					</associations>
+				</node>
+			</nodes>
+		</ntp>
+	</data>
+</rpc-reply>

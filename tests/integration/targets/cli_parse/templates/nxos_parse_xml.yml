@@ -1,0 +1,12 @@
+---
+vars:
+  ntp_peers:
+    address: "{{ item.address }}"
+    reachability: "{{ item.reachability}}"
+keys:
+  result:
+    value: "{{ ntp_peers }}"
+    top: data/ntp/nodes/node/associations
+    items:
+      address: peer-summary-info/peer-info-common/address
+      reachability: peer-summary-info/peer-info-common/reachability
