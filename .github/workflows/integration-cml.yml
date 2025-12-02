@@ -226,11 +226,11 @@ jobs:
         shell: bash
         run: python -c "from pylibsshext import __full_version__; print(__full_version__)"
 
-      # - name: Run ansible-test network-integration - NETCONF tests
-      #   run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" netconf_config netconf_get netconf_rpc -vvvv
-      #   working-directory: ${{ steps.identify.outputs.collection_path }}
-      #   env:
-      #     LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
+      - name: Run ansible-test network-integration - NETCONF tests
+        run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" netconf_config netconf_get netconf_rpc -vvvv
+        working-directory: ${{ steps.identify.outputs.collection_path }}
+        env:
+          LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
 
       - name: Run ansible-test network-integration - CLI tests
         run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" cli_parse cli_tests -vvvv

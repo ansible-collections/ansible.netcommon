@@ -8,16 +8,15 @@ concurrency:
 on:  # yamllint disable-line rule:truthy
   push:
     branches: [main]
-  pull_request:
+  pull_request_target:
     branches: [main]
   workflow_dispatch:
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 
 jobs:
   sonar:
     name: SonarCloud
-    if: github.event_name == 'push' || github.event_name == 'pull_request'
     uses: ansible/ansible-content-actions/.github/workflows/sonarcloud.yaml@main
     with:
       python_version: "3.12"
@@ -26,30 +25,19 @@ jobs:
       test_command: "pip install passlib && pytest tests/unit -v --cov-report xml --cov=./"
     secrets:
       SONAR_TOKEN: ${{ secrets.ANSIBLE_COLLECTIONS_ORG_SONAR_TOKEN_CICD_BOT }}
-
   changelog:
     uses: ansible/ansible-content-actions/.github/workflows/changelog.yaml@main
-    if: github.event_name == 'pull_request'
-
+    if: github.event_name == 'pull_request_target'
   build-import:
     uses: ansible/ansible-content-actions/.github/workflows/build_import.yaml@main
-    if: github.event_name != 'push' && github.event_name != 'pull_request_target'
-
   ansible-lint:
     uses: ansible/ansible-content-actions/.github/workflows/ansible_lint.yaml@main
-    if: github.event_name != 'push' && github.event_name != 'pull_request_target'
-
   sanity:
     uses: ansible/ansible-content-actions/.github/workflows/sanity.yaml@main
-    if: github.event_name != 'push' && github.event_name != 'pull_request_target'
-
   unit-galaxy:
     uses: ansible/ansible-content-actions/.github/workflows/unit.yaml@main
-    if: github.event_name != 'push' && github.event_name != 'pull_request_target'
-
   unit-source:
     uses: ansible-network/github_actions/.github/workflows/unit_source.yml@main
-    if: github.event_name != 'push' && github.event_name != 'pull_request_target'
     with:
       collection_pre_install: >-
         git+https://github.com/ansible-collections/ansible.utils.git
@@ -60,9 +48,9 @@ jobs:
       - changelog
       - build-import
       - sanity
-      - ansible-lint
       - unit-galaxy
       - unit-source
+      - ansible-lint
       - sonar
     runs-on: ubuntu-latest
     steps:
@@ -72,7 +60,7 @@ jobs:
           '${{ needs.changelog.result }}',
           '${{ needs.sanity.result }}',
           '${{ needs.unit-galaxy.result }}',
-          '${{ needs.unit-source.result }}',
           '${{ needs.ansible-lint.result }}',
+          '${{ needs.unit-source.result }}',
           '${{ needs.sonar.result }}'
           ])"
