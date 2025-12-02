@@ -49,7 +49,7 @@ jobs:
       CLI_SSH_TYPE: libssh
     strategy:
       fail-fast: true
-      matrix: #  There is no official support for matrix here as multiple applaince are needed per run, test against one core version.
+      matrix:  #  There is no official support for matrix here as multiple applaince are needed per run, test against one core version.
         ansible_version: ${{ github.event_name == 'workflow_dispatch' && fromJSON(format('["{0}"]', github.event.inputs.ansible_version)) || fromJSON('["devel"]') }}
     steps:
       - name: Set up Python 3.12

@@ -1,8 +1,9 @@
+---
 annotations:
-  - border_color: "#472B2B"
+  - border_color: '#472B2B'
     border_radius: 0
-    border_style: ""
-    color: "#203130FF"
+    border_style: ''
+    color: '#203130FF'
     thickness: 1
     type: rectangle
     x1: -1160.0
@@ -10,10 +11,10 @@ annotations:
     x2: 400.0
     y2: 640.0
     z_index: 0
-  - border_color: "#808080FF"
+  - border_color: '#808080FF'
     border_radius: 0
     border_style: 4,2
-    color: "#7393CC87"
+    color: '#7393CC87'
     thickness: 1
     type: rectangle
     x1: -760.0
@@ -21,10 +22,10 @@ annotations:
     x2: 800.0
     y2: 640.0
     z_index: 1
-  - border_color: "#808080FF"
+  - border_color: '#808080FF'
     border_radius: 0
-    border_style: ""
-    color: "#FFFFFFA6"
+    border_style: ''
+    color: '#FFFFFFA6'
     thickness: 1
     type: rectangle
     x1: 40.0
@@ -32,9 +33,9 @@ annotations:
     x2: 400.0
     y2: 640.0
     z_index: 2
-  - border_color: "#00000000"
-    border_style: ""
-    color: "#110606"
+  - border_color: '#00000000'
+    border_style: ''
+    color: '#110606'
     rotation: 0
     text_bold: false
     text_content: |-
@@ -42,6 +43,7 @@ annotations:
       iosxr - needed for netconf
       nxos - needed for network_cli and httpapi (netconf is disabled)
       ios - needed for restconf and network_cli (grpc on hold)
+      ubuntu - needed for jump host and parser tests
     text_font: monospace
     text_italic: false
     text_size: 12
@@ -584,6 +586,26 @@ nodes:
         label: port
         slot: 0
         type: physical
+  - boot_disk_size: null
+    configuration: []
+    cpu_limit: null
+    cpus: null
+    data_volume: null
+    hide_links: false
+    id: n5
+    image_definition: null
+    label: ubuntu
+    node_definition: ubuntu
+    parameters: {}
+    ram: null
+    tags: []
+    x: -680
+    y: -80
+    interfaces:
+      - id: i0
+        label: ens2
+        slot: 0
+        type: physical
 links:
   - id: l0
     n1: n3
@@ -613,6 +635,13 @@ links:
     i2: i1
     conditioning: {}
     label: slave-switch-port3<->iosxe-GigabitEthernet1
+  - id: l4
+    n1: n5
+    n2: n3
+    i1: i0
+    i2: i4
+    conditioning: {}
+    label: ubuntu-ens2<->slave-switch-port4
 lab:
   description: Upstream lab to test ansible.netcommon
   notes: Netcommon upstream test lab
