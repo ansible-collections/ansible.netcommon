@@ -49,7 +49,7 @@ jobs:
       CLI_SSH_TYPE: libssh
     strategy:
       fail-fast: true
-      matrix:  #  There is no official support for matrix here as multiple applaince are needed per run, test against one core version.
+      matrix: #  There is no official support for matrix here as multiple applaince are needed per run, test against one core version.
         ansible_version: ${{ github.event_name == 'workflow_dispatch' && fromJSON(format('["{0}"]', github.event.inputs.ansible_version)) || fromJSON('["devel"]') }}
     steps:
       - name: Set up Python 3.12
@@ -226,11 +226,11 @@ jobs:
         shell: bash
         run: python -c "from pylibsshext import __full_version__; print(__full_version__)"
 
-      # - name: Run ansible-test network-integration - NETCONF tests
-      #   run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" netconf_config netconf_get netconf_rpc -vvvv
-      #   working-directory: ${{ steps.identify.outputs.collection_path }}
-      #   env:
-      #     LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
+      - name: Run ansible-test network-integration - NETCONF tests
+        run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" netconf_config netconf_get netconf_rpc -vvvv
+        working-directory: ${{ steps.identify.outputs.collection_path }}
+        env:
+          LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
 
       - name: Run ansible-test network-integration - CLI tests
         run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" cli_parse cli_tests -vvvv

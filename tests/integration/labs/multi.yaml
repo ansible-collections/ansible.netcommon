@@ -280,99 +280,33 @@ nodes:
     configuration:
       - name: iosxr_config.txt
         content: |-
-          hostname iosxr
-          banner login @this is my banner from
-          NETCONF that contains multiline
-          string@
-          domain name ansible.com
           username ansible
-           secret 10 $6$ROTr90qrxWRj690.$N5VswuwGS4t/8SfCWA8lFSHDPGmIobK9daN/8HZL4IUaacihIPz1bFNpJdEiSuEgM6tVfDruWpLrU/YU.8CqZ.
+            group sysadmin
+            group root-lr
+            secret 0 ansible
           !
-          username cisco
-           group root-lr
-           group cisco-support
-           password 7 094F471A1A0A
-          !
-          username admin
-           group root-lr
-           group cisco-support
-           password 7 094F471A1A0A
-          !
-          username lab
-           group root-lr
-           group cisco-support
-           password 7 104D000A0618
-          !
-          username root
-           group root-lr
-           group cisco-support
-          !
-          aaa authentication login default local
-          grpc
-           port 57777
-           no-tls
-          !
-          line default
-           login authentication default
-           transport input ssh
-          !
-          snmp-server user myuser mygroup v3 auth sha encrypted 011E1F054E1F0E1F205F5D priv aes 128 encrypted 0702385C5C000F15160118
-          key chain my_fips_keychain
-           key 1
-            key-string password 11584D48180046010B382E692B3B34305E1717101241564A57
-            cryptographic-algorithm HMAC-SHA1-20
-           !
-          !
-          call-home
-           service active
-           contact smart-licensing
-           profile CiscoTAC-1
-            active
-            destination transport-method email disable
-            destination transport-method http
-           !
-          !
-          netconf-yang agent
-           ssh
+          hostname iosxr
+          interface MgmtEth0/RP0/CPU0/0
+          ipv4 address dhcp
+          no shutdown
           !
           interface Loopback888
-           description test for ansible
-           shutdown
           !
           interface Loopback999
-           shutdown
-          !
-          interface MgmtEth0/RP0/CPU0/0
-           ipv4 address dhcp
           !
           interface GigabitEthernet0/0/0/0
-           carrier-delay down 50
-           shutdown
-           dampening 21
+          shutdown
           !
           router static
-           address-family ipv4 unicast
+          address-family ipv4 unicast
             0.0.0.0/0 192.168.255.1
-           !
           !
-          router ospfv3 myprocess
-           area 1
-           !
-          !
-          netconf agent tty
-           session timeout 1440
-          !
-          crypto ca trustpoint msiox
           !
           ssh timeout 100
-          ssh server algorithms cipher aes128-ctr aes192-ctr aes256-ctr
-          ssh server algorithms key-exchange ecdh-sha2-nistp256 ecdh-sha2-nistp384
           ssh server v2
-          ssh server vrf default
-          ssh server netconf vrf default
-          ssh server netconf vrf Mgmt-intf
-          crypto fips-mode
-          end
+          netconf-yang agent
+          ssh
+          !
     cpu_limit: null
     cpus: null
     data_volume: null
