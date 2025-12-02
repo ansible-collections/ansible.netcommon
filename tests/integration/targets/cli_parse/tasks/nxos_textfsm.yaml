@@ -12,4 +12,3 @@
 - name: "Invoke parse_cli_textfsm"
   ansible.builtin.set_fact:
     device_neighbors: "{{ version_output.stdout[0] | parse_cli_textfsm(textfsm_template_path) }}"
-
