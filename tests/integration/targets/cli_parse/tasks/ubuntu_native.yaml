@@ -1,0 +1,31 @@
+---
+- name: "Run command and parse with {{ parser }}"
+  ansible.utils.cli_parse:
+    command: "ps -ef"
+    parser:
+      name: ansible.netcommon.native
+  register: ps_out
+
+- name: "Check output"
+  ansible.builtin.assert:
+    that: "{{ item }}"
+  with_items:
+    - "{{ ps_out['stdout'] is defined }}"
+    - "{{ ps_out['stdout_lines'] is defined }}"
+    - "{{ ps_out['parsed'] is defined }}"
+
+- name: "Run command and parse with {{ parser }}"
+  ansible.utils.cli_parse:
+    command: "iptables --list"
+    parser:
+      name: ansible.netcommon.native
+  become: true
+  register: ipt_out
+
+- name: "Check output"
+  ansible.builtin.assert:
+    that: "{{ item }}"
+  with_items:
+    - "{{ ipt_out['stdout'] is defined }}"
+    - "{{ ipt_out['stdout_lines'] is defined }}"
+    - "{{ ipt_out['parsed'] is defined }}"

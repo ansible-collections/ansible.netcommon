@@ -175,9 +175,10 @@ jobs:
           nxos_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.nxos // empty')
           iosxr_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.iosxr // empty')
           iosxe_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.iosxe // empty')
+          ubuntu_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.ubuntu // empty')
 
-          if [ -z "$nxos_ip" ] || [ -z "$iosxr_ip" ] || [ -z "$iosxe_ip" ]; then
-            echo "Missing one or more required nodes (nxos, iosxr, iosxe) in LAB_NODES_JSON"
+          if [ -z "$nxos_ip" ] || [ -z "$iosxr_ip" ] || [ -z "$iosxe_ip" ] || [ -z "$ubuntu_ip" ]; then
+            echo "Missing one or more required nodes (nxos, iosxr, iosxe, ubuntu) in LAB_NODES_JSON"
             echo "Available keys:" $(echo "$LAB_NODES_JSON" | jq -r '.nodes | keys | join(", ")')
             exit 1
           fi
@@ -202,13 +203,16 @@ jobs:
           iosxe_http_port=$((iosxe_last_octet + 8000))
           iosxe_netconf_port=$((iosxe_last_octet + 3000))
 
+          ubuntu_last_octet="${ubuntu_ip##*.}"
+          ubuntu_ssh_port=$((ubuntu_last_octet + 2000))
+
           # Destination host for port-forwarded access
           dest_host="54.190.208.146"
           out_file="$RUNNER_TEMP/inventory-${{ matrix.ansible_version }}.ini"
           ansible localhost -c local -m template -a "src=tests/integration/labs/inventory.j2 dest=$out_file mode=0644" \
             -e "ansible_host=$dest_host ansible_network_cli_ssh_type=$CLI_SSH_TYPE \
             nxos_ssh_port=$nxos_ssh_port nxos_http_port=$nxos_http_port nxos_netconf_port=$nxos_netconf_port \
-            iosxr_netconf_port=$iosxr_netconf_port iosxr_grpc_port=$iosxr_grpc_port \
+            iosxr_netconf_port=$iosxr_netconf_port iosxr_grpc_port=$iosxr_grpc_port ubuntu_ssh_port=$ubuntu_ssh_port \
             iosxe_http_port=$iosxe_http_port iosxr_ssh_port=$iosxr_ssh_port iosxe_ssh_port=$iosxe_ssh_port"
           echo "inventory_path=$out_file" >> "$GITHUB_OUTPUT"
 
@@ -244,7 +248,7 @@ jobs:
       #   env:
       #     LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
 
-      - name: Run ansible-test network-integration - HTTPAPI tests
+      - name: Run ansible-test network-integration - all
         run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" -vvvv
         working-directory: ${{ steps.identify.outputs.collection_path }}
         env:
