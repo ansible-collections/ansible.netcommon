@@ -12,3 +12,11 @@
 - name: "Invoke parse_cli_textfsm"
   ansible.builtin.set_fact:
     device_neighbors: "{{ version_output.stdout[0] | parse_cli_textfsm(textfsm_template_path) }}"
+  register: nxos_textfsm_text
+
+- name: Check textfsm parse output (would fail on underlying device update)
+  ansible.builtin.assert:
+    that: "{{ item }}"
+  with_items:
+    - "{{ nxos_textfsm_text['ansible_facts']['device_neighbors'][0]['BOOT_IMAGE'] == 'bootflash:///nxos64-cs.10.4.2.F.bin' }}"
+    - "{{ nxos_textfsm_text['ansible_facts']['device_neighbors'][0]['PLATFORM'] == 'C9300v' }}"
