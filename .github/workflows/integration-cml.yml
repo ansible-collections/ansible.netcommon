@@ -27,6 +27,11 @@ name: "Integration tests 💻"
           - "milestone"
           - "devel"
         default: "devel"
+      debug:
+        description: "Enable debug steps"
+        required: false
+        type: boolean
+        default: false
 jobs:
   lab-create:
     uses: ansible/ansible-content-actions/.github/workflows/cml_lab_create.yaml@main
@@ -58,6 +63,7 @@ jobs:
           python-version: "3.12"
 
       - name: DEBUG Show pip list before installs
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
         run: |
           python3 -m pip --version
           python3 -m pip list | sort
@@ -66,6 +72,7 @@ jobs:
         run: python3 -m pip install --upgrade pip wheel ansible-pylibssh paramiko genie passlib scp ncclient ntc_templates pyats jxmlease
 
       - name: DEBUG Show pip list after base deps install
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
         run: |
           python3 -m pip list | sort
 
@@ -139,6 +146,7 @@ jobs:
           fi
 
       - name: DEBUG Show pip list after ansible-core install
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
         run: |
           python3 -m pip list | sort
 
@@ -149,6 +157,7 @@ jobs:
           source_path: /home/runner/collections/ansible_collections/ansible/netcommon
 
       - name: DEBUG lab_nodes input
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
         shell: bash
         env:
           LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
@@ -217,9 +226,11 @@ jobs:
           echo "inventory_path=$out_file" >> "$GITHUB_OUTPUT"
 
       - name: DEBUG Print the ansible version
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
         run: ansible --version
 
       - name: DEBUG inventory
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
         shell: bash
         run: |
           echo "Inventory path: ${{ steps.render_inventory.outputs.inventory_path }}"
@@ -227,6 +238,7 @@ jobs:
           cat "${{ steps.render_inventory.outputs.inventory_path }}"
 
       - name: DEBUG libssh and pylibssh versions
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
         shell: bash
         run: python -c "from pylibsshext import __full_version__; print(__full_version__)"
 
