@@ -1,0 +1,21 @@
+---
+- name: Set path for xml templates and fixture
+  ansible.builtin.set_fact:
+    xml_template_path: "{{ role_path }}/templates/nxos_parse_xml.yml"
+    xml_fixture_path: "{{ role_path }}/fixtures/output.xml"
+
+- name: Facts setup
+  ansible.builtin.set_fact:
+    xml: "{{ lookup('file', xml_fixture_path) }}"
+
+- name: Parse xml invocation
+  ansible.builtin.debug:
+    msg: "{{ xml | ansible.netcommon.parse_xml(xml_template_path) }}"
+  register: nxos_xml_text
+
+- name: Check xml parse output
+  ansible.builtin.assert:
+    that: "{{ item }}"
+  with_items:
+    - "{{ nxos_xml_text['msg']['result'][0]['address'][0] == '10.1.1.1' }}"
+    - "{{ nxos_xml_text['msg']['result'][0]['reachability'][0] == '0' }}"
