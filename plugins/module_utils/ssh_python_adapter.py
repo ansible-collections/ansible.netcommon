@@ -10,25 +10,28 @@ to ansible-pylibssh, since both are Python bindings for the same libssh C librar
 
 from __future__ import absolute_import, division, print_function
 
+
 __metaclass__ = type
 
 import logging
 import os
+
 from subprocess import CompletedProcess
+
 
 # Try to import ssh-python
 try:
     from ssh import options as ssh_options
-    from ssh.session import Session as SSHPythonSession
-    from ssh.key import import_privkey_base64
     from ssh.exceptions import (
-        BaseSSHError,
         AuthenticationDenied,
         AuthenticationError,
+        BaseSSHError,
         SFTPError,
         SFTPHandleError,
     )
-    from ssh.scp import SSH_SCP_WRITE, SSH_SCP_READ, SSH_SCP_REQUEST_NEWFILE, SSH_SCP_REQUEST_EOF
+    from ssh.key import import_privkey_base64
+    from ssh.scp import SSH_SCP_READ, SSH_SCP_REQUEST_EOF, SSH_SCP_REQUEST_NEWFILE, SSH_SCP_WRITE
+    from ssh.session import Session as SSHPythonSession
 
     HAS_SSH_PYTHON = True
 except ImportError:
@@ -194,6 +197,7 @@ class Channel:
     def read_bulk_response(self, stderr=0, timeout=0.001, retry=5):
         """Read bulk response from channel with retries."""
         import time
+
         from io import BytesIO
 
         if retry <= 0:

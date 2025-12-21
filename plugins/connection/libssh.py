@@ -267,12 +267,15 @@ except ImportError:
     # Try ssh-python adapter as fallback
     try:
         from ansible_collections.ansible.netcommon.plugins.module_utils.ssh_python_adapter import (
-            __version__ as PYLIBSSH_VERSION,
+            HAS_SSH_PYTHON,
             LibsshSCPException,
             LibsshSessionException,
             Session,
-            HAS_SSH_PYTHON,
         )
+        from ansible_collections.ansible.netcommon.plugins.module_utils.ssh_python_adapter import (
+            __version__ as PYLIBSSH_VERSION,
+        )
+
         if HAS_SSH_PYTHON:
             HAS_PYLIBSSH = True
             LIBSSH_BACKEND = "ssh-python"
