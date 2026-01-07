@@ -211,7 +211,7 @@
     source: running
     display: pretty
   vars:
-      ansible_netconf_libssh: False  
+      ansible_netconf_libssh: false
   register: result
   
 - assert:
