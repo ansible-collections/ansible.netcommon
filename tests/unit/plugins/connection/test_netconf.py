@@ -127,3 +127,11 @@ def test_netconf_close():
 
     assert conn._connected is False
     assert conn._manager.close_session.called is True
+
+
+def test_netconf_use_libssh_default():
+    """Test that use_libssh option defaults to True"""
+    pc = PlayContext()
+    conn = connection_loader.get("netconf", pc, "/dev/null")
+
+    assert conn.get_option("use_libssh") is True
