@@ -19,6 +19,14 @@ from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
 
+# Ansible 2.19+ requires trust_as_template for Jinja2 processing
+try:
+    from ansible.template import trust_as_template
+
+    HAS_TRUST_AS_TEMPLATE = True
+except ImportError:
+    HAS_TRUST_AS_TEMPLATE = False
+
 
 display = Display()
 
@@ -185,6 +193,12 @@ class ActionModule(_ActionModule):
                         searchpath.append(role._role_path)
         searchpath.append(os.path.dirname(source))
         self._templar.environment.loader.searchpath = searchpath
+
+        # Ansible 2.19+ requires marking template data as trusted for Jinja2 processing
+        # In earlier versions, template data is processed directly
+        if HAS_TRUST_AS_TEMPLATE:
+            template_data = trust_as_template(template_data)
+
         self._task.args["src"] = self._templar.template(template_data)
 
     def _get_network_os(self, task_vars):

@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Adds a backward compatibility of handling source attributes, for consistent functioning with ansible-core >= 2.19
