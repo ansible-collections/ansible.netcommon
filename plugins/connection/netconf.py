@@ -326,7 +326,7 @@ class Connection(NetworkConnectionBase):
         self.queue_message("log", "ssh connection done, starting ncclient")
 
         allow_agent = True
-        use_libssh = self.get_option("use_libssh")
+      
 
         if self._play_context.password is not None:
             allow_agent = False
@@ -385,6 +385,7 @@ class Connection(NetworkConnectionBase):
                 ),
             )
 
+            use_libssh = self.get_option("use_libssh")
             params = dict(
                 host=self._play_context.remote_addr,
                 port=port,
@@ -394,7 +395,7 @@ class Connection(NetworkConnectionBase):
                 hostkey_verify=self.get_option("host_key_checking"),
                 look_for_keys=self.get_option("look_for_keys"),
                 device_params=device_params,
-                use_libssh=self._play_context.use_libssh,
+                use_libssh=use_libssh,
                 allow_agent=self._play_context.allow_agent,
                 timeout=self.get_option("persistent_connect_timeout"),
                 ssh_config=self._ssh_config,
