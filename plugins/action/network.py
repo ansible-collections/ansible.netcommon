@@ -19,6 +19,7 @@ from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
 
+
 # Ansible 2.19+ requires trust_as_template for Jinja2 processing
 try:
     from ansible.template import trust_as_template
