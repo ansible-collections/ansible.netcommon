@@ -326,7 +326,7 @@ class Connection(NetworkConnectionBase):
         self.queue_message("log", "ssh connection done, starting ncclient")
 
         allow_agent = True
-      
+
 
         if self._play_context.password is not None:
             allow_agent = False
@@ -406,7 +406,7 @@ class Connection(NetworkConnectionBase):
                     "warning",
                     "ncclient >= 0.7.0 does not support ssh_config file option while using libssh as a transport",
                 )
-              
+
             # sock is only supported by ncclient >= 0.6.10, and will error if
             # included on older versions. We check the version in
             # _get_proxy_command, so if this returns a value, the version is
