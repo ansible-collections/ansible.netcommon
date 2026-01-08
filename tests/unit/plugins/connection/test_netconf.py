@@ -135,3 +135,111 @@ def test_netconf_use_libssh_default():
     conn = connection_loader.get("netconf", pc, "/dev/null")
 
     assert conn.get_option("use_libssh") is True
+
+
+@patch("ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader")
+def test_netconf_connect_with_libssh_enabled(mock_netconf_loader):
+    """Test _connect() with use_libssh=True includes correct parameters"""
+    pc = PlayContext()
+    pc.remote_addr = "test.example.com"
+    pc.remote_user = "testuser"
+    pc.password = "testpass"
+    pc.port = 830
+
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+
+    # Mock get_option after connection is created
+    original_get_option = conn.get_option
+
+    def get_option_side_effect(option):
+        options = {
+            "use_libssh": True,
+            "host_key_checking": False,
+            "persistent_connect_timeout": 30,
+            "look_for_keys": True,
+            "netconf_ssh_config": None,
+        }
+        if option in options:
+            return options[option]
+        return original_get_option(option)
+
+    conn.get_option = MagicMock(side_effect=get_option_side_effect)
+
+    mock_manager = MagicMock()
+    mock_manager.session_id = "test-session-123"
+    netconf.manager.connect = MagicMock(return_value=mock_manager)
+
+    rc, out, err = conn._connect()
+
+    # Verify connection was successful
+    assert rc == 0
+    assert out == b"test-session-123"
+    assert err == b""
+    assert conn._connected is True
+
+    # Verify manager.connect was called with use_libssh parameter
+    call_args = netconf.manager.connect.call_args
+    assert call_args is not None
+    params = call_args[1]  # keyword arguments
+
+    assert params["use_libssh"] is True
+    assert "look_for_keys" not in params
+    assert "ssh_config" not in params
+    assert params["host"] == "test.example.com"
+    assert params["username"] == "testuser"
+    assert params["password"] == "testpass"
+    assert params["port"] == 830
+
+
+@patch("ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader")
+def test_netconf_connect_with_libssh_disabled(mock_netconf_loader):
+    """Test _connect() with use_libssh=False includes look_for_keys and ssh_config"""
+    pc = PlayContext()
+    pc.remote_addr = "test.example.com"
+    pc.remote_user = "testuser"
+    pc.password = "testpass"
+    pc.port = 830
+
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+
+    # Mock get_option after connection is created
+    original_get_option = conn.get_option
+
+    def get_option_side_effect(option):
+        options = {
+            "use_libssh": False,
+            "host_key_checking": False,
+            "persistent_connect_timeout": 30,
+            "look_for_keys": True,
+            "netconf_ssh_config": None,
+        }
+        if option in options:
+            return options[option]
+        return original_get_option(option)
+
+    conn.get_option = MagicMock(side_effect=get_option_side_effect)
+
+    mock_manager = MagicMock()
+    mock_manager.session_id = "test-session-456"
+    netconf.manager.connect = MagicMock(return_value=mock_manager)
+
+    rc, out, err = conn._connect()
+
+    # Verify connection was successful
+    assert rc == 0
+    assert out == b"test-session-456"
+    assert err == b""
+    assert conn._connected is True
+
+    # Verify manager.connect was called with look_for_keys and ssh_config
+    call_args = netconf.manager.connect.call_args
+    assert call_args is not None
+    params = call_args[1]  # keyword arguments
+
+    assert "use_libssh" not in params
+    assert params["look_for_keys"] is True
+    assert "ssh_config" in params
+    assert params["host"] == "test.example.com"
+    assert params["username"] == "testuser"
+    assert params["password"] == "testpass"
+    assert params["port"] == 830
