@@ -139,7 +139,7 @@ def test_netconf_use_libssh_default():
 
 @patch("ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader")
 def test_netconf_connect_with_libssh_enabled(mock_netconf_loader):
-    """Test _connect() with use_libssh=True includes correct parameters"""
+    """Test _connect() with use_libssh=True sets use_libssh parameter"""
     pc = PlayContext()
     pc.remote_addr = "test.example.com"
     pc.remote_user = "testuser"
@@ -177,14 +177,14 @@ def test_netconf_connect_with_libssh_enabled(mock_netconf_loader):
     assert err == b""
     assert conn._connected is True
 
-    # Verify manager.connect was called with use_libssh parameter
+    # Verify manager.connect was called with correct parameters
     call_args = netconf.manager.connect.call_args
     assert call_args is not None
     params = call_args[1]  # keyword arguments
 
     assert params["use_libssh"] is True
-    assert "look_for_keys" not in params
-    assert "ssh_config" not in params
+    assert params["look_for_keys"] is True
+    assert params["ssh_config"] is None
     assert params["host"] == "test.example.com"
     assert params["username"] == "testuser"
     assert params["password"] == "testpass"
@@ -193,7 +193,7 @@ def test_netconf_connect_with_libssh_enabled(mock_netconf_loader):
 
 @patch("ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader")
 def test_netconf_connect_with_libssh_disabled(mock_netconf_loader):
-    """Test _connect() with use_libssh=False includes look_for_keys and ssh_config"""
+    """Test _connect() with use_libssh=False sets use_libssh parameter to False"""
     pc = PlayContext()
     pc.remote_addr = "test.example.com"
     pc.remote_user = "testuser"
@@ -231,14 +231,14 @@ def test_netconf_connect_with_libssh_disabled(mock_netconf_loader):
     assert err == b""
     assert conn._connected is True
 
-    # Verify manager.connect was called with look_for_keys and ssh_config
+    # Verify manager.connect was called with correct parameters
     call_args = netconf.manager.connect.call_args
     assert call_args is not None
     params = call_args[1]  # keyword arguments
 
-    assert "use_libssh" not in params
+    assert params["use_libssh"] is False
     assert params["look_for_keys"] is True
-    assert "ssh_config" in params
+    assert params["ssh_config"] is None
     assert params["host"] == "test.example.com"
     assert params["username"] == "testuser"
     assert params["password"] == "testpass"
