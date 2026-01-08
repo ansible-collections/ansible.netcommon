@@ -326,7 +326,6 @@ class Connection(NetworkConnectionBase):
         self.queue_message("log", "ssh connection done, starting ncclient")
 
         allow_agent = True
-        use_libssh = self.get_option("use_libssh")
 
         if self._play_context.password is not None:
             allow_agent = False
