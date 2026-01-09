@@ -12,10 +12,10 @@
   ignore_errors: true
 
 # These tests are influence of https://github.com/ansible-collections/ansible.netcommon/pull/743 PR
-# with ansible-core 2,19+ the src attribute of config modules are impacted, the above mentioned PR 
+# with ansible-core 2,19+ the src attribute of config modules are impacted, the above mentioned PR
 # adds backward compatibility to the src attribute to consider config files and also process jinja2 templates
-# when mentioned. Also note that this backward compatibilty is added with a functionality deprecation 
-# as of January 2028, src would stop processing templates and only consider configuration files 
+# when mentioned. Also note that this backward compatibilty is added with a functionality deprecation
+# as of January 2028, src would stop processing templates and only consider configuration files
 
 - name: Apply configuration from file using inline lookup - must fail
   register: result
