@@ -36,7 +36,7 @@
   ansible.builtin.template:
     src: basic/config_src_recommended.j2
     dest: /tmp/config_src_recommended.j2
-    mode: '0644'
+    mode: "0644"
 
 - name: Apply configuration from file
   register: result
