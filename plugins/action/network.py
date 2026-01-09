@@ -197,7 +197,7 @@ class ActionModule(_ActionModule):
         display.deprecated(
             msg="Direct processing of templates via src is deprecated.",
             help_text="Use `ansible.builtin.templates` instead.",
-            date="01/01/2028",
+            date="01.01.2028",
             collection_name="ansible.netcommon",
         )
         # Ansible 2.19+ requires marking template data as trusted for Jinja2 processing
