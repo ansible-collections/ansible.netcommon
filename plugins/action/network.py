@@ -198,7 +198,7 @@ class ActionModule(_ActionModule):
             msg="Direct processing of templates via src is deprecated.",
             help_text="Use `ansible.builtin.templates` instead.",
             date="2028-01-01",
-            collection_name="ansible.netcommon",
+            collection_name=self._get_collection_name(),
         )
         # Ansible 2.19+ requires marking template data as trusted for Jinja2 processing
         # In earlier versions, template data is processed directly
@@ -206,6 +206,12 @@ class ActionModule(_ActionModule):
             template_data = trust_as_template(template_data)
 
         self._task.args["src"] = self._templar.template(template_data)
+
+    def _get_collection_name(self):
+        if self.ansible_name:
+            return ".".join(self.ansible_name.split(".")[:2])
+        else:
+            return "ansible.netcommon"
 
     def _get_network_os(self, task_vars):
         if "network_os" in self._task.args and self._task.args["network_os"]:

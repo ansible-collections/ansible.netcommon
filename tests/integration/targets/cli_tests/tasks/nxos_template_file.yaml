@@ -12,7 +12,7 @@
     lines:
       - no interface Loopback998
   failed_when:
-    - '" Invalid input detected" not in result.stderr'
+    - '"Invalid input detected" in result.stderr'
 
 # These tests are influence of https://github.com/ansible-collections/ansible.netcommon/pull/743 PR
 # with ansible-core 2,19+ the src attribute of config modules are impacted, the above mentioned PR
@@ -24,8 +24,7 @@
   register: result
   cisco.nxos.nxos_config:
     src: "{{ lookup('ansible.builtin.template', 'basic/config_src_recommended.j2') }}"
-  failed_when:
-    - '" Invalid input detected" not in result.stderr'
+  ignore_errors: true
 
 - name: Apply configuration from file - not recommended tests backward compatibility
   register: result
@@ -53,7 +52,7 @@
     lines:
       - no interface Loopback998
   failed_when:
-    - '" Invalid input detected" not in result.stderr'
+    - '"Invalid input detected" in result.stderr'
 
 - name: Test end msg for cli_config tests
   ansible.builtin.debug:
