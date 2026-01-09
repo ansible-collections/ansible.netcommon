@@ -182,9 +182,10 @@ def test_netconf_connect_with_libssh_enabled(mock_netconf_loader):
     assert call_args is not None
     params = call_args[1]  # keyword arguments
 
+    # When use_libssh is True, only use_libssh should be set
     assert params["use_libssh"] is True
-    assert params["look_for_keys"] is True
-    assert params["ssh_config"] is None
+    assert "look_for_keys" not in params
+    assert "ssh_config" not in params
     assert params["host"] == "test.example.com"
     assert params["username"] == "testuser"
     assert params["password"] == "testpass"
@@ -236,7 +237,8 @@ def test_netconf_connect_with_libssh_disabled(mock_netconf_loader):
     assert call_args is not None
     params = call_args[1]  # keyword arguments
 
-    assert params["use_libssh"] is False
+    # When use_libssh is False, look_for_keys and ssh_config should be set
+    assert "use_libssh" not in params
     assert params["look_for_keys"] is True
     assert params["ssh_config"] is None
     assert params["host"] == "test.example.com"
