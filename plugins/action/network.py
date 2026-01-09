@@ -194,7 +194,11 @@ class ActionModule(_ActionModule):
                         searchpath.append(role._role_path)
         searchpath.append(os.path.dirname(source))
         self._templar.environment.loader.searchpath = searchpath
-
+        display.deprecated(
+            msg="Direct processing of templates via src is deprecated.",
+            help_text="Use `ansible.builtin.templates` instead.",
+            date="01/01/2028",
+        )
         # Ansible 2.19+ requires marking template data as trusted for Jinja2 processing
         # In earlier versions, template data is processed directly
         if HAS_TRUST_AS_TEMPLATE:
