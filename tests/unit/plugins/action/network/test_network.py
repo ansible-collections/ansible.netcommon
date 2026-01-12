@@ -142,3 +142,265 @@ def test_backup_options_error(plugin):
             existing_file.name
         )
     )
+
+
+def test_src_option_absolute_path(plugin, tmp_path):
+    """Test _handle_src_option with absolute path"""
+    src_file = tmp_path / "config.txt"
+    src_file.write_text("hostname router1")
+
+    # Mock templar to return data as-is
+    plugin._templar.template = lambda data: data
+
+    plugin._task.args = {"src": str(src_file)}
+    plugin._handle_src_option()
+
+    assert plugin._task.args["src"] == "hostname router1"
+    assert os.path.dirname(str(src_file)) in plugin._templar.environment.loader.searchpath
+
+
+def test_src_option_relative_path_in_templates(plugin, tmp_path, monkeypatch):
+    """Test _handle_src_option with relative path in templates directory"""
+    working_dir = tmp_path / "playbook"
+    templates_dir = working_dir / "templates"
+    templates_dir.mkdir(parents=True)
+    src_file = templates_dir / "config.j2"
+    src_file.write_text("hostname router1")
+
+    monkeypatch.setattr(plugin._loader, "get_basedir", lambda: str(working_dir))
+
+    def mock_path_dwim_relative(path, *args):
+        # Handle both 2-arg (path, filename) and 3-arg (path, dirname, filename) calls
+        if len(args) == 1:
+            # 2-arg call: path_dwim_relative(path, filename)
+            filename = args[0]
+            return str(working_dir / filename)
+        elif len(args) == 2:
+            # 3-arg call: path_dwim_relative(path, dirname, filename)
+            dirname, filename = args
+            if dirname == "templates":
+                return str(templates_dir / filename)
+            return None
+        return None
+
+    monkeypatch.setattr(plugin._loader, "path_dwim_relative", mock_path_dwim_relative)
+    # Mock templar to return data as-is
+    plugin._templar.template = lambda data: data
+
+    plugin._task.args = {"src": "config.j2"}
+    plugin._handle_src_option()
+
+    assert plugin._task.args["src"] == "hostname router1"
+    assert str(templates_dir) in plugin._templar.environment.loader.searchpath
+
+
+def test_src_option_relative_path_in_working_dir(plugin, tmp_path, monkeypatch):
+    """Test _handle_src_option with relative path in working directory"""
+    working_dir = tmp_path / "playbook"
+    working_dir.mkdir(parents=True)
+    src_file = working_dir / "config.txt"
+    src_file.write_text("hostname router1")
+
+    monkeypatch.setattr(plugin._loader, "get_basedir", lambda: str(working_dir))
+
+    def mock_path_dwim_relative(path, *args):
+        # Handle both 2-arg (path, filename) and 3-arg (path, dirname, filename) calls
+        if len(args) == 1:
+            # 2-arg call: path_dwim_relative(path, filename)
+            filename = args[0]
+            return str(working_dir / filename)
+        elif len(args) == 2:
+            # 3-arg call: path_dwim_relative(path, dirname, filename)
+            dirname, filename = args
+            if dirname == "":
+                return str(working_dir / filename)
+            return None
+        return None
+
+    monkeypatch.setattr(plugin._loader, "path_dwim_relative", mock_path_dwim_relative)
+    # Mock templar to return data as-is
+    plugin._templar.template = lambda data: data
+
+    plugin._task.args = {"src": "config.txt"}
+    plugin._handle_src_option()
+
+    assert plugin._task.args["src"] == "hostname router1"
+    assert str(working_dir) in plugin._templar.environment.loader.searchpath
+
+
+def test_src_option_with_role_path(plugin, tmp_path, monkeypatch):
+    """Test _handle_src_option with role path"""
+    role_path = tmp_path / "roles" / "test_role"
+    role_path.mkdir(parents=True)
+    src_file = role_path / "config.j2"
+    src_file.write_text("hostname router1")
+
+    plugin._task._role = MagicMock(Role)
+    plugin._task._role._role_path = str(role_path)
+
+    monkeypatch.setattr(plugin._loader, "get_basedir", lambda: str(tmp_path))
+
+    def mock_path_dwim_relative(path, *args):
+        # Handle both 2-arg (path, filename) and 3-arg (path, dirname, filename) calls
+        if len(args) == 1:
+            # 2-arg call: path_dwim_relative(path, filename)
+            filename = args[0]
+            return str(role_path / filename)
+        elif len(args) == 2:
+            # 3-arg call: path_dwim_relative(path, dirname, filename)
+            dirname, filename = args
+            if dirname == "templates":
+                # Return None so it falls through to 2-arg call
+                return None
+            return str(role_path / filename)
+        return None
+
+    monkeypatch.setattr(plugin._loader, "path_dwim_relative", mock_path_dwim_relative)
+    # Mock templar to return data as-is
+    plugin._templar.template = lambda data: data
+
+    plugin._task.args = {"src": "config.j2"}
+    plugin._handle_src_option()
+
+    assert str(role_path) in plugin._templar.environment.loader.searchpath
+    assert plugin._templar.environment.loader.searchpath[0] == str(role_path)
+    assert plugin._templar.environment.loader.searchpath[1] == str(role_path)
+
+
+def test_src_option_file_not_found(plugin, tmp_path, monkeypatch):
+    """Test _handle_src_option raises error when file not found"""
+    working_dir = tmp_path / "playbook"
+    working_dir.mkdir(parents=True)
+
+    monkeypatch.setattr(plugin._loader, "get_basedir", lambda: str(working_dir))
+
+    def mock_path_dwim_relative(path, *args):
+        # Handle both 2-arg (path, filename) and 3-arg (path, dirname, filename) calls
+        if len(args) == 1:
+            # 2-arg call: path_dwim_relative(path, filename)
+            filename = args[0]
+            return str(working_dir / "nonexistent.txt")
+        elif len(args) == 2:
+            # 3-arg call: path_dwim_relative(path, dirname, filename)
+            dirname, filename = args
+            return str(working_dir / "nonexistent.txt")
+        return None
+
+    monkeypatch.setattr(plugin._loader, "path_dwim_relative", mock_path_dwim_relative)
+
+    plugin._task.args = {"src": "nonexistent.txt"}
+
+    with pytest.raises(AnsibleError, match="path specified in src not found"):
+        plugin._handle_src_option()
+
+
+def test_src_option_io_error(plugin, tmp_path, monkeypatch):
+    """Test _handle_src_option handles IO errors when reading file"""
+    src_file = tmp_path / "config.txt"
+    src_file.write_text("hostname router1")
+
+    plugin._task.args = {"src": str(src_file)}
+
+    # Mock open to raise IOError
+    def mock_open(*args, **kwargs):
+        raise IOError(13, "Permission denied")
+
+    monkeypatch.setattr("builtins.open", mock_open)
+
+    with pytest.raises(AnsibleError, match="unable to load src file"):
+        plugin._handle_src_option()
+
+
+def test_src_option_template_processing(plugin, tmp_path):
+    """Test _handle_src_option processes Jinja2 templates
+
+    NOTE: This test will fail when template processing is removed (deprecated as of 2028-01-01).
+    The functionality of processing Jinja2 templates directly via the `src` option is deprecated
+    in favor of using `ansible.builtin.template`. When the deprecation is removed, this test
+    should be updated or removed to reflect that templates are no longer processed.
+    """
+    src_file = tmp_path / "config.j2"
+    src_file.write_text("hostname {{ inventory_hostname }}")
+
+    plugin._task.args = {"src": str(src_file)}
+
+    # Mock templar to return processed template
+    def mock_template(data):
+        return data.replace("{{ inventory_hostname }}", "router1")
+
+    plugin._templar.template = mock_template
+
+    plugin._handle_src_option()
+
+    assert plugin._task.args["src"] == "hostname router1"
+
+
+def test_src_option_searchpath_order(plugin, tmp_path, monkeypatch):
+    """Test _handle_src_option sets correct searchpath order"""
+    working_dir = tmp_path / "playbook"
+    role_path = tmp_path / "roles" / "test_role"
+    src_file = role_path / "config.j2"
+    src_file.parent.mkdir(parents=True)
+    src_file.write_text("hostname router1")
+
+    plugin._task._role = MagicMock(Role)
+    plugin._task._role._role_path = str(role_path)
+
+    monkeypatch.setattr(plugin._loader, "get_basedir", lambda: str(working_dir))
+
+    def mock_path_dwim_relative(path, *args):
+        # Handle both 2-arg (path, filename) and 3-arg (path, dirname, filename) calls
+        if len(args) == 1:
+            # 2-arg call: path_dwim_relative(path, filename)
+            return str(src_file)
+        elif len(args) == 2:
+            # 3-arg call: path_dwim_relative(path, dirname, filename)
+            return str(src_file)
+        return None
+
+    monkeypatch.setattr(plugin._loader, "path_dwim_relative", mock_path_dwim_relative)
+    # Mock templar to return data as-is
+    plugin._templar.template = lambda data: data
+
+    plugin._task.args = {"src": "config.j2"}
+    plugin._handle_src_option()
+
+    searchpath = plugin._templar.environment.loader.searchpath
+    # Should be: [working_path, role_path, dirname(source)]
+    assert searchpath[0] == str(role_path)  # working_path when role exists
+    assert searchpath[1] == str(role_path)  # self_role_path
+    assert searchpath[-1] == str(role_path)  # dirname(source)
+
+
+def test_src_option_without_role(plugin, tmp_path, monkeypatch):
+    """Test _handle_src_option without role path"""
+    working_dir = tmp_path / "playbook"
+    working_dir.mkdir(parents=True)
+    src_file = working_dir / "config.j2"
+    src_file.write_text("hostname router1")
+
+    plugin._task._role = None
+
+    monkeypatch.setattr(plugin._loader, "get_basedir", lambda: str(working_dir))
+
+    def mock_path_dwim_relative(path, *args):
+        # Handle both 2-arg (path, filename) and 3-arg (path, dirname, filename) calls
+        if len(args) == 1:
+            # 2-arg call: path_dwim_relative(path, filename)
+            return str(src_file)
+        elif len(args) == 2:
+            # 3-arg call: path_dwim_relative(path, dirname, filename)
+            return str(src_file)
+        return None
+
+    monkeypatch.setattr(plugin._loader, "path_dwim_relative", mock_path_dwim_relative)
+    # Mock templar to return data as-is
+    plugin._templar.template = lambda data: data
+
+    plugin._task.args = {"src": "config.j2"}
+    plugin._handle_src_option()
+
+    searchpath = plugin._templar.environment.loader.searchpath
+    # Without role, searchpath should be: [working_path, dirname(source)]
+    assert searchpath[0] == str(working_dir)
+    assert searchpath[-1] == str(working_dir)
