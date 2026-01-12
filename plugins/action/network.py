@@ -20,6 +20,15 @@ from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
 
 
+# Ansible 2.19+ requires trust_as_template for Jinja2 processing
+try:
+    from ansible.template import trust_as_template
+
+    HAS_TRUST_AS_TEMPLATE = True
+except ImportError:
+    HAS_TRUST_AS_TEMPLATE = False
+
+
 display = Display()
 
 DEXEC_PREFIX = "ANSIBLE_NETWORK_IMPORT_MODULES:"
@@ -153,7 +162,7 @@ class ActionModule(_ActionModule):
         src = self._task.args.get("src")
         working_path = self._get_working_path()
 
-        if os.path.isabs(src) or urlsplit("src").scheme:
+        if os.path.isabs(src) or urlsplit(src).scheme:
             source = src
         else:
             source = self._loader.path_dwim_relative(working_path, "templates", src)
@@ -185,6 +194,17 @@ class ActionModule(_ActionModule):
                         searchpath.append(role._role_path)
         searchpath.append(os.path.dirname(source))
         self._templar.environment.loader.searchpath = searchpath
+        # help_text="Use `ansible.builtin.template` instead.", supported after 2.18 update as per support
+        display.deprecated(
+            msg="Direct processing of templates via `src` is deprecated, use `ansible.builtin.template` instead.",
+            date="2028-01-01",
+            collection_name="ansible.netcommon",
+        )
+        # Ansible 2.19+ requires marking template data as trusted for Jinja2 processing
+        # In earlier versions, template data is processed directly
+        if HAS_TRUST_AS_TEMPLATE:
+            template_data = trust_as_template(template_data)
+
         self._task.args["src"] = self._templar.template(template_data)
 
     def _get_network_os(self, task_vars):

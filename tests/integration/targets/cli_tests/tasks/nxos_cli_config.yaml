@@ -6,3 +6,12 @@
     config: |
       hostname foo
       feature nxapi
+
+- name: Apply configuration from file using inline lookup
+  ansible.netcommon.cli_config:
+    config: "{{ lookup('ansible.builtin.template', 'basic/config_src_recommended.j2') }}"
+
+- name: Remove Loopback998
+  ansible.netcommon.cli_config:
+    config: |
+      no interface Loopback998
