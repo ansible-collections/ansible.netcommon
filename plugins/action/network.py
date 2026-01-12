@@ -194,9 +194,9 @@ class ActionModule(_ActionModule):
                         searchpath.append(role._role_path)
         searchpath.append(os.path.dirname(source))
         self._templar.environment.loader.searchpath = searchpath
+        # help_text="Use `ansible.builtin.template` instead.", supported after 2.18 update as per support
         display.deprecated(
-            msg="Direct processing of templates via `src` is deprecated.",
-            help_text="Use `ansible.builtin.template` instead.",
+            msg="Direct processing of templates via `src` is deprecated, use `ansible.builtin.template` instead.",
             date="2028-01-01",
             collection_name="ansible.netcommon",
         )
