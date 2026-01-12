@@ -162,7 +162,7 @@ class ActionModule(_ActionModule):
         src = self._task.args.get("src")
         working_path = self._get_working_path()
 
-        if os.path.isabs(src) or urlsplit("src").scheme:
+        if os.path.isabs(src) or urlsplit(src).scheme:
             source = src
         else:
             source = self._loader.path_dwim_relative(working_path, "templates", src)

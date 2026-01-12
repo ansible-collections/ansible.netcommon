@@ -404,3 +404,274 @@ def test_src_option_without_role(plugin, tmp_path, monkeypatch):
     # Without role, searchpath should be: [working_path, dirname(source)]
     assert searchpath[0] == str(working_dir)
     assert searchpath[-1] == str(working_dir)
+
+
+def test_get_network_os_from_task_args(plugin):
+    """Test _get_network_os gets network_os from task args"""
+    plugin._task.args = {"network_os": "ios"}
+    task_vars = {}
+    network_os = plugin._get_network_os(task_vars)
+    assert network_os == "ios"
+
+
+def test_get_network_os_from_play_context(plugin):
+    """Test _get_network_os gets network_os from play context"""
+    plugin._task.args = {}
+    plugin._play_context.network_os = "eos"
+    task_vars = {}
+    network_os = plugin._get_network_os(task_vars)
+    assert network_os == "eos"
+
+
+def test_get_network_os_from_facts(plugin):
+    """Test _get_network_os gets network_os from ansible_facts"""
+    plugin._task.args = {}
+    plugin._play_context.network_os = None
+    task_vars = {"ansible_facts": {"network_os": "nxos"}}
+    network_os = plugin._get_network_os(task_vars)
+    assert network_os == "nxos"
+
+
+def test_get_network_os_not_found(plugin):
+    """Test _get_network_os raises error when network_os not found"""
+    plugin._task.args = {}
+    plugin._play_context.network_os = None
+    task_vars = {}
+    with pytest.raises(AnsibleError, match="ansible_network_os must be specified"):
+        plugin._get_network_os(task_vars)
+
+
+def test_get_network_os_prefers_task_args(plugin):
+    """Test _get_network_os prefers task args over other sources"""
+    plugin._task.args = {"network_os": "ios"}
+    plugin._play_context.network_os = "eos"
+    task_vars = {"ansible_facts": {"network_os": "nxos"}}
+    network_os = plugin._get_network_os(task_vars)
+    assert network_os == "ios"
+
+
+def test_check_dexec_eligibility_enabled(plugin):
+    """Test _check_dexec_eligibility when dexec is enabled"""
+    plugin.get_connection_option = MagicMock(return_value=True)
+    plugin._task.async_val = None
+    result = plugin._check_dexec_eligibility("test_host")
+    assert result is True
+
+
+def test_check_dexec_eligibility_disabled(plugin):
+    """Test _check_dexec_eligibility when dexec is disabled"""
+    plugin.get_connection_option = MagicMock(return_value=False)
+    result = plugin._check_dexec_eligibility("test_host")
+    assert result is False
+
+
+def test_check_dexec_eligibility_disabled_for_async(plugin):
+    """Test _check_dexec_eligibility is disabled for async tasks"""
+    plugin.get_connection_option = MagicMock(return_value=True)
+    plugin._task.async_val = 10  # async value set
+    result = plugin._check_dexec_eligibility("test_host")
+    assert result is False
+
+
+def test_sanitize_contents_no_filters(plugin):
+    """Test _sanitize_contents with no filters"""
+    content = "line1\nline2\nline3"
+    result = plugin._sanitize_contents(content, [])
+    assert result == "line1\nline2\nline3"
+
+
+def test_sanitize_contents_with_filters(plugin):
+    """Test _sanitize_contents with regex filters"""
+    content = "line1\n! comment line\nline2\n! another comment\nline3"
+    filters = [r"!.*"]
+    result = plugin._sanitize_contents(content, filters)
+    assert "comment" not in result
+    assert "line1" in result
+    assert "line2" in result
+    assert "line3" in result
+
+
+def test_sanitize_contents_multiple_filters(plugin):
+    """Test _sanitize_contents with multiple regex filters"""
+    content = "line1\n! comment\nline2\n# another comment\nline3"
+    filters = [r"!.*", r"#.*"]
+    result = plugin._sanitize_contents(content, filters)
+    assert "comment" not in result
+    assert "line1" in result
+    assert "line2" in result
+    assert "line3" in result
+
+
+def test_sanitize_contents_strips_whitespace(plugin):
+    """Test _sanitize_contents strips leading/trailing whitespace"""
+    content = "  line1\nline2  \n  "
+    filters = []
+    result = plugin._sanitize_contents(content, filters)
+    assert result == "line1\nline2"
+
+
+def test_backup_option_with_non_config_regexes(plugin, tmp_path):
+    """Test _handle_backup_option with non_config_lines regexes"""
+    backup_dir = tmp_path / "backup"
+    backup_dir.mkdir()
+    src_file = backup_dir / "backup_file"
+    src_file.write_text("config line\n! comment line\nanother config")
+
+    plugin._connection.cliconf = MagicMock()
+    plugin._connection.cliconf.get_option = MagicMock(return_value=[r"!.*"])
+
+    result = {"__backup__": "config line\n! comment line\nanother config"}
+    task_vars = {"inventory_hostname": "test_host"}
+
+    try:
+        plugin._handle_backup_option(
+            result, task_vars, {"dir_path": str(backup_dir), "filename": "backup_file"}
+        )
+        assert not result.get("failed")
+
+        with open(result["backup_path"]) as f:
+            content = f.read()
+            assert "comment" not in content
+            assert "config line" in content
+            assert "another config" in content
+    finally:
+        if os.path.exists(result["backup_path"]):
+            os.remove(result["backup_path"])
+
+
+def test_backup_option_non_config_regexes_attribute_error(plugin, tmp_path):
+    """Test _handle_backup_option handles AttributeError when getting non_config_lines"""
+    backup_dir = tmp_path / "backup"
+    backup_dir.mkdir()
+
+    plugin._connection.cliconf = MagicMock()
+    plugin._connection.cliconf.get_option = MagicMock(side_effect=AttributeError("No attribute"))
+
+    result = {"__backup__": "config content"}
+    task_vars = {"inventory_hostname": "test_host"}
+
+    try:
+        plugin._handle_backup_option(
+            result, task_vars, {"dir_path": str(backup_dir), "filename": "backup_file"}
+        )
+        assert not result.get("failed")
+    finally:
+        if os.path.exists(result["backup_path"]):
+            os.remove(result["backup_path"])
+
+
+def test_backup_option_non_config_regexes_key_error(plugin, tmp_path):
+    """Test _handle_backup_option handles KeyError when getting non_config_lines"""
+    backup_dir = tmp_path / "backup"
+    backup_dir.mkdir()
+
+    plugin._connection.cliconf = MagicMock()
+    plugin._connection.cliconf.get_option = MagicMock(side_effect=KeyError("key"))
+
+    result = {"__backup__": "config content"}
+    task_vars = {"inventory_hostname": "test_host"}
+
+    try:
+        plugin._handle_backup_option(
+            result, task_vars, {"dir_path": str(backup_dir), "filename": "backup_file"}
+        )
+        assert not result.get("failed")
+    finally:
+        if os.path.exists(result["backup_path"]):
+            os.remove(result["backup_path"])
+
+
+def test_backup_option_checksum_idempotency(plugin, tmp_path):
+    """Test _handle_backup_option doesn't overwrite if checksum matches"""
+    backup_dir = tmp_path / "backup"
+    backup_dir.mkdir()
+    backup_file = backup_dir / "backup_file"
+    content = "config content"
+    backup_file.write_text(content)
+
+    result = {"__backup__": content}
+    task_vars = {"inventory_hostname": "test_host"}
+
+    plugin._handle_backup_option(
+        result, task_vars, {"dir_path": str(backup_dir), "filename": "backup_file"}
+    )
+    assert not result.get("failed")
+    assert result["changed"] is False
+
+    # Verify file content unchanged
+    with open(backup_file) as f:
+        assert f.read() == content
+
+
+def test_backup_option_filename_and_shortname(plugin, tmp_path):
+    """Test _handle_backup_option sets filename and shortname when not provided"""
+    backup_dir = tmp_path / "backup"
+    backup_dir.mkdir()
+
+    result = {"__backup__": "config content"}
+    task_vars = {"inventory_hostname": "test_host"}
+
+    try:
+        plugin._handle_backup_option(result, task_vars, None)
+        assert not result.get("failed")
+        assert "filename" in result
+        assert "shortname" in result
+        assert result["filename"] == os.path.basename(result["backup_path"])
+        assert result["shortname"] == os.path.splitext(result["backup_path"])[0]
+    finally:
+        if os.path.exists(result["backup_path"]):
+            os.remove(result["backup_path"])
+
+
+def test_backup_option_no_filename_shortname_when_provided(plugin, tmp_path):
+    """Test _handle_backup_option doesn't set filename/shortname when filename provided"""
+    backup_dir = tmp_path / "backup"
+    backup_dir.mkdir()
+
+    result = {"__backup__": "config content"}
+    task_vars = {"inventory_hostname": "test_host"}
+
+    try:
+        plugin._handle_backup_option(result, task_vars, {"filename": "custom_backup"})
+        assert not result.get("failed")
+        # filename and shortname should not be set when custom filename provided
+        assert "filename" not in result or result.get("filename") != "custom_backup"
+        assert "shortname" not in result
+    finally:
+        if os.path.exists(result["backup_path"]):
+            os.remove(result["backup_path"])
+
+
+def test_get_working_path_with_role(plugin):
+    """Test _get_working_path returns role path when role exists"""
+    role_path = "/path/to/role"
+    plugin._task._role = MagicMock(Role)
+    plugin._task._role._role_path = role_path
+    plugin._loader.get_basedir = MagicMock(return_value="/path/to/playbook")
+
+    result = plugin._get_working_path()
+    assert result == role_path
+
+
+def test_get_working_path_without_role(plugin):
+    """Test _get_working_path returns loader basedir when no role"""
+    plugin._task._role = None
+    basedir = "/path/to/playbook"
+    plugin._loader.get_basedir = MagicMock(return_value=basedir)
+
+    result = plugin._get_working_path()
+    assert result == basedir
+
+
+def test_src_option_url_scheme(plugin, tmp_path, monkeypatch):
+    """Test _handle_src_option handles URL scheme"""
+    src_file = tmp_path / "config.txt"
+    src_file.write_text("hostname router1")
+
+    plugin._task.args = {"src": str(src_file)}
+    plugin._templar.template = lambda data: data
+    monkeypatch.setattr("os.path.isabs", lambda x: False)
+    plugin._loader.path_dwim_relative = MagicMock(return_value=str(src_file))
+
+    plugin._handle_src_option()
+    assert plugin._task.args["src"] == "hostname router1"
