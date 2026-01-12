@@ -675,3 +675,292 @@ def test_src_option_url_scheme(plugin, tmp_path, monkeypatch):
 
     plugin._handle_src_option()
     assert plugin._task.args["src"] == "hostname router1"
+
+
+def test_exec_module_with_raw_result(plugin):
+    """Test _exec_module when module has _raw_result (2.19.1+)"""
+    mock_module = MagicMock()
+    mock_module._raw_result = {"changed": True, "msg": "Success"}
+    mock_module.main = MagicMock()
+
+    result = plugin._exec_module(mock_module)
+
+    assert result == {"changed": True, "msg": "Success"}
+    mock_module.main.assert_called_once()
+
+
+def test_exec_module_without_raw_result(plugin):
+    """Test _exec_module when module doesn't have _raw_result (uses stdout/stderr)"""
+    import json
+
+    mock_module = MagicMock()
+    del mock_module._raw_result  # Ensure it doesn't exist
+    mock_result = {"changed": False, "msg": "No changes"}
+
+    def mock_main():
+        # Simulate module writing JSON to stdout
+        print(json.dumps(mock_result))
+
+    mock_module.main = mock_main
+    plugin._parse_returned_data = MagicMock(return_value=mock_result)
+
+    result = plugin._exec_module(mock_module)
+
+    assert result == mock_result
+    plugin._parse_returned_data.assert_called_once()
+
+
+def test_exec_module_handles_system_exit(plugin):
+    """Test _exec_module handles SystemExit gracefully"""
+    mock_module = MagicMock()
+    mock_module._raw_result = {"changed": False}
+    mock_module.main = MagicMock(side_effect=SystemExit(0))
+
+    result = plugin._exec_module(mock_module)
+
+    assert result == {"changed": False}
+
+
+def test_exec_module_generates_stdout_lines(plugin):
+    """Test _exec_module generates stdout_lines when missing"""
+    import json
+
+    mock_module = MagicMock()
+    del mock_module._raw_result
+    mock_result = {"stdout": "line1\nline2\nline3"}
+
+    def mock_main():
+        print(json.dumps(mock_result))
+
+    mock_module.main = mock_main
+    plugin._parse_returned_data = MagicMock(return_value=mock_result)
+
+    result = plugin._exec_module(mock_module)
+
+    assert "stdout_lines" in result
+    assert result["stdout_lines"] == ["line1", "line2", "line3"]
+
+
+def test_exec_module_generates_stderr_lines(plugin):
+    """Test _exec_module generates stderr_lines when missing"""
+    import json
+
+    mock_module = MagicMock()
+    del mock_module._raw_result
+    mock_result = {"stderr": "error1\nerror2"}
+
+    def mock_main():
+        print(json.dumps(mock_result))
+
+    mock_module.main = mock_main
+    plugin._parse_returned_data = MagicMock(return_value=mock_result)
+
+    result = plugin._exec_module(mock_module)
+
+    assert "stderr_lines" in result
+    assert result["stderr_lines"] == ["error1", "error2"]
+
+
+def test_exec_module_handles_false_stdout(plugin):
+    """Test _exec_module handles False stdout value"""
+    import json
+
+    mock_module = MagicMock()
+    del mock_module._raw_result
+    mock_result = {"stdout": False}
+
+    def mock_main():
+        print(json.dumps(mock_result))
+
+    mock_module.main = mock_main
+    plugin._parse_returned_data = MagicMock(return_value=mock_result)
+
+    result = plugin._exec_module(mock_module)
+
+    assert "stdout_lines" in result
+    assert result["stdout_lines"] == []
+
+
+def test_run_with_dexec_eligible_and_ansiblemodule(plugin, monkeypatch):
+    """Test run() when dexec is eligible and module has AnsibleModule"""
+    task_vars = {"ansible_host": "test_host"}
+    plugin._task.args = {}
+    plugin._config_module = False
+
+    # Mock dexec eligibility
+    plugin._check_dexec_eligibility = MagicMock(return_value=True)
+
+    # Mock module finding and loading
+    mock_module = MagicMock()
+    mock_module.AnsibleModule = MagicMock()
+    plugin._find_load_module = MagicMock(return_value=("/path/to/module.py", mock_module))
+
+    # Mock patching and execution
+    plugin._patch_update_module = MagicMock()
+    plugin._exec_module = MagicMock(return_value={"changed": True})
+
+    # Mock super().run() to ensure it's not called
+    super_run = MagicMock(return_value={"changed": False})
+    monkeypatch.setattr(plugin.__class__.__bases__[0], "run", super_run)
+
+    result = plugin.run(task_vars=task_vars)
+
+    assert result == {"changed": True}
+    plugin._check_dexec_eligibility.assert_called_once_with("test_host")
+    plugin._find_load_module.assert_called_once()
+    plugin._patch_update_module.assert_called_once_with(mock_module, task_vars, "test_host")
+    plugin._exec_module.assert_called_once_with(mock_module)
+    super_run.assert_not_called()
+
+
+def test_run_with_dexec_eligible_no_ansiblemodule(plugin, monkeypatch):
+    """Test run() when dexec is eligible but module doesn't have AnsibleModule"""
+    task_vars = {"ansible_host": "test_host"}
+    plugin._task.args = {}
+    plugin._config_module = False
+
+    # Mock dexec eligibility
+    plugin._check_dexec_eligibility = MagicMock(return_value=True)
+
+    # Mock module finding - module without AnsibleModule
+    mock_module = MagicMock()
+    del mock_module.AnsibleModule  # Remove AnsibleModule attribute
+    plugin._find_load_module = MagicMock(return_value=("/path/to/module.py", mock_module))
+
+    # Mock super().run() - should be called when dexec falls back
+    super_run = MagicMock(return_value={"changed": False})
+    monkeypatch.setattr(plugin.__class__.__bases__[0], "run", super_run)
+
+    result = plugin.run(task_vars=task_vars)
+
+    assert result == {"changed": False}
+    plugin._find_load_module.assert_called_once()
+    super_run.assert_called_once_with(task_vars=task_vars)
+
+
+def test_run_with_config_module_and_src_error(plugin, monkeypatch):
+    """Test run() handles AnsibleError from _handle_src_option"""
+    task_vars = {"ansible_host": "test_host"}
+    plugin._task.args = {"src": "nonexistent.j2"}
+    plugin._config_module = True
+
+    # Mock _handle_src_option to raise error
+    plugin._handle_src_option = MagicMock(side_effect=AnsibleError("File not found"))
+
+    result = plugin.run(task_vars=task_vars)
+
+    assert result["failed"] is True
+    assert "File not found" in result["msg"]
+
+
+def test_run_with_config_module_backup(plugin, monkeypatch, tmp_path):
+    """Test run() handles backup option for config modules"""
+    task_vars = {"ansible_host": "test_host", "inventory_hostname": "test_host"}
+    plugin._task.args = {"backup": True}
+    plugin._config_module = True
+
+    # Mock dexec not eligible to use normal run
+    plugin._check_dexec_eligibility = MagicMock(return_value=False)
+
+    # Mock super().run() to return result with backup
+    backup_dir = tmp_path / "backup"
+    backup_dir.mkdir()
+    super_run = MagicMock(
+        return_value={"changed": True, "__backup__": "config content", "failed": False}
+    )
+    monkeypatch.setattr(plugin.__class__.__bases__[0], "run", super_run)
+
+    # Mock connection for backup handling
+    plugin._connection = MagicMock()
+    plugin._connection.cliconf = MagicMock()
+    plugin._connection.cliconf.get_option = MagicMock(return_value=[])
+
+    result = plugin.run(task_vars=task_vars)
+
+    assert result["changed"] is True
+    assert "backup_path" in result
+
+
+def test_run_with_config_module_backup_failed(plugin, monkeypatch):
+    """Test run() doesn't handle backup when result has failed"""
+    task_vars = {"ansible_host": "test_host"}
+    plugin._task.args = {"backup": True}
+    plugin._config_module = True
+
+    # Mock dexec not eligible
+    plugin._check_dexec_eligibility = MagicMock(return_value=False)
+
+    # Mock super().run() to return failed result
+    super_run = MagicMock(return_value={"failed": True, "msg": "Error occurred"})
+    monkeypatch.setattr(plugin.__class__.__bases__[0], "run", super_run)
+
+    result = plugin.run(task_vars=task_vars)
+
+    assert result["failed"] is True
+    assert "backup_path" not in result
+
+
+def test_find_load_module_ansible_210(plugin, monkeypatch):
+    """Test _find_load_module with Ansible 2.10+ path"""
+    import importlib
+
+    mock_context = MagicMock()
+    mock_context.plugin_resolved_path = "/path/to/module.py"
+    mock_context.plugin_resolved_name = "ansible_collections.test.module"
+
+    mock_loader = MagicMock()
+    mock_loader.find_plugin_with_context = MagicMock(return_value=mock_context)
+    plugin._shared_loader_obj = MagicMock()
+    plugin._shared_loader_obj.module_loader = mock_loader
+
+    mock_module = MagicMock()
+    monkeypatch.setattr(importlib, "import_module", MagicMock(return_value=mock_module))
+
+    filename, module = plugin._find_load_module()
+
+    assert filename == "/path/to/module.py"
+    assert module == mock_module
+    mock_loader.find_plugin_with_context.assert_called_once_with(
+        plugin._task.action, collection_list=plugin._task.collections
+    )
+
+
+def test_find_load_module_ansible_29(plugin, monkeypatch):
+    """Test _find_load_module with Ansible 2.9 path"""
+    import importlib
+
+    mock_loader = MagicMock()
+    mock_loader.find_plugin_with_context = MagicMock(side_effect=AttributeError("No context"))
+    mock_loader.find_plugin_with_name = MagicMock(
+        return_value=("module.name", "/path/to/module.py")
+    )
+    plugin._shared_loader_obj = MagicMock()
+    plugin._shared_loader_obj.module_loader = mock_loader
+
+    mock_module = MagicMock()
+    monkeypatch.setattr(importlib, "import_module", MagicMock(return_value=mock_module))
+
+    filename, module = plugin._find_load_module()
+
+    assert filename == "/path/to/module.py"
+    assert module == mock_module
+    mock_loader.find_plugin_with_name.assert_called_once_with(
+        plugin._task.action, collection_list=plugin._task.collections
+    )
+
+
+def test_patch_update_module(plugin):
+    """Test _patch_update_module patches module with DirectExecutionModule"""
+    mock_module = MagicMock()
+    task_vars = {"ansible_host": "test_host"}
+    host = "test_host"
+
+    # Mock _update_module_args
+    plugin._update_module_args = MagicMock()
+
+    plugin._patch_update_module(mock_module, task_vars, host)
+
+    assert hasattr(mock_module, "AnsibleModule")
+    plugin._update_module_args.assert_called_once_with(
+        plugin._task.action, plugin._task.args, task_vars
+    )
