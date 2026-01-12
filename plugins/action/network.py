@@ -195,8 +195,8 @@ class ActionModule(_ActionModule):
         searchpath.append(os.path.dirname(source))
         self._templar.environment.loader.searchpath = searchpath
         display.deprecated(
-            msg="Direct processing of templates via src is deprecated.",
-            help_text="Use `ansible.builtin.templates` instead.",
+            msg="Direct processing of templates via `src` is deprecated.",
+            help_text="Use `ansible.builtin.template` instead.",
             date="2028-01-01",
             collection_name="ansible.netcommon",
         )
@@ -206,12 +206,6 @@ class ActionModule(_ActionModule):
             template_data = trust_as_template(template_data)
 
         self._task.args["src"] = self._templar.template(template_data)
-
-    def _get_collection_name(self):
-        if self.ansible_name:
-            return ".".join(self.ansible_name.split(".")[:2])
-        else:
-            return "ansible.netcommon"
 
     def _get_network_os(self, task_vars):
         if "network_os" in self._task.args and self._task.args["network_os"]:
