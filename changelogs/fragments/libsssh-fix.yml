@@ -1,4 +1,4 @@
 ---
 minor_changes:
   - Option to use libssh as transport while using netconf, is added.
-  - which will by default use libssh as transport for ncclient>=0.7.0 via ssh-python
+  - The ssh-python module is needed, which will ensure libssh as transport for netconf operations. When use_libssh is enabled.
