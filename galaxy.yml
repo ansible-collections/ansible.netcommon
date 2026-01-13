@@ -13,4 +13,4 @@ readme: README.md
 repository: https://github.com/ansible-collections/ansible.netcommon
 issues: https://github.com/ansible-collections/ansible.netcommon/issues
 tags: [networking, security, cloud, network_cli, netconf, httpapi, grpc]
-version: 8.2.0
+version: 8.2.1
