@@ -399,9 +399,13 @@ class Connection(NetworkConnectionBase):
             # use_libssh option is only supported with ncclient >= 0.7.0
             if use_libssh:
                 self.queue_message(
-                    "warning",
-                    "ncclient >= 0.7.0 does not support ssh_config file option while using libssh as a transport",
-                )
+                    "vvv",
+                    " ncclient is using LIBSSH as transport for this netconf connection ",
+                    )
+                self.queue_message(
+                    "vvv",
+                    " ncclient >= 0.7.0 does not support ssh_config file option while using libssh as a transport",
+                    )
                 params["use_libssh"] = use_libssh
             else:
                 params["look_for_keys"] = self.get_option("look_for_keys")
