@@ -369,13 +369,13 @@ Parameters
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
+                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
+                                    <li>yes</li>
                         </ul>
                 </td>
                     <td>
                             <div> ini entries:
-                                    <p>[defaults]<br>netconf_libssh = yes</p>
+                                    <p>[defaults]<br>netconf_libssh = no</p>
                             </div>
                                 <div>env:ANSIBLE_NETCONF_LIBSSH</div>
                                 <div>var: ansible_netconf_libssh</div>

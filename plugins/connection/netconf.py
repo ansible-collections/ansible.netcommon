@@ -51,7 +51,7 @@ options:
     type: bool
     description:
     - specifies weather to use libssh for netconf connection or not
-    default: true
+    default: false
     ini:
     - section: defaults
       key: netconf_libssh

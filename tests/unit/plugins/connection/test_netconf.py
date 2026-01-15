@@ -130,11 +130,11 @@ def test_netconf_close():
 
 
 def test_netconf_use_libssh_default():
-    """Test that use_libssh option defaults to True"""
+    """Test that use_libssh option defaults to False"""
     pc = PlayContext()
     conn = connection_loader.get("netconf", pc, "/dev/null")
 
-    assert conn.get_option("use_libssh") is True
+    assert conn.get_option("use_libssh") is False
 
 
 @patch("ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader")
