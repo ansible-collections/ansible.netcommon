@@ -17,9 +17,10 @@ Version added: 1.1.0
 
 Synopsis
 --------
-- Use the ansible-pylibssh python bindings to connect to targets
+- Use libssh python bindings (ansible-pylibssh or ssh-python) to connect to targets
 - The python bindings use libssh C library (https://www.libssh.org/) to connect to targets
 - This plugin borrows a lot of settings from the ssh plugin as they both cover the same protocol.
+- If ansible-pylibssh is not available, the plugin will try to use ssh-python as a fallback.
 
 
 
