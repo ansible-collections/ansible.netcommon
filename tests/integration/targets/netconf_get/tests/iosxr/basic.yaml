@@ -212,7 +212,7 @@
     display: pretty
   vars:
     ansible_connection: ansible.netcommon.netconf
-    ansible_netconf_libssh: false
+    ansible_netconf_libssh: true
   register: result
 - assert:
     that:
