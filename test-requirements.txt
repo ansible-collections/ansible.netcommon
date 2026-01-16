@@ -16,3 +16,5 @@ passlib
 
 # for integration tests
 jxmlease
+ncclient>=0.7.0
+ssh-python
