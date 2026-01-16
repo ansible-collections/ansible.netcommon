@@ -401,12 +401,12 @@ class Connection(NetworkConnectionBase):
                 self.queue_message(
                     "vvv",
                     " ncclient is using LIBSSH as transport for this netconf connection ",
-                    )
+                )
                 if self._ssh_config:
                     self.queue_message(
                         "vvv",
                         " ncclient >= 0.7.0 does not support ssh_config file option while using libssh as a transport",
-                        )
+                    )
                 params["use_libssh"] = use_libssh
             else:
                 params["look_for_keys"] = self.get_option("look_for_keys")
