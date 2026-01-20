@@ -288,8 +288,7 @@ def test_netconf_libssh_ssh_config_warning():
     warning_calls = [
         call
         for call in conn.queue_message.call_args_list
-        if len(call[0]) >= 2
-        and "does not support ssh_config file option" in call[0][1]
+        if len(call[0]) >= 2 and "does not support ssh_config file option" in call[0][1]
     ]
     assert len(warning_calls) == 1, "ssh_config warning should be shown exactly once"
 
@@ -338,8 +337,7 @@ def test_netconf_libssh_look_for_keys_warning():
     warning_calls = [
         call
         for call in conn.queue_message.call_args_list
-        if len(call[0]) >= 2
-        and "does not support look_for_keys option" in call[0][1]
+        if len(call[0]) >= 2 and "does not support look_for_keys option" in call[0][1]
     ]
     assert len(warning_calls) == 1, "look_for_keys warning should be shown exactly once"
 
@@ -388,20 +386,16 @@ def test_netconf_libssh_both_warnings():
     ssh_config_warnings = [
         call
         for call in conn.queue_message.call_args_list
-        if len(call[0]) >= 2
-        and "does not support ssh_config file option" in call[0][1]
+        if len(call[0]) >= 2 and "does not support ssh_config file option" in call[0][1]
     ]
     look_for_keys_warnings = [
         call
         for call in conn.queue_message.call_args_list
-        if len(call[0]) >= 2
-        and "does not support look_for_keys option" in call[0][1]
+        if len(call[0]) >= 2 and "does not support look_for_keys option" in call[0][1]
     ]
 
     assert len(ssh_config_warnings) == 1, "ssh_config warning should be shown exactly once"
-    assert (
-        len(look_for_keys_warnings) == 1
-    ), "look_for_keys warning should be shown exactly once"
+    assert len(look_for_keys_warnings) == 1, "look_for_keys warning should be shown exactly once"
 
 
 def test_netconf_libssh_no_warnings_when_options_not_set():
@@ -448,14 +442,12 @@ def test_netconf_libssh_no_warnings_when_options_not_set():
     ssh_config_warnings = [
         call
         for call in conn.queue_message.call_args_list
-        if len(call[0]) >= 2
-        and "does not support ssh_config file option" in call[0][1]
+        if len(call[0]) >= 2 and "does not support ssh_config file option" in call[0][1]
     ]
     look_for_keys_warnings = [
         call
         for call in conn.queue_message.call_args_list
-        if len(call[0]) >= 2
-        and "does not support look_for_keys option" in call[0][1]
+        if len(call[0]) >= 2 and "does not support look_for_keys option" in call[0][1]
     ]
 
     assert len(ssh_config_warnings) == 0, "No ssh_config warning should be shown"

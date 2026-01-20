@@ -132,6 +132,7 @@ Parameters
                     </td>
                 <td>
                         <div>Enables looking for ssh keys in the usual locations for ssh keys (e.g. :file:`~/.ssh/id_*`).</div>
+                        <div>This option is not supported when <code>use_libssh=True</code>,it will be ignored if <code>use_libssh</code> is enabled</div>
                 </td>
             </tr>
             <tr>
@@ -154,6 +155,7 @@ Parameters
                     </td>
                 <td>
                         <div>This variable is used to enable bastion/jump host with netconf connection. If set to True the bastion/jump host ssh settings should be present in ~/.ssh/config file, alternatively it can be set to custom ssh configuration file path to read the bastion/jump host settings.</div>
+                        <div>This option is not supported when <code>use_libssh=True</code>, it will be ignored if <code>use_libssh</code> is enabled</div>
                 </td>
             </tr>
             <tr>
@@ -381,7 +383,7 @@ Parameters
                                 <div>var: ansible_netconf_libssh</div>
                     </td>
                 <td>
-                        <div>specifies weather to use libssh for netconf connection or not</div>
+                        <div>specifies whether to use libssh for netconf connection or not</div>
                 </td>
             </tr>
     </table>

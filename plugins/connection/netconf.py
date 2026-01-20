@@ -152,7 +152,7 @@ options:
       set to True the bastion/jump host ssh settings should be present in ~/.ssh/config
       file, alternatively it can be set to custom ssh configuration file path to read
       the bastion/jump host settings.
-    - This option is not supported when C(use_libssh=True), it will be ignored if C(use_libssh) is enabled 
+    - This option is not supported when C(use_libssh=True), it will be ignored if C(use_libssh) is enabled
     type: string
     ini:
     - section: netconf_connection
@@ -404,20 +404,20 @@ class Connection(NetworkConnectionBase):
                 self.queue_message(
                     "vvv",
                     "ncclient is using LIBSSH as transport for this netconf connection ",
-                    )
+                )
                 if self._ssh_config:
                     self.queue_message(
                         "warning",
                         "ncclient >= 0.7.0 does not support ssh_config file option while using libssh as a transport",
-                        )
+                    )
                 if look_for_keys:
                     self.queue_message(
                         "warning",
                         "ncclient >= 0.7.0 does not support look_for_keys option while using libssh as a transport",
-                        )
+                    )
 
                 params["use_libssh"] = use_libssh
-                    
+
             else:
                 params["look_for_keys"] = look_for_keys
                 params["ssh_config"] = self._ssh_config
