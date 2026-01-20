@@ -45,8 +45,7 @@ def test_netconf_init():
     assert conn._connected is False
 
 
-@patch("ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader")
-def test_netconf__connect(mock_netconf_loader):
+def test_netconf__connect():
     pc = PlayContext()
     conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
 
@@ -137,8 +136,7 @@ def test_netconf_use_libssh_default():
     assert conn.get_option("use_libssh") is False
 
 
-@patch("ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader")
-def test_netconf_connect_with_libssh_enabled(mock_netconf_loader):
+def test_netconf_connect_with_libssh_enabled():
     """Test _connect() with use_libssh=True sets use_libssh parameter"""
     pc = PlayContext()
     pc.remote_addr = "test.example.com"
@@ -192,8 +190,7 @@ def test_netconf_connect_with_libssh_enabled(mock_netconf_loader):
     assert params["port"] == 830
 
 
-@patch("ansible_collections.ansible.netcommon.plugins.connection.netconf.netconf_loader")
-def test_netconf_connect_with_libssh_disabled(mock_netconf_loader):
+def test_netconf_connect_with_libssh_disabled():
     """Test _connect() with use_libssh=False sets use_libssh parameter to False"""
     pc = PlayContext()
     pc.remote_addr = "test.example.com"
@@ -245,3 +242,221 @@ def test_netconf_connect_with_libssh_disabled(mock_netconf_loader):
     assert params["username"] == "testuser"
     assert params["password"] == "testpass"
     assert params["port"] == 830
+
+
+def test_netconf_libssh_ssh_config_warning():
+    """Test that warning is shown when ssh_config is set with use_libssh=True"""
+    pc = PlayContext()
+    pc.remote_addr = "test.example.com"
+    pc.remote_user = "testuser"
+    pc.password = "testpass"
+    pc.port = 830
+
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+
+    # Mock get_option after connection is created
+    original_get_option = conn.get_option
+
+    def get_option_side_effect(option):
+        options = {
+            "use_libssh": True,
+            "host_key_checking": False,
+            "persistent_connect_timeout": 30,
+            "look_for_keys": False,  # Disabled to test only ssh_config warning
+            "netconf_ssh_config": "/path/to/ssh_config",
+        }
+        if option in options:
+            return options[option]
+        return original_get_option(option)
+
+    conn.get_option = MagicMock(side_effect=get_option_side_effect)
+
+    mock_manager = MagicMock()
+    mock_manager.session_id = "test-session-789"
+    netconf.manager.connect = MagicMock(return_value=mock_manager)
+
+    # Mock queue_message to capture warning messages
+    conn.queue_message = MagicMock()
+
+    rc, out, err = conn._connect()
+
+    # Verify connection was successful
+    assert rc == 0
+    assert conn._connected is True
+
+    # Verify warning message was queued for ssh_config
+    warning_calls = [
+        call
+        for call in conn.queue_message.call_args_list
+        if len(call[0]) >= 2
+        and "does not support ssh_config file option" in call[0][1]
+    ]
+    assert len(warning_calls) == 1, "ssh_config warning should be shown exactly once"
+
+
+def test_netconf_libssh_look_for_keys_warning():
+    """Test that warning is shown when look_for_keys is set with use_libssh=True"""
+    pc = PlayContext()
+    pc.remote_addr = "test.example.com"
+    pc.remote_user = "testuser"
+    pc.password = "testpass"
+    pc.port = 830
+
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+
+    # Mock get_option after connection is created
+    original_get_option = conn.get_option
+
+    def get_option_side_effect(option):
+        options = {
+            "use_libssh": True,
+            "host_key_checking": False,
+            "persistent_connect_timeout": 30,
+            "look_for_keys": True,
+            "netconf_ssh_config": None,  # Not set to test only look_for_keys warning
+        }
+        if option in options:
+            return options[option]
+        return original_get_option(option)
+
+    conn.get_option = MagicMock(side_effect=get_option_side_effect)
+
+    mock_manager = MagicMock()
+    mock_manager.session_id = "test-session-890"
+    netconf.manager.connect = MagicMock(return_value=mock_manager)
+
+    # Mock queue_message to capture warning messages
+    conn.queue_message = MagicMock()
+
+    rc, out, err = conn._connect()
+
+    # Verify connection was successful
+    assert rc == 0
+    assert conn._connected is True
+
+    # Verify warning message was queued for look_for_keys
+    warning_calls = [
+        call
+        for call in conn.queue_message.call_args_list
+        if len(call[0]) >= 2
+        and "does not support look_for_keys option" in call[0][1]
+    ]
+    assert len(warning_calls) == 1, "look_for_keys warning should be shown exactly once"
+
+
+def test_netconf_libssh_both_warnings():
+    """Test that both warnings are shown when ssh_config and look_for_keys are set with use_libssh=True"""
+    pc = PlayContext()
+    pc.remote_addr = "test.example.com"
+    pc.remote_user = "testuser"
+    pc.password = "testpass"
+    pc.port = 830
+
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+
+    # Mock get_option after connection is created
+    original_get_option = conn.get_option
+
+    def get_option_side_effect(option):
+        options = {
+            "use_libssh": True,
+            "host_key_checking": False,
+            "persistent_connect_timeout": 30,
+            "look_for_keys": True,
+            "netconf_ssh_config": "/path/to/ssh_config",
+        }
+        if option in options:
+            return options[option]
+        return original_get_option(option)
+
+    conn.get_option = MagicMock(side_effect=get_option_side_effect)
+
+    mock_manager = MagicMock()
+    mock_manager.session_id = "test-session-901"
+    netconf.manager.connect = MagicMock(return_value=mock_manager)
+
+    # Mock queue_message to capture warning messages
+    conn.queue_message = MagicMock()
+
+    rc, out, err = conn._connect()
+
+    # Verify connection was successful
+    assert rc == 0
+    assert conn._connected is True
+
+    # Verify both warning messages were queued
+    ssh_config_warnings = [
+        call
+        for call in conn.queue_message.call_args_list
+        if len(call[0]) >= 2
+        and "does not support ssh_config file option" in call[0][1]
+    ]
+    look_for_keys_warnings = [
+        call
+        for call in conn.queue_message.call_args_list
+        if len(call[0]) >= 2
+        and "does not support look_for_keys option" in call[0][1]
+    ]
+
+    assert len(ssh_config_warnings) == 1, "ssh_config warning should be shown exactly once"
+    assert (
+        len(look_for_keys_warnings) == 1
+    ), "look_for_keys warning should be shown exactly once"
+
+
+def test_netconf_libssh_no_warnings_when_options_not_set():
+    """Test that no warnings are shown when ssh_config and look_for_keys are not set with use_libssh=True"""
+    pc = PlayContext()
+    pc.remote_addr = "test.example.com"
+    pc.remote_user = "testuser"
+    pc.password = "testpass"
+    pc.port = 830
+
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+
+    # Mock get_option after connection is created
+    original_get_option = conn.get_option
+
+    def get_option_side_effect(option):
+        options = {
+            "use_libssh": True,
+            "host_key_checking": False,
+            "persistent_connect_timeout": 30,
+            "look_for_keys": False,
+            "netconf_ssh_config": None,
+        }
+        if option in options:
+            return options[option]
+        return original_get_option(option)
+
+    conn.get_option = MagicMock(side_effect=get_option_side_effect)
+
+    mock_manager = MagicMock()
+    mock_manager.session_id = "test-session-012"
+    netconf.manager.connect = MagicMock(return_value=mock_manager)
+
+    # Mock queue_message to capture warning messages
+    conn.queue_message = MagicMock()
+
+    rc, out, err = conn._connect()
+
+    # Verify connection was successful
+    assert rc == 0
+    assert conn._connected is True
+
+    # Verify no warnings about ssh_config or look_for_keys
+    ssh_config_warnings = [
+        call
+        for call in conn.queue_message.call_args_list
+        if len(call[0]) >= 2
+        and "does not support ssh_config file option" in call[0][1]
+    ]
+    look_for_keys_warnings = [
+        call
+        for call in conn.queue_message.call_args_list
+        if len(call[0]) >= 2
+        and "does not support look_for_keys option" in call[0][1]
+    ]
+
+    assert len(ssh_config_warnings) == 0, "No ssh_config warning should be shown"
+    assert len(look_for_keys_warnings) == 0, "No look_for_keys warning should be shown"
