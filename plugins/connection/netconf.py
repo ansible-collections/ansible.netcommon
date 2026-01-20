@@ -50,7 +50,7 @@ options:
   use_libssh:
     type: bool
     description:
-    - specifies weather to use libssh for netconf connection or not
+    - specifies whether to use libssh for netconf connection or not
     default: false
     ini:
     - section: defaults
@@ -108,6 +108,7 @@ options:
     default: true
     description:
     - Enables looking for ssh keys in the usual locations for ssh keys (e.g. :file:`~/.ssh/id_*`).
+    - This option is not supported when C(use_libssh=True),it will be ignored if C(use_libssh) is enabled
     env:
     - name: ANSIBLE_PARAMIKO_LOOK_FOR_KEYS
     ini:
@@ -151,6 +152,7 @@ options:
       set to True the bastion/jump host ssh settings should be present in ~/.ssh/config
       file, alternatively it can be set to custom ssh configuration file path to read
       the bastion/jump host settings.
+    - This option is not supported when C(use_libssh=True), it will be ignored if C(use_libssh) is enabled 
     type: string
     ini:
     - section: netconf_connection
@@ -385,6 +387,7 @@ class Connection(NetworkConnectionBase):
             )
 
             use_libssh = self.get_option("use_libssh")
+            look_for_keys = self.get_option("look_for_keys")
             params = dict(
                 host=self._play_context.remote_addr,
                 port=port,
@@ -404,17 +407,19 @@ class Connection(NetworkConnectionBase):
                     )
                 if self._ssh_config:
                     self.queue_message(
-                        "vvv",
+                        "warning",
                         " ncclient >= 0.7.0 does not support ssh_config file option while using libssh as a transport",
                         )
-                if self.get_option("look_for_keys"):
+                if look_for_keys:
                     self.queue_message(
-                        "vvv",
-                        " ncclient >= 0.7.0 does not support look_for_keys option while using libssh as a transport",
+                        "warning",
+                        " ncclient >= 0.7.0 does not support look_for_keys  option while using libssh as a transport",
                         )
+
                 params["use_libssh"] = use_libssh
+                    
             else:
-                params["look_for_keys"] = self.get_option("look_for_keys")
+                params["look_for_keys"] = look_for_keys
                 params["ssh_config"] = self._ssh_config
 
             # sock is only supported by ncclient >= 0.6.10, and will error if
