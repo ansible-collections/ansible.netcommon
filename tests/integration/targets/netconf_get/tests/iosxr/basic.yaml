@@ -206,7 +206,7 @@
       - "{{ result['output']['data']['@xmlns:nc'] == 'urn:ietf:params:xml:ns:netconf:base:1.0' }}"
       - "{{ result['output']['data']['interface-configurations']['interface-configuration'] is defined }}"
 
-- name: Get running configuration and state data with  ansible_netconf_libssh set as false
+- name: Get running configuration and state data with  ansible_netconf_libssh set as true
   ansible.netcommon.netconf_get:
     source: running
     display: pretty
