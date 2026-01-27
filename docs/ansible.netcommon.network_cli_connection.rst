@@ -25,7 +25,7 @@ Requirements
 ------------
 The below requirements are needed on the local Ansible controller node that executes this connection.
 
-- ansible-pylibssh if using *ssh_type=libssh*
+- ansible-pylibssh or ssh-python if using *ssh_type=libssh*
 
 
 Parameters
@@ -472,9 +472,9 @@ Parameters
                     </td>
                 <td>
                         <div>The python package that will be used by the <code>network_cli</code> connection plugin to create a SSH connection to remote host.</div>
-                        <div><em>libssh</em> will use the ansible-pylibssh package, which needs to be installed in order to work.</div>
+                        <div><em>libssh</em> will use the ansible-pylibssh or ssh-python package, which needs to be installed in order to work.</div>
                         <div><em>paramiko</em> will instead use the paramiko package to manage the SSH connection.</div>
-                        <div><em>auto</em> will use ansible-pylibssh if that package is installed, otherwise will fallback to paramiko.</div>
+                        <div><em>auto</em> will use ansible-pylibssh or ssh-python if either package is installed, otherwise will fallback to paramiko.</div>
                 </td>
             </tr>
             <tr>
