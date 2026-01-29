@@ -8,8 +8,8 @@
 """
 The parse_cli_textfsm filter plugin
 """
-from __future__ import absolute_import, division, print_function
 
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -92,7 +92,6 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_cli_textfsm import (
     parse_cli_textfsm,
 )
-
 
 try:
     from jinja2.filters import pass_environment

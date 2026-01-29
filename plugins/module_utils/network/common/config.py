@@ -11,14 +11,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 import hashlib
 import re
 
 from ansible.module_utils.common.text.converters import to_bytes, to_native
 from ansible.module_utils.six.moves import zip
-
 
 DEFAULT_COMMENT_TOKENS = ["#", "!", "/*", "*/", "echo"]
 

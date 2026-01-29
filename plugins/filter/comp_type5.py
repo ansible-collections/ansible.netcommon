@@ -8,8 +8,8 @@
 """
 The comp_type5 filter plugin
 """
-from __future__ import absolute_import, division, print_function
 
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -75,7 +75,6 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
 )
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import comp_type5
-
 
 try:
     from jinja2.filters import pass_environment
