@@ -924,3 +924,13 @@ releases:
     fragments:
       - libsssh-fix.yml
     release_date: "2026-02-04"
+  8.4.0:
+    changes:
+      minor_changes:
+        - Option to use libssh as transport while using netconf, is added.
+        - The ssh-python module is needed, which will ensure libssh as transport for
+          netconf operations. When use_libssh is enabled.
+      release_summary: Re-released 8.3.1 with features added in the last release.
+    fragments:
+      - re_release_832.yaml
+    release_date: "2026-02-04"
