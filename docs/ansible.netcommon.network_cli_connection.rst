@@ -43,6 +43,29 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>banner_timeout</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">float</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">30</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[paramiko_connection]<br>banner_timeout = 30</p>
+                            </div>
+                                <div>env:ANSIBLE_PARAMIKO_BANNER_TIMEOUT</div>
+                    </td>
+                <td>
+                        <div>Configures, in seconds, the amount of time to wait for the SSH banner to be presented. This option is supported by paramiko version 1.15.0 or newer.</div>
+                        <div>This option is only used when <em>ssh_type</em> is set to <code>paramiko</code>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>become</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -206,6 +229,30 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>look_for_keys</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"yes"</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[paramiko_connection]<br>look_for_keys = yes</p>
+                            </div>
+                                <div>env:ANSIBLE_PARAMIKO_LOOK_FOR_KEYS</div>
+                                <div>var: ansible_paramiko_look_for_keys</div>
+                    </td>
+                <td>
+                        <div>Controls whether the connection plugin will look for private keys in the <code>~/.ssh/</code> directory. When set to <em>True</em>, keys will be searched. Set to <em>False</em> to disable this behavior.</div>
+                        <div>This option is only used when <em>ssh_type</em> is set to <code>paramiko</code>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>network_cli_retries</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -242,6 +289,30 @@ Parameters
                     </td>
                 <td>
                         <div>Configures the device platform network operating system.  This value is used to load the correct terminal and cliconf plugins to communicate with the remote device.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>paramiko_timeout</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">10</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[paramiko_connection]<br>timeout = 10</p>
+                            </div>
+                                <div>env:ANSIBLE_PARAMIKO_TIMEOUT</div>
+                                <div>var: ansible_paramiko_timeout</div>
+                    </td>
+                <td>
+                        <div>Number of seconds until the paramiko plugin gives up on failing to establish a TCP connection.</div>
+                        <div>This option is only used when <em>ssh_type</em> is set to <code>paramiko</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -400,6 +471,76 @@ Parameters
                     </td>
                 <td>
                         <div>The private SSH key or certificate file used to authenticate to the remote device when first establishing the SSH connection.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>proxy_command</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">""</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[paramiko_connection]<br>proxy_command = </p>
+                            </div>
+                                <div>env:ANSIBLE_PARAMIKO_PROXY_COMMAND</div>
+                                <div>var: ansible_paramiko_proxy_command</div>
+                    </td>
+                <td>
+                        <div>Proxy information for running the connection via a jumphost.</div>
+                        <div>This option is only used when <em>ssh_type</em> is set to <code>paramiko</code>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>pty</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"yes"</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[paramiko_connection]<br>pty = yes</p>
+                            </div>
+                                <div>env:ANSIBLE_PARAMIKO_PTY</div>
+                    </td>
+                <td>
+                        <div>When <code>True</code>, a pseudo-terminal will be requested for SSH sessions. This is usually required for privilege escalation (sudo).</div>
+                        <div>This option is only used when <em>ssh_type</em> is set to <code>paramiko</code>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>record_host_keys</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"yes"</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[paramiko_connection]<br>record_host_keys = yes</p>
+                            </div>
+                                <div>env:ANSIBLE_PARAMIKO_RECORD_HOST_KEYS</div>
+                    </td>
+                <td>
+                        <div>When <code>True</code>, new host keys will be saved to the known hosts file.</div>
+                        <div>This option is only used when <em>ssh_type</em> is set to <code>paramiko</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -614,6 +755,32 @@ Parameters
                     </td>
                 <td>
                         <div>A single regex pattern or a sequence of patterns along with optional flags to match the command prompt from the received response chunk. This option accepts <code>pattern</code> and <code>flags</code> keys. The value of <code>pattern</code> is a python regex pattern to match the response and the value of <code>flags</code> is the value accepted by <em>flags</em> argument of <em>re.compile</em> python method to control the way regex is matched with the response, for example <em>&#x27;re.I&#x27;</em>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>use_rsa_sha2_algorithms</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"yes"</div>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[paramiko_connection]<br>use_rsa_sha2_algorithms = yes</p>
+                            </div>
+                                <div>env:ANSIBLE_PARAMIKO_USE_RSA_SHA2_ALGORITHMS</div>
+                                <div>var: ansible_paramiko_use_rsa_sha2_algorithms</div>
+                    </td>
+                <td>
+                        <div>Whether or not to enable RSA SHA2 algorithms for pubkeys and hostkeys.</div>
+                        <div>On paramiko versions older than 2.9, this only affects hostkeys.</div>
+                        <div>For behavior matching paramiko&lt;2.9 set this to V(False).</div>
+                        <div>This option is only used when <em>ssh_type</em> is set to <code>paramiko</code>.</div>
                 </td>
             </tr>
     </table>
