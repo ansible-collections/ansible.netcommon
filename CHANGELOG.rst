@@ -4,6 +4,15 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.3.0
+======
+
+Minor Changes
+-------------
+
+- Option to use libssh as transport while using netconf, is added.
+- The ssh-python module is needed, which will ensure libssh as transport for netconf operations. When use_libssh is enabled.
+
 v8.2.1
 ======
 

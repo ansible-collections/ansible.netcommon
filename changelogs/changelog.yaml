@@ -915,3 +915,12 @@ releases:
       - backward_src_219.yml
       - test-fixes.yml
     release_date: "2026-01-13"
+  8.3.0:
+    changes:
+      minor_changes:
+        - Option to use libssh as transport while using netconf, is added.
+        - The ssh-python module is needed, which will ensure libssh as transport for
+          netconf operations. When use_libssh is enabled.
+    fragments:
+      - libsssh-fix.yml
+    release_date: "2026-02-04"
