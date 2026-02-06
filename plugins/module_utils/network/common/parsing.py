@@ -11,7 +11,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 import re
@@ -22,7 +21,6 @@ from ansible.module_utils.parsing.convert_bool import BOOLEANS_FALSE, BOOLEANS_T
 from ansible.module_utils.six.moves import zip
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
-
 
 text_type = str
 string_types = (str,)

@@ -7,7 +7,6 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 import re
@@ -15,7 +14,6 @@ import re
 import pytest
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common import config
-
 
 RUNNING = """interface Ethernet1
    speed auto
