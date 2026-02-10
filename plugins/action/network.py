@@ -300,9 +300,6 @@ class ActionModule(_ActionModule):
                     ),
                     host,
                 )
-                import q
-
-                q("wprs")
                 pass
 
             def _record_module_result(self, o):
