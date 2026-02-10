@@ -319,7 +319,6 @@ from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.common.text.converters import to_bytes, to_native, to_text
 from ansible.module_utils.six.moves import cPickle
 from ansible.playbook.play_context import PlayContext
-from ansible.plugins.connection import ConnectionBase
 from ansible.plugins.loader import cache_loader, cliconf_loader, connection_loader, terminal_loader
 from ansible.utils.display import Display
 from ansible.utils.path import makedirs_safe
@@ -506,16 +505,22 @@ class _ParamikoConnection:
 
         Priority order:
         1. Explicitly set options in _paramiko_options (via set_option/set_options)
-        2. Parent connection's options (network_cli)
+        2. Parent connection's options (only for options we know about)
         3. Default values in _PARAMIKO_DEFAULTS
 
         Raises KeyError for unknown options to match expected plugin behavior.
         """
+        # Only handle options that are relevant to paramiko
+        # This ensures options like 'ssh_type' that are specific to network_cli
+        # are not exposed through this connection
+        if option not in self._PARAMIKO_DEFAULTS:
+            raise KeyError(option)
+
         # First check if option was explicitly set on this connection
         if option in self._paramiko_options:
             return self._paramiko_options[option]
 
-        # Then try to get from parent connection (network_cli)
+        # Then try to get from parent connection (network_cli) for shared options
         if self._parent_connection is not None:
             try:
                 value = self._parent_connection.get_option(option)
@@ -524,12 +529,8 @@ class _ParamikoConnection:
             except (KeyError, AttributeError):
                 pass
 
-        # Check if it's a known default option
-        if option in self._PARAMIKO_DEFAULTS:
-            return self._PARAMIKO_DEFAULTS[option]
-
-        # Unknown option - raise KeyError to match expected plugin behavior
-        raise KeyError(option)
+        # Return default value
+        return self._PARAMIKO_DEFAULTS[option]
 
     def set_option(self, option, value):
         """Set an option value."""
@@ -540,12 +541,14 @@ class _ParamikoConnection:
         """Set multiple options at once.
 
         This method is called by Ansible to configure the connection plugin.
-        We only store options locally - do NOT delegate to parent to avoid recursion.
+        We only store options that are relevant to paramiko (i.e., in _PARAMIKO_DEFAULTS).
+        Options like ssh_type that are specific to network_cli are not stored here.
         """
-        # Store any direct options in our internal dict
+        # Only store options that are relevant to paramiko
         if direct:
             for key, value in direct.items():
-                self._paramiko_options[key] = value
+                if key in self._PARAMIKO_DEFAULTS:
+                    self._paramiko_options[key] = value
 
     def get_options(self, hostvars=None):
         """Get all options as a dictionary."""
