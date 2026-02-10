@@ -525,13 +525,22 @@ _PARAMIKO_SSH_CONNECTION_CACHE = {}
 _PARAMIKO_SFTP_CONNECTION_CACHE = {}
 
 
-class _ParamikoConnection(ConnectionBase):
+class _ParamikoConnection:
     """
     Internal paramiko-based SSH connection class for network_cli.
 
     This class provides the paramiko SSH connection functionality that was
     previously loaded from ansible-core's paramiko connection plugin.
     It implements only the methods and attributes required by network_cli.
+
+    Note: This class intentionally does NOT inherit from ConnectionBase to avoid
+    issues with Ansible's plugin option system. Options are managed internally.
+
+    .. deprecated:: 7.0.0
+       paramiko support was removed from ansible-core in version 2.21.
+       This compatibility layer is provided as a transitional measure.
+       Please migrate to using ``ssh_type=libssh`` by installing ansible-pylibssh.
+       This feature will be removed in a release after 2028-02-01.
     """
 
     transport = "network_cli_paramiko"
@@ -556,11 +565,18 @@ class _ParamikoConnection(ConnectionBase):
         "use_persistent_connections": False,
     }
 
-    def __init__(self, play_context, new_stdin, *args, **kwargs):
-        super(_ParamikoConnection, self).__init__(play_context, new_stdin, *args, **kwargs)
+    def __init__(self, play_context, new_stdin, parent_connection=None):
+        self._play_context = play_context
         self.ssh = None
         self._connected = False
         self.keyfile = os.path.expanduser("~/.ssh/known_hosts")
+        # Store reference to parent connection for option lookups
+        self._parent_connection = parent_connection
+        # Attribute used by host key policy
+        self.force_persistence = False
+        # Plugin-related attributes expected by Ansible
+        self._load_name = "network_cli_paramiko"
+        self._original_path = __file__
         # Initialize options with defaults
         self._paramiko_options = dict(self._PARAMIKO_DEFAULTS)
         # Initialize from play_context where available
@@ -579,14 +595,15 @@ class _ParamikoConnection(ConnectionBase):
                 self._paramiko_options["paramiko_timeout"] = play_context.timeout
 
     def get_option(self, option, hostvars=None):
-        """Get an option value, with fallback to paramiko defaults."""
-        # First try the parent's get_option (which uses _options)
-        try:
-            value = super(_ParamikoConnection, self).get_option(option, hostvars=hostvars)
-            if value is not None:
-                return value
-        except (KeyError, AttributeError):
-            pass
+        """Get an option value from parent connection or internal defaults."""
+        # First try to get from parent connection (network_cli)
+        if self._parent_connection is not None:
+            try:
+                value = self._parent_connection.get_option(option)
+                if value is not None:
+                    return value
+            except (KeyError, AttributeError):
+                pass
 
         # Fall back to our internal paramiko options
         if option in self._paramiko_options:
@@ -599,11 +616,25 @@ class _ParamikoConnection(ConnectionBase):
         """Set an option value."""
         # Store in our internal options
         self._paramiko_options[option] = value
-        # Also try to set in parent
-        try:
-            super(_ParamikoConnection, self).set_option(option, value)
-        except (KeyError, AttributeError):
-            pass
+
+    def set_options(self, task_keys=None, var_options=None, direct=None):
+        """Set multiple options at once.
+
+        This method is called by Ansible to configure the connection plugin.
+        We only store options locally - do NOT delegate to parent to avoid recursion.
+        """
+        # Store any direct options in our internal dict
+        if direct:
+            for key, value in direct.items():
+                self._paramiko_options[key] = value
+
+    def get_options(self, hostvars=None):
+        """Get all options as a dictionary."""
+        # Start with defaults
+        options = dict(self._PARAMIKO_DEFAULTS)
+        # Override with our stored options
+        options.update(self._paramiko_options)
+        return options
 
     def _cache_key(self):
         return "%s__%s__" % (self.get_option("remote_addr"), self.get_option("remote_user"))
@@ -654,6 +685,17 @@ class _ParamikoConnection(ConnectionBase):
 
         if paramiko is None:
             raise AnsibleError("paramiko is not installed: %s" % to_native(PARAMIKO_IMPORT_ERR))
+
+        # Emit deprecation warning for paramiko usage
+        display.deprecated(
+            "The paramiko-based SSH transport for network_cli is deprecated. "
+            "paramiko support is removed from ansible-core in version 2.21 and "
+            "this compatibility layer in ansible.netcommon is provided as a "
+            "transitional measure. Please migrate to using ssh_type=libssh by "
+            "installing ansible-pylibssh. ",
+            date="2028-02-01",
+            collection_name="ansible.netcommon",
+        )
 
         port = self.get_option("port") or 22
         display.vvv(
@@ -1026,7 +1068,9 @@ class Connection(NetworkConnectionBase):
             elif self.ssh_type == "paramiko":
                 # Use the internal paramiko connection implementation
                 # This removes the dependency on ansible-core's paramiko plugin
-                self._ssh_type_conn = _ParamikoConnection(self._play_context, "/dev/null")
+                self._ssh_type_conn = _ParamikoConnection(
+                    self._play_context, "/dev/null", parent_connection=self
+                )
             else:
                 raise AnsibleConnectionFailure(
                     "Invalid value '%s' set for ssh_type option."
