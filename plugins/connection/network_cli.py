@@ -296,99 +296,6 @@ options:
     - name: ANSIBLE_NETWORK_SINGLE_USER_MODE
     vars:
     - name: ansible_network_single_user_mode
-  look_for_keys:
-    description:
-    - Controls whether the connection plugin will look for private keys in
-      the C(~/.ssh/) directory. When set to I(True), keys will be searched.
-      Set to I(False) to disable this behavior.
-    - This option is only used when I(ssh_type) is set to C(paramiko).
-    default: True
-    type: boolean
-    env:
-    - name: ANSIBLE_PARAMIKO_LOOK_FOR_KEYS
-    ini:
-    - section: paramiko_connection
-      key: look_for_keys
-    vars:
-    - name: ansible_paramiko_look_for_keys
-  proxy_command:
-    description:
-    - Proxy information for running the connection via a jumphost.
-    - This option is only used when I(ssh_type) is set to C(paramiko).
-    default: ''
-    type: string
-    env:
-    - name: ANSIBLE_PARAMIKO_PROXY_COMMAND
-    ini:
-    - section: paramiko_connection
-      key: proxy_command
-    vars:
-    - name: ansible_paramiko_proxy_command
-  pty:
-    description:
-    - When C(True), a pseudo-terminal will be requested for SSH sessions.
-      This is usually required for privilege escalation (sudo).
-    - This option is only used when I(ssh_type) is set to C(paramiko).
-    default: True
-    type: boolean
-    env:
-    - name: ANSIBLE_PARAMIKO_PTY
-    ini:
-    - section: paramiko_connection
-      key: pty
-  record_host_keys:
-    description:
-    - When C(True), new host keys will be saved to the known hosts file.
-    - This option is only used when I(ssh_type) is set to C(paramiko).
-    default: True
-    type: boolean
-    env:
-    - name: ANSIBLE_PARAMIKO_RECORD_HOST_KEYS
-    ini:
-    - section: paramiko_connection
-      key: record_host_keys
-  use_rsa_sha2_algorithms:
-    description:
-    - Whether or not to enable RSA SHA2 algorithms for pubkeys and hostkeys.
-    - On paramiko versions older than 2.9, this only affects hostkeys.
-    - For behavior matching paramiko<2.9 set this to V(False).
-    - This option is only used when I(ssh_type) is set to C(paramiko).
-    default: True
-    type: boolean
-    env:
-    - name: ANSIBLE_PARAMIKO_USE_RSA_SHA2_ALGORITHMS
-    ini:
-    - section: paramiko_connection
-      key: use_rsa_sha2_algorithms
-    vars:
-    - name: ansible_paramiko_use_rsa_sha2_algorithms
-  banner_timeout:
-    description:
-    - Configures, in seconds, the amount of time to wait for the SSH
-      banner to be presented. This option is supported by paramiko
-      version 1.15.0 or newer.
-    - This option is only used when I(ssh_type) is set to C(paramiko).
-    default: 30
-    type: float
-    env:
-    - name: ANSIBLE_PARAMIKO_BANNER_TIMEOUT
-    ini:
-    - section: paramiko_connection
-      key: banner_timeout
-  paramiko_timeout:
-    description:
-    - Number of seconds until the paramiko plugin gives up on failing
-      to establish a TCP connection.
-    - This option is only used when I(ssh_type) is set to C(paramiko).
-    default: 10
-    type: int
-    env:
-    - name: ANSIBLE_PARAMIKO_TIMEOUT
-    ini:
-    - section: paramiko_connection
-      key: timeout
-    vars:
-    - name: ansible_paramiko_timeout
 """
 
 import fcntl
@@ -595,8 +502,20 @@ class _ParamikoConnection:
                 self._paramiko_options["paramiko_timeout"] = play_context.timeout
 
     def get_option(self, option, hostvars=None):
-        """Get an option value from parent connection or internal defaults."""
-        # First try to get from parent connection (network_cli)
+        """Get an option value from internal options, parent connection, or defaults.
+
+        Priority order:
+        1. Explicitly set options in _paramiko_options (via set_option/set_options)
+        2. Parent connection's options (network_cli)
+        3. Default values in _PARAMIKO_DEFAULTS
+
+        Raises KeyError for unknown options to match expected plugin behavior.
+        """
+        # First check if option was explicitly set on this connection
+        if option in self._paramiko_options:
+            return self._paramiko_options[option]
+
+        # Then try to get from parent connection (network_cli)
         if self._parent_connection is not None:
             try:
                 value = self._parent_connection.get_option(option)
@@ -605,12 +524,12 @@ class _ParamikoConnection:
             except (KeyError, AttributeError):
                 pass
 
-        # Fall back to our internal paramiko options
-        if option in self._paramiko_options:
-            return self._paramiko_options[option]
+        # Check if it's a known default option
+        if option in self._PARAMIKO_DEFAULTS:
+            return self._PARAMIKO_DEFAULTS[option]
 
-        # Finally, check defaults
-        return self._PARAMIKO_DEFAULTS.get(option)
+        # Unknown option - raise KeyError to match expected plugin behavior
+        raise KeyError(option)
 
     def set_option(self, option, value):
         """Set an option value."""
