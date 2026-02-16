@@ -342,8 +342,6 @@ except ImportError:
 PARAMIKO_IMPORT_SOURCE = None  # Track where paramiko was imported from
 
 try:
-    import exist
-
     from ansible.module_utils.compat.paramiko import _PARAMIKO_IMPORT_ERR as PARAMIKO_IMPORT_ERR
     from ansible.module_utils.compat.paramiko import _paramiko as paramiko
 
