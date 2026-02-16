@@ -342,11 +342,10 @@ except ImportError:
 PARAMIKO_IMPORT_SOURCE = None  # Track where paramiko was imported from
 
 try:
-    from ansible.module_utils.compat.paramiko import (
-        _PARAMIKO_IMPORT_ERR as PARAMIKO_IMPORT_ERR,
-        _paramiko as paramiko,
-    )
     import exist
+
+    from ansible.module_utils.compat.paramiko import _PARAMIKO_IMPORT_ERR as PARAMIKO_IMPORT_ERR
+    from ansible.module_utils.compat.paramiko import _paramiko as paramiko
 
     if paramiko is not None:
         from paramiko.ssh_exception import AuthenticationException, BadHostKeyException
@@ -363,6 +362,7 @@ except ImportError:
     # Fall back to direct paramiko import
     try:
         import paramiko
+
         from paramiko.ssh_exception import AuthenticationException, BadHostKeyException
 
         HAS_PARAMIKO = True
