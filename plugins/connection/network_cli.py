@@ -337,17 +337,44 @@ try:
 except ImportError:
     HAS_SCP = False
 
+# Try to import paramiko - first from ansible-core's compat module (for older versions),
+# then fall back to direct import (for when paramiko is removed from ansible-core after 2.21)
+PARAMIKO_IMPORT_SOURCE = None  # Track where paramiko was imported from
+
 try:
-    import paramiko
+    from ansible.module_utils.compat.paramiko import (
+        _PARAMIKO_IMPORT_ERR as PARAMIKO_IMPORT_ERR,
+        _paramiko as paramiko,
+    )
+    import exist
 
-    from paramiko.ssh_exception import AuthenticationException, BadHostKeyException
+    if paramiko is not None:
+        from paramiko.ssh_exception import AuthenticationException, BadHostKeyException
 
-    HAS_PARAMIKO = True
-    PARAMIKO_IMPORT_ERR = None
-except ImportError as err:
-    HAS_PARAMIKO = False
-    PARAMIKO_IMPORT_ERR = err
-    paramiko = None
+        HAS_PARAMIKO = True
+        PARAMIKO_IMPORT_SOURCE = "ansible.module_utils.compat.paramiko"
+    else:
+        HAS_PARAMIKO = False
+        AuthenticationException = None
+        BadHostKeyException = None
+        PARAMIKO_IMPORT_SOURCE = "ansible.module_utils.compat.paramiko (paramiko not installed)"
+except ImportError:
+    # ansible-core's compat.paramiko module not available (removed after 2.21)
+    # Fall back to direct paramiko import
+    try:
+        import paramiko
+        from paramiko.ssh_exception import AuthenticationException, BadHostKeyException
+
+        HAS_PARAMIKO = True
+        PARAMIKO_IMPORT_ERR = None
+        PARAMIKO_IMPORT_SOURCE = "direct import (ansible-core compat module not available)"
+    except ImportError as err:
+        HAS_PARAMIKO = False
+        PARAMIKO_IMPORT_ERR = err
+        paramiko = None
+        AuthenticationException = None
+        BadHostKeyException = None
+        PARAMIKO_IMPORT_SOURCE = "not available (paramiko not installed)"
 
 # Import LooseVersion for paramiko version checks
 try:
@@ -617,6 +644,13 @@ class _ParamikoConnection:
             "installing ansible-pylibssh. ",
             date="2028-02-01",
             collection_name="ansible.netcommon",
+        )
+
+        # Log paramiko import source for debugging
+        display.vvvv(
+            "PARAMIKO IMPORT SOURCE: %s (version %s)"
+            % (PARAMIKO_IMPORT_SOURCE, paramiko.__version__),
+            host=self.get_option("remote_addr"),
         )
 
         port = self.get_option("port") or 22
