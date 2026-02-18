@@ -376,7 +376,7 @@ Are you sure you want to continue connecting (yes/no)?
 """
 # One-line message when we cannot prompt (e.g. persistent connection)
 AUTHENTICITY_ERR_MSG = (
-    "paramiko: The authenticity of host '%s' can't be established. " "The %s key fingerprint is %s."
+    "paramiko: The authenticity of host '%s' can't be established. The %s key fingerprint is %s."
 )
 
 # SSH Options Regex for parsing proxy commands
