@@ -473,7 +473,7 @@ Parameters
                 <td>
                         <div>The python package that will be used by the <code>network_cli</code> connection plugin to create a SSH connection to remote host.</div>
                         <div><em>libssh</em> will use the ansible-pylibssh package, which needs to be installed in order to work.</div>
-                        <div><em>paramiko</em> will instead use the paramiko package to manage the SSH connection.</div>
+                        <div><em>paramiko</em> will instead use the paramiko package to manage the SSH connection. This option is deprecated and will be removed in a release after 2028-02-01. Migrate to <em>libssh</em> by installing the ansible-pylibssh package.</div>
                         <div><em>auto</em> will use ansible-pylibssh if that package is installed, otherwise will fallback to paramiko.</div>
                 </td>
             </tr>
