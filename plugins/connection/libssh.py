@@ -400,20 +400,12 @@ class Connection(ConnectionBase):
 
         remote_user = self.get_option("remote_user")
         remote_addr = self.get_option("remote_addr")
-        # Only set port if explicitly specified, otherwise let SSH config determine it
-        port = self._play_context.port
-        if port:
-            display.vvv(
-                "ESTABLISH LIBSSH CONNECTION FOR USER: %s on PORT %s TO %s"
-                % (remote_user, port, remote_addr),
-                host=remote_addr,
-            )
-        else:
-            display.vvv(
-                "ESTABLISH LIBSSH CONNECTION FOR USER: %s TO %s (port from SSH config)"
-                % (remote_user, remote_addr),
-                host=remote_addr,
-            )
+        port = self._play_context.port or 22
+        display.vvv(
+            "ESTABLISH LIBSSH CONNECTION FOR USER: %s on PORT %s TO %s"
+            % (remote_user, port, remote_addr),
+            host=remote_addr,
+        )
 
         self.ssh = Session()
 
@@ -422,8 +414,7 @@ class Connection(ConnectionBase):
 
         self.keyfile = os.path.expanduser("~/.ssh/known_hosts")
 
-        # For proxy_command %p substitution, use explicit port or default to 22
-        proxy_command = self._get_proxy_command(port or 22)
+        proxy_command = self._get_proxy_command(port)
 
         try:
             private_key = None
@@ -459,10 +450,6 @@ class Connection(ConnectionBase):
 
             self.ssh.set_missing_host_key_policy(MyAddPolicy(self))
 
-            # Only pass port if explicitly specified, otherwise let SSH config determine it
-            if port:
-                ssh_connect_kwargs["port"] = port
-
             self.ssh.connect(
                 host=remote_addr.lower(),
                 user=remote_user,
@@ -473,6 +460,7 @@ class Connection(ConnectionBase):
                 private_key=private_key,
                 private_key_password=self.get_option("private_key_passphrase"),
                 timeout=self._play_context.timeout,
+                port=port,
                 **ssh_connect_kwargs,
             )
         except LibsshSessionException as e:

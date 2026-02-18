@@ -258,6 +258,8 @@ options:
       - The python package that will be used by the C(network_cli) connection plugin to create a SSH connection to remote host.
       - I(libssh) will use the ansible-pylibssh package, which needs to be installed in order to work.
       - I(paramiko) will instead use the paramiko package to manage the SSH connection.
+        This option is deprecated and will be removed in a release after 2028-02-01.
+        Migrate to I(libssh) by installing the ansible-pylibssh package.
       - I(auto) will use ansible-pylibssh if that package is installed, otherwise will fallback to paramiko.
     default: auto
     choices: ["libssh", "paramiko", "auto"]
@@ -337,42 +339,24 @@ try:
 except ImportError:
     HAS_SCP = False
 
-# Try to import paramiko - first from ansible-core's compat module (for older versions),
-# then fall back to direct import (for when paramiko is removed from ansible-core after 2.21)
-PARAMIKO_IMPORT_SOURCE = None  # Track where paramiko was imported from
+# Import paramiko directly (network_cli's paramiko support is independent of ansible-core)
+PARAMIKO_IMPORT_SOURCE = None
 
 try:
-    from ansible.module_utils.compat.paramiko import _PARAMIKO_IMPORT_ERR as PARAMIKO_IMPORT_ERR
-    from ansible.module_utils.compat.paramiko import _paramiko as paramiko
+    import paramiko
 
-    if paramiko is not None:
-        from paramiko.ssh_exception import AuthenticationException, BadHostKeyException
+    from paramiko.ssh_exception import AuthenticationException, BadHostKeyException
 
-        HAS_PARAMIKO = True
-        PARAMIKO_IMPORT_SOURCE = "ansible.module_utils.compat.paramiko"
-    else:
-        HAS_PARAMIKO = False
-        AuthenticationException = None
-        BadHostKeyException = None
-        PARAMIKO_IMPORT_SOURCE = "ansible.module_utils.compat.paramiko (paramiko not installed)"
-except ImportError:
-    # ansible-core's compat.paramiko module not available (removed after 2.21)
-    # Fall back to direct paramiko import
-    try:
-        import paramiko
-
-        from paramiko.ssh_exception import AuthenticationException, BadHostKeyException
-
-        HAS_PARAMIKO = True
-        PARAMIKO_IMPORT_ERR = None
-        PARAMIKO_IMPORT_SOURCE = "direct import (ansible-core compat module not available)"
-    except ImportError as err:
-        HAS_PARAMIKO = False
-        PARAMIKO_IMPORT_ERR = err
-        paramiko = None
-        AuthenticationException = None
-        BadHostKeyException = None
-        PARAMIKO_IMPORT_SOURCE = "not available (paramiko not installed)"
+    HAS_PARAMIKO = True
+    PARAMIKO_IMPORT_ERR = None
+    PARAMIKO_IMPORT_SOURCE = "direct import"
+except ImportError as err:
+    HAS_PARAMIKO = False
+    PARAMIKO_IMPORT_ERR = err
+    paramiko = None
+    AuthenticationException = None
+    BadHostKeyException = None
+    PARAMIKO_IMPORT_SOURCE = "not available (paramiko not installed)"
 
 # Import LooseVersion for paramiko version checks
 try:
@@ -384,12 +368,16 @@ except ImportError:
 display = Display()
 
 
-# Paramiko host key authenticity message
+# Paramiko host key authenticity message (prompt for user)
 AUTHENTICITY_MSG = """
 paramiko: The authenticity of host '%s' can't be established.
 The %s key fingerprint is %s.
 Are you sure you want to continue connecting (yes/no)?
 """
+# One-line message when we cannot prompt (e.g. persistent connection)
+AUTHENTICITY_ERR_MSG = (
+    "paramiko: The authenticity of host '%s' can't be established. " "The %s key fingerprint is %s."
+)
 
 # SSH Options Regex for parsing proxy commands
 SETTINGS_REGEX = re.compile(r"(\w+)(?:\s*=\s*|\s+)(.+)")
@@ -430,7 +418,7 @@ class _ParamikoHostKeyPolicy(_MissingHostKeyPolicy):
             ):
                 # don't print the prompt string since the user cannot respond
                 # to the question anyway
-                raise AnsibleError(AUTHENTICITY_MSG[1:92] % (hostname, ktype, fingerprint))
+                raise AnsibleError(AUTHENTICITY_ERR_MSG % (hostname, ktype, fingerprint))
 
             inp = to_text(
                 display.prompt_until(
@@ -862,10 +850,10 @@ class _ParamikoConnection:
             dirname = os.path.dirname(self.keyfile)
             makedirs_safe(dirname)
 
-            KEY_LOCK = open(lockfile, "w")
-            fcntl.lockf(KEY_LOCK, fcntl.LOCK_EX)
-
+            key_lock = open(lockfile, "w")
             try:
+                fcntl.lockf(key_lock, fcntl.LOCK_EX)
+
                 # just in case any were added recently
                 self.ssh.load_system_host_keys()
                 self.ssh._host_keys.update(self.ssh._system_host_keys)
@@ -885,7 +873,8 @@ class _ParamikoConnection:
                 # Save the new keys to a temporary file and move it into place
                 tmp_keyfile = tempfile.NamedTemporaryFile(dir=key_dir, delete=False)
                 os.chmod(tmp_keyfile.name, mode & 0o7777)
-                os.chown(tmp_keyfile.name, uid, gid)
+                if hasattr(os, "chown"):
+                    os.chown(tmp_keyfile.name, uid, gid)
 
                 self._save_ssh_host_keys(tmp_keyfile.name)
                 tmp_keyfile.close()
@@ -895,7 +884,9 @@ class _ParamikoConnection:
             except Exception:
                 # unable to save keys, including scenario when key was invalid
                 traceback.print_exc()
-            fcntl.lockf(KEY_LOCK, fcntl.LOCK_UN)
+            finally:
+                fcntl.lockf(key_lock, fcntl.LOCK_UN)
+                key_lock.close()
 
         if self.ssh:
             self.ssh.close()
