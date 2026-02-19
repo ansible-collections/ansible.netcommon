@@ -42,6 +42,24 @@ jobs:
       collection_pre_install: >-
         git+https://github.com/ansible-collections/ansible.utils.git
 
+  report-status:
+    if: ${{ always() && github.event_name == 'schedule' }}
+    needs:
+      - changelog
+      - build-import
+      - sanity
+      - unit-galaxy
+      - ansible-lint
+      - unit-source
+    uses: ansible/ansible-content-actions/.github/workflows/upload_upstream_results.yaml@main
+    with:
+      job_context: ${{ toJSON(needs) }}
+      component_name: ${{ github.event.repository.name }}
+      UPLOAD_USER: ${{ vars.PDE_ORG_RESULTS_AGGREGATOR_UPLOAD_USER }}
+      UPLOAD_URL: ${{ vars.PDE_ORG_RESULTS_AGGREGATOR_UPLOAD_URL }}
+    secrets:
+      UPLOAD_PASSWORD: ${{ secrets.PDE_ORG_RESULTS_UPLOAD_PASSWORD }}
+
   all_green:
     if: ${{ always() }}
     needs:
@@ -52,15 +70,18 @@ jobs:
       - unit-source
       - ansible-lint
       - sonar
+      - report-status
     runs-on: ubuntu-latest
     steps:
       - run: >-
           python -c "assert 'failure' not in
           set([
           '${{ needs.changelog.result }}',
+          '${{ needs.build-import.result }}',
           '${{ needs.sanity.result }}',
           '${{ needs.unit-galaxy.result }}',
           '${{ needs.ansible-lint.result }}',
           '${{ needs.unit-source.result }}',
-          '${{ needs.sonar.result }}'
+          '${{ needs.sonar.result }}',
+          '${{ needs.report-status.result }}'
           ])"
