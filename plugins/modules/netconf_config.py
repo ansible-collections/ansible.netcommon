@@ -666,7 +666,10 @@ def main():
                 if not module.check_mode:
                     confirm_timeout = confirm if confirm > 0 else None
                     confirmed_commit = True if confirm_timeout else False
-                    conn.commit(confirmed=confirmed_commit, timeout=confirm_timeout)
+                    conn.commit(
+                        confirmed=confirmed_commit,
+                        timeout=to_text(confirm_timeout, errors="surrogate_or_strict"),
+                    )
                 else:
                     conn.discard_changes()
 
