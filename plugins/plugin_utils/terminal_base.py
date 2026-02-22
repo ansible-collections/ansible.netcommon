@@ -40,6 +40,9 @@ class TerminalBase(TerminalBaseBase):
         re.compile(rb"\x1b\[m"),  # ANSI reset code
     ]
 
+    #: Send newline after initial session connection
+    terminal_initial_newline = False
+
     #: terminal initial prompt
     terminal_initial_prompt = None
 
