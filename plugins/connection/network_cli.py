@@ -340,8 +340,6 @@ except ImportError:
     HAS_SCP = False
 
 # Import paramiko directly (network_cli's paramiko support is independent of ansible-core)
-PARAMIKO_IMPORT_SOURCE = None
-
 try:
     import paramiko
 
@@ -349,14 +347,12 @@ try:
 
     HAS_PARAMIKO = True
     PARAMIKO_IMPORT_ERR = None
-    PARAMIKO_IMPORT_SOURCE = "direct import"
 except ImportError as err:
     HAS_PARAMIKO = False
     PARAMIKO_IMPORT_ERR = err
     paramiko = None
     AuthenticationException = None
     BadHostKeyException = None
-    PARAMIKO_IMPORT_SOURCE = "not available (paramiko not installed)"
 
 # Import LooseVersion for paramiko version checks
 try:
@@ -618,7 +614,7 @@ class _ParamikoConnection:
     def _connect_uncached(self):
         """Activates the connection object"""
 
-        if paramiko is None:
+        if not HAS_PARAMIKO:
             raise AnsibleError("paramiko is not installed: %s" % to_native(PARAMIKO_IMPORT_ERR))
 
         # Emit deprecation warning for paramiko usage
@@ -632,10 +628,9 @@ class _ParamikoConnection:
             collection_name="ansible.netcommon",
         )
 
-        # Log paramiko import source for debugging
+        # Log paramiko availability for debugging
         display.vvvv(
-            "PARAMIKO IMPORT SOURCE: %s (version %s)"
-            % (PARAMIKO_IMPORT_SOURCE, paramiko.__version__),
+            "PARAMIKO: direct import (version %s)" % paramiko.__version__,
             host=self.get_option("remote_addr"),
         )
 
