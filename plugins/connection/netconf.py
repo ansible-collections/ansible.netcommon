@@ -5,7 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -180,7 +179,6 @@ from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base 
     NetworkConnectionBase,
 )
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
-
 
 try:
     from ncclient import __version__ as NCCLIENT_VERSION

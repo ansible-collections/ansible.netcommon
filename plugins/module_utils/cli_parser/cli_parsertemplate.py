@@ -14,8 +14,8 @@ this was done in case there is a need to
 modify the resource module parser class
 or extend it a split it from the cli parsers.
 """
-from __future__ import absolute_import, division, print_function
 
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 

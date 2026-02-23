@@ -5,7 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 from abc import abstractmethod
@@ -17,7 +16,6 @@ from ansible.module_utils.common.text.converters import to_native
 
 # Needed to satisfy PluginLoader's required_base_class
 from ansible.plugins.netconf import NetconfBase as NetconfBaseBase
-
 
 try:
     from ncclient.operations import RPCError

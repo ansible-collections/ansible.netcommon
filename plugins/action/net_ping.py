@@ -4,7 +4,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 import copy
@@ -12,7 +11,6 @@ import copy
 from ansible.errors import AnsibleError
 from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
-
 
 display = Display()
 
