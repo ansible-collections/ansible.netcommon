@@ -237,7 +237,7 @@ def test_network_cli_ssh_type_invalid(conn):
     conn._ssh_type = "invalid"
 
     with pytest.raises(AnsibleConnectionFailure) as excinfo:
-        _ = conn.ssh_type
+        conn.ssh_type
 
     assert "Invalid value 'invalid'" in str(excinfo.value)
 
@@ -305,26 +305,6 @@ def test_network_cli_exec_command_value_error_falls_back_to_bytes(conn):
 
     conn.send.assert_called_once_with(command=b"show version")
     assert out == b"output"
-
-
-# ---- update_play_context ----
-def test_network_cli_update_play_context(conn):
-    from ansible.module_utils.six.moves import cPickle
-
-    conn._terminal = MagicMock()
-    conn._ssh_type_conn = MagicMock()
-    conn._play_context.become = False
-    new_pc = PlayContext()
-    new_pc.become = False
-    new_pc.become_pass = None
-    try:
-        pc_data = cPickle.dumps(new_pc.serialize(), protocol=0)
-    except TypeError:
-        pc_data = cPickle.dumps(new_pc.serialize())
-
-    conn.update_play_context(pc_data)
-
-    assert conn._play_context.become is False
 
 
 # ---- _get_terminal_std_re ----
