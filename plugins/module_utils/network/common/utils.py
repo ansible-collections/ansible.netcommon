@@ -695,6 +695,9 @@ class Template:
 
         if value:
             try:
+                # PATCH: Preserve AS-DOT ASN string formatting (e.g., '65000.1000')
+                if isinstance(value, str) and re.fullmatch(r"\d+\.\d{3,}", value):
+                    return value
                 return ast.literal_eval(value)
             except Exception:
                 return str(value)
