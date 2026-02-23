@@ -67,3 +67,9 @@ class TestConvertToNative(TestCase):
         # Verify the original would have failed deepcopy
         with self.assertRaises(NotImplementedError):
             deepcopy(uncopyable)
+
+    def test_non_json_serializable_returns_unchanged(self):
+        """Types that fail JSON round-trip are returned as-is (covers try/except path)."""
+        value = {1, 2, 3}  # set is not JSON-serializable
+        out = convert_to_native(value)
+        self.assertIs(out, value)
