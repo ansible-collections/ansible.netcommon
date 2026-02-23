@@ -19,7 +19,7 @@ description:
   for sending and receiving CLi commands to network devices.
 version_added: 1.0.0
 requirements:
-- ansible-pylibssh if using I(ssh_type=libssh)
+- ansible-pylibssh or ssh-python if using I(ssh_type=libssh)
 extends_documentation_fragment:
 - ansible.netcommon.connection_persistent
 options:
@@ -256,9 +256,9 @@ options:
   ssh_type:
     description:
       - The python package that will be used by the C(network_cli) connection plugin to create a SSH connection to remote host.
-      - I(libssh) will use the ansible-pylibssh package, which needs to be installed in order to work.
+      - I(libssh) will use the ansible-pylibssh or ssh-python package, which needs to be installed in order to work.
       - I(paramiko) will instead use the paramiko package to manage the SSH connection.
-      - I(auto) will use ansible-pylibssh if that package is installed, otherwise will fallback to paramiko.
+      - I(auto) will use ansible-pylibssh or ssh-python if either package is installed, otherwise will fallback to paramiko.
     default: auto
     choices: ["libssh", "paramiko", "auto"]
     type: string
@@ -431,7 +431,7 @@ class Connection(NetworkConnectionBase):
                 else:
                     self.queue_message(
                         "warning",
-                        "ansible-pylibssh not installed, falling back to paramiko",
+                        "ansible-pylibssh/ssh-python not installed, falling back to paramiko",
                     )
                     self._ssh_type = "paramiko"
                 self.queue_message("vvvv", "ssh type is now set to %s" % self._ssh_type)
