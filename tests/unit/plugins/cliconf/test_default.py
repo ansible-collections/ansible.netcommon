@@ -6,7 +6,6 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 import json
@@ -17,7 +16,6 @@ import pytest
 
 from ansible.errors import AnsibleConnectionFailure
 from ansible.plugins.loader import cliconf_loader
-
 
 INFO = dict(network_os="default")
 OPERATIONS = {
