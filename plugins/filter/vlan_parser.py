@@ -106,6 +106,9 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
     AnsibleArgSpecValidator,
 )
 
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.argspec_filter_utils import (
+    convert_to_native,
+)
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
 
 
@@ -113,31 +116,6 @@ try:
     from jinja2.filters import pass_environment
 except ImportError:
     from jinja2.filters import environmentfilter as pass_environment
-
-
-def _convert_to_native(value):
-    """Convert Ansible lazy containers and wrapped types to native Python types.
-
-    Note - I am not sure of this, also adds a lot of complexity
-    In Ansible 2.19+, filter arguments may be wrapped in lazy containers that
-    cannot be deep-copied. This function converts them to plain Python types.
-    """
-    import json
-
-    if value is None:
-        return None
-    if isinstance(value, (bool, int, float, str)):
-        return value
-    if isinstance(value, (list, tuple)):
-        return [_convert_to_native(item) for item in value]
-    if isinstance(value, dict):
-        return {_convert_to_native(k): _convert_to_native(v) for k, v in value.items()}
-    # For any other type, try to convert via JSON round-trip to get native types
-    try:
-        return json.loads(json.dumps(value))
-    except (TypeError, ValueError):
-        # If JSON fails, return as-is and let validation handle it
-        return value
 
 
 @pass_environment
@@ -149,9 +127,8 @@ def _vlan_parser(*args, **kwargs):
     data = dict(zip(keys, filter_args))
     data.update(kwargs)
 
-    # Convert to native Python types to avoid deepcopy issues with Ansible 2.19+
-    # lazy containers that hold references to Templar/Template objects
-    data = _convert_to_native(data)
+    # Convert to native Python types so ArgumentSpecValidator can deepcopy (Ansible 2.19+)
+    data = convert_to_native(data)
 
     aav = AnsibleArgSpecValidator(data=data, schema=DOCUMENTATION, name="vlan_parser")
     valid, errors, updated_data = aav.validate()
