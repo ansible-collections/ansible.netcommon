@@ -1,0 +1,15 @@
+---
+minor_changes:
+  - network_cli - When ssh_type is set to paramiko, the connection plugin now uses
+    an in-collection paramiko implementation instead of loading ansible-core's paramiko
+    connection plugin. This allows network_cli to work with versions of ansible-core,
+    where the paramiko connection plugin was removed.
+  - network_cli - The in-collection paramiko path supports the same host key policy
+    behavior (including host_key_auto_add and known_hosts handling) and persistent
+    connection caching as the previous ansible-core paramiko integration.
+deprecated_features:
+  - network_cli - The in-collection paramiko support (used when ssh_type is paramiko)
+    is a compatibility layer for environments where ansible-core's paramiko connection
+    is no longer available. This layer is deprecated and will be removed in a release
+    after 2028-02-01. Migrate to ssh_type=libssh by installing the
+    ansible-pylibssh package.

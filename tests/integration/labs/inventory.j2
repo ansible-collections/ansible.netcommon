@@ -1,5 +1,5 @@
 [cli]
-nxos ansible_host={{ ansible_host }} ansible_user=cisco ansible_password=cisco ansible_connection=ansible.netcommon.network_cli ansible_network_os=cisco.nxos.nxos ansible_ssh_port={{ nxos_ssh_port }}
+nxos ansible_host={{ ansible_host }} ansible_user=cisco ansible_password=cisco ansible_connection=ansible.netcommon.network_cli ansible_network_os=cisco.nxos.nxos ansible_ssh_port={{ nxos_ssh_port }} ansible_network_cli_ssh_type={{ ansible_network_cli_ssh_type }}
 ubuntu ansible_host={{ ansible_host }} ansible_user=cisco ansible_password=cisco ansible_ssh_port={{ ubuntu_ssh_port }}
 
 [netconf]
