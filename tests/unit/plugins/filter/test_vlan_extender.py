@@ -10,6 +10,7 @@ __metaclass__ = type
 
 from unittest import TestCase
 
+from ansible_collections.ansible.netcommon.plugins.filter.vlan_expander import _vlan_expander
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
 
 
@@ -76,3 +77,9 @@ class TestVlanExtender(TestCase):
                 19,
             ],
         )
+
+    def test_vlan_expander_filter_wrapper(self):
+        """Filter wrapper runs convert_to_native before validation."""
+        env = None
+        result = _vlan_expander(env, "1-3")
+        self.assertEqual(result, [1, 2, 3])

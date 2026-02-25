@@ -134,6 +134,9 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
     AnsibleArgSpecValidator,
 )
 
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.argspec_filter_utils import (
+    convert_to_native,
+)
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_cli import parse_cli
 
 
@@ -156,6 +159,7 @@ def _parse_cli(*args, **kwargs):
     keys = ["output", "tmpl"]
     data = dict(zip(keys, args[1:]))
     data.update(kwargs)
+    data = convert_to_native(data)
     aav = AnsibleArgSpecValidator(data=data, schema=DOCUMENTATION, name="parse_cli")
     valid, errors, updated_data = aav.validate()
     if not valid:
