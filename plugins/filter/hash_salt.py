@@ -65,6 +65,9 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
     AnsibleArgSpecValidator,
 )
 
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.argspec_filter_utils import (
+    convert_to_native,
+)
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import hash_salt
 
 
@@ -81,6 +84,7 @@ def _hash_salt(*args, **kwargs):
     keys = ["password"]
     data = dict(zip(keys, args[1:]))
     data.update(kwargs)
+    data = convert_to_native(data)
     aav = AnsibleArgSpecValidator(data=data, schema=DOCUMENTATION, name="hash_salt")
     valid, errors, updated_data = aav.validate()
     if not valid:

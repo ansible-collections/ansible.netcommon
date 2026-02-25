@@ -12,6 +12,7 @@ from unittest import TestCase
 
 from ansible.errors import AnsibleFilterError
 
+from ansible_collections.ansible.netcommon.plugins.filter.pop_ace import _pop_ace
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.pop_ace import pop_ace
 
 
@@ -335,6 +336,37 @@ class TestPopAce(TestCase):
         result = pop_ace(*args)
         self.assertEqual(result.get("removed_aces"), removed_aces)
         self.assertEqual(result.get("clean_acls"), clean_acls)
+
+    def test_pop_ace_filter_wrapper(self):
+        """Filter wrapper runs convert_to_native before validation."""
+        env = None
+        filter_options = {"match_all": True}
+        match_criteria = {"afi": "ipv4", "source": "192.0.2.0", "destination": "192.0.3.0"}
+        data = [
+            {
+                "acls": [
+                    {
+                        "aces": [
+                            {
+                                "destination": {
+                                    "address": "192.0.3.0",
+                                    "wildcard_bits": "0.0.0.255",
+                                },
+                                "grant": "deny",
+                                "sequence": 10,
+                                "source": {"address": "192.0.2.0", "wildcard_bits": "0.0.0.255"},
+                            },
+                        ],
+                        "acl_type": "extended",
+                        "name": "110",
+                    },
+                ],
+                "afi": "ipv4",
+            },
+        ]
+        result = _pop_ace(env, data, filter_options, match_criteria)
+        self.assertIn("removed_aces", result)
+        self.assertIn("clean_acls", result)
 
     def test_pop_ace_plugin_remove_first(self):
         filter_options = {"match_all": True, "remove": "first"}

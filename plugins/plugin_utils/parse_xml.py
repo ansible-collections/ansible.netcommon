@@ -23,7 +23,9 @@ from ansible.errors import AnsibleFilterError
 from ansible.module_utils.common.text.converters import to_native
 from ansible.utils.display import Display
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import Template
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    JinjaTemplate,
+)
 
 
 string_types = (str,)
@@ -125,7 +127,7 @@ def parse_xml(output, tmpl):
 
     root = fromstring(output)
     try:
-        template = Template()
+        template = JinjaTemplate()
     except ImportError as exc:
         raise AnsibleFilterError(to_native(exc))
 

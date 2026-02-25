@@ -8,10 +8,12 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from copy import deepcopy
 from unittest import TestCase
 
 from ansible.errors import AnsibleFilterError
 
+from ansible_collections.ansible.netcommon.plugins.filter.vlan_parser import _vlan_parser
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
 
 
@@ -111,3 +113,23 @@ class TestVlanParser(TestCase):
             "Valid VLAN range is 1-4094",
             str(error.exception),
         )
+
+
+class TestVlanParserFilter(TestCase):
+    """Test the filter plugin (_vlan_parser) with inputs that would fail without convert_to_native."""
+
+    def test_filter_with_uncopyable_list_like(self):
+        """Filter works when data is a list-like that cannot be deepcopied (e.g. Ansible 2.19 lazy)."""
+        env = None  # pass_environment injects env; not used by our filter logic
+
+        class UncopyableList(list):
+            def __deepcopy__(self, memo):
+                raise NotImplementedError("Cannot deepcopy lazy container")
+
+        data = UncopyableList([1, 2, 3])
+        result = _vlan_parser(env, data)
+        self.assertEqual(result[0], "1-3")
+        # Without convert_to_native, AnsibleArgSpecValidator -> ArgumentSpecValidator
+        # would deepcopy(data) and raise
+        with self.assertRaises(NotImplementedError):
+            deepcopy(data)
