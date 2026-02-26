@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - "Add `huge_tree` support for RPC calls to support large RPC responses with lxml."
