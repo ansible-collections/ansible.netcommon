@@ -13,9 +13,10 @@ DOCUMENTATION = """
     name: libssh
     short_description: Run tasks using libssh for ssh connection
     description:
-        - Use the ansible-pylibssh python bindings to connect to targets
+        - Use libssh python bindings (ansible-pylibssh or ssh-python) to connect to targets
         - The python bindings use libssh C library (https://www.libssh.org/) to connect to targets
         - This plugin borrows a lot of settings from the ssh plugin as they both cover the same protocol.
+        - If ansible-pylibssh is not available, the plugin will try to use ssh-python as a fallback.
     version_added: 1.1.0
     options:
       remote_addr:
@@ -249,14 +250,37 @@ from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import V
 
 display = Display()
 
+# Try pylibssh first, then fall back to ssh-python adapter
+HAS_PYLIBSSH = False
+HAS_SSH_PYTHON = False
+PYLIBSSH_VERSION = "0.0.0"
+LIBSSH_BACKEND = None
+
 try:
     from pylibsshext import __version__ as PYLIBSSH_VERSION
     from pylibsshext.errors import LibsshSCPException, LibsshSessionException
     from pylibsshext.session import Session
 
     HAS_PYLIBSSH = True
+    LIBSSH_BACKEND = "pylibssh"
 except ImportError:
-    HAS_PYLIBSSH = False
+    # Try ssh-python adapter as fallback
+    try:
+        from ansible_collections.ansible.netcommon.plugins.module_utils.ssh_python_adapter import (
+            HAS_SSH_PYTHON,
+            LibsshSCPException,
+            LibsshSessionException,
+            Session,
+        )
+        from ansible_collections.ansible.netcommon.plugins.module_utils.ssh_python_adapter import (
+            __version__ as PYLIBSSH_VERSION,
+        )
+
+        if HAS_SSH_PYTHON:
+            HAS_PYLIBSSH = True
+            LIBSSH_BACKEND = "ssh-python"
+    except ImportError:
+        pass
 
 
 AUTHENTICITY_MSG = """
@@ -390,9 +414,9 @@ class Connection(ConnectionBase):
         """activates the connection object"""
 
         if not HAS_PYLIBSSH:
-            raise AnsibleError(missing_required_lib("ansible-pylibssh"))
+            raise AnsibleError(missing_required_lib("ansible-pylibssh or ssh-python"))
         display.vvv(
-            "USING PYLIBSSH VERSION %s" % PYLIBSSH_VERSION,
+            "USING LIBSSH BACKEND %s VERSION %s" % (LIBSSH_BACKEND, PYLIBSSH_VERSION),
             host=self._play_context.remote_addr,
         )
 
