@@ -5,7 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -324,7 +323,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.connection_base import (
     NetworkConnectionBase,
 )
-
 
 try:
     from scp import SCPClient

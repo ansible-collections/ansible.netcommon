@@ -4,7 +4,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 DOCUMENTATION = """
@@ -245,7 +244,6 @@ from ansible.plugins.connection import ConnectionBase
 from ansible.utils.display import Display
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.version import Version
-
 
 display = Display()
 
