@@ -583,6 +583,7 @@ class Connection(ConnectionBase):
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
             raise AnsibleFileNotFound("file or module does not exist: %s" % in_path)
 
+        self._connect()
         if proto == "sftp":
             try:
                 self.sftp = self.ssh.sftp()
@@ -647,6 +648,18 @@ class Connection(ConnectionBase):
                 # it works fine if the file is actually present
                 scp.get(in_path, out_path)
             except LibsshSCPException as exc:
+                # Invalidate cached connection so next operation (e.g. put_file)
+                # uses a fresh connection; some devices misbehave when reusing
+                # a connection that had a failed SCP get.
+                cache_key = self._cache_key()
+                SSH_CONNECTION_CACHE.pop(cache_key, None)
+                SFTP_CONNECTION_CACHE.pop(cache_key, None)
+                if hasattr(self, "ssh") and self.ssh is not None:
+                    try:
+                        self.ssh.close()
+                    except Exception:
+                        pass
+                    self.ssh = None
                 raise AnsibleError("Error transferring file from %s: %s" % (out_path, to_text(exc)))
         else:
             raise AnsibleError("Don't know how to transfer file over protocol %s" % proto)
