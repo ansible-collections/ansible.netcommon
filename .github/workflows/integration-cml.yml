@@ -32,6 +32,14 @@ name: "Integration tests 💻"
         required: false
         type: boolean
         default: false
+      ssh_type:
+        description: "network_cli SSH transport (paramiko or libssh)"
+        required: false
+        type: choice
+        options:
+          - "libssh"
+          - "paramiko"
+        default: "libssh"
 jobs:
   lab-create:
     uses: ansible/ansible-content-actions/.github/workflows/cml_lab_create.yaml@main
@@ -45,13 +53,14 @@ jobs:
 
   integration-tests:
     needs: lab-create
-    name: "libssh & ansible-core ${{ matrix.ansible_version }}"
+    name: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ssh_type || 'libssh' }} & ansible-core ${{ matrix.ansible_version }}"
     runs-on: ubuntu-latest
     if: ${{ !github.event.pull_request || contains(github.event.pull_request.labels.*.name, 'safe to test') }}
     env:
       PY_COLORS: "1"
       ANSIBLE_COLLECTIONS_PATHS: "/home/runner/collections:~/.ansible/collections:/usr/share/ansible/collections"
-      CLI_SSH_TYPE: libssh
+      # workflow_dispatch: use chosen ssh_type; PR/schedule: default libssh
+      CLI_SSH_TYPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ssh_type || 'libssh' }}
     strategy:
       fail-fast: true
       matrix:  #  There is no official support for matrix here as multiple applaince are needed per run, test against one core version.
