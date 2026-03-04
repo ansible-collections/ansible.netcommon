@@ -6,7 +6,7 @@ plugin_routing:
       redirect: ansible.netcommon.grpc
     grpc_get:
       redirect: ansible.netcommon.grpc
-  filter: # this is added as shortforms are broken after plugins are moved from netcommon to utils
+  filter:
     ipaddr:
       redirect: ansible.utils.ipaddr
     ipv4:
