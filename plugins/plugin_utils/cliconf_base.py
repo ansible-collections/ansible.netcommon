@@ -5,7 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 from abc import abstractmethod
@@ -19,7 +18,6 @@ from ansible.module_utils.common.text.converters import to_bytes, to_text
 from ansible.plugins.cliconf import CliconfBase as CliconfBaseBase
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
-
 
 try:
     from scp import SCPClient

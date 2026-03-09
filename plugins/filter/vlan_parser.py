@@ -8,8 +8,8 @@
 """
 The vlan_parser filter plugin
 """
-from __future__ import absolute_import, division, print_function
 
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -110,7 +110,6 @@ from ansible_collections.ansible.netcommon.plugins.plugin_utils.argspec_filter_u
     convert_to_native,
 )
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
-
 
 try:
     from jinja2.filters import pass_environment
