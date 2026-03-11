@@ -41,8 +41,8 @@ EXAMPLES = r"""
   register: nxos_pyats_text
 """
 
-from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import missing_required_lib
+from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
 
 
@@ -137,5 +137,5 @@ class CliParser(CliParserBase):
             parsed = device.parse(command, output=cli_output)
         except Exception as exc:
             msg = "The pyats library return an error for '{cmd}' for '{os}'. Error: {err}."
-            return {"errors": [(msg.format(cmd=command, os=network_os, err=to_native(exc)))]}
+            return {"errors": [msg.format(cmd=command, os=network_os, err=to_native(exc))]}
         return {"parsed": parsed}

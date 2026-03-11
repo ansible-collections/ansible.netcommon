@@ -1,0 +1,23 @@
+---
+- name: Gather facts for non-network to get ansible_distribution
+  ansible.builtin.gather_facts:
+  when: ansible_network_os is not defined
+
+- name: Set a short name
+  ansible.builtin.set_fact:
+    os: "{{ ansible_distribution | d or (ansible_network_os | d('')).split('.')[-1] }}"
+
+- name: Run a RM test - network_cli
+  ansible.builtin.include_tasks: "{{ os | lower }}_any_rm.yaml"
+  when: "os in ['nxos']"
+
+- name: Run a command module test - network_cli
+  ansible.builtin.include_tasks: "{{ os | lower }}_cli_command.yaml"
+  when: "os in ['nxos']"
+
+- name: Run a config module test - network_cli
+  ansible.builtin.include_tasks: "{{ os | lower }}_cli_config.yaml"
+  when: "os in ['nxos']"
+# - name: Run a net_put module test - network_cli
+#   ansible.builtin.include_tasks: "{{ os | lower }}_net_put.yaml"
+#   when: "os in ['nxos']"

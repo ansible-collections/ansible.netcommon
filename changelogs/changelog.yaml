@@ -848,9 +848,89 @@ releases:
         - Bumping `requires_ansible` to `>=2.16.0`, since previous ansible-core versions
           are EoL now.
       release_summary:
-        "With this release, the minimum required version of `ansible-core`
+        With this release, the minimum required version of `ansible-core`
         for this collection is `2.16.0`. The last version known to be compatible with
-        `ansible-core` versions below `2.16` is v7.2.0."
+        `ansible-core` versions below `2.16` is v7.2.0.
     fragments:
       - bump216.yml
     release_date: "2025-04-11"
+  8.0.1:
+    changes:
+      bugfixes:
+        - (#633) Fixed typo in ansible.netcommon.telnet parameter crlf (was clrf by
+          mistake)
+        - netconf - Adds check for netconf session_close RPC happens only if connection
+          is alive.
+    fragments:
+      - data_tag.yml
+      - fix_ci.yaml
+      - netconf_reset_connection.yaml
+      - telnet_crlf_parameter.yml
+    release_date: "2025-07-01"
+  8.1.0:
+    changes:
+      bugfixes:
+        - Improved error handling in DirectExecutionModule._record_module_result method
+          for better compatibility with core<=2.18
+      minor_changes:
+        - Changes to supplement direct execution of Ansible module in validate_config(utils.py)
+          and _patch_update_module(network.py) added.
+        - Override new 2.19.1+ AnsibleModule._record_module_result hook in network action
+          plugin to bypass module result serialization when direct execution is enabled
+    fragments:
+      - data_tagging_2_19.yaml
+    release_date: "2025-08-14"
+  8.2.0:
+    changes:
+      bugfixes:
+        - Added support for private key passphrase in libssh connection plugin, when
+          using encrypted private keys specified by the C(ansible_private_key_file)
+          attribute.
+        - Avoid legacy imports deprecated in ansible-core 2.20 (https://github.com/ansible-collections/ansible.netcommon/pull/720).
+        - Avoid merging module_defaults for all ansible.netcommon.grpc_* modules.
+        - Set libssh logging level to DEBUG when Ansible verbosity is greater than 3,
+          to aid in troubleshooting connection issues.
+      minor_changes:
+        - Exposes new libssh option to configure key_exchange_algorithms. This requires
+          ansible-pylibssh v1.3.0 or higher.
+    fragments:
+      - 720-ansible-core-2.20.yml
+      - fix_721_private_key.yml
+      - fix_grpc_module_defaults.yaml
+      - fix_sanity_220_devel.yaml
+      - fix_typo_error.yaml
+      - key_exchange_algo.yml
+    release_date: "2025-11-06"
+  8.2.1:
+    changes:
+      bugfixes:
+        - Adds backward compatibility of handling src attributes, functional consistency
+          with ansible-core >= 2.19
+        - Adds deprecation warning for the jinja2 processing functionality for src attributes,
+          src attributes in collections would still support considering file path but
+          they would not process template files directly once the functionality is deprecated.
+        - It is suggested to use ansible.builtin.template module to process templates
+          and use the processed template path in src attributes.
+    fragments:
+      - backward_src_219.yml
+      - test-fixes.yml
+    release_date: "2026-01-13"
+  8.3.0:
+    changes:
+      minor_changes:
+        - Option to use libssh as transport while using netconf, is added.
+        - The ssh-python module is needed, which will ensure libssh as transport for
+          netconf operations. When use_libssh is enabled.
+    fragments:
+      - libsssh-fix.yml
+    release_date: "2026-02-04"
+  8.4.0:
+    changes:
+      minor_changes:
+        - Option to use libssh as transport while using netconf, is added.
+        - The ssh-python module is needed, which will ensure libssh as transport for
+          netconf operations. When use_libssh is enabled.
+      release_summary: Re-released 8.3.1 with features added in the last release.
+    fragments:
+      - re_release_832.yaml
+    release_date: "2026-02-04"

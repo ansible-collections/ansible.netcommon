@@ -58,6 +58,7 @@ def test_libssh_connect(conn, monkeypatch):
         look_for_keys=True,
         password="test",
         password_prompt=None,
+        private_key_password=None,
         port=8080,
         timeout=60,
         user="user1",

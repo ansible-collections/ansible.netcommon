@@ -10,14 +10,14 @@ __metaclass__ = type
 
 from time import sleep
 
-from ansible.module_utils._text import to_bytes, to_text
-from ansible.module_utils.six import text_type
+from ansible.module_utils.common.text.converters import to_bytes, to_text
 from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.compat import telnetlib
 
 
+text_type = str
 display = Display()
 
 

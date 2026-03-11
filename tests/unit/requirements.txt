@@ -12,5 +12,4 @@ ntc_templates
 pyats >= 21.4 ; python_version >= '3.6'
 genie >= 21.4 ; python_version >= '3.6'
 textfsm
-ttp
 xmltodict

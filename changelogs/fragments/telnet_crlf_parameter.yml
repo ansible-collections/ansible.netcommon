@@ -1,3 +1,0 @@
----
-bugfixes:
-  - "(#633) Fixed typo in ansible.netcommon.telnet parameter crlf (was clrf by mistake)"

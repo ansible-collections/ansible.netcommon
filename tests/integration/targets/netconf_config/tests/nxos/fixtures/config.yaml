@@ -1,6 +1,6 @@
 ---
 vlan_config: |
-  <config>
+  <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
   <System xmlns="http://cisco.com/ns/yang/cisco-nx-os-device">
     <bd-items>
       <bd-items>
