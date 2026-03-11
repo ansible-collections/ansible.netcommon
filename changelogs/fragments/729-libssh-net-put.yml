@@ -1,0 +1,12 @@
+minor_changes:
+  - >-
+    The ``net_put`` module uses temporary files created via the Python
+    function ``mkstemp`` instead of the current working directory
+bugfixes:
+  - >-
+    Reset SCP connections after `fetch_file` and `put_file` calls for `libssh`
+    connections. This resolves the issue with Cisco SCP servers that close
+    channels after SCP operations.
+  - >-
+    Improve handling of temporary files in `net_put` so failures no longer
+    leave lingering temporary files in the current working directory.
