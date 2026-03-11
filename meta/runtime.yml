@@ -1,14 +1,15 @@
 ---
 requires_ansible: ">=2.16.0"
 plugin_routing:
-  modules:
+  action:
     grpc_config:
-      action_plugin: ansible.netcommon.grpc
+      redirect: ansible.netcommon.grpc
     grpc_get:
-      action_plugin: ansible.netcommon.grpc
-    netconf_config:
-      action_plugin: ansible.netcommon.netconf
-    netconf_get:
-      action_plugin: ansible.netcommon.netconf
-    netconf_rpc:
-      action_plugin: ansible.netcommon.netconf
+      redirect: ansible.netcommon.grpc
+  filter:
+    ipaddr:
+      redirect: ansible.utils.ipaddr
+    ipv4:
+      redirect: ansible.utils.ipv4
+    ipv6:
+      redirect: ansible.utils.ipv6

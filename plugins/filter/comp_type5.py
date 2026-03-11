@@ -74,6 +74,9 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
     AnsibleArgSpecValidator,
 )
 
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.argspec_filter_utils import (
+    convert_to_native,
+)
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.comp_type5 import comp_type5
 
 
@@ -94,6 +97,7 @@ def _comp_type5(*args, **kwargs):
     ]
     data = dict(zip(keys, args[1:]))
     data.update(kwargs)
+    data = convert_to_native(data)
     aav = AnsibleArgSpecValidator(data=data, schema=DOCUMENTATION, name="comp_type5")
     valid, errors, updated_data = aav.validate()
     if not valid:

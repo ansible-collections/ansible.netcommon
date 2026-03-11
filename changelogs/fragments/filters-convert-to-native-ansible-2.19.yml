@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - filter plugins - Convert filter arguments to native Python types before ``AnsibleArgSpecValidator`` so filters work with Ansible 2.19+ lazy containers that cannot be deep-copied (e.g. ``vlan_parser``, ``vlan_expander``, ``hash_salt``, ``type5_pw``, ``comp_type5``, ``parse_cli``, ``parse_cli_textfsm``, ``parse_xml``, ``pop_ace``).

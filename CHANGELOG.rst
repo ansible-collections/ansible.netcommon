@@ -4,6 +4,39 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.4.0
+======
+
+Release Summary
+---------------
+
+Re-released 8.3.1 with features added in the last release.
+
+Minor Changes
+-------------
+
+- Option to use libssh as transport while using netconf, is added.
+- The ssh-python module is needed, which will ensure libssh as transport for netconf operations. When use_libssh is enabled.
+
+v8.3.0
+======
+
+Minor Changes
+-------------
+
+- Option to use libssh as transport while using netconf, is added.
+- The ssh-python module is needed, which will ensure libssh as transport for netconf operations. When use_libssh is enabled.
+
+v8.2.1
+======
+
+Bugfixes
+--------
+
+- Adds backward compatibility of handling src attributes, functional consistency with ansible-core >= 2.19
+- Adds deprecation warning for the jinja2 processing functionality for src attributes, src attributes in collections would still support considering file path but they would not process template files directly once the functionality is deprecated.
+- It is suggested to use ansible.builtin.template module to process templates and use the processed template path in src attributes.
+
 v8.2.0
 ======
 

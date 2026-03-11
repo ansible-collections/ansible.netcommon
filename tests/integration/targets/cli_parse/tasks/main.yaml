@@ -14,13 +14,13 @@
   tags:
     - native
 
-- name: Run JSON parser tests
-  ansible.builtin.include_tasks: "{{ os | lower }}_json.yaml"
+- name: Run pyats parser tests
+  ansible.builtin.include_tasks: "{{ os | lower }}_pyats.yaml"
   vars:
-    parser: "({{ os }}/json)"
+    parser: "({{ os }}/pyats)"
   when: "os in ['nxos']"
   tags:
-    - json
+    - pyats
 
 - name: Run ntc_templates parser tests
   ansible.builtin.include_tasks: "{{ os | lower }}_ntc_templates.yaml"
@@ -30,14 +30,6 @@
   tags:
     - ntc_templates
 
-- name: Run pyats parser tests
-  ansible.builtin.include_tasks: "{{ os | lower }}_pyats.yaml"
-  vars:
-    parser: "({{ os }}/pyats)"
-  when: "os in ['nxos']"
-  tags:
-    - pyats
-
 - name: Run textfsm parser tests
   ansible.builtin.include_tasks: "{{ os | lower }}_textfsm.yaml"
   vars:
@@ -45,14 +37,6 @@
   when: "os in ['nxos']"
   tags:
     - textfsm
-
-- name: Run ttp parser tests
-  ansible.builtin.include_tasks: "{{ os | lower }}_ttp.yaml"
-  vars:
-    parser: "({{ os }}/ttp)"
-  when: "os in ['nxos']"
-  tags:
-    - ttp
 
 - name: Run XML parser tests
   ansible.builtin.include_tasks: "{{ os | lower }}_xml.yaml"

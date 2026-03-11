@@ -1,0 +1,6 @@
+---
+- name: Run show version
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.cli_command:
+    command: show version

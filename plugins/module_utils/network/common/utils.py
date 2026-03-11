@@ -669,7 +669,13 @@ def compare_partial_dict(want, have, compare_keys):
     return wantd == haved
 
 
-class Template:
+class JinjaTemplate:
+    """Custom Jinja2-based template class for network module utilities.
+
+    Note: This class was renamed from 'Template' to 'JinjaTemplate' to avoid
+    naming collision with Jinja2's Template class in Ansible 2.19+.
+    """
+
     def __init__(self):
         if not HAS_JINJA2:
             raise ImportError(
@@ -711,6 +717,10 @@ class Template:
                 if marker in data:
                     return True
         return False
+
+
+# Backwards compatibility alias for code that imports 'Template' from here
+Template = JinjaTemplate
 
 
 def extract_argspec(doc_obj, argpsec):

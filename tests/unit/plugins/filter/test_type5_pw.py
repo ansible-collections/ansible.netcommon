@@ -10,6 +10,7 @@ __metaclass__ = type
 
 from unittest import TestCase
 
+from ansible_collections.ansible.netcommon.plugins.filter.type5_pw import _type5_pw
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
 
 
@@ -66,3 +67,10 @@ class TestType5_pw(TestCase):
             len(result),
             30,
         )
+
+    def test_type5_pw_filter_wrapper(self):
+        """Filter wrapper runs convert_to_native before validation."""
+        env = None
+        result = _type5_pw(env, "cisco", salt="nTc1")
+        expected = self.check_version_and_get_expected_md5_crypt("cisco", "nTc1")
+        self.assertEqual(result, expected)
