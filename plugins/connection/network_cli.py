@@ -181,25 +181,48 @@ options:
     elements: dict
     description:
     - A single regex pattern or a sequence of patterns along with optional flags to
-      match the command prompt from the received response chunk. This option accepts
-      C(pattern) and C(flags) keys. The value of C(pattern) is a python regex pattern
-      to match the response and the value of C(flags) is the value accepted by I(flags)
-      argument of I(re.compile) python method to control the way regex is matched
-      with the response, for example I('re.I').
+      match the command prompt from the received response chunk. When
+      I(terminal_stdout_re_behaviour) is I(override), these patterns replace the
+      terminal plugin defaults. When I(merge), they are added to the terminal
+      defaults. This option accepts C(pattern) and C(flags) keys. The value of
+      C(pattern) is a python regex pattern to match the response and the value of
+      C(flags) is the value accepted by I(flags) argument of I(re.compile) python
+      method to control the way regex is matched with the response, for example
+      I('re.I').
     vars:
     - name: ansible_terminal_stdout_re
+  terminal_stdout_re_behaviour:
+    type: str
+    choices: [merge, override]
+    default: override
+    description:
+    - When I(override), C(terminal_stdout_re) patterns replace the terminal plugin
+      defaults. When I(merge), they are added to the terminal plugin defaults.
+    vars:
+    - name: ansible_terminal_stdout_re_behaviour
   terminal_stderr_re:
     type: list
     elements: dict
     description:
     - This option provides the regex pattern and optional flags to match the error
-      string from the received response chunk. This option accepts C(pattern) and
-      C(flags) keys. The value of C(pattern) is a python regex pattern to match the
-      response and the value of C(flags) is the value accepted by I(flags) argument
-      of I(re.compile) python method to control the way regex is matched with the
-      response, for example I('re.I').
+      string from the received response chunk. When I(terminal_stderr_re_behaviour)
+      is I(override), these patterns replace the terminal plugin defaults. When
+      I(merge), they are added to the terminal defaults. This option accepts
+      C(pattern) and C(flags) keys. The value of C(pattern) is a python regex
+      pattern to match the response and the value of C(flags) is the value accepted
+      by I(flags) argument of I(re.compile) python method to control the way
+      regex is matched with the response, for example I('re.I').
     vars:
     - name: ansible_terminal_stderr_re
+  terminal_stderr_re_behaviour:
+    type: str
+    choices: [merge, override]
+    default: override
+    description:
+    - When I(override), C(terminal_stderr_re) patterns replace the terminal plugin
+      defaults. When I(merge), they are added to the terminal plugin defaults.
+    vars:
+    - name: ansible_terminal_stderr_re_behaviour
   terminal_initial_prompt:
     type: list
     elements: string
@@ -1745,9 +1768,17 @@ class Connection(NetworkConnectionBase):
 
     def _get_terminal_std_re(self, option):
         terminal_std_option = self.get_option(option)
-        terminal_std_re = []
+        behaviour_option = option + "_behaviour"
+        behaviour = self.get_option(behaviour_option)
 
         if terminal_std_option:
+            if behaviour == "merge":
+                # Start with terminal plugin defaults, then append user patterns
+                terminal_std_re = list(getattr(self._terminal, option))
+            else:
+                # override: use only user-provided patterns
+                terminal_std_re = []
+
             for item in terminal_std_option:
                 if "pattern" not in item:
                     raise AnsibleConnectionFailure(
@@ -1760,8 +1791,7 @@ class Connection(NetworkConnectionBase):
                     flag = getattr(re, flag.split(".")[1])
                 terminal_std_re.append(re.compile(pattern, flag))
         else:
-            # To maintain backward compatibility
-            terminal_std_re = getattr(self._terminal, option)
+            terminal_std_re = list(getattr(self._terminal, option))
 
         return terminal_std_re
 

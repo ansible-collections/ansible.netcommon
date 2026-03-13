@@ -595,7 +595,29 @@ Parameters
                                 <div>var: ansible_terminal_stderr_re</div>
                     </td>
                 <td>
-                        <div>This option provides the regex pattern and optional flags to match the error string from the received response chunk. This option accepts <code>pattern</code> and <code>flags</code> keys. The value of <code>pattern</code> is a python regex pattern to match the response and the value of <code>flags</code> is the value accepted by <em>flags</em> argument of <em>re.compile</em> python method to control the way regex is matched with the response, for example <em>&#x27;re.I&#x27;</em>.</div>
+                        <div>This option provides the regex pattern and optional flags to match the error string from the received response chunk. When <em>terminal_stderr_re_behaviour</em> is <em>override</em>, these patterns replace the terminal plugin defaults. When <em>merge</em>, they are added to the terminal defaults. This option accepts <code>pattern</code> and <code>flags</code> keys. The value of <code>pattern</code> is a python regex pattern to match the response and the value of <code>flags</code> is the value accepted by <em>flags</em> argument of <em>re.compile</em> python method to control the way regex is matched with the response, for example <em>&#x27;re.I&#x27;</em>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>terminal_stderr_re_behaviour</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>merge</li>
+                                    <li><div style="color: blue"><b>override</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                    <td>
+                                <div>var: ansible_terminal_stderr_re_behaviour</div>
+                    </td>
+                <td>
+                        <div>When <em>override</em>, <code>terminal_stderr_re</code> patterns replace the terminal plugin defaults. When <em>merge</em>, they are added to the terminal plugin defaults.</div>
                 </td>
             </tr>
             <tr>
@@ -614,7 +636,29 @@ Parameters
                                 <div>var: ansible_terminal_stdout_re</div>
                     </td>
                 <td>
-                        <div>A single regex pattern or a sequence of patterns along with optional flags to match the command prompt from the received response chunk. This option accepts <code>pattern</code> and <code>flags</code> keys. The value of <code>pattern</code> is a python regex pattern to match the response and the value of <code>flags</code> is the value accepted by <em>flags</em> argument of <em>re.compile</em> python method to control the way regex is matched with the response, for example <em>&#x27;re.I&#x27;</em>.</div>
+                        <div>A single regex pattern or a sequence of patterns along with optional flags to match the command prompt from the received response chunk. When <em>terminal_stdout_re_behaviour</em> is <em>override</em>, these patterns replace the terminal plugin defaults. When <em>merge</em>, they are added to the terminal defaults. This option accepts <code>pattern</code> and <code>flags</code> keys. The value of <code>pattern</code> is a python regex pattern to match the response and the value of <code>flags</code> is the value accepted by <em>flags</em> argument of <em>re.compile</em> python method to control the way regex is matched with the response, for example <em>&#x27;re.I&#x27;</em>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>terminal_stdout_re_behaviour</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>merge</li>
+                                    <li><div style="color: blue"><b>override</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                    <td>
+                                <div>var: ansible_terminal_stdout_re_behaviour</div>
+                    </td>
+                <td>
+                        <div>When <em>override</em>, <code>terminal_stdout_re</code> patterns replace the terminal plugin defaults. When <em>merge</em>, they are added to the terminal plugin defaults.</div>
                 </td>
             </tr>
     </table>

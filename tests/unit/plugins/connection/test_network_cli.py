@@ -308,7 +308,8 @@ def test_network_cli_exec_command_value_error_falls_back_to_bytes(conn):
 
 
 # ---- _get_terminal_std_re ----
-def test_network_cli_get_terminal_std_re_from_option(conn):
+def test_network_cli_get_terminal_std_re_from_option_override_default(conn):
+    """By default (override), user-provided patterns replace terminal defaults."""
     conn.set_options(
         direct={
             "ssh_type": "libssh",
@@ -321,6 +322,24 @@ def test_network_cli_get_terminal_std_re_from_option(conn):
 
     assert len(result) == 1
     assert result[0].pattern == rb"hostname#"
+
+
+def test_network_cli_get_terminal_std_re_from_option_merge_behaviour(conn):
+    """With terminal_stdout_re_behaviour=merge, user patterns are added to defaults."""
+    conn.set_options(
+        direct={
+            "ssh_type": "libssh",
+            "terminal_stdout_re": [{"pattern": r"hostname#"}],
+            "terminal_stdout_re_behaviour": "merge",
+        }
+    )
+    conn._terminal = _make_terminal_mock()
+
+    result = conn._get_terminal_std_re("terminal_stdout_re")
+
+    assert len(result) == 2
+    assert result[0].pattern == rb"device#"
+    assert result[1].pattern == rb"hostname#"
 
 
 def test_network_cli_get_terminal_std_re_missing_pattern_raises(conn):
@@ -354,6 +373,7 @@ def test_network_cli_get_terminal_std_re_with_flags(conn):
 
 
 def test_network_cli_get_terminal_std_re_fallback_to_terminal(conn):
+    """When option is not set, only terminal plugin defaults are used."""
     conn.set_options(direct={"ssh_type": "libssh"})
     terminal = _make_terminal_mock()
     terminal.terminal_stdout_re = [re.compile(rb"fallback#")]
@@ -362,6 +382,42 @@ def test_network_cli_get_terminal_std_re_fallback_to_terminal(conn):
     result = conn._get_terminal_std_re("terminal_stdout_re")
 
     assert result == [re.compile(rb"fallback#")]
+
+
+def test_network_cli_get_terminal_std_re_stderr_override_default(conn):
+    """By default, terminal_stderr_re overrides terminal plugin patterns."""
+    conn.set_options(
+        direct={
+            "ssh_type": "libssh",
+            "terminal_stderr_re": [{"pattern": r"custom error"}],
+        }
+    )
+    terminal = _make_terminal_mock(terminal_stderr_re=[re.compile(rb"% Error")])
+    conn._terminal = terminal
+
+    result = conn._get_terminal_std_re("terminal_stderr_re")
+
+    assert len(result) == 1
+    assert result[0].pattern == rb"custom error"
+
+
+def test_network_cli_get_terminal_std_re_stderr_merge_behaviour(conn):
+    """With terminal_stderr_re_behaviour=merge, user patterns are added to defaults."""
+    conn.set_options(
+        direct={
+            "ssh_type": "libssh",
+            "terminal_stderr_re": [{"pattern": r"custom error"}],
+            "terminal_stderr_re_behaviour": "merge",
+        }
+    )
+    terminal = _make_terminal_mock(terminal_stderr_re=[re.compile(rb"% Error")])
+    conn._terminal = terminal
+
+    result = conn._get_terminal_std_re("terminal_stderr_re")
+
+    assert len(result) == 2
+    assert result[0].pattern == rb"% Error"
+    assert result[1].pattern == rb"custom error"
 
 
 # ---- _strip, _sanitize, _find_prompt, _find_error ----
