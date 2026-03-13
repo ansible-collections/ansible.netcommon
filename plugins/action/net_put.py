@@ -148,12 +148,13 @@ class ActionModule(ActionBase):
                 proto=proto,
                 timeout=timeout,
             )
-        except ConnectionError as exc:
+        except (ConnectionError, AnsibleError) as exc:
             error = to_text(exc)
-            if error.endswith("No such file or directory") or "File doesn't exist" in error:
+            if "No such file or directory" in error or "File doesn't exist" in error:
                 if os.path.exists(tmp_source_file):
                     os.remove(tmp_source_file)
                 return True
+            raise
         try:
             with open(source, "r") as f:
                 new_content = f.read()
