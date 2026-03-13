@@ -141,17 +141,18 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"no"</div>
+                        <b>Default:</b><br/><div style="color: blue">"yes"</div>
                 </td>
                     <td>
                             <div> ini entries:
-                                    <p>[paramiko_connection]<br>host_key_auto_add = no</p>
+                                    <p>[paramiko_connection]<br>host_key_auto_add = yes</p>
                             </div>
                                 <div>env:ANSIBLE_HOST_KEY_AUTO_ADD</div>
                     </td>
                 <td>
-                        <div>By default, Ansible will prompt the user before adding SSH keys to the known hosts file.  Since persistent connections such as network_cli run in background processes, the user will never be prompted.  By enabling this option, unknown host keys will automatically be added to the known hosts file.</div>
-                        <div>Be sure to fully understand the security implications of enabling this option on production systems as it could create a security vulnerability.</div>
+                        <div>When <code>true</code>, unknown host keys are automatically added to the user known_hosts file and saved on connection close, so the first connection to a new host works without manual intervention (e.g. no need to run ssh-keyscan or set config).</div>
+                        <div>When <code>false</code>, Ansible would prompt before adding; since network_cli uses persistent connections (background processes), the user cannot respond, so connection fails for new hosts unless the key is already in known_hosts.</div>
+                        <div>Set to <code>false</code> if you need to avoid automatically trusting new host keys (e.g. on production systems where you manage known_hosts separately).</div>
                 </td>
             </tr>
             <tr>
