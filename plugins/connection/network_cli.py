@@ -147,13 +147,15 @@ options:
   host_key_auto_add:
     type: boolean
     description:
-    - By default, Ansible will prompt the user before adding SSH keys to the known
-      hosts file.  Since persistent connections such as network_cli run in background
-      processes, the user will never be prompted.  By enabling this option, unknown
-      host keys will automatically be added to the known hosts file.
-    - Be sure to fully understand the security implications of enabling this option
-      on production systems as it could create a security vulnerability.
-    default: false
+    - When C(true), unknown host keys are automatically added to the user known_hosts
+      file and saved on connection close, so the first connection to a new host works
+      without manual intervention (e.g. no need to run ssh-keyscan or set config).
+    - When C(false), Ansible would prompt before adding; since network_cli uses
+      persistent connections (background processes), the user cannot respond, so
+      connection fails for new hosts unless the key is already in known_hosts.
+    - Set to C(false) if you need to avoid automatically trusting new host keys
+      (e.g. on production systems where you manage known_hosts separately).
+    default: true
     ini:
     - section: paramiko_connection
       key: host_key_auto_add
@@ -372,7 +374,8 @@ Are you sure you want to continue connecting (yes/no)?
 """
 # One-line message when we cannot prompt (e.g. persistent connection)
 AUTHENTICITY_ERR_MSG = (
-    "paramiko: The authenticity of host '%s' can't be established. The %s key fingerprint is %s."
+    "paramiko: The authenticity of host '%s' can't be established. The %s key fingerprint is %s. "
+    "Set host_key_auto_add=True to add the key and save it to known_hosts, or add the key manually."
 )
 
 # SSH Options Regex for parsing proxy commands
@@ -405,7 +408,7 @@ class _ParamikoHostKeyPolicy(_MissingHostKeyPolicy):
                 not self.connection.get_option("host_key_auto_add"),
             )
         ):
-            fingerprint = hexlify(key.get_fingerprint())
+            fingerprint = to_text(hexlify(key.get_fingerprint()), errors="surrogate_or_strict")
             ktype = key.get_name()
 
             if (
@@ -468,7 +471,7 @@ class _ParamikoConnection:
         "remote_user": None,
         "password": None,
         "private_key_file": None,
-        "host_key_auto_add": False,
+        "host_key_auto_add": True,
         "look_for_keys": True,
         "proxy_command": "",
         "pty": True,
@@ -669,8 +672,14 @@ class _ParamikoConnection:
                 try:
                     ssh.load_system_host_keys(ssh_known_hosts)
                     break
-                except IOError:
+                except OSError:
                     pass  # file was not found, but not required to function
+            # Load user's known_hosts (same file we write to on close)
+            if os.path.exists(self.keyfile):
+                try:
+                    ssh.load_system_host_keys(self.keyfile)
+                except OSError:
+                    pass
             ssh.load_system_host_keys()
 
         ssh_connect_kwargs = self._parse_proxy_command(port)
