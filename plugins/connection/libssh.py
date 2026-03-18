@@ -238,6 +238,7 @@ import os
 import re
 import socket
 
+from ansible import constants as C
 from ansible.errors import AnsibleConnectionFailure, AnsibleError, AnsibleFileNotFound
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.common.text.converters import to_bytes, to_native, to_text
@@ -345,6 +346,79 @@ class Connection(ConnectionBase):
     def _set_log_channel(self, name):
         self._log_channel = name
 
+    def _ensure_pylibssh_log_handler(self, host=None):
+        """Route ansible-pylibssh (libssh) logs to Ansible log_path when set.
+
+        Handler and logger levels follow display.verbosity using Python standard
+        logging levels: 0 -> WARNING, 1-2 -> INFO, 3+ -> DEBUG.
+        """
+        verbosity = display.verbosity
+        if verbosity >= 3:
+            log_level = logging.DEBUG
+        elif verbosity >= 1:
+            log_level = logging.INFO
+        else:
+            log_level = logging.WARNING
+
+        logpath = getattr(C, "DEFAULT_LOG_PATH", None)
+        display.vvvv(
+            "libssh log handler: DEFAULT_LOG_PATH=%s" % repr(logpath),
+            host=host,
+        )
+        if not logpath:
+            display.vvvv("libssh log handler: skipped (no DEFAULT_LOG_PATH set)", host=host)
+            return
+        if not os.path.isabs(logpath):
+            display.vvvv(
+                "libssh log handler: skipped (log_path not absolute: %s)" % logpath,
+                host=host,
+            )
+            return
+        logpath = os.path.expanduser(logpath)
+        if os.path.exists(logpath):
+            if not os.access(logpath, os.W_OK):
+                display.vvvv(
+                    "libssh log handler: skipped (log file not writable: %s)" % logpath,
+                    host=host,
+                )
+                return
+        else:
+            parent = os.path.dirname(logpath)
+            if parent and not os.path.isdir(parent):
+                display.vvvv(
+                    "libssh log handler: skipped (parent not a directory: %s)" % parent,
+                    host=host,
+                )
+                return
+            if parent and not os.access(parent, os.W_OK):
+                display.vvvv(
+                    "libssh log handler: skipped (parent not writable: %s)" % parent,
+                    host=host,
+                )
+                return
+        pylibssh_log = logging.getLogger("ansible-pylibssh")
+        for h in pylibssh_log.handlers:
+            if getattr(h, "baseFilename", None) == logpath:
+                pylibssh_log.setLevel(log_level)
+                h.setLevel(log_level)
+                display.vvvv(
+                    "libssh log handler: already attached to %s (level=%s)" % (logpath, log_level),
+                    host=host,
+                )
+                return
+        handler = logging.FileHandler(logpath, mode="a", encoding="utf-8")
+        handler.setLevel(log_level)
+        handler.setFormatter(
+            logging.Formatter("%(asctime)s p=%(process)d n=%(name)s %(levelname)s| %(message)s")
+        )
+        pylibssh_log.addHandler(handler)
+        pylibssh_log.setLevel(log_level)
+        display.vvvv(
+            "libssh log handler: added FileHandler for ansible-pylibssh -> %s (level=%s)"
+            % (logpath, log_level),
+            host=host,
+        )
+
     def _get_proxy_command(self, port=22):
         proxy_command = None
         # Parse ansible_ssh_common_args, specifically looking for ProxyCommand
@@ -408,9 +482,7 @@ class Connection(ConnectionBase):
         )
 
         self.ssh = Session()
-
-        if display.verbosity > 3:
-            self.ssh.set_log_level(logging.DEBUG)
+        self._ensure_pylibssh_log_handler(remote_addr)
 
         self.keyfile = os.path.expanduser("~/.ssh/known_hosts")
 
