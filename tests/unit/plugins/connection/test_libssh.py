@@ -105,11 +105,18 @@ def test_libssh_put_file_not_exist(mocked_super, conn):
 
 @patch("os.path.exists")
 @patch("ansible.plugins.connection.ConnectionBase.put_file")
-def test_libssh_put_file(mocked_super, mock_exists, conn):
+def test_libssh_put_file(mocked_super, mock_exists, conn, monkeypatch):
+    conn.set_options(
+        direct={
+            "remote_addr": "localhost",
+            "remote_user": "user1",
+            "host_key_checking": False,
+        }
+    )
     mock_sftp = MagicMock()
     attr = {"sftp.return_value": mock_sftp}
     mock_ssh = MagicMock(**attr)
-    conn.ssh = mock_ssh
+    monkeypatch.setattr(libssh, "Session", lambda: mock_ssh)
 
     file_path = "test_libssh.py"
     conn.put_file(in_path=file_path, out_path=file_path)
