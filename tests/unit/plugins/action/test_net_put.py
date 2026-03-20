@@ -73,7 +73,5 @@ def test_handle_existing_file_connection_error_missing_remote(net_put_action):
     conn = MagicMock()
     conn.get_file.side_effect = ConnectionError("File doesn't exist")
 
-    result = ActionModule._handle_existing_file(
-        action, conn, str(src), "/r/x", "sftp", 5
-    )
+    result = ActionModule._handle_existing_file(action, conn, str(src), "/r/x", "sftp", 5)
     assert result is True
