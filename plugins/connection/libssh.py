@@ -346,20 +346,16 @@ class Connection(ConnectionBase):
     def _set_log_channel(self, name):
         self._log_channel = name
 
-    def _ensure_pylibssh_log_handler(self, host=None):
-        """Route ansible-pylibssh (libssh) logs to Ansible log_path when set.
-
-        Handler and logger levels follow display.verbosity using Python standard
-        logging levels: 0 -> WARNING, 1-2 -> INFO, 3+ -> DEBUG.
-        """
+    @staticmethod
+    def _pylibssh_handler_log_level():
         verbosity = display.verbosity
         if verbosity >= 3:
-            log_level = logging.DEBUG
-        elif verbosity >= 1:
-            log_level = logging.INFO
-        else:
-            log_level = logging.WARNING
+            return logging.DEBUG
+        if verbosity >= 1:
+            return logging.INFO
+        return logging.WARNING
 
+    def _pylibssh_resolve_log_path(self, host):
         logpath = getattr(C, "DEFAULT_LOG_PATH", None)
         display.vvvv(
             "libssh log handler: DEFAULT_LOG_PATH=%s" % repr(logpath),
@@ -367,13 +363,13 @@ class Connection(ConnectionBase):
         )
         if not logpath:
             display.vvvv("libssh log handler: skipped (no DEFAULT_LOG_PATH set)", host=host)
-            return
+            return None
         if not os.path.isabs(logpath):
             display.vvvv(
                 "libssh log handler: skipped (log_path not absolute: %s)" % logpath,
                 host=host,
             )
-            return
+            return None
         logpath = os.path.expanduser(logpath)
         if os.path.exists(logpath):
             if not os.access(logpath, os.W_OK):
@@ -381,21 +377,24 @@ class Connection(ConnectionBase):
                     "libssh log handler: skipped (log file not writable: %s)" % logpath,
                     host=host,
                 )
-                return
-        else:
-            parent = os.path.dirname(logpath)
-            if parent and not os.path.isdir(parent):
-                display.vvvv(
-                    "libssh log handler: skipped (parent not a directory: %s)" % parent,
-                    host=host,
-                )
-                return
-            if parent and not os.access(parent, os.W_OK):
-                display.vvvv(
-                    "libssh log handler: skipped (parent not writable: %s)" % parent,
-                    host=host,
-                )
-                return
+                return None
+            return logpath
+        parent = os.path.dirname(logpath)
+        if parent and not os.path.isdir(parent):
+            display.vvvv(
+                "libssh log handler: skipped (parent not a directory: %s)" % parent,
+                host=host,
+            )
+            return None
+        if parent and not os.access(parent, os.W_OK):
+            display.vvvv(
+                "libssh log handler: skipped (parent not writable: %s)" % parent,
+                host=host,
+            )
+            return None
+        return logpath
+
+    def _pylibssh_attach_log_handler(self, logpath, log_level, host):
         pylibssh_log = logging.getLogger("ansible-pylibssh")
         for h in pylibssh_log.handlers:
             if getattr(h, "baseFilename", None) == logpath:
@@ -418,6 +417,18 @@ class Connection(ConnectionBase):
             % (logpath, log_level),
             host=host,
         )
+
+    def _ensure_pylibssh_log_handler(self, host=None):
+        """Route ansible-pylibssh (libssh) logs to Ansible log_path when set.
+
+        Handler and logger levels follow display.verbosity using Python standard
+        logging levels: 0 -> WARNING, 1-2 -> INFO, 3+ -> DEBUG.
+        """
+        log_level = self._pylibssh_handler_log_level()
+        logpath = self._pylibssh_resolve_log_path(host)
+        if logpath is None:
+            return
+        self._pylibssh_attach_log_handler(logpath, log_level, host)
 
     def _get_proxy_command(self, port=22):
         proxy_command = None
