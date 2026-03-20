@@ -340,7 +340,7 @@ def test_libssh_put_file_unknown_proto(mocked_super, mock_exists, conn, monkeypa
             "host_key_checking": False,
         }
     )
-    monkeypatch.setattr(libssh, "Session", lambda: MagicMock())
+    monkeypatch.setattr(libssh, "Session", MagicMock)
     mock_exists.return_value = True
     with pytest.raises(AnsibleError, match="Don't know how to transfer"):
         conn.put_file("/a", "/b", proto="bogus")
