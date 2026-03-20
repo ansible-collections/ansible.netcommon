@@ -305,10 +305,14 @@ def test_libssh_log_handler_updates_level_when_handler_exists(conn, monkeypatch,
 @patch("os.path.exists")
 @patch("ansible.plugins.connection.ConnectionBase.put_file")
 def test_libssh_put_file_scp(mocked_super, mock_exists, conn, monkeypatch):
+    libssh.SSH_CONNECTION_CACHE.clear()
+    libssh.SFTP_CONNECTION_CACHE.clear()
+    conn._play_context.remote_addr = "put-file-scp-host"
+    conn._play_context.remote_user = "u-scp"
     conn.set_options(
         direct={
-            "remote_addr": "localhost",
-            "remote_user": "u1",
+            "remote_addr": "put-file-scp-host",
+            "remote_user": "u-scp",
             "host_key_checking": False,
         }
     )
@@ -325,10 +329,14 @@ def test_libssh_put_file_scp(mocked_super, mock_exists, conn, monkeypatch):
 @patch("os.path.exists")
 @patch("ansible.plugins.connection.ConnectionBase.put_file")
 def test_libssh_put_file_unknown_proto(mocked_super, mock_exists, conn, monkeypatch):
+    libssh.SSH_CONNECTION_CACHE.clear()
+    libssh.SFTP_CONNECTION_CACHE.clear()
+    conn._play_context.remote_addr = "put-unknown-proto-host"
+    conn._play_context.remote_user = "u-up"
     conn.set_options(
         direct={
-            "remote_addr": "localhost",
-            "remote_user": "u1",
+            "remote_addr": "put-unknown-proto-host",
+            "remote_user": "u-up",
             "host_key_checking": False,
         }
     )
@@ -341,16 +349,20 @@ def test_libssh_put_file_unknown_proto(mocked_super, mock_exists, conn, monkeypa
 @patch("os.path.exists")
 @patch("ansible.plugins.connection.ConnectionBase.put_file")
 def test_libssh_put_file_sftp_put_ioerror(mocked_super, mock_exists, conn, monkeypatch):
+    libssh.SSH_CONNECTION_CACHE.clear()
+    libssh.SFTP_CONNECTION_CACHE.clear()
     mock_sftp = MagicMock()
     mock_sftp.put.side_effect = OSError("disk full")
     mock_ssh = MagicMock()
     mock_ssh.sftp.return_value = mock_sftp
     monkeypatch.setattr(libssh, "Session", lambda: mock_ssh)
     mock_exists.return_value = True
+    conn._play_context.remote_addr = "sftp-put-ioerror-host"
+    conn._play_context.remote_user = "u-ioe"
     conn.set_options(
         direct={
-            "remote_addr": "localhost",
-            "remote_user": "u1",
+            "remote_addr": "sftp-put-ioerror-host",
+            "remote_user": "u-ioe",
             "host_key_checking": False,
         }
     )
