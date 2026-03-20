@@ -9,6 +9,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 import logging
+import os
 
 from unittest.mock import MagicMock, patch
 
@@ -228,3 +229,171 @@ def test_libssh_fetch_file_scp_failure_invalidates_cache(mocked_super, conn, mon
     assert cache_key not in libssh.SSH_CONNECTION_CACHE
     assert conn.ssh is None
     mock_ssh.close.assert_called_once()
+
+
+def test_libssh_resolve_log_path_new_file_writable_parent(conn, monkeypatch, tmp_path):
+    """Log file does not exist yet; parent directory is writable -> return path."""
+    logf = tmp_path / "new" / "ansible.log"
+    logf.parent.mkdir(parents=True)
+    monkeypatch.setattr(libssh.C, "DEFAULT_LOG_PATH", str(logf.resolve()))
+    assert conn._pylibssh_resolve_log_path("h") == str(logf.resolve())
+
+
+def test_libssh_resolve_log_path_skip_not_writable(conn, monkeypatch, tmp_path):
+    logf = tmp_path / "ansible.log"
+    logf.write_text("")
+    abs_path = str(logf.resolve())
+    monkeypatch.setattr(libssh.C, "DEFAULT_LOG_PATH", abs_path)
+    real_access = os.access
+
+    def _access(path, mode):
+        if os.fspath(path) == abs_path and mode == os.W_OK:
+            return False
+        return real_access(path, mode)
+
+    monkeypatch.setattr(os, "access", _access)
+    assert conn._pylibssh_resolve_log_path("h") is None
+
+
+def test_libssh_resolve_log_path_skip_parent_not_writable(conn, monkeypatch, tmp_path):
+    logf = tmp_path / "subdir" / "ansible.log"
+    logf.parent.mkdir(parents=True)
+    abs_path = str(logf.resolve())
+    monkeypatch.setattr(libssh.C, "DEFAULT_LOG_PATH", abs_path)
+    real_access = os.access
+
+    def _access(path, mode):
+        p = os.fspath(path)
+        if p == str(logf.parent.resolve()) and mode == os.W_OK:
+            return False
+        return real_access(path, mode)
+
+    monkeypatch.setattr(os, "access", _access)
+    assert conn._pylibssh_resolve_log_path("h") is None
+
+
+def test_libssh_resolve_log_path_skip_parent_not_dir(conn, monkeypatch, tmp_path):
+    """Parent path component exists but is a file, not a directory."""
+    blocker = tmp_path / "notadir"
+    blocker.write_text("x", encoding="utf-8")
+    nested = tmp_path / "notadir" / "ansible.log"
+    monkeypatch.setattr(libssh.C, "DEFAULT_LOG_PATH", str(nested.resolve()))
+    assert conn._pylibssh_resolve_log_path("h") is None
+
+
+def test_libssh_log_handler_updates_level_when_handler_exists(conn, monkeypatch, tmp_path):
+    logf = tmp_path / "ansible.log"
+    logf.touch()
+    abs_path = str(logf.resolve())
+    monkeypatch.setattr(libssh.C, "DEFAULT_LOG_PATH", abs_path)
+    pylog = logging.getLogger("ansible-pylibssh")
+    pylog.handlers = [h for h in pylog.handlers if getattr(h, "baseFilename", None) != abs_path]
+
+    monkeypatch.setattr(libssh.display, "verbosity", 4)
+    conn._ensure_pylibssh_log_handler(host="h")
+    monkeypatch.setattr(libssh.display, "verbosity", 0)
+    conn._ensure_pylibssh_log_handler(host="h")
+
+    for h in pylog.handlers:
+        if getattr(h, "baseFilename", None) == abs_path:
+            assert h.level == logging.WARNING
+            break
+    else:
+        raise AssertionError("handler not found")
+
+
+@patch("os.path.exists")
+@patch("ansible.plugins.connection.ConnectionBase.put_file")
+def test_libssh_put_file_scp(mocked_super, mock_exists, conn, monkeypatch):
+    conn.set_options(
+        direct={
+            "remote_addr": "localhost",
+            "remote_user": "u1",
+            "host_key_checking": False,
+        }
+    )
+    mock_scp = MagicMock()
+    mock_ssh = MagicMock()
+    mock_ssh.scp.return_value = mock_scp
+    monkeypatch.setattr(libssh, "Session", lambda: mock_ssh)
+    mock_exists.return_value = True
+
+    conn.put_file(in_path="/local/x", out_path="/remote/x", proto="scp")
+    mock_scp.put.assert_called_once_with("/local/x", "/remote/x")
+
+
+@patch("os.path.exists")
+@patch("ansible.plugins.connection.ConnectionBase.put_file")
+def test_libssh_put_file_unknown_proto(mocked_super, mock_exists, conn, monkeypatch):
+    conn.set_options(
+        direct={
+            "remote_addr": "localhost",
+            "remote_user": "u1",
+            "host_key_checking": False,
+        }
+    )
+    monkeypatch.setattr(libssh, "Session", lambda: MagicMock())
+    mock_exists.return_value = True
+    with pytest.raises(AnsibleError, match="Don't know how to transfer"):
+        conn.put_file("/a", "/b", proto="bogus")
+
+
+@patch("os.path.exists")
+@patch("ansible.plugins.connection.ConnectionBase.put_file")
+def test_libssh_put_file_sftp_put_ioerror(mocked_super, mock_exists, conn, monkeypatch):
+    mock_sftp = MagicMock()
+    mock_sftp.put.side_effect = OSError("disk full")
+    mock_ssh = MagicMock()
+    mock_ssh.sftp.return_value = mock_sftp
+    monkeypatch.setattr(libssh, "Session", lambda: mock_ssh)
+    mock_exists.return_value = True
+    conn.set_options(
+        direct={
+            "remote_addr": "localhost",
+            "remote_user": "u1",
+            "host_key_checking": False,
+        }
+    )
+    with pytest.raises(AnsibleError, match="failed to transfer file to"):
+        conn.put_file("/a", "/b", proto="sftp")
+
+
+@patch("ansible.plugins.connection.ConnectionBase.fetch_file")
+def test_libssh_fetch_file_sftp_get_ioerror(mocked_super, conn, monkeypatch):
+    mock_sftp = MagicMock()
+    mock_sftp.get.side_effect = OSError("read fail")
+    conn.set_options(
+        direct={
+            "remote_addr": "localhost",
+            "remote_user": "u1",
+            "host_key_checking": False,
+        }
+    )
+    conn._connect_sftp = MagicMock(return_value=mock_sftp)
+    with pytest.raises(AnsibleError, match="failed to transfer file from"):
+        conn.fetch_file("/r", "/l", proto="sftp")
+
+
+@patch("ansible.plugins.connection.ConnectionBase.fetch_file")
+def test_libssh_fetch_file_scp_success(mocked_super, conn, monkeypatch):
+    mock_scp = MagicMock()
+    mock_ssh = MagicMock()
+    mock_ssh.scp.return_value = mock_scp
+    conn.ssh = mock_ssh
+    conn.fetch_file("/remote/f", "/local/f", proto="scp")
+    mock_scp.get.assert_called_once_with("/remote/f", "/local/f")
+
+
+def test_libssh_invalidate_ssh_close_exception_swallowed(conn):
+    mock_ssh = MagicMock()
+    mock_ssh.close.side_effect = RuntimeError("close failed")
+    conn.ssh = mock_ssh
+    conn.set_options(
+        direct={
+            "remote_addr": "h1",
+            "remote_user": "u1",
+            "host_key_checking": False,
+        }
+    )
+    conn._invalidate_ssh_session_after_scp_get_failure()
+    assert conn.ssh is None
