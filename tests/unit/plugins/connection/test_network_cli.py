@@ -710,3 +710,22 @@ def test_paramiko_connection_connect_uncached_without_paramiko():
     finally:
         network_cli.HAS_PARAMIKO = orig_has
         network_cli.PARAMIKO_IMPORT_ERR = orig_err
+
+
+def test_network_cli_copy_file_libssh(conn):
+    """libssh branch: delegate to ssh_type_conn.put_file (no _connect_uncached)."""
+    mock_libssh = MagicMock()
+    conn._ssh_type = "libssh"
+    conn._ssh_type_conn = mock_libssh
+    conn.copy_file(source="/tmp/local", destination="/remote/x", proto="sftp", timeout=45)
+    mock_libssh.put_file.assert_called_once_with("/tmp/local", "/remote/x", proto="sftp")
+
+
+def test_network_cli_get_file_libssh(conn):
+    """libssh branch: _connect then fetch_file on ssh_type_conn."""
+    mock_libssh = MagicMock()
+    conn._ssh_type = "libssh"
+    conn._ssh_type_conn = mock_libssh
+    conn.get_file(source="/r/f", destination="/l/f", proto="sftp", timeout=60)
+    mock_libssh._connect.assert_called_once()
+    mock_libssh.fetch_file.assert_called_once_with("/r/f", "/l/f", proto="sftp")
