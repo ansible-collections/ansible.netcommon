@@ -700,6 +700,46 @@ class Connection(ConnectionBase):
             result = SFTP_CONNECTION_CACHE[cache_key] = self._connect().ssh.sftp()
             return result
 
+    def _invalidate_ssh_session_after_scp_get_failure(self):
+        """Drop cached SSH/SFTP and close session after failed SCP get (device quirks)."""
+        cache_key = self._cache_key()
+        SSH_CONNECTION_CACHE.pop(cache_key, None)
+        SFTP_CONNECTION_CACHE.pop(cache_key, None)
+        if hasattr(self, "ssh") and self.ssh is not None:
+            try:
+                self.ssh.close()
+            except Exception:
+                pass
+            self.ssh = None
+
+    def _fetch_file_via_sftp(self, in_path, out_path):
+        try:
+            self.sftp = self._connect_sftp()
+        except Exception as e:
+            raise AnsibleError("failed to open a SFTP connection (%s)" % to_native(e))
+
+        try:
+            self.sftp.get(
+                to_bytes(in_path, errors="surrogate_or_strict"),
+                to_bytes(out_path, errors="surrogate_or_strict"),
+            )
+        except IOError:
+            raise AnsibleError("failed to transfer file from %s" % in_path)
+
+    def _fetch_file_via_scp(self, in_path, out_path):
+        scp = self.ssh.scp()
+        try:
+            # this abruptly closes the connection when
+            # scp.get fails only when the file is not there
+            # it works fine if the file is actually present
+            scp.get(in_path, out_path)
+        except LibsshSCPException as exc:
+            # Invalidate cached connection so next operation (e.g. put_file)
+            # uses a fresh connection; some devices misbehave when reusing
+            # a connection that had a failed SCP get.
+            self._invalidate_ssh_session_after_scp_get_failure()
+            raise AnsibleError("Error transferring file from %s: %s" % (out_path, to_text(exc)))
+
     def fetch_file(self, in_path, out_path, proto="sftp"):
         """save a remote file to the specified path"""
 
@@ -711,39 +751,9 @@ class Connection(ConnectionBase):
         )
 
         if proto == "sftp":
-            try:
-                self.sftp = self._connect_sftp()
-            except Exception as e:
-                raise AnsibleError("failed to open a SFTP connection (%s)" % to_native(e))
-
-            try:
-                self.sftp.get(
-                    to_bytes(in_path, errors="surrogate_or_strict"),
-                    to_bytes(out_path, errors="surrogate_or_strict"),
-                )
-            except IOError:
-                raise AnsibleError("failed to transfer file from %s" % in_path)
+            self._fetch_file_via_sftp(in_path, out_path)
         elif proto == "scp":
-            scp = self.ssh.scp()
-            try:
-                # this abruptly closes the connection when
-                # scp.get fails only when the file is not there
-                # it works fine if the file is actually present
-                scp.get(in_path, out_path)
-            except LibsshSCPException as exc:
-                # Invalidate cached connection so next operation (e.g. put_file)
-                # uses a fresh connection; some devices misbehave when reusing
-                # a connection that had a failed SCP get.
-                cache_key = self._cache_key()
-                SSH_CONNECTION_CACHE.pop(cache_key, None)
-                SFTP_CONNECTION_CACHE.pop(cache_key, None)
-                if hasattr(self, "ssh") and self.ssh is not None:
-                    try:
-                        self.ssh.close()
-                    except Exception:
-                        pass
-                    self.ssh = None
-                raise AnsibleError("Error transferring file from %s: %s" % (out_path, to_text(exc)))
+            self._fetch_file_via_scp(in_path, out_path)
         else:
             raise AnsibleError("Don't know how to transfer file over protocol %s" % proto)
 
