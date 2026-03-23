@@ -7,7 +7,7 @@ minor_changes:
     ansible-pylibssh configuration manually.
 bugfixes:
   - |
-    network_cli - Fixed file transfer (net_put / net_fetch) when ssh_type=libssh. For put_file, no longer call
+    network_cli - Fixed file transfer (net_put / net_get) when ssh_type=libssh. For put_file, no longer call
     _connect_uncached() before delegating to the libssh connection the libssh plugin's put_file() calls _connect() internally.
     For fetch_file, call _connect() then fetch_file() for libssh instead of _connect_uncached(), so connection caching and the
     correct flow are used. Paramiko branch unchanged (still uses _connect_uncached() for scp/sftp).
