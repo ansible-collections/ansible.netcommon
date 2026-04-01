@@ -28,6 +28,29 @@ try:
 except ImportError:
     HAS_TRUST_AS_TEMPLATE = False
 
+# ansible-core devel may relocate remove_internal_keys; keep a local fallback.
+try:
+    from ansible.vars.clean import remove_internal_keys as _remove_internal_keys
+except ImportError:
+    from ansible import constants as _ansible_constants
+
+    def _remove_internal_keys(data):
+        """Mirror ansible.vars.clean.remove_internal_keys when that API is unavailable."""
+        for key in list(data.keys()):
+            if (key.startswith("_ansible_") and key != "_ansible_parsed") or key in _ansible_constants.INTERNAL_RESULT_KEYS:
+                display.warning("Removed unexpected internal key in module return: %s = %s" % (key, data[key]))
+                del data[key]
+
+        for key in ("warnings", "deprecations"):
+            if key in data and not data[key]:
+                del data[key]
+
+        ansible_facts = data.get("ansible_facts")
+        if ansible_facts:
+            for key in list(ansible_facts.keys()):
+                if key.startswith("discovered_interpreter_") or key.startswith("ansible_discovered_interpreter_"):
+                    del ansible_facts[key]
+
 
 display = Display()
 
@@ -331,8 +354,6 @@ class ActionModule(_ActionModule):
         import io
         import sys
 
-        from ansible.vars.clean import remove_internal_keys
-
         # preserve stdout/stderr to swap and restore later, create private buffers to capture
         sys_stdout = sys.stdout
         sys_stderr = sys.stderr
@@ -371,7 +392,7 @@ class ActionModule(_ActionModule):
             data = self._parse_returned_data(dict_out)
 
         # Clean up the response like action _execute_module
-        remove_internal_keys(data)
+        _remove_internal_keys(data)
 
         # split stdout/stderr into lines if needed
         if "stdout" in data and "stdout_lines" not in data:
