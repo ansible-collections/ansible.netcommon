@@ -36,8 +36,12 @@ def _netcommon_remove_internal_keys_fallback(data):
     from ansible import constants as _ansible_constants
 
     for key in list(data.keys()):
-        if (key.startswith("_ansible_") and key != "_ansible_parsed") or key in _ansible_constants.INTERNAL_RESULT_KEYS:
-            display.warning("Removed unexpected internal key in module return: %s = %s" % (key, data[key]))
+        if (
+            key.startswith("_ansible_") and key != "_ansible_parsed"
+        ) or key in _ansible_constants.INTERNAL_RESULT_KEYS:
+            display.warning(
+                "Removed unexpected internal key in module return: %s = %s" % (key, data[key])
+            )
             del data[key]
 
     for key in ("warnings", "deprecations"):
@@ -47,7 +51,9 @@ def _netcommon_remove_internal_keys_fallback(data):
     ansible_facts = data.get("ansible_facts")
     if ansible_facts:
         for key in list(ansible_facts.keys()):
-            if key.startswith("discovered_interpreter_") or key.startswith("ansible_discovered_interpreter_"):
+            if key.startswith("discovered_interpreter_") or key.startswith(
+                "ansible_discovered_interpreter_"
+            ):
                 del ansible_facts[key]
 
 
