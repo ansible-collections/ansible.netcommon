@@ -811,11 +811,7 @@ def test_netcommon_remove_internal_keys_fallback_strips_internal_data(monkeypatc
     """Test local fallback mirrors ansible.vars.clean.remove_internal_keys behavior."""
     warned = []
 
-    monkeypatch.setattr(
-        netcommon_network_action.display,
-        "warning",
-        lambda msg: warned.append(msg),
-    )
+    monkeypatch.setattr(netcommon_network_action.display, "warning", warned.append)
 
     data = {
         "changed": True,
