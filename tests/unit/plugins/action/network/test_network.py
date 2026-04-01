@@ -20,6 +20,7 @@ from ansible.playbook.task import Task
 from ansible.plugins.loader import action_loader
 from ansible.template import Templar
 
+from ansible_collections.ansible.netcommon.plugins.action import network as netcommon_network_action
 from ansible_collections.ansible.netcommon.tests.unit.mock.loader import DictDataLoader
 
 
@@ -779,6 +780,66 @@ def test_exec_module_handles_false_stdout(plugin):
 
     assert "stdout_lines" in result
     assert result["stdout_lines"] == []
+
+
+def test_exec_module_strips_internal_keys_from_raw_result(plugin):
+    """Test _exec_module applies remove_internal_keys-style cleanup to _raw_result."""
+    mock_module = MagicMock()
+    mock_module._raw_result = {
+        "changed": True,
+        "msg": "ok",
+        "_ansible_no_log": True,
+        "_ansible_parsed": True,
+        "add_host": {"name": "h"},
+        "warnings": [],
+        "ansible_facts": {"discovered_interpreter_python": "/usr/bin/python3", "keep": 1},
+    }
+    mock_module.main = MagicMock()
+
+    result = plugin._exec_module(mock_module)
+
+    assert result["changed"] is True
+    assert result["msg"] == "ok"
+    assert "_ansible_no_log" not in result
+    assert result.get("_ansible_parsed") is True
+    assert "add_host" not in result
+    assert "warnings" not in result
+    assert result["ansible_facts"] == {"keep": 1}
+
+
+def test_netcommon_remove_internal_keys_fallback_strips_internal_data(monkeypatch):
+    """Test local fallback mirrors ansible.vars.clean.remove_internal_keys behavior."""
+    warned = []
+
+    monkeypatch.setattr(
+        netcommon_network_action.display,
+        "warning",
+        lambda msg: warned.append(msg),
+    )
+
+    data = {
+        "changed": True,
+        "_ansible_no_log": True,
+        "_ansible_parsed": True,
+        "add_host": {"name": "h"},
+        "warnings": [],
+        "deprecations": [],
+        "ansible_facts": {
+            "keep": 1,
+            "discovered_interpreter_python": "/usr/bin/python3",
+            "ansible_discovered_interpreter_python": "/usr/bin/python3",
+        },
+    }
+
+    netcommon_network_action._netcommon_remove_internal_keys_fallback(data)
+
+    assert "_ansible_no_log" not in data
+    assert data.get("_ansible_parsed") is True
+    assert "add_host" not in data
+    assert "warnings" not in data
+    assert "deprecations" not in data
+    assert data["ansible_facts"] == {"keep": 1}
+    assert warned
 
 
 def test_run_with_dexec_eligible_and_ansiblemodule(plugin, monkeypatch):

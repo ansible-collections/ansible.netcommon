@@ -28,31 +28,34 @@ try:
 except ImportError:
     HAS_TRUST_AS_TEMPLATE = False
 
+display = Display()
+
+
+def _netcommon_remove_internal_keys_fallback(data):
+    """Mirror ansible.vars.clean.remove_internal_keys when that API is unavailable."""
+    from ansible import constants as _ansible_constants
+
+    for key in list(data.keys()):
+        if (key.startswith("_ansible_") and key != "_ansible_parsed") or key in _ansible_constants.INTERNAL_RESULT_KEYS:
+            display.warning("Removed unexpected internal key in module return: %s = %s" % (key, data[key]))
+            del data[key]
+
+    for key in ("warnings", "deprecations"):
+        if key in data and not data[key]:
+            del data[key]
+
+    ansible_facts = data.get("ansible_facts")
+    if ansible_facts:
+        for key in list(ansible_facts.keys()):
+            if key.startswith("discovered_interpreter_") or key.startswith("ansible_discovered_interpreter_"):
+                del ansible_facts[key]
+
+
 # ansible-core devel may relocate remove_internal_keys; keep a local fallback.
 try:
     from ansible.vars.clean import remove_internal_keys as _remove_internal_keys
 except ImportError:
-    from ansible import constants as _ansible_constants
-
-    def _remove_internal_keys(data):
-        """Mirror ansible.vars.clean.remove_internal_keys when that API is unavailable."""
-        for key in list(data.keys()):
-            if (key.startswith("_ansible_") and key != "_ansible_parsed") or key in _ansible_constants.INTERNAL_RESULT_KEYS:
-                display.warning("Removed unexpected internal key in module return: %s = %s" % (key, data[key]))
-                del data[key]
-
-        for key in ("warnings", "deprecations"):
-            if key in data and not data[key]:
-                del data[key]
-
-        ansible_facts = data.get("ansible_facts")
-        if ansible_facts:
-            for key in list(ansible_facts.keys()):
-                if key.startswith("discovered_interpreter_") or key.startswith("ansible_discovered_interpreter_"):
-                    del ansible_facts[key]
-
-
-display = Display()
+    _remove_internal_keys = _netcommon_remove_internal_keys_fallback
 
 DEXEC_PREFIX = "ANSIBLE_NETWORK_IMPORT_MODULES:"
 
