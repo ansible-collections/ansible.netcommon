@@ -41,7 +41,9 @@ def _netcommon_remove_internal_keys_fallback(data):
     )
 
     for key in list(data.keys()):
-        if (key.startswith("_ansible_") and key != "_ansible_parsed") or key in _internal_result_keys:
+        if (
+            key.startswith("_ansible_") and key != "_ansible_parsed"
+        ) or key in _internal_result_keys:
             display.warning(
                 "Removed unexpected internal key in module return: %s = %s" % (key, data[key])
             )
