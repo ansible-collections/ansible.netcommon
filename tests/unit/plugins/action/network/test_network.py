@@ -604,10 +604,17 @@ def test_backup_option_checksum_idempotency(plugin, tmp_path):
         assert f.read() == content
 
 
-def test_backup_option_filename_and_shortname(plugin, tmp_path):
+def test_backup_option_filename_and_shortname(plugin, tmp_path, monkeypatch):
     """Test _handle_backup_option sets filename and shortname when not provided"""
     backup_dir = tmp_path / "backup"
     backup_dir.mkdir()
+
+    # Without this, backup_path becomes <loader_basedir>/backup; on CI that can be the
+    # collection tree where ``backup`` already exists and makedirs raises FileExistsError.
+    def fake_working_path():
+        return str(tmp_path)
+
+    monkeypatch.setattr(plugin, "_get_working_path", fake_working_path)
 
     result = {"__backup__": "config content"}
     task_vars = {"inventory_hostname": "test_host"}
@@ -620,14 +627,20 @@ def test_backup_option_filename_and_shortname(plugin, tmp_path):
         assert result["filename"] == os.path.basename(result["backup_path"])
         assert result["shortname"] == os.path.splitext(result["backup_path"])[0]
     finally:
-        if os.path.exists(result["backup_path"]):
-            os.remove(result["backup_path"])
+        backup_path = result.get("backup_path")
+        if backup_path and os.path.exists(backup_path):
+            os.remove(backup_path)
 
 
-def test_backup_option_no_filename_shortname_when_provided(plugin, tmp_path):
+def test_backup_option_no_filename_shortname_when_provided(plugin, tmp_path, monkeypatch):
     """Test _handle_backup_option doesn't set filename/shortname when filename provided"""
     backup_dir = tmp_path / "backup"
     backup_dir.mkdir()
+
+    def fake_working_path():
+        return str(tmp_path)
+
+    monkeypatch.setattr(plugin, "_get_working_path", fake_working_path)
 
     result = {"__backup__": "config content"}
     task_vars = {"inventory_hostname": "test_host"}
@@ -639,8 +652,9 @@ def test_backup_option_no_filename_shortname_when_provided(plugin, tmp_path):
         assert "filename" not in result or result.get("filename") != "custom_backup"
         assert "shortname" not in result
     finally:
-        if os.path.exists(result["backup_path"]):
-            os.remove(result["backup_path"])
+        backup_path = result.get("backup_path")
+        if backup_path and os.path.exists(backup_path):
+            os.remove(backup_path)
 
 
 def test_get_working_path_with_role(plugin):
