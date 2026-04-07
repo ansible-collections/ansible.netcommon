@@ -58,7 +58,7 @@ jobs:
     if: ${{ !github.event.pull_request || contains(github.event.pull_request.labels.*.name, 'safe to test') }}
     env:
       PY_COLORS: "1"
-      ANSIBLE_COLLECTIONS_PATHS: "/home/runner/collections:~/.ansible/collections:/usr/share/ansible/collections"
+      ANSIBLE_COLLECTIONS_PATHS: "/home/runner/collections"
       # workflow_dispatch: use chosen ssh_type; PR/schedule: default libssh
       CLI_SSH_TYPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ssh_type || 'libssh' }}
     strategy:
