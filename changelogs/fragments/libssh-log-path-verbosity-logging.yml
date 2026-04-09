@@ -5,6 +5,10 @@ minor_changes:
     logs into the same Ansible log file. Log level is derived from display.verbosity using Python standard logging: verbosity 0 -> WARNING,
     1-2 -> INFO, 3+ -> DEBUG. This allows SSH/libssh debug and trace output to appear in the configured log file for troubleshooting without changing
     ansible-pylibssh configuration manually.
+  - The dependency on ansible-pylibssh (for ssh_type=libssh / network_cli) is now
+    ansible-pylibssh>=1.4.0 in requirements.txt, raised from the previous >=0.2.0
+    requirement. Installations still on ansible-pylibssh 0.x or 1.x below 1.4.0 must upgrade to use
+    the libssh connection path with this collection release.
 bugfixes:
   - |
     network_cli - Fixed file transfer (net_put / net_get) when ssh_type=libssh. For put_file, no longer call

@@ -1803,7 +1803,6 @@ class Connection(NetworkConnectionBase):
                         remote host before triggering timeout exception
         :return: None
         """
-        """Fetch file over scp/sftp from remote device"""
         if self.ssh_type == "libssh":
             self.ssh_type_conn._connect()
             self.ssh_type_conn.fetch_file(source, destination, proto=proto)
