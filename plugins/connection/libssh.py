@@ -738,7 +738,7 @@ class Connection(ConnectionBase):
             # uses a fresh connection; some devices misbehave when reusing
             # a connection that had a failed SCP get.
             self._invalidate_ssh_session_after_scp_get_failure()
-            raise AnsibleError("Error transferring file from %s: %s" % (out_path, to_text(exc)))
+            raise AnsibleError("Error transferring file from %s: %s" % (in_path, to_text(exc)))
 
     def fetch_file(self, in_path, out_path, proto="sftp"):
         """save a remote file to the specified path"""
