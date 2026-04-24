@@ -38,7 +38,9 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         self._resource = kwargs.get("resource", None)
         self._tmplt = kwargs.get("tmplt", None)
 
-        self.want = remove_empties(self._module.params).get("config", self._empty_fact_val)
+        # Defensive: ensure remove_empties result is a dict (handles ansible-core 2.21+ edge cases)
+        params = remove_empties(self._module.params) or {}
+        self.want = params.get("config", self._empty_fact_val)
         # Error out if empty config is passed for following states
         if self.state in ("overridden", "merged", "replaced", "rendered") and not self.want:
             self._module.fail_json(
@@ -56,7 +58,9 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         if self.state == "rendered":
             return self._empty_fact_val
         elif self.state == "parsed":
-            data = self._module.params["running_config"]
+            # Defensive: ensure params is a dict (handles ansible-core 2.21+ edge cases)
+            params = self._module.params or {}
+            data = params.get("running_config")
             if not data:
                 self._module.fail_json(
                     msg="value of running_config parameter must not be empty for state parsed"

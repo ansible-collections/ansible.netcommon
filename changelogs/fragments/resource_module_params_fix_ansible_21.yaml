@@ -1,0 +1,5 @@
+---
+bugfixes:
+  - resource_module - Fixed 'NoneType' object has no attribute 'get' error when using
+    resource modules with ansible-core 2.21+. Added defensive handling to ensure
+    remove_empties() result is always treated as a dictionary.

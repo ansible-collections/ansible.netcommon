@@ -31,8 +31,10 @@ class RmEngineBase(object):  # pylint: disable=R0902
         # backward compatibility for modules, in which, module is not passed
         # to the NetworkTemplate
         if self._module:
-            if "state" in self._module.params.keys():
-                self.state = self._module.params["state"]
+            # Defensive: ensure params is a dict (handles ansible-core 2.21+ edge cases)
+            params = self._module.params or {}
+            if "state" in params.keys():
+                self.state = params["state"]
 
             self._get_connection()
 
