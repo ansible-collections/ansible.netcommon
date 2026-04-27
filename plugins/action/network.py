@@ -338,6 +338,7 @@ class ActionModule(_ActionModule):
                     host,
                 )
                 from ansible.module_utils import basic as _basic
+
                 if getattr(_basic, "_PARSED_MODULE_ARGS", None) is None:
                     _basic._PARSED_MODULE_ARGS = {}
 
