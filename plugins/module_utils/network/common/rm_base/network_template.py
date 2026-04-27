@@ -90,7 +90,8 @@ class NetworkTemplate(RmEngineBase):
     def get_parser(self, name):
         """get_parsers"""
         res = [p for p in self._tmplt.PARSERS if p["name"] == name]
-        return res[0]
+        # Defensive: return None instead of IndexError (handles ansible-core 2.21+ edge cases)
+        return res[0] if res else None
 
     def _render(self, tmplt, data, negate):
         try:
@@ -118,12 +119,12 @@ class NetworkTemplate(RmEngineBase):
 
     def render(self, data, parser_name, negate=False):
         """render"""
+        # Defensive: ensure get_parser returns a dict (handles ansible-core 2.21+ edge cases)
+        parser_dict = self.get_parser(parser_name) or {}
         if negate:
-            tmplt = (
-                self.get_parser(parser_name).get("remval") or self.get_parser(parser_name)["setval"]
-            )
+            tmplt = parser_dict.get("remval") or parser_dict.get("setval", "")
         else:
-            tmplt = self.get_parser(parser_name)["setval"]
+            tmplt = parser_dict.get("setval", "")
         command = self._render(tmplt, data, negate)
         return command
 

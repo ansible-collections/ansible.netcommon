@@ -35,6 +35,10 @@ def _netcommon_remove_internal_keys_fallback(data):
     """Mirror ansible.vars.clean.remove_internal_keys when that API is unavailable."""
     from ansible import constants as _ansible_constants
 
+    # Defensive: ensure data is a dict (handles ansible-core 2.21+ edge cases)
+    if data is None:
+        return
+
     # ansible-core may drop INTERNAL_RESULT_KEYS from constants; match historical defaults.
     _internal_result_keys = getattr(
         _ansible_constants, "INTERNAL_RESULT_KEYS", ("add_host", "add_group")
@@ -55,6 +59,9 @@ def _netcommon_remove_internal_keys_fallback(data):
 
     ansible_facts = data.get("ansible_facts")
     if ansible_facts:
+        # Defensive: ensure ansible_facts is a dict (handles ansible-core 2.21+ edge cases)
+        if not isinstance(ansible_facts, dict):
+            return
         for key in list(ansible_facts.keys()):
             if key.startswith("discovered_interpreter_") or key.startswith(
                 "ansible_discovered_interpreter_"
@@ -406,6 +413,9 @@ class ActionModule(_ActionModule):
             data = self._parse_returned_data(dict_out)
 
         # Clean up the response like action _execute_module
+        # Defensive: ensure data is a dict (handles ansible-core 2.21+ edge cases)
+        if data is None:
+            data = {}
         _remove_internal_keys(data)
 
         # split stdout/stderr into lines if needed

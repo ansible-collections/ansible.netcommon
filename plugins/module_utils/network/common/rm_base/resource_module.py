@@ -113,7 +113,10 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
             resource_facts_type=[self._resource],
             data=data,
         )
-        facts = facts["ansible_network_resources"].get(self._resource)
+        # Defensive: ensure facts and ansible_network_resources exist (handles ansible-core 2.21+ edge cases)
+        facts = facts or {}
+        network_resources = facts.get("ansible_network_resources") or {}
+        facts = network_resources.get(self._resource)
         if not facts:
             return empty_val
         return facts
@@ -127,7 +130,9 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         if have is None:
             have = self.have
         for parser in to_list(parsers):
-            compval = self._tmplt.get_parser(parser).get("compval")
+            # Defensive: ensure get_parser returns a dict (handles ansible-core 2.21+ edge cases)
+            parser_dict = self._tmplt.get_parser(parser) or {}
+            compval = parser_dict.get("compval")
             if not compval:
                 compval = parser
             inw = get_from_dict(want, compval)
