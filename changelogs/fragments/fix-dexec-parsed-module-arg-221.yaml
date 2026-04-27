@@ -1,0 +1,9 @@
+---
+bugfixes:
+  - network action plugin - Initialize ``_PARSED_MODULE_ARGS`` in
+    ``DirectExecutionModule._load_params`` to fix a crash on ansible-core 2.21+.
+    The global was added in ansible-core PR #86771 and is read by
+    ``_return_formatted()`` before ``_record_module_result()`` is called.
+    Since direct execution skips stdin loading, the global stayed ``None``,
+    causing ``fail_json()`` and ``exit_json()`` to raise ``AttributeError``
+    instead of returning the module result.
