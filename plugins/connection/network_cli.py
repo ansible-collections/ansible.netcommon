@@ -1327,7 +1327,8 @@ class Connection(NetworkConnectionBase):
                     f.write(json.dumps(entry) + "\n")
             self.queue_message(
                 "log",
-                "Transcript recorded: %d entries written to %s" % (len(self._transcript_log), filepath),
+                "Transcript recorded: %d entries written to %s"
+                % (len(self._transcript_log), filepath),
             )
         except (IOError, OSError) as exc:
             self.queue_message(
