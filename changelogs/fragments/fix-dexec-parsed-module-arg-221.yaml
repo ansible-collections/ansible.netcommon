@@ -1,5 +1,0 @@
----
-bugfixes:
-  - network action plugin - initialize ``_PARSED_MODULE_ARGS`` in
-    ``DirectExecutionModule._load_params`` to avoid ``AttributeError``
-    on ansible-core 2.21+ when ``fail_json`` or ``exit_json`` is called.
