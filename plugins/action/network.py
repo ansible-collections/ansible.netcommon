@@ -337,7 +337,10 @@ class ActionModule(_ActionModule):
                     ),
                     host,
                 )
-                pass
+                from ansible.module_utils import basic as _basic
+
+                if getattr(_basic, "_PARSED_MODULE_ARGS", None) is None:
+                    _basic._PARSED_MODULE_ARGS = {}
 
             def _record_module_result(self, o):
                 """Override new 2.19.1+ hook to directly record the module result as a module attr."""
