@@ -4,6 +4,19 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.5.2
+======
+
+Release Summary
+---------------
+
+Rereleased 8.5.1 with corrected changelog.
+
+Bugfixes
+--------
+
+- network action plugin - initialize ``_PARSED_MODULE_ARGS`` in ``DirectExecutionModule._load_params`` to avoid ``AttributeError`` on ansible-core 2.21+ when ``fail_json`` or ``exit_json`` is called.
+
 v8.5.1
 ======
 
