@@ -994,3 +994,13 @@ releases:
     release_date: "2026-04-13"
   8.5.1:
     release_date: "2026-05-05"
+  8.5.2:
+    changes:
+      bugfixes:
+        - network action plugin - initialize ``_PARSED_MODULE_ARGS`` in ``DirectExecutionModule._load_params``
+          to avoid ``AttributeError`` on ansible-core 2.21+ when ``fail_json`` or ``exit_json``
+          is called.
+      release_summary: Rereleased 8.5.1 with corrected changelog.
+    fragments:
+      - rerelease_852.yaml
+    release_date: "2026-05-07"
