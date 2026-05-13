@@ -5,7 +5,7 @@
 ansible.netcommon.net_ping
 **************************
 
-**Tests reachability using ping from a network device**
+**Tests reachability using ICMP ping from a network device**
 
 
 Version added: 1.0.0
@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Tests reachability using ping from network device to a remote destination.
+- Tests reachability using ICMP ping from network device to a remote destination.
 
 
 
