@@ -10,6 +10,7 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+from functools import wraps
 
 from ansible import constants as C
 from ansible.utils.display import Display
@@ -46,10 +47,28 @@ class NetworkConnectionBase(PersistentConnectionBase):
                 if plugin:
                     method = getattr(plugin, name, None)
                     if method is not None:
+                        if name == "edit_config":
+                            return self._wrap_edit_config(method)
                         return method
             raise AttributeError(
                 "'%s' object has no attribute '%s'" % (self.__class__.__name__, name)
             )
+
+    def _wrap_edit_config(self, method):
+        @wraps(method)
+        def wrapped(*args, **kwargs):
+            try:
+                return method(*args, **kwargs)
+            except Exception:
+                try:
+                    plugin = self._sub_plugin.get("obj")
+                    if plugin and hasattr(plugin, "set_cli_prompt_context"):
+                        plugin.set_cli_prompt_context()
+                except Exception:
+                    pass
+                raise
+
+        return wrapped
 
     def get_options(self, hostvars=None):
         options = super(NetworkConnectionBase, self).get_options(hostvars=hostvars)

@@ -510,6 +510,29 @@ class CliconfBase(CliconfBaseBase):
 
         return responses
 
+    def _send_config_commands(self, candidate, exit_command="end", cmd_filter=None):
+        """Send configuration commands with guaranteed config-mode exit.
+
+        :param candidate: Configuration commands (string, list, or list of dicts).
+        :param exit_command: Command to exit config mode, sent in finally block.
+        :param cmd_filter: Optional callable; return True to send, False to skip.
+        :return: Tuple of (results, requests).
+        """
+        results = []
+        requests = []
+        try:
+            for line in to_list(candidate):
+                if not isinstance(line, Mapping):
+                    line = {"command": line}
+                cmd = line["command"]
+                if cmd_filter and not cmd_filter(cmd):
+                    continue
+                results.append(self.send_command(**line))
+                requests.append(cmd)
+        finally:
+            self.send_command(exit_command)
+        return results, requests
+
     def check_edit_config_capability(
         self,
         operations,
