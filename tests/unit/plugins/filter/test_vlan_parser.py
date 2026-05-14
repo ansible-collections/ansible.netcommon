@@ -73,6 +73,10 @@ class TestVlanParser(TestCase):
             "1-3",
         )
 
+    def test_vlan_parser_empty_list(self):
+        result = vlan_parser([])
+        self.assertEqual(result, [])
+
     def test_vlan_parser_fail_wrong_data(self):
         data = "13"
         args = [data]
