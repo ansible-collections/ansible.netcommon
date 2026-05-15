@@ -65,9 +65,7 @@ class TestSendConfigCommands:
 
     def test_cmd_filter_skips(self, cliconf):
         cmds = ["interface loopback0", "!", "description test"]
-        results, requests = cliconf._send_config_commands(
-            cmds, cmd_filter=lambda cmd: cmd != "!"
-        )
+        results, requests = cliconf._send_config_commands(cmds, cmd_filter=lambda cmd: cmd != "!")
         assert requests == ["interface loopback0", "description test"]
         assert len(results) == 2
 
@@ -82,9 +80,7 @@ class TestSendConfigCommands:
         assert cliconf.send_command.call_args_list[-1] == call("end")
 
     def test_exit_command_sent_on_exception(self, cliconf):
-        cliconf.send_command = MagicMock(
-            side_effect=[Exception("device error"), "ok"]
-        )
+        cliconf.send_command = MagicMock(side_effect=[Exception("device error"), "ok"])
         with pytest.raises(Exception, match="device error"):
             cliconf._send_config_commands("bad command")
         assert cliconf.send_command.call_args_list[-1] == call("end")

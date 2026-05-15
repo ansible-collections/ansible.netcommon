@@ -97,9 +97,7 @@ class TestWrapEditConfig:
     def test_set_cli_prompt_context_error_suppressed(self, connection):
         plugin = connection._sub_plugin["obj"]
         plugin.edit_config = MagicMock(side_effect=RuntimeError("config error"))
-        plugin.set_cli_prompt_context = MagicMock(
-            side_effect=Exception("prompt context error")
-        )
+        plugin.set_cli_prompt_context = MagicMock(side_effect=Exception("prompt context error"))
 
         with pytest.raises(RuntimeError, match="config error"):
             connection.edit_config()
