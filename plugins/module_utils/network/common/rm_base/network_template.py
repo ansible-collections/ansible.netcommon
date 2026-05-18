@@ -80,7 +80,7 @@ class NetworkTemplate(RmEngineBase):
                     capdict = cap.groupdict()
                     capdict = dict((k, v) for k, v in capdict.items() if v is not None)
                     if parser.get("shared"):
-                        shared = capdict
+                        shared = dict_merge(shared, capdict)
                     vals = dict_merge(capdict, shared)
                     res = self._deepformat(deepcopy(parser["result"]), vals)
                     result = dict_merge(result, res)
