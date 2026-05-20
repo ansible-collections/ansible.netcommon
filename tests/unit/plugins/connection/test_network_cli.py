@@ -12,7 +12,7 @@ __metaclass__ = type
 import json
 import re
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
 
@@ -710,3 +710,36 @@ def test_paramiko_connection_connect_uncached_without_paramiko():
     finally:
         network_cli.HAS_PARAMIKO = orig_has
         network_cli.PARAMIKO_IMPORT_ERR = orig_err
+
+
+def test_network_cli_copy_file_libssh(conn):
+    """libssh branch: delegate to ssh_type_conn.put_file (no _connect_uncached)."""
+    mock_libssh = MagicMock()
+    conn._ssh_type = "libssh"
+    conn._ssh_type_conn = mock_libssh
+    conn.copy_file(source="/tmp/local", destination="/remote/x", proto="sftp", timeout=45)
+    mock_libssh.put_file.assert_called_once_with("/tmp/local", "/remote/x", proto="sftp")
+
+
+def test_network_cli_get_file_libssh(conn):
+    """libssh branch: _connect then fetch_file on ssh_type_conn."""
+    mock_libssh = MagicMock()
+    conn._ssh_type = "libssh"
+    conn._ssh_type_conn = mock_libssh
+    conn.get_file(source="/r/f", destination="/l/f", proto="sftp", timeout=60)
+    mock_libssh._connect.assert_called_once()
+    mock_libssh.fetch_file.assert_called_once_with("/r/f", "/l/f", proto="sftp")
+
+
+def test_network_cli_copy_file_invalid_ssh_type_raises(conn):
+    """Else branch: unsupported ssh_type must raise AnsibleError."""
+    with patch.object(type(conn), "ssh_type", new_callable=PropertyMock, return_value="bogus"):
+        with pytest.raises(AnsibleError, match="Do not know how to do SCP with ssh_type"):
+            conn.copy_file(source="/a", destination="/b")
+
+
+def test_network_cli_get_file_invalid_ssh_type_raises(conn):
+    """Else branch for get_file when ssh_type is not libssh or paramiko."""
+    with patch.object(type(conn), "ssh_type", new_callable=PropertyMock, return_value="bogus"):
+        with pytest.raises(AnsibleError, match="Do not know how to do SCP with ssh_type"):
+            conn.get_file(source="/a", destination="/b")

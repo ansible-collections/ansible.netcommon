@@ -58,7 +58,7 @@ jobs:
     if: ${{ !github.event.pull_request || contains(github.event.pull_request.labels.*.name, 'safe to test') }}
     env:
       PY_COLORS: "1"
-      ANSIBLE_COLLECTIONS_PATHS: "/home/runner/collections:~/.ansible/collections:/usr/share/ansible/collections"
+      ANSIBLE_COLLECTIONS_PATHS: "/home/runner/.ansible/collections"
       # workflow_dispatch: use chosen ssh_type; PR/schedule: default libssh
       CLI_SSH_TYPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ssh_type || 'libssh' }}
     strategy:
@@ -103,24 +103,24 @@ jobs:
 
       - name: Create collections directory structure
         run: |
-          mkdir -p /home/runner/collections/ansible_collections/cisco
-          mkdir -p /home/runner/collections/ansible_collections/ansible
+          mkdir -p /home/runner/.ansible/collections/ansible_collections/cisco
+          mkdir -p /home/runner/.ansible/collections/ansible_collections/ansible
 
       - name: Clone cisco.nxos collection (main branch)
         run: |
-          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.nxos.git /home/runner/collections/ansible_collections/cisco/nxos
+          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.nxos.git /home/runner/.ansible/collections/ansible_collections/cisco/nxos
 
       - name: Clone cisco.ios collection (main branch)
         run: |
-          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.ios.git /home/runner/collections/ansible_collections/cisco/ios
+          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.ios.git /home/runner/.ansible/collections/ansible_collections/cisco/ios
 
       - name: Clone cisco.iosxr collection (main branch)
         run: |
-          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.iosxr.git /home/runner/collections/ansible_collections/cisco/iosxr
+          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.iosxr.git /home/runner/.ansible/collections/ansible_collections/cisco/iosxr
 
       - name: Clone ansible.utils collection (main branch)
         run: |
-          git clone --depth=1 --branch main https://github.com/ansible-collections/ansible.utils.git /home/runner/collections/ansible_collections/ansible/utils
+          git clone --depth=1 --branch main https://github.com/ansible-collections/ansible.utils.git /home/runner/.ansible/collections/ansible_collections/ansible/utils
 
       - name: Clone netcommon collection (PR branch or repo)
         run: |
@@ -136,22 +136,22 @@ jobs:
           echo "Cloning netcommon from git+https://github.com/${REPO_URL}.git, ref: ${BRANCH_REF}"
           if [ "$IS_SHA" = "true" ]; then
             # For SHA, clone with more depth to ensure we get the commit
-            git clone --depth=100 --no-single-branch https://github.com/${REPO_URL}.git /home/runner/collections/ansible_collections/ansible/netcommon
-            cd /home/runner/collections/ansible_collections/ansible/netcommon
+            git clone --depth=100 --no-single-branch https://github.com/${REPO_URL}.git /home/runner/.ansible/collections/ansible_collections/ansible/netcommon
+            cd /home/runner/.ansible/collections/ansible_collections/ansible/netcommon
             git fetch origin ${BRANCH_REF} || git fetch --unshallow || true
             git checkout ${BRANCH_REF}
           else
             # For branch name, use standard shallow clone
-            git clone --depth=1 --branch ${BRANCH_REF} https://github.com/${REPO_URL}.git /home/runner/collections/ansible_collections/ansible/netcommon
+            git clone --depth=1 --branch ${BRANCH_REF} https://github.com/${REPO_URL}.git /home/runner/.ansible/collections/ansible_collections/ansible/netcommon
           fi
 
       - name: Install Python dependencies from collections
         run: |
-          if [ -f "/home/runner/collections/ansible_collections/cisco/nxos/requirements.txt" ]; then
-            python3 -m pip install -r /home/runner/collections/ansible_collections/cisco/nxos/requirements.txt
+          if [ -f "/home/runner/.ansible/collections/ansible_collections/cisco/nxos/requirements.txt" ]; then
+            python3 -m pip install -r /home/runner/.ansible/collections/ansible_collections/cisco/nxos/requirements.txt
           fi
-          if [ -f "/home/runner/collections/ansible_collections/ansible/netcommon/requirements.txt" ]; then
-            python3 -m pip install -r /home/runner/collections/ansible_collections/ansible/netcommon/requirements.txt
+          if [ -f "/home/runner/.ansible/collections/ansible_collections/ansible/netcommon/requirements.txt" ]; then
+            python3 -m pip install -r /home/runner/.ansible/collections/ansible_collections/ansible/netcommon/requirements.txt
           fi
 
       - name: DEBUG Show pip list after ansible-core install
@@ -163,7 +163,7 @@ jobs:
         id: identify
         uses: ansible-network/github_actions/.github/actions/identify_collection@main
         with:
-          source_path: /home/runner/collections/ansible_collections/ansible/netcommon
+          source_path: /home/runner/.ansible/collections/ansible_collections/ansible/netcommon
 
       - name: DEBUG lab_nodes input
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}

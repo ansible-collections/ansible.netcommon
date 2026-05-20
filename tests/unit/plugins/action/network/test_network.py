@@ -20,6 +20,7 @@ from ansible.playbook.task import Task
 from ansible.plugins.loader import action_loader
 from ansible.template import Templar
 
+from ansible_collections.ansible.netcommon.plugins.action import network as netcommon_network_action
 from ansible_collections.ansible.netcommon.tests.unit.mock.loader import DictDataLoader
 
 
@@ -603,10 +604,17 @@ def test_backup_option_checksum_idempotency(plugin, tmp_path):
         assert f.read() == content
 
 
-def test_backup_option_filename_and_shortname(plugin, tmp_path):
+def test_backup_option_filename_and_shortname(plugin, tmp_path, monkeypatch):
     """Test _handle_backup_option sets filename and shortname when not provided"""
     backup_dir = tmp_path / "backup"
     backup_dir.mkdir()
+
+    # Without this, backup_path becomes <loader_basedir>/backup; on CI that can be the
+    # collection tree where ``backup`` already exists and makedirs raises FileExistsError.
+    def fake_working_path():
+        return str(tmp_path)
+
+    monkeypatch.setattr(plugin, "_get_working_path", fake_working_path)
 
     result = {"__backup__": "config content"}
     task_vars = {"inventory_hostname": "test_host"}
@@ -619,14 +627,20 @@ def test_backup_option_filename_and_shortname(plugin, tmp_path):
         assert result["filename"] == os.path.basename(result["backup_path"])
         assert result["shortname"] == os.path.splitext(result["backup_path"])[0]
     finally:
-        if os.path.exists(result["backup_path"]):
-            os.remove(result["backup_path"])
+        backup_path = result.get("backup_path")
+        if backup_path and os.path.exists(backup_path):
+            os.remove(backup_path)
 
 
-def test_backup_option_no_filename_shortname_when_provided(plugin, tmp_path):
+def test_backup_option_no_filename_shortname_when_provided(plugin, tmp_path, monkeypatch):
     """Test _handle_backup_option doesn't set filename/shortname when filename provided"""
     backup_dir = tmp_path / "backup"
     backup_dir.mkdir()
+
+    def fake_working_path():
+        return str(tmp_path)
+
+    monkeypatch.setattr(plugin, "_get_working_path", fake_working_path)
 
     result = {"__backup__": "config content"}
     task_vars = {"inventory_hostname": "test_host"}
@@ -638,8 +652,9 @@ def test_backup_option_no_filename_shortname_when_provided(plugin, tmp_path):
         assert "filename" not in result or result.get("filename") != "custom_backup"
         assert "shortname" not in result
     finally:
-        if os.path.exists(result["backup_path"]):
-            os.remove(result["backup_path"])
+        backup_path = result.get("backup_path")
+        if backup_path and os.path.exists(backup_path):
+            os.remove(backup_path)
 
 
 def test_get_working_path_with_role(plugin):
@@ -779,6 +794,62 @@ def test_exec_module_handles_false_stdout(plugin):
 
     assert "stdout_lines" in result
     assert result["stdout_lines"] == []
+
+
+def test_exec_module_strips_internal_keys_from_raw_result(plugin):
+    """Test _exec_module applies remove_internal_keys-style cleanup to _raw_result."""
+    mock_module = MagicMock()
+    mock_module._raw_result = {
+        "changed": True,
+        "msg": "ok",
+        "_ansible_no_log": True,
+        "_ansible_parsed": True,
+        "add_host": {"name": "h"},
+        "warnings": [],
+        "ansible_facts": {"discovered_interpreter_python": "/usr/bin/python3", "keep": 1},
+    }
+    mock_module.main = MagicMock()
+
+    result = plugin._exec_module(mock_module)
+
+    assert result["changed"] is True
+    assert result["msg"] == "ok"
+    assert "_ansible_no_log" not in result
+    assert result.get("_ansible_parsed") is True
+    assert "add_host" not in result
+    assert "warnings" not in result
+    assert result["ansible_facts"] == {"keep": 1}
+
+
+def test_netcommon_remove_internal_keys_fallback_strips_internal_data(monkeypatch):
+    """Test local fallback mirrors ansible.vars.clean.remove_internal_keys behavior."""
+    warned = []
+
+    monkeypatch.setattr(netcommon_network_action.display, "warning", warned.append)
+
+    data = {
+        "changed": True,
+        "_ansible_no_log": True,
+        "_ansible_parsed": True,
+        "add_host": {"name": "h"},
+        "warnings": [],
+        "deprecations": [],
+        "ansible_facts": {
+            "keep": 1,
+            "discovered_interpreter_python": "/usr/bin/python3",
+            "ansible_discovered_interpreter_python": "/usr/bin/python3",
+        },
+    }
+
+    netcommon_network_action._netcommon_remove_internal_keys_fallback(data)
+
+    assert "_ansible_no_log" not in data
+    assert data.get("_ansible_parsed") is True
+    assert "add_host" not in data
+    assert "warnings" not in data
+    assert "deprecations" not in data
+    assert data["ansible_facts"] == {"keep": 1}
+    assert warned
 
 
 def test_run_with_dexec_eligible_and_ansiblemodule(plugin, monkeypatch):
