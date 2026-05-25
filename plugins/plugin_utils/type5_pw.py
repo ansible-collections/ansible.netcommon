@@ -8,8 +8,8 @@
 """
 The type5_pw plugin code
 """
-from __future__ import absolute_import, division, print_function
 
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -17,7 +17,6 @@ import string
 
 from ansible.errors import AnsibleFilterError
 from ansible.module_utils.common.text.converters import to_text
-
 
 try:
     # old import

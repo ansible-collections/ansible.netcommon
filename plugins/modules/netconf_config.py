@@ -6,7 +6,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 
@@ -416,7 +415,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data impor
     dict_to_xml,
     validate_and_normalize_data,
 )
-
 
 try:
     from lxml.etree import fromstring, tostring
