@@ -812,13 +812,13 @@ def test_proxy_command_parse_replaces_tokens():
     paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
     paramiko_conn.set_option("proxy_command", "ssh -W %h:%p -l %r jumphost")
 
-    with patch("ansible_collections.ansible.netcommon.plugins.connection.network_cli.paramiko") as mock_paramiko:
+    with patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.network_cli.paramiko"
+    ) as mock_paramiko:
         mock_paramiko.ProxyCommand.return_value = MagicMock()
         result = paramiko_conn._parse_proxy_command(port=22)
 
-    mock_paramiko.ProxyCommand.assert_called_once_with(
-        "ssh -W 10.0.0.1:22 -l admin jumphost"
-    )
+    mock_paramiko.ProxyCommand.assert_called_once_with("ssh -W 10.0.0.1:22 -l admin jumphost")
     assert "sock" in result
 
 
@@ -886,7 +886,10 @@ def test_send_error_drains_buffer_before_raising(conn, ssh_type):
         mock__shell.recv.side_effect = [error_chunk, trailing_data, None]
     elif conn.ssh_type == "libssh":
         mock__shell.read_bulk_response.side_effect = [
-            None, error_chunk, trailing_data, None,
+            None,
+            error_chunk,
+            trailing_data,
+            None,
         ]
 
     with pytest.raises(AnsibleConnectionFailure, match="Invalid input"):
