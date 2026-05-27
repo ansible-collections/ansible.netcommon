@@ -899,3 +899,194 @@ def test_send_error_drains_buffer_before_raising(conn, ssh_type):
         assert mock__shell.recv.call_count == 3
     elif conn.ssh_type == "libssh":
         assert mock__shell.read_bulk_response.call_count == 4
+
+
+# --- paramiko: error raised via AnsibleCmdRespRecv (buffer_read_timeout > 0) ---
+
+
+def test_paramiko_error_raised_after_buffer_read_timeout(conn):
+    """When buffer_read_timeout > 0, error+prompt sets command_prompt_matched.
+    On next iteration AnsibleCmdRespRecv fires and the pending error is raised."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        AnsibleCmdRespRecv,
+    )
+
+    conn.set_options(
+        direct={
+            "ssh_type": "paramiko",
+            "terminal_stderr_re": [{"pattern": "Invalid input"}],
+            "terminal_stdout_re": [{"pattern": r"device[#>]"}],
+            "persistent_buffer_read_timeout": 0.1,
+        }
+    )
+    mock__shell = MagicMock()
+    conn._terminal = MagicMock()
+    conn._ssh_shell = mock__shell
+    conn._connected = True
+
+    error_response = b"bad_cmd\n% Invalid input detected\ndevice#"
+    mock__shell.recv.side_effect = [error_response, AnsibleCmdRespRecv()]
+
+    with patch("signal.setitimer"), patch("signal.alarm"):
+        with pytest.raises(AnsibleConnectionFailure, match="Invalid input"):
+            conn.send(b"bad_cmd")
+
+
+def test_paramiko_success_with_buffer_read_timeout(conn):
+    """When buffer_read_timeout > 0 and no error, AnsibleCmdRespRecv returns the response."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        AnsibleCmdRespRecv,
+    )
+
+    conn.set_options(
+        direct={
+            "ssh_type": "paramiko",
+            "terminal_stdout_re": [{"pattern": r"device[#>]"}],
+            "persistent_buffer_read_timeout": 0.1,
+        }
+    )
+    mock__shell = MagicMock()
+    conn._terminal = MagicMock()
+    conn._ssh_shell = mock__shell
+    conn._connected = True
+
+    success_response = b"show version output\ndevice#"
+    mock__shell.recv.side_effect = [success_response, AnsibleCmdRespRecv()]
+
+    with patch("signal.setitimer"), patch("signal.alarm"):
+        result = conn.send(b"show version")
+    assert "show version output" in result
+
+
+# --- paramiko: error at end of stream (recv returns empty) ---
+
+
+def test_paramiko_error_at_end_of_stream(conn):
+    """Error found but no prompt; recv returns empty → breaks loop → raises error."""
+    conn.set_options(
+        direct={
+            "ssh_type": "paramiko",
+            "terminal_stderr_re": [{"pattern": "Invalid input"}],
+            "terminal_stdout_re": [{"pattern": r"device[#>]"}],
+        }
+    )
+    mock__shell = MagicMock()
+    conn._terminal = MagicMock()
+    conn._ssh_shell = mock__shell
+    conn._connected = True
+
+    error_no_prompt = b"bad_cmd\n% Invalid input detected"
+    mock__shell.recv.side_effect = [error_no_prompt, b""]
+
+    with pytest.raises(AnsibleConnectionFailure, match="Invalid input"):
+        conn.send(b"bad_cmd")
+
+
+# --- libssh: error raised after prompt match with no more data ---
+
+
+def test_libssh_error_raised_after_prompt_match_no_more_data(conn):
+    """Libssh: error+prompt found → command_prompt_matched=True →
+    _read_post_command_prompt_match returns None → raises error."""
+    conn.set_options(
+        direct={
+            "ssh_type": "libssh",
+            "terminal_stderr_re": [{"pattern": "Invalid input"}],
+            "terminal_stdout_re": [{"pattern": r"device[#>]"}],
+        }
+    )
+    mock__shell = MagicMock()
+    conn._terminal = MagicMock()
+    conn._ssh_shell = mock__shell
+    conn._connected = True
+
+    error_response = b"bad_cmd\n% Invalid input detected\ndevice#"
+    mock__shell.read_bulk_response.side_effect = [None, error_response]
+
+    with patch.object(conn, "_read_post_command_prompt_match", return_value=None):
+        with pytest.raises(AnsibleConnectionFailure, match="Invalid input"):
+            conn.send(b"bad_cmd")
+
+
+# --- libssh: OSError during read (socket closed) ---
+
+
+def test_libssh_socket_close_during_read(conn):
+    """Libssh: read_bulk_response raises OSError → breaks loop, returns None."""
+    conn.set_options(
+        direct={
+            "ssh_type": "libssh",
+            "terminal_stdout_re": [{"pattern": r"device[#>]"}],
+        }
+    )
+    mock__shell = MagicMock()
+    conn._terminal = MagicMock()
+    conn._ssh_shell = mock__shell
+    conn._connected = True
+
+    mock__shell.read_bulk_response.side_effect = [None, OSError("socket closed")]
+
+    result = conn.send(b"show version")
+    assert result == "None"
+
+
+# --- proxy_command: _parse_proxy_command edge cases ---
+
+
+def test_parse_proxy_command_returns_empty_when_unset():
+    """_parse_proxy_command with no proxy_command returns empty dict."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
+
+    result = paramiko_conn._parse_proxy_command(port=22)
+    assert result == {}
+
+
+def test_parse_proxy_command_attribute_error_fallback():
+    """_parse_proxy_command returns empty dict when paramiko.ProxyCommand is unavailable."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    pc.remote_addr = "10.0.0.1"
+    pc.remote_user = "admin"
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
+    paramiko_conn.set_option("proxy_command", "ssh -W %h:%p jumphost")
+
+    with patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.network_cli.paramiko"
+    ) as mock_paramiko:
+        mock_paramiko.ProxyCommand.side_effect = AttributeError("no ProxyCommand")
+        result = paramiko_conn._parse_proxy_command(port=22)
+
+    assert result == {}
+
+
+# --- paramiko shim: var_options filtering ---
+
+
+def test_paramiko_shim_var_options_ignores_unknown_keys():
+    """var_options keys not in _PARAMIKO_DEFAULTS are silently ignored."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
+    paramiko_conn.set_options(
+        var_options={
+            "proxy_command": "ssh -W %h:%p jumphost",
+            "ssh_type": "paramiko",
+            "nonexistent_option": "should_be_ignored",
+        },
+    )
+    assert paramiko_conn.get_option("proxy_command") == "ssh -W %h:%p jumphost"
+    with pytest.raises(KeyError):
+        paramiko_conn.get_option("ssh_type")
+    with pytest.raises(KeyError):
+        paramiko_conn.get_option("nonexistent_option")
