@@ -11,7 +11,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 # Networking tools for network modules only
@@ -29,7 +28,6 @@ from itertools import chain
 from ansible.module_utils import basic
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.parsing.convert_bool import boolean
-
 
 try:
     from collections.abc import Mapping

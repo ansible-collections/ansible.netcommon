@@ -7,7 +7,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 """
 Utils functions for handle data formatting
@@ -17,7 +16,6 @@ import sys
 
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.common.text.converters import to_native
-
 
 string_types = (str,)
 try:
