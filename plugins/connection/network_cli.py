@@ -300,6 +300,21 @@ options:
     - name: ANSIBLE_NETWORK_SINGLE_USER_MODE
     vars:
     - name: ansible_network_single_user_mode
+  proxy_command:
+    default: ''
+    description:
+        - Proxy information for running the connection via a jumphost.
+        - 'Also this plugin will scan C(ssh_args), C(ssh_extra_args) and
+          C(ssh_common_args) from the C(ssh) plugin settings for proxy
+          information if set, when using C(ssh_type=libssh).'
+    type: string
+    env:
+        - name: ANSIBLE_PARAMIKO_PROXY_COMMAND
+    ini:
+        - section: paramiko_connection
+          key: proxy_command
+    vars:
+        - name: ansible_paramiko_proxy_command
 """
 
 import fcntl
@@ -473,7 +488,7 @@ class _ParamikoConnection:
         "private_key_file": None,
         "host_key_auto_add": True,
         "look_for_keys": True,
-        "proxy_command": "",
+        "proxy_command": None,
         "pty": True,
         "record_host_keys": True,
         "host_key_checking": True,
@@ -495,8 +510,8 @@ class _ParamikoConnection:
         # Plugin-related attributes expected by Ansible
         self._load_name = "network_cli_paramiko"
         self._original_path = __file__
-        # Initialize options with defaults
-        self._paramiko_options = dict(self._PARAMIKO_DEFAULTS)
+        # Only store explicitly set options; defaults are in _PARAMIKO_DEFAULTS
+        self._paramiko_options = {}
         # Initialize from play_context where available
         if play_context:
             if hasattr(play_context, "remote_addr") and play_context.remote_addr:
@@ -557,6 +572,11 @@ class _ParamikoConnection:
         Options like ssh_type that are specific to network_cli are not stored here.
         """
         # Only store options that are relevant to paramiko
+        # Process var_options first so direct values take precedence
+        if var_options:
+            for key, value in var_options.items():
+                if key in self._PARAMIKO_DEFAULTS:
+                    self._paramiko_options[key] = value
         if direct:
             for key, value in direct.items():
                 if key in self._PARAMIKO_DEFAULTS:
