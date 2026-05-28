@@ -1363,8 +1363,6 @@ class Connection(NetworkConnectionBase):
 
                 except AnsibleCmdRespRecv:
                     # reset socket timeout to global timeout
-                    if errored_response:
-                        raise AnsibleConnectionFailure(errored_response)
                     return self._command_response
             else:
                 data = self._ssh_shell.recv(256)
@@ -1411,20 +1409,16 @@ class Connection(NetworkConnectionBase):
                 errored_response = window
 
             if self._find_prompt(window):
-                if not errored_response:
-                    self._last_response = recv.getvalue()
-                    resp = self._strip(self._last_response)
-                    self._command_response = self._sanitize(resp, command, strip_prompt)
+                if errored_response:
+                    raise AnsibleConnectionFailure(errored_response)
+                self._last_response = recv.getvalue()
+                resp = self._strip(self._last_response)
+                self._command_response = self._sanitize(resp, command, strip_prompt)
                 if self._buffer_read_timeout == 0.0:
-                    if errored_response:
-                        raise AnsibleConnectionFailure(errored_response)
                     # reset socket timeout to global timeout
                     return self._command_response
                 else:
                     command_prompt_matched = True
-
-        if errored_response:
-            raise AnsibleConnectionFailure(errored_response)
 
     def receive_libssh(
         self,
@@ -1447,8 +1441,6 @@ class Connection(NetworkConnectionBase):
                 if data:
                     command_prompt_matched = False
                 else:
-                    if errored_response:
-                        raise AnsibleConnectionFailure(errored_response)
                     return self._command_response
             else:
                 try:
@@ -1496,9 +1488,10 @@ class Connection(NetworkConnectionBase):
                 errored_response = resp
 
             if self._find_prompt(resp):
-                if not errored_response:
-                    self._last_response = data
-                    self._command_response = self._sanitize(resp, command, strip_prompt)
+                if errored_response:
+                    raise AnsibleConnectionFailure(errored_response)
+                self._last_response = data
+                self._command_response = self._sanitize(resp, command, strip_prompt)
                 command_prompt_matched = True
 
     def receive(

@@ -1,4 +1,3 @@
 bugfixes:
   - network_cli - Fix ``proxy_command`` silently ignored with ``ssh_type=paramiko``
     (https://github.com/ansible-collections/ansible.netcommon/issues/776).
-  - network_cli - Fix error buffer drain in paramiko and libssh receive paths.
