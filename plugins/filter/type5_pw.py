@@ -21,6 +21,7 @@ short_description: The type5_pw filter plugin.
 description:
   - Filter plugin to produce cisco type5 hashed password.
   - Using the parameters below - C(xml_data | ansible.netcommon.type5_pw(template.yml))
+  - This plugin uses do_encrypt if used with ansible-core 2.20+ and passlib_or_crypt for versions before 2.20
 notes:
   - The filter plugin generates cisco type5 hashed password.
 options:
@@ -65,6 +66,9 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
     AnsibleArgSpecValidator,
 )
 
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.argspec_filter_utils import (
+    convert_to_native,
+)
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
 
 
@@ -81,6 +85,7 @@ def _type5_pw(*args, **kwargs):
     keys = ["password", "salt"]
     data = dict(zip(keys, args[1:]))
     data.update(kwargs)
+    data = convert_to_native(data)
     aav = AnsibleArgSpecValidator(data=data, schema=DOCUMENTATION, name="type5_pw")
     valid, errors, updated_data = aav.validate()
     if not valid:

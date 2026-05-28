@@ -132,6 +132,7 @@ Parameters
                     </td>
                 <td>
                         <div>Enables looking for ssh keys in the usual locations for ssh keys (e.g. :file:`~/.ssh/id_*`).</div>
+                        <div>This option is not supported when <code>use_libssh=True</code>,it will be ignored if <code>use_libssh</code> is enabled</div>
                 </td>
             </tr>
             <tr>
@@ -154,6 +155,7 @@ Parameters
                     </td>
                 <td>
                         <div>This variable is used to enable bastion/jump host with netconf connection. If set to True the bastion/jump host ssh settings should be present in ~/.ssh/config file, alternatively it can be set to custom ssh configuration file path to read the bastion/jump host settings.</div>
+                        <div>This option is not supported when <code>use_libssh=True</code>, it will be ignored if <code>use_libssh</code> is enabled</div>
                 </td>
             </tr>
             <tr>
@@ -356,6 +358,32 @@ Parameters
                 <td>
                         <div>The username used to authenticate to the remote device when the SSH connection is first established.  If the remote_user is not specified, the connection will use the username of the logged in user.</div>
                         <div>Can be configured from the CLI via the <code>--user</code> or <code>-u</code> options.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>use_libssh</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                    <td>
+                            <div> ini entries:
+                                    <p>[defaults]<br>netconf_libssh = no</p>
+                            </div>
+                                <div>env:ANSIBLE_NETCONF_LIBSSH</div>
+                                <div>var: ansible_netconf_libssh</div>
+                    </td>
+                <td>
+                        <div>specifies whether to use libssh for netconf connection or not</div>
                 </td>
             </tr>
     </table>

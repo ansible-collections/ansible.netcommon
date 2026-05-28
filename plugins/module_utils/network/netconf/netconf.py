@@ -18,7 +18,7 @@ try:
 except ImportError:
     from xml.etree.ElementTree import fromstring, tostring
 
-from ansible.module_utils._text import to_bytes, to_text
+from ansible.module_utils.common.text.converters import to_bytes, to_text
 from ansible.module_utils.connection import Connection, ConnectionError
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (

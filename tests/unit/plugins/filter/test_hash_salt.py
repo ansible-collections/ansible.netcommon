@@ -10,6 +10,7 @@ __metaclass__ = type
 
 from unittest import TestCase
 
+from ansible_collections.ansible.netcommon.plugins.filter.hash_salt import _hash_salt
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.hash_salt import hash_salt
 
 
@@ -25,3 +26,9 @@ class Testhash_salt(TestCase):
             "avs",
             result,
         )
+
+    def test_hash_salt_filter_wrapper(self):
+        """Filter wrapper runs convert_to_native before validation."""
+        env = None
+        result = _hash_salt(env, "$1$avs$uSTOEMh65qzvpb9yBMpzd/")
+        self.assertEqual(result, "avs")

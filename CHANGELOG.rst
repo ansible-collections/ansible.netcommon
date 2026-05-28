@@ -4,6 +4,119 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.5.2
+======
+
+Release Summary
+---------------
+
+Rereleased 8.5.1 with corrected changelog.
+
+Bugfixes
+--------
+
+- network action plugin - initialize ``_PARSED_MODULE_ARGS`` in ``DirectExecutionModule._load_params`` to avoid ``AttributeError`` on ansible-core 2.21+ when ``fail_json`` or ``exit_json`` is called.
+
+v8.5.1
+======
+
+v8.5.0
+======
+
+Minor Changes
+-------------
+
+- The dependency on ansible-pylibssh (for ssh_type=libssh / network_cli) is now ansible-pylibssh>=1.4.0 in requirements.txt, raised from the previous >=0.2.0 requirement. Installations still on ansible-pylibssh 0.x or 1.x below 1.4.0 must upgrade to use the libssh connection path with this collection release.
+- libssh connection - When log_path is set (e.g. via ANSIBLE_LOG_PATH or log_path in ansible.cfg), the plugin now routes ansible-pylibssh (libssh) logs into the same Ansible log file. Log level is derived from display.verbosity using Python standard logging: verbosity 0 -> WARNING, 1-2 -> INFO, 3+ -> DEBUG. This allows SSH/libssh debug and trace output to appear in the configured log file for troubleshooting without changing ansible-pylibssh configuration manually.
+- network_cli - The in-collection paramiko path supports the same host key policy behavior (including host_key_auto_add and known_hosts handling) and persistent connection caching as the previous ansible-core paramiko integration.
+- network_cli - When ssh_type is set to paramiko, the connection plugin now uses an in-collection paramiko implementation instead of loading ansible-core's paramiko connection plugin. This allows network_cli to work with versions of ansible-core, where the paramiko connection plugin was removed.
+
+Deprecated Features
+-------------------
+
+- network_cli - The in-collection paramiko support (used when ssh_type is paramiko) is a compatibility layer for environments where ansible-core's paramiko connection is no longer available. This layer is deprecated and will be removed in a release after 2028-02-01. Migrate to ssh_type=libssh by installing the ansible-pylibssh package.
+
+Bugfixes
+--------
+
+- filter plugins - Add plugin_routing redirects for ``ipaddr``, ``ipv4``, and ``ipv6`` to ``ansible.utils`` so short names work when ``ansible.netcommon`` is in the play's collection list (https://github.com/ansible-collections/ansible.utils/issues/404).
+- filter plugins - Convert filter arguments to native Python types before ``AnsibleArgSpecValidator`` so filters work with Ansible 2.19+ lazy containers that cannot be deep-copied (e.g. ``vlan_parser``, ``vlan_expander``, ``hash_salt``, ``type5_pw``, ``comp_type5``, ``parse_cli``, ``parse_cli_textfsm``, ``parse_xml``, ``pop_ace``).
+- libssh connection - Fixed test_libssh_put_file unit test so the put_file code path (used by net_put, copy module, and other file transfer over libssh) is properly tested in CI. The test now sets connection options and mocks Session so put_file does not trigger a real connection attempt with an unset host (was failing with "Hostname required").
+- network action plugin - Fall back when remove_internal_keys is not importable from ansible.vars.clean (e.g. some ansible-core builds), so direct module execution still cleans module return data.
+- network_cli - Fixed file transfer (net_put / net_get) when ssh_type=libssh. For put_file, no longer call_connect_uncached() before delegating to the libssh connection the libssh plugin's put_file() calls _connect() internally. For fetch_file, call _connect() then fetch_file() for libssh instead of _connect_uncached(), so connection caching and the correct flow are used. Paramiko branch unchanged (still uses _connect_uncached() for scp/sftp).
+
+v8.4.0
+======
+
+Release Summary
+---------------
+
+Re-released 8.3.1 with features added in the last release.
+
+Minor Changes
+-------------
+
+- Option to use libssh as transport while using netconf, is added.
+- The ssh-python module is needed, which will ensure libssh as transport for netconf operations. When use_libssh is enabled.
+
+v8.3.0
+======
+
+Minor Changes
+-------------
+
+- Option to use libssh as transport while using netconf, is added.
+- The ssh-python module is needed, which will ensure libssh as transport for netconf operations. When use_libssh is enabled.
+
+v8.2.1
+======
+
+Bugfixes
+--------
+
+- Adds backward compatibility of handling src attributes, functional consistency with ansible-core >= 2.19
+- Adds deprecation warning for the jinja2 processing functionality for src attributes, src attributes in collections would still support considering file path but they would not process template files directly once the functionality is deprecated.
+- It is suggested to use ansible.builtin.template module to process templates and use the processed template path in src attributes.
+
+v8.2.0
+======
+
+Minor Changes
+-------------
+
+- Exposes new libssh option to configure key_exchange_algorithms. This requires ansible-pylibssh v1.3.0 or higher.
+
+Bugfixes
+--------
+
+- Added support for private key passphrase in libssh connection plugin, when using encrypted private keys specified by the C(ansible_private_key_file) attribute.
+- Avoid legacy imports deprecated in ansible-core 2.20 (https://github.com/ansible-collections/ansible.netcommon/pull/720).
+- Avoid merging module_defaults for all ansible.netcommon.grpc_* modules.
+- Set libssh logging level to DEBUG when Ansible verbosity is greater than 3, to aid in troubleshooting connection issues.
+
+v8.1.0
+======
+
+Minor Changes
+-------------
+
+- Changes to supplement direct execution of Ansible module in validate_config(utils.py) and _patch_update_module(network.py) added.
+- Override new 2.19.1+ AnsibleModule._record_module_result hook in network action plugin to bypass module result serialization when direct execution is enabled
+
+Bugfixes
+--------
+
+- Improved error handling in DirectExecutionModule._record_module_result method for better compatibility with core<=2.18
+
+v8.0.1
+======
+
+Bugfixes
+--------
+
+- (#633) Fixed typo in ansible.netcommon.telnet parameter crlf (was clrf by mistake)
+- netconf - Adds check for netconf session_close RPC happens only if connection is alive.
+
 v8.0.0
 ======
 

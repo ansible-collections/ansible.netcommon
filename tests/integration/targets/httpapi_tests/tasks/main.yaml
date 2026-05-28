@@ -1,0 +1,28 @@
+---
+- name: Gather facts for non-network to get ansible_distribution
+  ansible.builtin.gather_facts:
+  when: ansible_network_os is not defined
+
+- name: Set a short name
+  ansible.builtin.set_fact:
+    os: "{{ ansible_distribution | d or (ansible_network_os | d('')).split('.')[-1] }}"
+
+- name: Enable nxapi feature on NXOS device
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  when: "os in ['nxos']"
+  ansible.netcommon.cli_config:
+    config: |
+      feature nxapi
+
+- name: Run a RM test - httpapi
+  ansible.builtin.include_tasks: "{{ os | lower }}_any_rm.yaml"
+  when: "os in ['nxos']"
+
+- name: Run a command module test - httpapi
+  ansible.builtin.include_tasks: "{{ os | lower }}_cli_command.yaml"
+  when: "os in ['nxos']"
+
+- name: Run a config module test - httpapi
+  ansible.builtin.include_tasks: "{{ os | lower }}_cli_config.yaml"
+  when: "os in ['nxos']"

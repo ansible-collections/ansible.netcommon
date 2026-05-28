@@ -70,6 +70,9 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
     AnsibleArgSpecValidator,
 )
 
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.argspec_filter_utils import (
+    convert_to_native,
+)
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
 
 
@@ -86,6 +89,7 @@ def _vlan_expander(*args, **kwargs):
     keys = ["data"]
     data = dict(zip(keys, args[1:]))
     data.update(kwargs)
+    data = convert_to_native(data)
     aav = AnsibleArgSpecValidator(data=data, schema=DOCUMENTATION, name="vlan_expander")
     valid, errors, updated_data = aav.validate()
     if not valid:

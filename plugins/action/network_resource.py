@@ -28,7 +28,7 @@ except ImportError:
     HAS_YAML = False
 
 from ansible.errors import AnsibleActionFail, AnsibleError
-from ansible.module_utils._text import to_text
+from ansible.module_utils.common.text.converters import to_text
 from ansible.utils.display import Display
 
 from ansible_collections.ansible.netcommon.plugins.action.network import (

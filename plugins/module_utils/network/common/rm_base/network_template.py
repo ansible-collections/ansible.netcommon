@@ -22,7 +22,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     RmEngineBase,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
-    Template,
+    JinjaTemplate,
     dict_merge,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
@@ -46,7 +46,7 @@ class NetworkTemplate(RmEngineBase):
         super(NetworkTemplate, self).__init__(module=module)
         self._lines = lines or []
         self._tmplt = tmplt
-        self._template = Template()
+        self._template = JinjaTemplate()
         self._prefix = prefix or {}
 
     def _deepformat(self, tmplt, data):

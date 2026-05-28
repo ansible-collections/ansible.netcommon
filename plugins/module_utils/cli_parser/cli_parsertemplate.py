@@ -9,7 +9,7 @@
 # Simplified BSD License (see LICENSES/BSD-2-Clause.txt or https://opensource.org/licenses/BSD-2-Clause)
 # SPDX-License-Identifier: BSD-2-Clause
 
-""" A shim class for the NetworkTemplate
+"""A shim class for the NetworkTemplate
 this was done in case there is a need to
 modify the resource module parser class
 or extend it a split it from the cli parsers.

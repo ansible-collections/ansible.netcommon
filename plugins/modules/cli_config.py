@@ -156,7 +156,7 @@ options:
 EXAMPLES = """
 - name: configure device with config
   ansible.netcommon.cli_config:
-    config: "{{ lookup('template', 'basic/config.j2') }}"
+    config: "{{ lookup('ansible.builtin.template', 'basic/config.j2') }}"
 
 - name: multiline config
   ansible.netcommon.cli_config:
@@ -166,7 +166,7 @@ EXAMPLES = """
 
 - name: configure device with config with defaults enabled
   ansible.netcommon.cli_config:
-    config: "{{ lookup('template', 'basic/config.j2') }}"
+    config: "{{ lookup('ansible.builtin.template', 'basic/config.j2') }}"
     defaults: "yes"
 
 - name: Use diff_match
@@ -189,7 +189,7 @@ EXAMPLES = """
 
 - name: configurable backup path
   ansible.netcommon.cli_config:
-    config: "{{ lookup('template', 'basic/config.j2') }}"
+    config: "{{ lookup('ansible.builtin.template', 'basic/config.j2') }}"
     backup: "yes"
     backup_options:
       filename: backup.cfg
@@ -226,8 +226,8 @@ backup_path:
 
 import json
 
-from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.connection import Connection
 
 

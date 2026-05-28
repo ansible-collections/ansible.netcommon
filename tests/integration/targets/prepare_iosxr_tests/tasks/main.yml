@@ -1,22 +1,27 @@
 ---
 - name: Ensure we have loopback 888 for testing
-  connection: ansible.netcommon.network_cli
   cisco.iosxr.iosxr_config:
     src: config.j2
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
 
-- name: Enable Netconf service
-  connection: ansible.netcommon.network_cli
-  tags: netconf
+- name: Enable NETCONF service
   cisco.iosxr.iosxr_netconf:
     netconf_port: 830
     netconf_vrf: default
     state: present
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  tags:
+    - netconf
 
 - name: Enable gRPC
-  connection: ansible.netcommon.network_cli
-  tags: grpc
   cisco.iosxr.iosxr_config:
     src: config_grpc.j2
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  tags:
+    - grpc
 
 - name: Save truncated hostname
   ansible.builtin.set_fact:

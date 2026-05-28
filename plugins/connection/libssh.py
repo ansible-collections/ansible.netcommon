@@ -65,6 +65,14 @@ DOCUMENTATION = """
         vars:
           - name: ansible_libssh_password_prompt
         version_added: 3.1.0
+      private_key_passphrase:
+        description:
+          - Passphrase used to unlock the private key specified by the C(ansible_private_key_file) attribute.
+          - This is required if the private key is encrypted with a passphrase.
+        type: string
+        vars:
+            - name: ansible_private_key_password
+            - name: ansible_private_key_passphrase
       host_key_auto_add:
         description: 'TODO: write it'
         env: [{name: ANSIBLE_LIBSSH_HOST_KEY_AUTO_ADD}]
@@ -104,7 +112,7 @@ DOCUMENTATION = """
         default: ''
         description:
             - List of algorithms to forward to SSH_OPTIONS_PUBLICKEY_ACCEPTED_TYPES.
-        type: string
+        type: str
         env:
           - name: ANSIBLE_LIBSSH_PUBLICKEY_ALGORITHMS
         ini:
@@ -114,13 +122,26 @@ DOCUMENTATION = """
       hostkeys:
         default: ''
         description: Set the preferred server host key types as a comma-separated list (e.g., ssh-rsa,ssh-dss,ecdh-sha2-nistp256).
-        type: string
+        type: str
         env:
           - name: ANSIBLE_LIBSSH_HOSTKEYS
         ini:
           - {key: hostkeys, section: libssh_connection}
         vars:
           - name: ansible_libssh_hostkeys
+      key_exchange_algorithms:
+        description:
+          - Set the key exchange method as a comma-separated list (e.g., "ecdh-sha2-nistp256,diffie-hellman-group14-sha1,diffie-hellman-group1-sha1").
+          - The list can be prepended by +,-,^ which will append, remove or move to the beginning (prioritizing) of the default list respectively.
+            Giving an empty list after + and ^ will cause error.
+        type: str
+        env:
+          - name: ANSIBLE_LIBSSH_KEY_EXCHANGE_ALGORITHMS
+        ini:
+          - key: key_exchange_algorithms
+            section: libssh_connection
+        vars:
+          - name: ansible_libssh_key_exchange_algorithms
       host_key_checking:
         description: 'Set this to "False" if you want to avoid host key checking by the underlying tools Ansible uses to connect to the host'
         type: boolean
@@ -217,9 +238,10 @@ import os
 import re
 import socket
 
+from ansible import constants as C
 from ansible.errors import AnsibleConnectionFailure, AnsibleError, AnsibleFileNotFound
-from ansible.module_utils._text import to_bytes, to_native, to_text
 from ansible.module_utils.basic import missing_required_lib
+from ansible.module_utils.common.text.converters import to_bytes, to_native, to_text
 from ansible.plugins.connection import ConnectionBase
 from ansible.utils.display import Display
 
@@ -302,7 +324,7 @@ SFTP_CONNECTION_CACHE = {}
 
 
 class Connection(ConnectionBase):
-    """SSH based connections with Paramiko"""
+    """SSH based connections with Libssh"""
 
     transport = "ansible.netcommon.libssh"
     _log_channel = None
@@ -323,6 +345,90 @@ class Connection(ConnectionBase):
 
     def _set_log_channel(self, name):
         self._log_channel = name
+
+    @staticmethod
+    def _pylibssh_handler_log_level():
+        verbosity = display.verbosity
+        if verbosity >= 3:
+            return logging.DEBUG
+        if verbosity >= 1:
+            return logging.INFO
+        return logging.WARNING
+
+    def _pylibssh_resolve_log_path(self, host):
+        logpath = getattr(C, "DEFAULT_LOG_PATH", None)
+        display.vvvv(
+            "libssh log handler: DEFAULT_LOG_PATH=%s" % repr(logpath),
+            host=host,
+        )
+        if not logpath:
+            display.vvvv("libssh log handler: skipped (no DEFAULT_LOG_PATH set)", host=host)
+            return None
+        if not os.path.isabs(logpath):
+            display.vvvv(
+                "libssh log handler: skipped (log_path not absolute: %s)" % logpath,
+                host=host,
+            )
+            return None
+        logpath = os.path.expanduser(logpath)
+        if os.path.exists(logpath):
+            if not os.access(logpath, os.W_OK):
+                display.vvvv(
+                    "libssh log handler: skipped (log file not writable: %s)" % logpath,
+                    host=host,
+                )
+                return None
+            return logpath
+        parent = os.path.dirname(logpath)
+        if parent and not os.path.isdir(parent):
+            display.vvvv(
+                "libssh log handler: skipped (parent not a directory: %s)" % parent,
+                host=host,
+            )
+            return None
+        if parent and not os.access(parent, os.W_OK):
+            display.vvvv(
+                "libssh log handler: skipped (parent not writable: %s)" % parent,
+                host=host,
+            )
+            return None
+        return logpath
+
+    def _pylibssh_attach_log_handler(self, logpath, log_level, host):
+        pylibssh_log = logging.getLogger("ansible-pylibssh")
+        for h in pylibssh_log.handlers:
+            if getattr(h, "baseFilename", None) == logpath:
+                pylibssh_log.setLevel(log_level)
+                h.setLevel(log_level)
+                display.vvvv(
+                    "libssh log handler: already attached to %s (level=%s)" % (logpath, log_level),
+                    host=host,
+                )
+                return
+        handler = logging.FileHandler(logpath, mode="a", encoding="utf-8")
+        handler.setLevel(log_level)
+        handler.setFormatter(
+            logging.Formatter("%(asctime)s p=%(process)d n=%(name)s %(levelname)s| %(message)s")
+        )
+        pylibssh_log.addHandler(handler)
+        pylibssh_log.setLevel(log_level)
+        display.vvvv(
+            "libssh log handler: added FileHandler for ansible-pylibssh -> %s (level=%s)"
+            % (logpath, log_level),
+            host=host,
+        )
+
+    def _ensure_pylibssh_log_handler(self, host=None):
+        """Route ansible-pylibssh (libssh) logs to Ansible log_path when set.
+
+        Handler and logger levels follow display.verbosity using Python standard
+        logging levels: 0 -> WARNING, 1-2 -> INFO, 3+ -> DEBUG.
+        """
+        log_level = self._pylibssh_handler_log_level()
+        logpath = self._pylibssh_resolve_log_path(host)
+        if logpath is None:
+            return
+        self._pylibssh_attach_log_handler(logpath, log_level, host)
 
     def _get_proxy_command(self, port=22):
         proxy_command = None
@@ -387,9 +493,7 @@ class Connection(ConnectionBase):
         )
 
         self.ssh = Session()
-
-        if display.verbosity > 3:
-            self.ssh.set_log_level(logging.INFO)
+        self._ensure_pylibssh_log_handler(remote_addr)
 
         self.keyfile = os.path.expanduser("~/.ssh/known_hosts")
 
@@ -422,6 +526,11 @@ class Connection(ConnectionBase):
             if self.get_option("hostkeys"):
                 ssh_connect_kwargs["hostkeys"] = self.get_option("hostkeys")
 
+            if self.get_option("key_exchange_algorithms"):
+                ssh_connect_kwargs["key_exchange_algorithms"] = self.get_option(
+                    "key_exchange_algorithms"
+                )
+
             self.ssh.set_missing_host_key_policy(MyAddPolicy(self))
 
             self.ssh.connect(
@@ -432,6 +541,7 @@ class Connection(ConnectionBase):
                 password=self.get_option("password"),
                 password_prompt=self.get_option("password_prompt"),
                 private_key=private_key,
+                private_key_password=self.get_option("private_key_passphrase"),
                 timeout=self._play_context.timeout,
                 port=port,
                 **ssh_connect_kwargs,
@@ -556,6 +666,7 @@ class Connection(ConnectionBase):
         if not os.path.exists(to_bytes(in_path, errors="surrogate_or_strict")):
             raise AnsibleFileNotFound("file or module does not exist: %s" % in_path)
 
+        self._connect()
         if proto == "sftp":
             try:
                 self.sftp = self.ssh.sftp()
@@ -589,6 +700,46 @@ class Connection(ConnectionBase):
             result = SFTP_CONNECTION_CACHE[cache_key] = self._connect().ssh.sftp()
             return result
 
+    def _invalidate_ssh_session_after_scp_get_failure(self):
+        """Drop cached SSH/SFTP and close session after failed SCP get (device quirks)."""
+        cache_key = self._cache_key()
+        SSH_CONNECTION_CACHE.pop(cache_key, None)
+        SFTP_CONNECTION_CACHE.pop(cache_key, None)
+        if hasattr(self, "ssh") and self.ssh is not None:
+            try:
+                self.ssh.close()
+            except Exception:
+                pass
+            self.ssh = None
+
+    def _fetch_file_via_sftp(self, in_path, out_path):
+        try:
+            self.sftp = self._connect_sftp()
+        except Exception as e:
+            raise AnsibleError("failed to open a SFTP connection (%s)" % to_native(e))
+
+        try:
+            self.sftp.get(
+                to_bytes(in_path, errors="surrogate_or_strict"),
+                to_bytes(out_path, errors="surrogate_or_strict"),
+            )
+        except IOError:
+            raise AnsibleError("failed to transfer file from %s" % in_path)
+
+    def _fetch_file_via_scp(self, in_path, out_path):
+        scp = self.ssh.scp()
+        try:
+            # this abruptly closes the connection when
+            # scp.get fails only when the file is not there
+            # it works fine if the file is actually present
+            scp.get(in_path, out_path)
+        except LibsshSCPException as exc:
+            # Invalidate cached connection so next operation (e.g. put_file)
+            # uses a fresh connection; some devices misbehave when reusing
+            # a connection that had a failed SCP get.
+            self._invalidate_ssh_session_after_scp_get_failure()
+            raise AnsibleError("Error transferring file from %s: %s" % (in_path, to_text(exc)))
+
     def fetch_file(self, in_path, out_path, proto="sftp"):
         """save a remote file to the specified path"""
 
@@ -600,27 +751,9 @@ class Connection(ConnectionBase):
         )
 
         if proto == "sftp":
-            try:
-                self.sftp = self._connect_sftp()
-            except Exception as e:
-                raise AnsibleError("failed to open a SFTP connection (%s)" % to_native(e))
-
-            try:
-                self.sftp.get(
-                    to_bytes(in_path, errors="surrogate_or_strict"),
-                    to_bytes(out_path, errors="surrogate_or_strict"),
-                )
-            except IOError:
-                raise AnsibleError("failed to transfer file from %s" % in_path)
+            self._fetch_file_via_sftp(in_path, out_path)
         elif proto == "scp":
-            scp = self.ssh.scp()
-            try:
-                # this abruptly closes the connection when
-                # scp.get fails only when the file is not there
-                # it works fine if the file is actually present
-                scp.get(in_path, out_path)
-            except LibsshSCPException as exc:
-                raise AnsibleError("Error transferring file from %s: %s" % (out_path, to_text(exc)))
+            self._fetch_file_via_scp(in_path, out_path)
         else:
             raise AnsibleError("Don't know how to transfer file over protocol %s" % proto)
 

@@ -19,6 +19,7 @@ Synopsis
 --------
 - Filter plugin to produce cisco type5 hashed password.
 - Using the parameters below - ``xml_data | ansible.netcommon.type5_pw(template.yml``)
+- This plugin uses do_encrypt if used with ansible-core 2.20+ and passlib_or_crypt for versions before 2.20
 
 
 
