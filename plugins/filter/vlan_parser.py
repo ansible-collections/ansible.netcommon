@@ -106,6 +106,9 @@ from ansible_collections.ansible.utils.plugins.module_utils.common.argspec_valid
     AnsibleArgSpecValidator,
 )
 
+from ansible_collections.ansible.netcommon.plugins.plugin_utils.argspec_filter_utils import (
+    convert_to_native,
+)
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
 
 
@@ -118,10 +121,15 @@ except ImportError:
 @pass_environment
 def _vlan_parser(*args, **kwargs):
     """Extend vlan data"""
-
+    # Extract filter arguments (skip environment which is first arg)
+    filter_args = args[1:] if args else []
     keys = ["data", "first_line_len", "other_line_len"]
-    data = dict(zip(keys, args[1:]))
+    data = dict(zip(keys, filter_args))
     data.update(kwargs)
+
+    # Convert to native Python types so ArgumentSpecValidator can deepcopy (Ansible 2.19+)
+    data = convert_to_native(data)
+
     aav = AnsibleArgSpecValidator(data=data, schema=DOCUMENTATION, name="vlan_parser")
     valid, errors, updated_data = aav.validate()
     if not valid:

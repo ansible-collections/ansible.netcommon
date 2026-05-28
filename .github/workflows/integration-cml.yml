@@ -1,0 +1,267 @@
+---
+name: "Integration tests 💻"
+"on":
+  pull_request_target:
+    branches: [main]
+    types:
+      - labeled
+      - opened
+      - reopened
+      - synchronize
+    paths:
+      - "plugins/**"
+      - "tests/integration/**"
+  workflow_dispatch:
+    inputs:
+      ansible_version:
+        description: "Ansible core version to test"
+        required: true
+        type: choice
+        options:
+          - "2.15"
+          - "2.16"
+          - "2.17"
+          - "2.18"
+          - "2.19"
+          - "2.20"
+          - "milestone"
+          - "devel"
+        default: "devel"
+      debug:
+        description: "Enable debug steps"
+        required: false
+        type: boolean
+        default: false
+      ssh_type:
+        description: "network_cli SSH transport (paramiko or libssh)"
+        required: false
+        type: choice
+        options:
+          - "libssh"
+          - "paramiko"
+        default: "libssh"
+jobs:
+  lab-create:
+    uses: ansible/ansible-content-actions/.github/workflows/cml_lab_create.yaml@main
+    with:
+      topology_path: tests/integration/labs/multi.yaml
+      # lab_title_override: "Optional custom lab title"
+    secrets:
+      virl_host: ${{ secrets.VIRL_HOST }}
+      virl_username: ${{ secrets.VIRL_USERNAME }}
+      virl_password: ${{ secrets.VIRL_PASSWORD }}
+
+  integration-tests:
+    needs: lab-create
+    name: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ssh_type || 'libssh' }} & ansible-core ${{ matrix.ansible_version }}"
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request || contains(github.event.pull_request.labels.*.name, 'safe to test') }}
+    env:
+      PY_COLORS: "1"
+      ANSIBLE_COLLECTIONS_PATHS: "/home/runner/.ansible/collections"
+      # workflow_dispatch: use chosen ssh_type; PR/schedule: default libssh
+      CLI_SSH_TYPE: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ssh_type || 'libssh' }}
+    strategy:
+      fail-fast: true
+      matrix:  #  There is no official support for matrix here as multiple applaince are needed per run, test against one core version.
+        ansible_version: ${{ github.event_name == 'workflow_dispatch' && fromJSON(format('["{0}"]', github.event.inputs.ansible_version)) || fromJSON('["devel"]') }}
+    steps:
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: DEBUG Show pip list before installs
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
+        run: |
+          python3 -m pip --version
+          python3 -m pip list | sort
+
+      - name: Upgrade pip and wheel
+        run: python3 -m pip install --upgrade pip wheel ansible-pylibssh paramiko genie passlib scp ncclient ntc_templates pyats jxmlease ssh-python
+
+      - name: DEBUG Show pip list after base deps install
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
+        run: |
+          python3 -m pip list | sort
+
+      - name: Install ansible-core (${{ matrix.ansible_version }}) - Stable version
+        run: python3 -m pip install "ansible-core~=${{ matrix.ansible_version }}.0" --disable-pip-version-check
+        if: ${{ !contains(matrix.ansible_version, 'devel') && !contains(matrix.ansible_version, 'milestone') }}
+
+      - name: Checkout ansible-core (${{ matrix.ansible_version }}) - Branch
+        uses: actions/checkout@v4
+        with:
+          repository: ansible/ansible
+          ref: ${{ matrix.ansible_version }}
+          path: ansible-core-source
+        if: ${{ contains(matrix.ansible_version, 'devel') || contains(matrix.ansible_version, 'milestone') }}
+
+      - name: Install ansible-core (${{ matrix.ansible_version }}) - Branch
+        run: python3 -m pip install ./ansible-core-source --disable-pip-version-check
+        if: ${{ contains(matrix.ansible_version, 'devel') || contains(matrix.ansible_version, 'milestone') }}
+
+      - name: Create collections directory structure
+        run: |
+          mkdir -p /home/runner/.ansible/collections/ansible_collections/cisco
+          mkdir -p /home/runner/.ansible/collections/ansible_collections/ansible
+
+      - name: Clone cisco.nxos collection (main branch)
+        run: |
+          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.nxos.git /home/runner/.ansible/collections/ansible_collections/cisco/nxos
+
+      - name: Clone cisco.ios collection (main branch)
+        run: |
+          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.ios.git /home/runner/.ansible/collections/ansible_collections/cisco/ios
+
+      - name: Clone cisco.iosxr collection (main branch)
+        run: |
+          git clone --depth=1 --branch main https://github.com/ansible-collections/cisco.iosxr.git /home/runner/.ansible/collections/ansible_collections/cisco/iosxr
+
+      - name: Clone ansible.utils collection (main branch)
+        run: |
+          git clone --depth=1 --branch main https://github.com/ansible-collections/ansible.utils.git /home/runner/.ansible/collections/ansible_collections/ansible/utils
+
+      - name: Clone netcommon collection (PR branch or repo)
+        run: |
+          if [ -n "${{ github.event.pull_request.head.repo.full_name }}" ]; then
+            REPO_URL="${{ github.event.pull_request.head.repo.full_name }}"
+            BRANCH_REF="${{ github.event.pull_request.head.sha }}"
+            IS_SHA=true
+          else
+            REPO_URL="${{ github.repository }}"
+            BRANCH_REF="${{ github.ref_name }}"
+            IS_SHA=false
+          fi
+          echo "Cloning netcommon from git+https://github.com/${REPO_URL}.git, ref: ${BRANCH_REF}"
+          if [ "$IS_SHA" = "true" ]; then
+            # For SHA, clone with more depth to ensure we get the commit
+            git clone --depth=100 --no-single-branch https://github.com/${REPO_URL}.git /home/runner/.ansible/collections/ansible_collections/ansible/netcommon
+            cd /home/runner/.ansible/collections/ansible_collections/ansible/netcommon
+            git fetch origin ${BRANCH_REF} || git fetch --unshallow || true
+            git checkout ${BRANCH_REF}
+          else
+            # For branch name, use standard shallow clone
+            git clone --depth=1 --branch ${BRANCH_REF} https://github.com/${REPO_URL}.git /home/runner/.ansible/collections/ansible_collections/ansible/netcommon
+          fi
+
+      - name: Install Python dependencies from collections
+        run: |
+          if [ -f "/home/runner/.ansible/collections/ansible_collections/cisco/nxos/requirements.txt" ]; then
+            python3 -m pip install -r /home/runner/.ansible/collections/ansible_collections/cisco/nxos/requirements.txt
+          fi
+          if [ -f "/home/runner/.ansible/collections/ansible_collections/ansible/netcommon/requirements.txt" ]; then
+            python3 -m pip install -r /home/runner/.ansible/collections/ansible_collections/ansible/netcommon/requirements.txt
+          fi
+
+      - name: DEBUG Show pip list after ansible-core install
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
+        run: |
+          python3 -m pip list | sort
+
+      - name: Read collection metadata from galaxy.yml
+        id: identify
+        uses: ansible-network/github_actions/.github/actions/identify_collection@main
+        with:
+          source_path: /home/runner/.ansible/collections/ansible_collections/ansible/netcommon
+
+      - name: DEBUG lab_nodes input
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
+        shell: bash
+        env:
+          LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
+        run: |
+          echo 'LAB_NODES (raw):'
+          echo "$LAB_NODES"
+          echo
+
+      - name: Generate inventory from lab_nodes and template
+        id: render_inventory
+        shell: bash
+        working-directory: ${{ steps.identify.outputs.collection_path }}
+        env:
+          LAB_NODES_JSON: ${{ needs.lab-create.outputs.lab_nodes_json }}
+          RUNNER_TEMP: ${{ runner.temp }}
+          CLI_SSH_TYPE: ${{ env.CLI_SSH_TYPE }}
+        run: |
+          set -euo pipefail
+          if ! command -v jq >/dev/null 2>&1; then
+            sudo apt-get update -y >/dev/null 2>&1 || true
+            sudo apt-get install -y jq >/dev/null 2>&1 || true
+          fi
+          # Extract DHCP IPs for each node
+          nxos_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.nxos // empty')
+          iosxr_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.iosxr // empty')
+          iosxe_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.iosxe // empty')
+          ubuntu_ip=$(echo "$LAB_NODES_JSON" | jq -r '.nodes.ubuntu // empty')
+
+          if [ -z "$nxos_ip" ] || [ -z "$iosxr_ip" ] || [ -z "$iosxe_ip" ] || [ -z "$ubuntu_ip" ]; then
+            echo "Missing one or more required nodes (nxos, iosxr, iosxe, ubuntu) in LAB_NODES_JSON"
+            echo "Available keys:" $(echo "$LAB_NODES_JSON" | jq -r '.nodes | keys | join(", ")')
+            exit 1
+          fi
+
+          # Compute ports from last octet of each DHCP IP
+          nxos_last_octet="${nxos_ip##*.}"
+          nxos_ssh_port=$((nxos_last_octet + 2000))
+          nxos_https_port=$((nxos_last_octet + 4000))
+          nxos_http_port=$((nxos_last_octet + 8000))
+          nxos_netconf_port=$((nxos_last_octet + 3000))
+
+          iosxr_last_octet="${iosxr_ip##*.}"
+          iosxr_ssh_port=$((iosxr_last_octet + 2000))
+          iosxr_https_port=$((iosxr_last_octet + 4000))
+          iosxr_http_port=$((iosxr_last_octet + 8000))
+          iosxr_netconf_port=$((iosxr_last_octet + 3000))
+          iosxr_grpc_port=57400
+
+          iosxe_last_octet="${iosxe_ip##*.}"
+          iosxe_ssh_port=$((iosxe_last_octet + 2000))
+          iosxe_https_port=$((iosxe_last_octet + 4000))
+          iosxe_http_port=$((iosxe_last_octet + 8000))
+          iosxe_netconf_port=$((iosxe_last_octet + 3000))
+
+          ubuntu_last_octet="${ubuntu_ip##*.}"
+          ubuntu_ssh_port=$((ubuntu_last_octet + 2000))
+
+          # Destination host for port-forwarded access
+          dest_host="54.190.208.146"
+          out_file="$RUNNER_TEMP/inventory-${{ matrix.ansible_version }}.ini"
+          ansible localhost -c local -m template -a "src=tests/integration/labs/inventory.j2 dest=$out_file mode=0644" \
+            -e "ansible_host=$dest_host ansible_network_cli_ssh_type=$CLI_SSH_TYPE \
+            nxos_ssh_port=$nxos_ssh_port nxos_http_port=$nxos_http_port nxos_netconf_port=$nxos_netconf_port \
+            iosxr_netconf_port=$iosxr_netconf_port iosxr_grpc_port=$iosxr_grpc_port ubuntu_ssh_port=$ubuntu_ssh_port \
+            iosxe_http_port=$iosxe_http_port iosxr_ssh_port=$iosxr_ssh_port iosxe_ssh_port=$iosxe_ssh_port"
+          echo "inventory_path=$out_file" >> "$GITHUB_OUTPUT"
+
+      - name: DEBUG Print the ansible version
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
+        run: ansible --version
+
+      - name: DEBUG inventory
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
+        shell: bash
+        run: |
+          echo "Inventory path: ${{ steps.render_inventory.outputs.inventory_path }}"
+          echo
+          cat "${{ steps.render_inventory.outputs.inventory_path }}"
+
+      - name: DEBUG libssh and pylibssh versions
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.debug == 'true' || github.event_name == 'pull_request_target' && contains(github.event.pull_request.labels.*.name, 'debug') }}
+        shell: bash
+        run: python -c "from pylibsshext import __full_version__; print(__full_version__)"
+
+      - name: Run ansible-test network-integration - all
+        run: ansible-test network-integration --inventory "${{ steps.render_inventory.outputs.inventory_path }}" -vvvv
+        working-directory: ${{ steps.identify.outputs.collection_path }}
+        env:
+          LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
+
+  lab-destroy:
+    if: ${{ always() }}
+    needs: integration-tests
+    uses: ansible/ansible-content-actions/.github/workflows/cml_lab_destroy.yaml@main
+    secrets:
+      virl_host: ${{ secrets.VIRL_HOST }}
+      virl_username: ${{ secrets.VIRL_USERNAME }}
+      virl_password: ${{ secrets.VIRL_PASSWORD }}

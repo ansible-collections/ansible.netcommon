@@ -21,7 +21,9 @@ from collections.abc import Mapping
 from ansible.errors import AnsibleFilterError
 from ansible.module_utils.common.text.converters import to_native
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import Template
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    JinjaTemplate,
+)
 
 
 try:
@@ -94,7 +96,7 @@ def parse_cli(output, tmpl):
         _raise_error("unable to locate parse_cli template: %s" % tmpl)
 
     try:
-        template = Template()
+        template = JinjaTemplate()
     except ImportError as exc:
         _raise_error(to_native(exc))
 

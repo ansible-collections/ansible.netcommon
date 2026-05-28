@@ -20,7 +20,53 @@ from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s
 
 
+# Ansible 2.19+ requires trust_as_template for Jinja2 processing
+try:
+    from ansible.template import trust_as_template
+
+    HAS_TRUST_AS_TEMPLATE = True
+except ImportError:
+    HAS_TRUST_AS_TEMPLATE = False
+
 display = Display()
+
+
+def _netcommon_remove_internal_keys_fallback(data):
+    """Mirror ansible.vars.clean.remove_internal_keys when that API is unavailable."""
+    from ansible import constants as _ansible_constants
+
+    # ansible-core may drop INTERNAL_RESULT_KEYS from constants; match historical defaults.
+    _internal_result_keys = getattr(
+        _ansible_constants, "INTERNAL_RESULT_KEYS", ("add_host", "add_group")
+    )
+
+    for key in list(data.keys()):
+        if (
+            key.startswith("_ansible_") and key != "_ansible_parsed"
+        ) or key in _internal_result_keys:
+            display.warning(
+                "Removed unexpected internal key in module return: %s = %s" % (key, data[key])
+            )
+            del data[key]
+
+    for key in ("warnings", "deprecations"):
+        if key in data and not data[key]:
+            del data[key]
+
+    ansible_facts = data.get("ansible_facts")
+    if ansible_facts:
+        for key in list(ansible_facts.keys()):
+            if key.startswith("discovered_interpreter_") or key.startswith(
+                "ansible_discovered_interpreter_"
+            ):
+                del ansible_facts[key]
+
+
+# ansible-core devel may relocate remove_internal_keys; keep a local fallback.
+try:
+    from ansible.vars.clean import remove_internal_keys as _remove_internal_keys
+except ImportError:
+    _remove_internal_keys = _netcommon_remove_internal_keys_fallback
 
 DEXEC_PREFIX = "ANSIBLE_NETWORK_IMPORT_MODULES:"
 
@@ -153,7 +199,7 @@ class ActionModule(_ActionModule):
         src = self._task.args.get("src")
         working_path = self._get_working_path()
 
-        if os.path.isabs(src) or urlsplit("src").scheme:
+        if os.path.isabs(src) or urlsplit(src).scheme:
             source = src
         else:
             source = self._loader.path_dwim_relative(working_path, "templates", src)
@@ -185,6 +231,17 @@ class ActionModule(_ActionModule):
                         searchpath.append(role._role_path)
         searchpath.append(os.path.dirname(source))
         self._templar.environment.loader.searchpath = searchpath
+        # help_text="Use `ansible.builtin.template` instead.", supported after 2.18 update as per support
+        display.deprecated(
+            msg="Direct processing of templates via `src` is deprecated, use `ansible.builtin.template` instead.",
+            date="2028-01-01",
+            collection_name="ansible.netcommon",
+        )
+        # Ansible 2.19+ requires marking template data as trusted for Jinja2 processing
+        # In earlier versions, template data is processed directly
+        if HAS_TRUST_AS_TEMPLATE:
+            template_data = trust_as_template(template_data)
+
         self._task.args["src"] = self._templar.template(template_data)
 
     def _get_network_os(self, task_vars):
@@ -280,7 +337,10 @@ class ActionModule(_ActionModule):
                     ),
                     host,
                 )
-                pass
+                from ansible.module_utils import basic as _basic
+
+                if getattr(_basic, "_PARSED_MODULE_ARGS", None) is None:
+                    _basic._PARSED_MODULE_ARGS = {}
 
             def _record_module_result(self, o):
                 """Override new 2.19.1+ hook to directly record the module result as a module attr."""
@@ -310,8 +370,6 @@ class ActionModule(_ActionModule):
         """
         import io
         import sys
-
-        from ansible.vars.clean import remove_internal_keys
 
         # preserve stdout/stderr to swap and restore later, create private buffers to capture
         sys_stdout = sys.stdout
@@ -351,7 +409,7 @@ class ActionModule(_ActionModule):
             data = self._parse_returned_data(dict_out)
 
         # Clean up the response like action _execute_module
-        remove_internal_keys(data)
+        _remove_internal_keys(data)
 
         # split stdout/stderr into lines if needed
         if "stdout" in data and "stdout_lines" not in data:

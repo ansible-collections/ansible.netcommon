@@ -1,18 +1,6 @@
 ---
-- name: Run junos netconf_rpc tests
-  ansible.builtin.include_tasks: junos.yaml
-  when: ansible_network_os == 'junipernetworks.junos.junos'
-  tags:
-    - netconf
-
-- name: Run iosxr netconf_rpc tests
+- name: Run IOS-XR NETCONF RPC tests
   ansible.builtin.include_tasks: iosxr.yaml
   when: ansible_network_os == 'cisco.iosxr.iosxr'
-  tags:
-    - netconf
-
-- name: Run nxos netconf_rpc tests
-  ansible.builtin.include_tasks: sros.yaml
-  when: ansible_network_os == 'sros'
   tags:
     - netconf
