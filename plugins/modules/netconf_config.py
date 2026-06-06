@@ -493,6 +493,7 @@ def main():
     save = module.params["save"]
     filter = module.params["get_filter"]
     format = module.params["format"]
+    commit = module.params["commit"]
 
     try:
         filter_data, filter_type = validate_and_normalize_data(filter)
@@ -689,6 +690,18 @@ def main():
                         "before": sanitized_before,
                         "after": sanitized_after,
                     }
+        elif not config and commit:
+            if not module.check_mode:
+                confirm_timeout = confirm if confirm > 0 else None
+                commit_rpc = f"""
+                <commit xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+                  <confirmed/>
+                  <confirm-timeout>{confirm_timeout}</confirm-timeout>
+                </commit>
+                """
+                response = conn.dispatch(commit_rpc.strip())
+            else:
+                conn.discard_changes()
 
     except ConnectionError as e:
         module.fail_json(msg=to_text(e, errors="surrogate_then_replace").strip())
