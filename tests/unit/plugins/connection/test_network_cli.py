@@ -109,9 +109,8 @@ def test_options_pass_through(conn, ssh_type):
     # At some point these options should be able to be dropped from network_cli
     assert conn.get_option("host_key_checking") is False
     assert conn.ssh_type_conn.get_option("host_key_checking") is False
-    # Options not found in network_cli are not saved there
-    with pytest.raises(KeyError):
-        conn.get_option("proxy_command")
+    # proxy_command is declared in network_cli and passes through to ssh_type_conn
+    assert conn.get_option("proxy_command") == "do a proxy"
     assert conn.ssh_type_conn.get_option("proxy_command") == "do a proxy"
 
 
@@ -743,3 +742,156 @@ def test_network_cli_get_file_invalid_ssh_type_raises(conn):
     with patch.object(type(conn), "ssh_type", new_callable=PropertyMock, return_value="bogus"):
         with pytest.raises(AnsibleError, match="Do not know how to do SCP with ssh_type"):
             conn.get_file(source="/a", destination="/b")
+
+
+# --- proxy_command tests (issue #776) ---
+
+
+def test_proxy_command_var_options_reaches_shim():
+    """proxy_command set via var_options is stored by the paramiko shim."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
+    paramiko_conn.set_options(
+        var_options={"proxy_command": "ssh -W %h:%p jumphost"},
+    )
+    assert paramiko_conn.get_option("proxy_command") == "ssh -W %h:%p jumphost"
+
+
+def test_proxy_command_direct_overrides_var_options():
+    """direct proxy_command takes precedence over var_options."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
+    paramiko_conn.set_options(
+        direct={"proxy_command": "direct-proxy"},
+        var_options={"proxy_command": "var-proxy"},
+    )
+    assert paramiko_conn.get_option("proxy_command") == "direct-proxy"
+
+
+def test_proxy_command_falls_back_to_parent():
+    """When proxy_command is not set directly, get_option falls back to parent."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    mock_parent = MagicMock()
+    mock_parent.get_option.return_value = "ssh -W %h:%p jumphost"
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=mock_parent)
+    assert paramiko_conn.get_option("proxy_command") == "ssh -W %h:%p jumphost"
+
+
+def test_proxy_command_default_when_unset():
+    """When proxy_command is not set anywhere, get_option returns the default."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
+    assert paramiko_conn.get_option("proxy_command") is None
+
+
+def test_proxy_command_parse_replaces_tokens():
+    """_parse_proxy_command replaces %h, %p, %r tokens."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    pc.remote_addr = "10.0.0.1"
+    pc.remote_user = "admin"
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
+    paramiko_conn.set_option("proxy_command", "ssh -W %h:%p -l %r jumphost")
+
+    with patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.network_cli.paramiko"
+    ) as mock_paramiko:
+        mock_paramiko.ProxyCommand.return_value = MagicMock()
+        result = paramiko_conn._parse_proxy_command(port=22)
+
+    mock_paramiko.ProxyCommand.assert_called_once_with("ssh -W 10.0.0.1:22 -l admin jumphost")
+    assert "sock" in result
+
+
+@pytest.mark.parametrize("ssh_type", ["paramiko", "libssh", "auto"])
+def test_proxy_command_pass_through_network_cli(conn, ssh_type):
+    """proxy_command set via direct on network_cli reaches ssh_type_conn."""
+    conn.set_options(
+        direct={
+            "ssh_type": ssh_type,
+            "proxy_command": "ssh -W %h:%p jumphost",
+        }
+    )
+    assert conn.get_option("proxy_command") == "ssh -W %h:%p jumphost"
+    assert conn.ssh_type_conn.get_option("proxy_command") == "ssh -W %h:%p jumphost"
+
+
+# --- proxy_command: _parse_proxy_command edge cases ---
+
+
+def test_parse_proxy_command_returns_empty_when_unset():
+    """_parse_proxy_command with no proxy_command returns empty dict."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
+
+    result = paramiko_conn._parse_proxy_command(port=22)
+    assert result == {}
+
+
+def test_parse_proxy_command_attribute_error_fallback():
+    """_parse_proxy_command returns empty dict when paramiko.ProxyCommand is unavailable."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    pc.remote_addr = "10.0.0.1"
+    pc.remote_user = "admin"
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
+    paramiko_conn.set_option("proxy_command", "ssh -W %h:%p jumphost")
+
+    with patch(
+        "ansible_collections.ansible.netcommon.plugins.connection.network_cli.paramiko"
+    ) as mock_paramiko:
+        mock_paramiko.ProxyCommand.side_effect = AttributeError("no ProxyCommand")
+        result = paramiko_conn._parse_proxy_command(port=22)
+
+    assert result == {}
+
+
+# --- paramiko shim: var_options filtering ---
+
+
+def test_paramiko_shim_var_options_ignores_unknown_keys():
+    """var_options keys not in _PARAMIKO_DEFAULTS are silently ignored."""
+    from ansible_collections.ansible.netcommon.plugins.connection.network_cli import (
+        _ParamikoConnection,
+    )
+
+    pc = PlayContext()
+    paramiko_conn = _ParamikoConnection(pc, "/dev/null", parent_connection=None)
+    paramiko_conn.set_options(
+        var_options={
+            "proxy_command": "ssh -W %h:%p jumphost",
+            "ssh_type": "paramiko",
+            "nonexistent_option": "should_be_ignored",
+        },
+    )
+    assert paramiko_conn.get_option("proxy_command") == "ssh -W %h:%p jumphost"
+    with pytest.raises(KeyError):
+        paramiko_conn.get_option("ssh_type")
+    with pytest.raises(KeyError):
+        paramiko_conn.get_option("nonexistent_option")
