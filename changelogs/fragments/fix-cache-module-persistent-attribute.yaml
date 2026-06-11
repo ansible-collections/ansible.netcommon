@@ -1,0 +1,5 @@
+bugfixes:
+  - memory cache plugin - Add missing ``_persistent`` attribute to ``CacheModule``
+    to fix ``'CacheModule' object has no attribute '_persistent'`` error with
+    ansible-core 2.19+ when ``single_user_mode`` caching is enabled
+    (https://github.com/ansible-collections/ansible.netcommon/issues/781).
