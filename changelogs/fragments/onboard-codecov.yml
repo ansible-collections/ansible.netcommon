@@ -1,0 +1,2 @@
+trivial:
+  - added codecoverage.yml to github actions workflow
