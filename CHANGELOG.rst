@@ -4,6 +4,16 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.5.3
+======
+
+Bugfixes
+--------
+
+- memory cache plugin - Add missing ``_persistent`` attribute to ``CacheModule`` to fix ``'CacheModule' object has no attribute '_persistent'`` error with ansible-core 2.19+ when ``single_user_mode`` caching is enabled (https://github.com/ansible-collections/ansible.netcommon/issues/781).
+- network_cli - Fix ``proxy_command`` silently ignored with ``ssh_type=paramiko`` (https://github.com/ansible-collections/ansible.netcommon/issues/776).
+- vlan_parser - Fix ``IndexError`` when an empty list is passed as input by returning an empty list instead of crashing (https://github.com/ansible-collections/ansible.netcommon/issues/302).
+
 v8.5.2
 ======
 
