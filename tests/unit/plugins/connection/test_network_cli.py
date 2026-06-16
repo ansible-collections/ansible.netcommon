@@ -895,3 +895,216 @@ def test_paramiko_shim_var_options_ignores_unknown_keys():
         paramiko_conn.get_option("ssh_type")
     with pytest.raises(KeyError):
         paramiko_conn.get_option("nonexistent_option")
+
+
+# --- transcript recording tests (PR #772) ---
+
+
+def test_transcript_recording_disabled_by_default(conn):
+    """Recording is off when ANSIBLE_NETWORK_CLI_RECORD is not set."""
+    assert conn._transcript_recording is False
+    assert conn._transcript_log is None
+
+
+def test_transcript_recording_enabled_by_env(monkeypatch):
+    """Setting ANSIBLE_NETWORK_CLI_RECORD=1 turns on recording."""
+    monkeypatch.setenv("ANSIBLE_NETWORK_CLI_RECORD", "1")
+    pc = PlayContext()
+    pc.network_os = "fakeos"
+    monkeypatch.setattr(terminal_loader, "get", lambda *a, **kw: MagicMock())
+    conn = connection_loader.get("ansible.netcommon.network_cli", pc, "/dev/null")
+    assert conn._transcript_recording is True
+    assert conn._transcript_log == []
+
+
+def test_transcript_recording_custom_output_dir(monkeypatch):
+    """ANSIBLE_NETWORK_CLI_RECORD_PATH overrides the default output dir."""
+    monkeypatch.setenv("ANSIBLE_NETWORK_CLI_RECORD", "1")
+    monkeypatch.setenv("ANSIBLE_NETWORK_CLI_RECORD_PATH", "/custom/path")
+    pc = PlayContext()
+    pc.network_os = "fakeos"
+    monkeypatch.setattr(terminal_loader, "get", lambda *a, **kw: MagicMock())
+    conn = connection_loader.get("ansible.netcommon.network_cli", pc, "/dev/null")
+    assert conn._transcript_output_dir == "/custom/path"
+
+
+def test_transcript_recording_default_output_dir(monkeypatch):
+    """Default output dir is /tmp/transcript-recordings."""
+    monkeypatch.setenv("ANSIBLE_NETWORK_CLI_RECORD", "1")
+    monkeypatch.delenv("ANSIBLE_NETWORK_CLI_RECORD_PATH", raising=False)
+    pc = PlayContext()
+    pc.network_os = "fakeos"
+    monkeypatch.setattr(terminal_loader, "get", lambda *a, **kw: MagicMock())
+    conn = connection_loader.get("ansible.netcommon.network_cli", pc, "/dev/null")
+    assert conn._transcript_output_dir == "/tmp/transcript-recordings"
+
+
+def test_send_appends_to_transcript_log(conn):
+    """When recording is on, send() appends command/response to the log."""
+    conn._transcript_recording = True
+    conn._transcript_log = []
+    conn._connected = True
+    conn._ssh_shell = MagicMock()
+    conn._history = []
+    conn._single_user_mode = False
+
+    mock_terminal = _make_terminal_mock()
+    conn._terminal = mock_terminal
+
+    # Mock receive to return a known response
+    with patch.object(conn, "receive", return_value=b"hostname box1\n"):
+        with patch.object(conn, "update_cli_prompt_context"):
+            conn.send(b"show running-config | section ^hostname")
+
+    assert len(conn._transcript_log) == 1
+    entry = conn._transcript_log[0]
+    assert entry["command"] == "show running-config | section ^hostname"
+    assert entry["response"] == "hostname box1\n"
+    assert "timestamp" in entry
+    assert isinstance(entry["timestamp"], float)
+
+
+def test_send_does_not_record_when_disabled(conn):
+    """When recording is off, send() does not create a log entry."""
+    conn._transcript_recording = False
+    conn._transcript_log = None
+    conn._connected = True
+    conn._ssh_shell = MagicMock()
+    conn._history = []
+    conn._single_user_mode = False
+
+    mock_terminal = _make_terminal_mock()
+    conn._terminal = mock_terminal
+
+    with patch.object(conn, "receive", return_value=b"hostname box1\n"):
+        with patch.object(conn, "update_cli_prompt_context"):
+            conn.send(b"show running-config | section ^hostname")
+
+    assert conn._transcript_log is None
+
+
+def test_flush_transcript_log_writes_jsonl(conn, tmp_path):
+    """_flush_transcript_log writes each entry as a JSON line."""
+    conn._transcript_recording = True
+    conn._transcript_log = [
+        {"command": "terminal length 0", "response": "", "timestamp": 1714300000.0},
+        {"command": "show version", "response": "Cisco IOS XE\n", "timestamp": 1714300001.0},
+    ]
+    conn._transcript_output_dir = str(tmp_path)
+    conn._play_context.remote_addr = "192.168.1.1"
+    conn._play_context.port = 22
+
+    conn._flush_transcript_log()
+
+    outfile = tmp_path / "192.168.1.1_22.jsonl"
+    assert outfile.exists()
+    lines = outfile.read_text().strip().split("\n")
+    assert len(lines) == 2
+    assert json.loads(lines[0])["command"] == "terminal length 0"
+    assert json.loads(lines[1])["command"] == "show version"
+    assert json.loads(lines[1])["response"] == "Cisco IOS XE\n"
+
+
+def test_flush_transcript_log_appends(conn, tmp_path):
+    """Successive flushes append to the same file, not overwrite."""
+    conn._transcript_recording = True
+    conn._transcript_output_dir = str(tmp_path)
+    conn._play_context.remote_addr = "10.0.0.1"
+    conn._play_context.port = 830
+
+    # First flush
+    conn._transcript_log = [
+        {"command": "cmd1", "response": "resp1", "timestamp": 1.0},
+    ]
+    conn._flush_transcript_log()
+
+    # Second flush
+    conn._transcript_log = [
+        {"command": "cmd2", "response": "resp2", "timestamp": 2.0},
+    ]
+    conn._flush_transcript_log()
+
+    outfile = tmp_path / "10.0.0.1_830.jsonl"
+    lines = outfile.read_text().strip().split("\n")
+    assert len(lines) == 2
+    assert json.loads(lines[0])["command"] == "cmd1"
+    assert json.loads(lines[1])["command"] == "cmd2"
+
+
+def test_flush_transcript_log_default_port(conn, tmp_path):
+    """When port is None, default to 22 in the filename."""
+    conn._transcript_recording = True
+    conn._transcript_log = [
+        {"command": "show clock", "response": "12:00:00", "timestamp": 1.0},
+    ]
+    conn._transcript_output_dir = str(tmp_path)
+    conn._play_context.remote_addr = "router1"
+    conn._play_context.port = None
+
+    conn._flush_transcript_log()
+
+    outfile = tmp_path / "router1_22.jsonl"
+    assert outfile.exists()
+
+
+def test_flush_transcript_log_handles_write_error(conn):
+    """_flush_transcript_log emits a warning on write failure, does not raise."""
+    conn._transcript_recording = True
+    conn._transcript_log = [
+        {"command": "show clock", "response": "12:00:00", "timestamp": 1.0},
+    ]
+    conn._transcript_output_dir = "/nonexistent/deeply/nested/path"
+    conn._play_context.remote_addr = "host1"
+    conn._play_context.port = 22
+
+    # Patch os.makedirs to raise so we test the error handling path
+    with patch("os.makedirs", side_effect=OSError("Permission denied")):
+        # Should not raise
+        conn._flush_transcript_log()
+
+
+def test_close_flushes_transcript(conn):
+    """close() calls _flush_transcript_log when recording is active with entries."""
+    conn._transcript_recording = True
+    conn._transcript_log = [
+        {"command": "cmd", "response": "resp", "timestamp": 1.0},
+    ]
+    conn._connected = True
+    conn._ssh_shell = MagicMock()
+    conn._terminal = _make_terminal_mock()
+    conn._ssh_type_conn = MagicMock()
+
+    with patch.object(conn, "_flush_transcript_log") as mock_flush:
+        conn.close()
+
+    mock_flush.assert_called_once()
+
+
+def test_close_skips_flush_when_log_empty(conn):
+    """close() does not flush when the transcript log is empty."""
+    conn._transcript_recording = True
+    conn._transcript_log = []
+    conn._connected = True
+    conn._ssh_shell = MagicMock()
+    conn._terminal = _make_terminal_mock()
+    conn._ssh_type_conn = MagicMock()
+
+    with patch.object(conn, "_flush_transcript_log") as mock_flush:
+        conn.close()
+
+    mock_flush.assert_not_called()
+
+
+def test_close_skips_flush_when_recording_disabled(conn):
+    """close() does not flush when recording was never enabled."""
+    conn._transcript_recording = False
+    conn._transcript_log = None
+    conn._connected = True
+    conn._ssh_shell = MagicMock()
+    conn._terminal = _make_terminal_mock()
+    conn._ssh_type_conn = MagicMock()
+
+    with patch.object(conn, "_flush_transcript_log") as mock_flush:
+        conn.close()
+
+    mock_flush.assert_not_called()
