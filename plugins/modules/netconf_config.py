@@ -616,15 +616,10 @@ def main():
                 result["changed"] = True
                 module.exit_json(**result)
 
-            if execute_lock:
-                conn.lock(target=target)
-                locked = True
-            if before is None:
-                before = to_text(
-                    conn.get_config(source=target, filter=filter_spec),
-                    errors="surrogate_then_replace",
-                ).strip()
-
+            # Validate and normalize config content locally before acquiring the
+            # datastore lock. These checks are pure local operations and do not
+            # require device interaction. Failing here avoids acquiring a lock
+            # that would then need to be released on an error path.
             if format != "text":
                 # check for format of type json/xml/xpath
                 try:
@@ -647,6 +642,18 @@ def main():
                     format = config_format
 
             validate_config(module, config, format)
+
+            # Acquire the datastore lock only after local validation has passed.
+            # get_config (before snapshot) is kept inside the lock so the
+            # baseline state is consistent with the subsequent edit-config.
+            if execute_lock:
+                conn.lock(target=target)
+                locked = True
+            if before is None:
+                before = to_text(
+                    conn.get_config(source=target, filter=filter_spec),
+                    errors="surrogate_then_replace",
+                ).strip()
 
             kwargs = {
                 "config": config,
@@ -694,7 +701,17 @@ def main():
         module.fail_json(msg=to_text(e, errors="surrogate_then_replace").strip())
     finally:
         if locked:
-            conn.unlock(target=target)
+            try:
+                conn.discard_changes()
+            except Exception:
+                pass
+            try:
+                conn.unlock(target=target)
+            except Exception as unlock_err:
+                module.warn(
+                    "Failed to unlock '%s' datastore: %s"
+                    % (target, to_text(unlock_err, errors="surrogate_then_replace"))
+                )
 
     module.exit_json(**result)
 
