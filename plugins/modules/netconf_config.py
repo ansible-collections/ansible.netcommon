@@ -701,17 +701,7 @@ def main():
         module.fail_json(msg=to_text(e, errors="surrogate_then_replace").strip())
     finally:
         if locked:
-            try:
-                conn.discard_changes()
-            except Exception:
-                pass
-            try:
-                conn.unlock(target=target)
-            except Exception as unlock_err:
-                module.warn(
-                    "Failed to unlock '%s' datastore: %s"
-                    % (target, to_text(unlock_err, errors="surrogate_then_replace"))
-                )
+            conn.unlock(target=target)
 
     module.exit_json(**result)
 

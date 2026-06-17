@@ -4,7 +4,3 @@ bugfixes:
     other NETCONF targets. Local content validation (format parsing and XML
     syntax check) is now performed before acquiring the candidate datastore lock
     so invalid content never causes a lock that cannot be cleanly released.
-    Additionally, the ``finally`` block now calls ``discard_changes`` before
-    ``unlock`` to roll back any uncommitted edits on failure, and wraps the
-    ``unlock`` call in a try/except so that an unlock failure is surfaced as a
-    warning rather than silently leaving the datastore locked.
