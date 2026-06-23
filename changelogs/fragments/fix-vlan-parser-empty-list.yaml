@@ -1,3 +1,0 @@
-bugfixes:
-  - vlan_parser - Fix ``IndexError`` when an empty list is passed as input by returning
-    an empty list instead of crashing (https://github.com/ansible-collections/ansible.netcommon/issues/302).
