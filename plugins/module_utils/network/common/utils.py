@@ -30,13 +30,7 @@ from ansible.module_utils import basic
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.parsing.convert_bool import boolean
 
-
-try:
-    from collections.abc import Mapping
-except ImportError:
-    # Python 2.7 fallback for ansible-core 2.16:
-    from ansible.module_utils.common._collections_compat import Mapping
-
+from collections.abc import Mapping
 
 string_types = (str,)
 try:
