@@ -66,6 +66,8 @@ backup_path:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.connection import Connection
 
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import warn_and_exit
+
 
 def validate_args(module, device_operations):
     """validate param if it is supported on the platform"""
@@ -119,7 +121,7 @@ def main():
     running = connection.get_config(flags=flags)
     result["__backup__"] = running
 
-    module.exit_json(**result)
+    warn_and_exit(module, result)
 
 
 if __name__ == "__main__":

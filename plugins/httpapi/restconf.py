@@ -29,7 +29,7 @@ import json
 
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.connection import ConnectionError
-from ansible.module_utils.six.moves.urllib.error import HTTPError
+from urllib.error import HTTPError
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.httpapi_base import HttpApiBase
 

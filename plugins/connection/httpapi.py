@@ -185,11 +185,11 @@ options:
 """
 
 from io import BytesIO
+import pickle
 
 from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils.common.text.converters import to_bytes
-from ansible.module_utils.six.moves import cPickle
-from ansible.module_utils.six.moves.urllib.error import HTTPError, URLError
+from urllib.error import HTTPError, URLError
 from ansible.module_utils.urls import open_url
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.connection import ensure_connect
@@ -257,7 +257,7 @@ class Connection(NetworkConnectionBase):
     def update_play_context(self, pc_data):
         """Updates the play context information for the connection"""
         pc_data = to_bytes(pc_data)
-        pc_data = cPickle.loads(pc_data, encoding="bytes")
+        pc_data = pickle.loads(pc_data, encoding="bytes")
 
         play_context = PlayContext()
         play_context.deserialize(pc_data)

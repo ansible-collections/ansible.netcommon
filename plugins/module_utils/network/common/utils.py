@@ -747,3 +747,17 @@ def convert_doc_to_ansible_module_kwargs(doc):
         if item in VALID_ANSIBLEMODULE_ARGS:
             spec.update({item: doc_obj[item]})
     return spec
+
+def emit_warnings(module, result):
+    """Pop warnings from result dict and emit via module.warn().
+    Passing 'warnings' to exit_json is deprecated in ansible-core 2.23.
+    """
+    for warning in result.pop("warnings", []):
+        module.warn(warning)
+
+def warn_and_exit(module, result):
+    # Passing 'warnings' to exit_json is deprecated in ansible-core 2.23.
+    # Emit warnings via module.warn() and remove the key before exit.
+    emit_warnings(module,result)
+    module.exit_json(**result)
+    

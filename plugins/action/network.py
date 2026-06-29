@@ -14,7 +14,7 @@ import time
 
 from ansible.errors import AnsibleError
 from ansible.module_utils.common.text.converters import to_text
-from ansible.module_utils.six.moves.urllib.parse import urlsplit
+from urllib.parse import urlsplit
 from ansible.plugins.action.normal import ActionModule as _ActionModule
 from ansible.utils.display import Display
 from ansible.utils.hashing import checksum, checksum_s

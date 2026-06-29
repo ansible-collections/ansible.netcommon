@@ -15,7 +15,7 @@ import uuid
 from ansible.errors import AnsibleError
 from ansible.module_utils.common.text.converters import to_bytes, to_text
 from ansible.module_utils.connection import Connection, ConnectionError
-from ansible.module_utils.six.moves.urllib.parse import urlsplit
+from urllib.parse import urlsplit
 from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
 
