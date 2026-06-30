@@ -1,0 +1,24 @@
+minor_changes:
+  - Remediate deprecated ``warnings`` parameter in ``exit_json`` calls by using
+    ``AnsibleModule.warn()`` across all netcommon modules to address deprecation
+    warning from ansible-core 2.23.
+
+  - Added ``emit_warnings`` and ``warn_and_exit`` utility functions in
+    ``plugins/module_utils/network/common/utils.py`` to centralize warning
+    emission logic.
+
+  - Fixed ``ResourceModule.result`` property in ``rm_base/resource_module.py``
+    to emit warnings via ``module.warn()`` before returning the result dict.
+    This automatically addresses the deprecation for all downstream collections
+    using ``ResourceModule`` (e.g. cisco.iosxr, cisco.ios, arista.eos).
+
+  - Remediate deprecated ``to_text`` and ``to_bytes`` from
+    ``ansible.module_utils._text`` and replaced with
+    ``ansible.module_utils.common.text.converters``.
+
+  - Remediate deprecated ``ansible.module_utils.common._collections_compat`` module
+    and replaced with ``collections.abc`` from the Python standard library.
+
+  - Remediate deprecated ``ansible.module_utils.six`` module and replaced it with
+    native Python 3 equivalents like ``pickle``, ``zip``, ``urllib.parse``,
+    ``urllib.error`` etc.
