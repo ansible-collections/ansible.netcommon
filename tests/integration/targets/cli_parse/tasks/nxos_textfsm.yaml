@@ -9,14 +9,9 @@
   ansible.builtin.set_fact:
     textfsm_template_path: "{{ role_path }}/templates/nxos_show_version.textfsm"
 
-- name: "Parse with textfsm using cli_parse"
-  ansible.utils.cli_parse:
-    text: "{{ version_output.stdout[0] }}"
-    parser:
-      name: ansible.netcommon.ntc_templates
-      command: show version
-      template_path: "{{ textfsm_template_path }}"
-    set_fact: device_neighbors
+- name: "Invoke parse_cli_textfsm"
+  ansible.builtin.set_fact:
+    device_neighbors: "{{ version_output.stdout[0] | parse_cli_textfsm(textfsm_template_path) }}"
   register: nxos_textfsm_text
 
 - name: Check textfsm parse output (would fail on underlying device update)
