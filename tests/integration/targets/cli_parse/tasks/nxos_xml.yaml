@@ -12,7 +12,7 @@
   ansible.utils.cli_parse:
     text: "{{ xml }}"
     parser:
-      name: ansible.utils.xml_parser
+      name: ansible.utils.xml
       template_path: "{{ xml_template_path }}"
   register: nxos_xml_text
 
@@ -20,5 +20,5 @@
   ansible.builtin.assert:
     that: "{{ item }}"
   with_items:
-    - "{{ nxos_xml_text['parsed']['result'][0]['address'][0] == '10.1.1.1' }}"
-    - "{{ nxos_xml_text['parsed']['result'][0]['reachability'][0] == '0' }}"
+    - "{{ nxos_xml_text['msg']['result'][0]['address'][0] == '10.1.1.1' }}"
+    - "{{ nxos_xml_text['msg']['result'][0]['reachability'][0] == '0' }}"

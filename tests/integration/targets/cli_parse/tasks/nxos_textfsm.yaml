@@ -14,6 +14,7 @@
     text: "{{ version_output.stdout[0] }}"
     parser:
       name: ansible.netcommon.ntc_templates
+      command: show version
       template_path: "{{ textfsm_template_path }}"
     set_fact: device_neighbors
   register: nxos_textfsm_text
