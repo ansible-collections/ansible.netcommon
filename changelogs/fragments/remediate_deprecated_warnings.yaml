@@ -22,3 +22,9 @@ minor_changes:
   - Remediate deprecated ``ansible.module_utils.six`` module and replaced it with
     native Python 3 equivalents like ``pickle``, ``zip``, ``urllib.parse``,
     ``urllib.error`` etc.
+  
+  - Remediate deprecated - `parse_cli_textfsm` filter plugin and replaced with `ansible.utils.cli_parse` with the `ansible.utils.textfsm_parser` parser as a replacement .
+
+  - Remediate deprecated - `parse_cli` filter plugin and replaced with `ansible.utils.cli_parse`.
+
+  - Remediate deprecated - `parse_xml` filter plugin and replaced with `ansible.utils.cli_parse` with the `ansible.utils.xml_parser` parser as a replacement.
