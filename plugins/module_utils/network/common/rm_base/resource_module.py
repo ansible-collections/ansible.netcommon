@@ -69,8 +69,8 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
         """Compute the final result"""
         result = {"warnings": self.warnings}
 
-        emit_warnings(self._module,result)
-        
+        emit_warnings(self._module, result)
+
         if self.state not in self.ACTION_STATES:
             if self.state == "gathered":
                 result["gathered"] = self.before

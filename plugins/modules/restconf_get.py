@@ -87,7 +87,9 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.connection import ConnectionError
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import warn_and_exit
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    warn_and_exit,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.restconf import restconf
 from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data import xml_to_dict
 

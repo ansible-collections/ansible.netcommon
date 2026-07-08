@@ -459,10 +459,11 @@ def test_to_ipv6_subnet():
     assert "2001:0db8:85a3:4242::" == to_ipv6_subnet("2001:0db8:85a3:4242:0000:8a2e:0370:7334")
     assert "2001:0db8:85a3:4242::" == to_ipv6_subnet("2001:0db8:85a3:4242:0:8a2e:0370:7334")
 
+
 def test_emit_warnings():
     module = MagicMock()
-    result = {"warnings":["This is a warning", "This is second warning"], "changed":False} 
-    utils.emit_warnings(module,result)
+    result = {"warnings": ["This is a warning", "This is second warning"], "changed": False}
+    utils.emit_warnings(module, result)
     # Warning key should be removed from result
     assert "warnings" not in result
     # module.warn should be called twice once per warning
@@ -470,26 +471,29 @@ def test_emit_warnings():
     module.warn.assert_any_call("This is a warning")
     module.warn.assert_any_call("This is second warning")
 
+
 def test_emit_warnings_no_warning_key():
     module = MagicMock()
     result = {"changed": False}
-    utils.emit_warnings(module,result)
+    utils.emit_warnings(module, result)
     # Since no warning key exists in results module.warn should not be called
     module.warn.assert_not_called()
     assert result == {"changed": False}
 
+
 def test_emit_warnings_empty_warning_list():
     module = MagicMock()
-    result = {"changed": False,"warnings":[]}
-    utils.emit_warnings(module,result)
+    result = {"changed": False, "warnings": []}
+    utils.emit_warnings(module, result)
     # Since warning is empty list in results module.warn should not be called
     module.warn.assert_not_called()
     assert result == {"changed": False}
 
+
 def test_warn_and_exit():
     module = MagicMock()
-    result = {"changed":False,"commands":{"K":"v","res":[1,2]},"warnings":["warning1"]}
-    utils.warn_and_exit(module,result)
+    result = {"changed": False, "commands": {"K": "v", "res": [1, 2]}, "warnings": ["warning1"]}
+    utils.warn_and_exit(module, result)
     module.warn.assert_called_once_with("warning1")
     # exit_json was called WITHOUT warnings key
-    module.exit_json.assert_called_once_with(changed = False,commands={"K":"v","res":[1,2]})
+    module.exit_json.assert_called_once_with(changed=False, commands={"K": "v", "res": [1, 2]})

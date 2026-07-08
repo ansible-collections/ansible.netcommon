@@ -21,6 +21,7 @@ import operator
 import re
 import socket
 
+from collections.abc import Mapping
 from copy import deepcopy
 from functools import reduce  # forward compatibility for Python 3
 from io import StringIO
@@ -30,7 +31,6 @@ from ansible.module_utils import basic
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.parsing.convert_bool import boolean
 
-from collections.abc import Mapping
 
 string_types = (str,)
 try:
@@ -742,6 +742,7 @@ def convert_doc_to_ansible_module_kwargs(doc):
             spec.update({item: doc_obj[item]})
     return spec
 
+
 def emit_warnings(module, result):
     """Pop warnings from result dict and emit via module.warn().
     Passing 'warnings' to exit_json is deprecated in ansible-core 2.23.
@@ -749,9 +750,9 @@ def emit_warnings(module, result):
     for warning in result.pop("warnings", []):
         module.warn(warning)
 
+
 def warn_and_exit(module, result):
     # Passing 'warnings' to exit_json is deprecated in ansible-core 2.23.
     # Emit warnings via module.warn() and remove the key before exit.
-    emit_warnings(module,result)
+    emit_warnings(module, result)
     module.exit_json(**result)
-    

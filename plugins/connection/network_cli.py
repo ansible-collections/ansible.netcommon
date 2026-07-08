@@ -322,13 +322,13 @@ import getpass
 import json
 import logging
 import os
+import pickle
 import re
 import signal
 import socket
 import tempfile
 import time
 import traceback
-import pickle
 
 from binascii import hexlify
 from functools import wraps

@@ -184,12 +184,13 @@ options:
     - name: ansible_platform_type
 """
 
-from io import BytesIO
 import pickle
+
+from io import BytesIO
+from urllib.error import HTTPError, URLError
 
 from ansible.errors import AnsibleConnectionFailure
 from ansible.module_utils.common.text.converters import to_bytes
-from urllib.error import HTTPError, URLError
 from ansible.module_utils.urls import open_url
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.connection import ensure_connect
