@@ -1,16 +1,15 @@
 minor_changes:
-  - Remediate deprecated ``warnings`` parameter in ``exit_json`` calls by using
-    ``AnsibleModule.warn()`` across all netcommon modules to address deprecation
-    warning from ansible-core 2.23.
-
-  - Added ``emit_warnings`` and ``warn_and_exit`` utility functions in
+  - Remediate deprecated ``warnings`` parameter in ``exit_json`` calls by
+    introducing ``emit_warnings`` and ``warn_and_exit`` utility functions in
     ``plugins/module_utils/network/common/utils.py`` to centralize warning
     emission logic.
-
-  - Fixed ``ResourceModule.result`` property in ``rm_base/resource_module.py``
-    to emit warnings via ``module.warn()`` before returning the result dict.
-    This automatically addresses the deprecation for all downstream collections
-    using ``ResourceModule`` (e.g. cisco.iosxr, cisco.ios, arista.eos).
+    The following modules were updated to use ``warn_and_exit`` -
+    ``cli_backup``, ``cli_command``, ``cli_config``, ``cli_restore``,
+    ``grpc_config``, ``grpc_get``, ``netconf_config``, ``netconf_get``,
+    ``netconf_rpc``, ``restconf_config``, ``restconf_get``.
+    ``ResourceModule`` base class in ``rm_base/resource_module.py`` was updated
+    to use ``emit_warnings``, which automatically addresses the deprecation for
+    all downstream collections (e.g. cisco.iosxr, cisco.ios, arista.eos).
 
   - Remediate deprecated ``to_text`` and ``to_bytes`` from
     ``ansible.module_utils._text`` and replaced with
