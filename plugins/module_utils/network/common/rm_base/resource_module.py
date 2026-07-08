@@ -20,6 +20,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.r
     RmEngineBase,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    emit_warnings,
     get_from_dict,
     remove_empties,
     to_list,
@@ -67,6 +68,9 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
     def result(self):
         """Compute the final result"""
         result = {"warnings": self.warnings}
+
+        emit_warnings(self._module, result)
+
         if self.state not in self.ACTION_STATES:
             if self.state == "gathered":
                 result["gathered"] = self.before

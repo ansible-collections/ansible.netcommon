@@ -19,7 +19,6 @@ import shlex
 import time
 
 from ansible.module_utils.parsing.convert_bool import BOOLEANS_FALSE, BOOLEANS_TRUE
-from ansible.module_utils.six.moves import zip
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
 

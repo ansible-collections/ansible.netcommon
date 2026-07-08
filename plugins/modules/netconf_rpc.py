@@ -164,6 +164,9 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.netconf import (
     remove_namespaces,
 )
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    warn_and_exit,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
     dispatch,
 )
@@ -280,7 +283,7 @@ def main():
 
     result = {"stdout": xml_resp, "output": output}
 
-    module.exit_json(**result)
+    warn_and_exit(module, result)
 
 
 if __name__ == "__main__":
