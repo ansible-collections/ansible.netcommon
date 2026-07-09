@@ -960,7 +960,13 @@ class Connection(NetworkConnectionBase):
         # Transcript recording for CISSHGO fixture generation.
         # Enable via ANSIBLE_NETWORK_CLI_RECORD=1 to capture every
         # command/response pair exchanged over the SSH channel.
-        self._transcript_recording = bool(os.environ.get("ANSIBLE_NETWORK_CLI_RECORD"))
+        # NOTE: Log accumulates in memory for the connection lifetime and
+        # flushes to disk on close(). Each entry is ~200-600 bytes; a
+        # 10,000-command playbook uses ~6MB. For very long-running sessions,
+        # consider splitting into shorter plays.
+        self._transcript_recording = os.environ.get(
+            "ANSIBLE_NETWORK_CLI_RECORD", ""
+        ).strip().lower() in ("1", "true", "yes")
         self._transcript_log = [] if self._transcript_recording else None
         self._transcript_output_dir = os.environ.get(
             "ANSIBLE_NETWORK_CLI_RECORD_PATH", "/tmp/transcript-recordings"
@@ -1275,6 +1281,15 @@ class Connection(NetworkConnectionBase):
 
             self.queue_message("vvvv", "ssh connection has completed successfully")
 
+            if self._transcript_recording:
+                self.queue_message(
+                    "warning",
+                    "Transcript recording is ENABLED. Raw commands and responses "
+                    "will be written to %s. Sensitive data (passwords, keys, IPs, "
+                    "hostnames) MUST be sanitized before committing fixtures to "
+                    "any repository." % self._transcript_output_dir,
+                )
+
         return self
 
     def _on_become(self, become_pass=None):
@@ -1338,11 +1353,13 @@ class Connection(NetworkConnectionBase):
         """Write recorded command/response pairs to a JSONL file."""
         host = self._play_context.remote_addr
         port = self._play_context.port or 22
-        filename = "%s_%s.jsonl" % (host, port)
+        safe_host = re.sub(r"[^\w.\-]", "_", host)
+        filename = "%s_%s.jsonl" % (safe_host, port)
         try:
-            os.makedirs(self._transcript_output_dir, exist_ok=True)
+            os.makedirs(self._transcript_output_dir, mode=0o700, exist_ok=True)
             filepath = os.path.join(self._transcript_output_dir, filename)
-            with open(filepath, "a") as f:
+            fd = os.open(filepath, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+            with os.fdopen(fd, "a") as f:
                 for entry in self._transcript_log:
                     f.write(json.dumps(entry) + "\n")
             self.queue_message(

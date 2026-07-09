@@ -1108,3 +1108,87 @@ def test_close_skips_flush_when_recording_disabled(conn):
         conn.close()
 
     mock_flush.assert_not_called()
+
+
+@pytest.mark.parametrize("env_value", ["0", "false", "False", "FALSE", "no", "No", ""])
+def test_transcript_recording_disabled_for_falsy_values(monkeypatch, env_value):
+    """Setting ANSIBLE_NETWORK_CLI_RECORD to '0', 'false', 'no', or '' does NOT enable recording."""
+    monkeypatch.setenv("ANSIBLE_NETWORK_CLI_RECORD", env_value)
+    pc = PlayContext()
+    pc.network_os = "fakeos"
+    monkeypatch.setattr(terminal_loader, "get", lambda *a, **kw: MagicMock())
+    conn = connection_loader.get("ansible.netcommon.network_cli", pc, "/dev/null")
+    assert conn._transcript_recording is False
+    assert conn._transcript_log is None
+
+
+@pytest.mark.parametrize("env_value", ["1", "true", "True", "TRUE", "yes", "Yes", "YES"])
+def test_transcript_recording_enabled_for_truthy_values(monkeypatch, env_value):
+    """Setting ANSIBLE_NETWORK_CLI_RECORD to '1', 'true', or 'yes' enables recording."""
+    monkeypatch.setenv("ANSIBLE_NETWORK_CLI_RECORD", env_value)
+    pc = PlayContext()
+    pc.network_os = "fakeos"
+    monkeypatch.setattr(terminal_loader, "get", lambda *a, **kw: MagicMock())
+    conn = connection_loader.get("ansible.netcommon.network_cli", pc, "/dev/null")
+    assert conn._transcript_recording is True
+    assert conn._transcript_log == []
+
+
+def test_flush_transcript_log_sanitizes_hostname(conn, tmp_path):
+    """Path traversal characters in hostname are sanitized in the output filename."""
+    conn._transcript_recording = True
+    conn._transcript_log = [
+        {"command": "show clock", "response": "12:00:00", "timestamp": 1.0},
+    ]
+    conn._transcript_output_dir = str(tmp_path)
+    conn._play_context.remote_addr = "../../etc/cron.d/evil"
+    conn._play_context.port = 22
+
+    conn._flush_transcript_log()
+
+    # The traversal characters (/ and spaces) should be replaced with
+    # underscores so the file stays inside the output directory.
+    # Dots and hyphens are preserved by the regex [^\w.\-]
+    expected = tmp_path / ".._.._etc_cron.d_evil_22.jsonl"
+    assert expected.exists()
+    # Verify no file was written outside the output directory
+    import pathlib
+
+    for f in pathlib.Path(str(tmp_path)).rglob("*.jsonl"):
+        assert str(f).startswith(str(tmp_path))
+
+
+def test_flush_transcript_log_preserves_normal_hostnames(conn, tmp_path):
+    """Normal hostnames (IPs, FQDNs, hyphens) are not altered by sanitization."""
+    conn._transcript_recording = True
+    conn._transcript_log = [
+        {"command": "show clock", "response": "12:00:00", "timestamp": 1.0},
+    ]
+    conn._transcript_output_dir = str(tmp_path)
+    conn._play_context.remote_addr = "router-core.lab.local"
+    conn._play_context.port = 22
+
+    conn._flush_transcript_log()
+
+    outfile = tmp_path / "router-core.lab.local_22.jsonl"
+    assert outfile.exists()
+
+
+def test_flush_transcript_log_restrictive_permissions(conn, tmp_path):
+    """Output directory is created with 0o700 and files with 0o600."""
+    output_dir = tmp_path / "recordings"
+    conn._transcript_recording = True
+    conn._transcript_log = [
+        {"command": "show clock", "response": "12:00:00", "timestamp": 1.0},
+    ]
+    conn._transcript_output_dir = str(output_dir)
+    conn._play_context.remote_addr = "10.0.0.1"
+    conn._play_context.port = 22
+
+    conn._flush_transcript_log()
+
+    assert output_dir.exists()
+    assert oct(output_dir.stat().st_mode & 0o777) == oct(0o700)
+    outfile = output_dir / "10.0.0.1_22.jsonl"
+    assert outfile.exists()
+    assert oct(outfile.stat().st_mode & 0o777) == oct(0o600)
