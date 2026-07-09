@@ -4,6 +4,27 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.6.0
+======
+
+Minor Changes
+-------------
+
+- Remediate deprecated ``ansible.module_utils.common._collections_compat`` module and replaced with ``collections.abc`` from the Python standard library.
+- Remediate deprecated ``ansible.module_utils.six`` module and replaced it with native Python 3 equivalents like ``pickle``, ``zip``, ``urllib.parse``, ``urllib.error`` etc.
+- Remediate deprecated ``to_text`` and ``to_bytes`` from ``ansible.module_utils._text`` and replaced with ``ansible.module_utils.common.text.converters``.
+- Remediate deprecated ``warnings`` parameter in ``exit_json`` calls by introducing ``emit_warnings`` and ``warn_and_exit`` utility functions in ``plugins/module_utils/network/common/utils.py`` to centralize warning emission logic. The following modules were updated to use ``warn_and_exit`` - ``cli_backup``, ``cli_command``, ``cli_config``, ``cli_restore``, ``grpc_config``, ``grpc_get``, ``netconf_config``, ``netconf_get``, ``netconf_rpc``, ``restconf_config``, ``restconf_get``. ``ResourceModule`` base class in ``rm_base/resource_module.py`` was updated to use ``emit_warnings``, which automatically addresses the deprecation for all downstream collections (e.g. cisco.iosxr, cisco.ios, arista.eos).
+
+v8.5.3
+======
+
+Bugfixes
+--------
+
+- memory cache plugin - Add missing ``_persistent`` attribute to ``CacheModule`` to fix ``'CacheModule' object has no attribute '_persistent'`` error with ansible-core 2.19+ when ``single_user_mode`` caching is enabled (https://github.com/ansible-collections/ansible.netcommon/issues/781).
+- network_cli - Fix ``proxy_command`` silently ignored with ``ssh_type=paramiko`` (https://github.com/ansible-collections/ansible.netcommon/issues/776).
+- vlan_parser - Fix ``IndexError`` when an empty list is passed as input by returning an empty list instead of crashing (https://github.com/ansible-collections/ansible.netcommon/issues/302).
+
 v8.5.2
 ======
 

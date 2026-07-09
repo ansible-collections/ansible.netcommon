@@ -129,7 +129,10 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.connection import ConnectionError
 
-from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    to_list,
+    warn_and_exit,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.grpc.grpc import (
     get,
     get_capabilities,
@@ -210,7 +213,7 @@ def main():
     else:
         result["output"] = to_list(response)
 
-    module.exit_json(**result)
+    warn_and_exit(module, result)
 
 
 if __name__ == "__main__":

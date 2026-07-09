@@ -17,7 +17,7 @@ from unittest.mock import MagicMock, PropertyMock, patch
 import pytest
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
-from ansible.module_utils._text import to_text
+from ansible.module_utils.common.text.converters import to_text
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import cache_loader, connection_loader
 
