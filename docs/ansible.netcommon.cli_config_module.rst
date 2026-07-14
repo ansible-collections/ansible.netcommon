@@ -280,6 +280,7 @@ Notes
 .. note::
    - The commands will be returned only for platforms that do not support onbox diff. The ``--diff`` option with the playbook will return the difference in configuration for devices that has support for onbox diff
    - To ensure idempotency and correct diff the configuration lines in the relevant module options should be similar to how they appear if present in the running configuration on device including the indentation.
+   - For platforms whose cliconf plugin supports neither ``supports_onbox_diff`` nor ``supports_generate_diff``, the configuration is pushed to the device unconditionally and the ``changed`` status is determined by comparing a running-config snapshot taken before and after the change. Check mode is not supported in this scenario.
    - This module is supported on ``ansible_network_os`` network platforms. See the :ref:`Network Platform Options <platform_options>` for details.
 
 
@@ -387,9 +388,10 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>When <em>supports_onbox_diff=True</em> in the platform&#x27;s cliconf plugin</td>
+                <td>When <em>supports_onbox_diff=True</em> in the platform&#x27;s cliconf plugin, or when neither <em>supports_onbox_diff</em> nor <em>supports_generate_diff</em> is set and the <code>--diff</code> option is used</td>
                 <td>
-                            <div>The diff generated on the device when the commands were applied</div>
+                            <div>The diff generated on the device when the commands were applied.</div>
+                            <div>When neither <em>supports_onbox_diff</em> nor <em>supports_generate_diff</em> is set in the platform&#x27;s cliconf plugin, this is a dictionary with <code>before</code> and <code>after</code> keys containing the running configuration snapshots taken before and after the configuration was pushed.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">--- system:/running-config
