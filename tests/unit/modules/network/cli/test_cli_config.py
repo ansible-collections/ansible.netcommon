@@ -155,3 +155,50 @@ class TestCliConfigModule(TestCliModule):
         self.conn.rollback.return_value = {}
         set_module_args(args)
         self.execute_module(changed=False)
+
+    def test_cli_config_no_diff_support_changed(self):
+        self.conn.get_capabilities.return_value = "{}"
+        self.conn.get_config.side_effect = ["running before", "running after"]
+
+        set_module_args({"config": "hostname foo"})
+        self.execute_module(changed=True)
+        self.conn.edit_config.assert_called_once_with(
+            candidate=["hostname foo"],
+            commit=True,
+            replace=None,
+            comment=None,
+        )
+
+    def test_cli_config_no_diff_support_unchanged(self):
+        self.conn.get_capabilities.return_value = "{}"
+        self.conn.get_config.side_effect = ["same config", "same config"]
+
+        set_module_args({"config": "hostname foo"})
+        self.execute_module(changed=False)
+        self.conn.edit_config.assert_called_once_with(
+            candidate=["hostname foo"],
+            commit=True,
+            replace=None,
+            comment=None,
+        )
+
+    def test_cli_config_no_diff_support_check_mode(self):
+        self.conn.get_capabilities.return_value = "{}"
+        self.conn.get_config.return_value = "running config"
+
+        args = {"config": "hostname foo", "_ansible_check_mode": True}
+        set_module_args(args)
+        self.execute_module(changed=False)
+        self.conn.edit_config.assert_not_called()
+
+    def test_cli_config_no_diff_support_returns_diff(self):
+        self.conn.get_capabilities.return_value = "{}"
+        self.conn.get_config.side_effect = ["running before", "running after"]
+
+        args = {"config": "hostname foo", "_ansible_diff": True}
+        set_module_args(args)
+        result = self.execute_module(changed=True)
+        self.assertEqual(
+            result["diff"],
+            {"before": "running before", "after": "running after"},
+        )

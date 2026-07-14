@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - "cli_config: Push configuration and detect changes by comparing running-config snapshots taken before and after the change, for platforms whose cliconf plugin supports neither onbox diff nor generate diff. Previously the configuration was silently never pushed to the device in this scenario (https://github.com/ansible-collections/ansible.netcommon/issues/156)."

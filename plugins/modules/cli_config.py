@@ -21,6 +21,10 @@ notes:
 - To ensure idempotency and correct diff the configuration lines in the relevant module
   options should be similar to how they appear if present in the running configuration on
   device including the indentation.
+- For platforms whose cliconf plugin supports neither C(supports_onbox_diff) nor
+  C(supports_generate_diff), the configuration is pushed to the device unconditionally
+  and the C(changed) status is determined by comparing a running-config snapshot taken
+  before and after the change. Check mode is not supported in this scenario.
 short_description: Push text based configuration to network devices over network_cli
 description:
 - This module provides platform agnostic way of pushing text based configuration to
@@ -198,8 +202,15 @@ EXAMPLES = """
 
 RETURN = """
 diff:
-  description: The diff generated on the device when the commands were applied
-  returned: When I(supports_onbox_diff=True) in the platform's cliconf plugin
+  description:
+  - The diff generated on the device when the commands were applied.
+  - When neither I(supports_onbox_diff) nor I(supports_generate_diff) is set in the
+    platform's cliconf plugin, this is a dictionary with C(before) and C(after) keys
+    containing the running configuration snapshots taken before and after the
+    configuration was pushed.
+  returned: When I(supports_onbox_diff=True) in the platform's cliconf plugin, or when
+    neither I(supports_onbox_diff) nor I(supports_generate_diff) is set and the C(--diff)
+    option is used
   type: str
   sample: |-
     --- system:/running-config
@@ -260,7 +271,7 @@ def validate_args(module, device_operations):
                 module.fail_json(msg="Option %s is not supported on this platform" % feature)
 
 
-def run(module, device_operations, connection, candidate, running, rollback_id):
+def run(module, device_operations, connection, candidate, running, rollback_id, flags=None):
     result = {}
     resp = {}
     config_diff = []
@@ -356,10 +367,47 @@ def run(module, device_operations, connection, candidate, running, rollback_id):
                 connection.edit_banner(**kwargs)
             result["changed"] = True
 
+    else:
+        # Platform supports neither onbox diff nor generate diff. Push the
+        # candidate configuration unconditionally and detect changes by
+        # comparing a running-config snapshot taken before and after the
+        # change, similar to how netconf_config behaves when a device does
+        # not support the candidate datastore.
+        if module.check_mode:
+            module.warn(
+                "Check mode is not supported for this platform, as it does not"
+                " support onbox diff or generate diff. No changes have been made"
+                " to the device."
+            )
+        else:
+            if candidate and not isinstance(candidate, list):
+                candidate = candidate.strip("\n").splitlines()
+
+            kwargs = {
+                "candidate": candidate,
+                "commit": commit,
+                "replace": replace,
+                "comment": commit_comment,
+            }
+            connection.edit_config(**kwargs)
+
+            running_after = connection.get_config(flags=flags or [])
+
+            if running != running_after:
+                result["changed"] = True
+                if module._diff:
+                    result["diff"] = {"before": running, "after": running_after}
+
+            module.warn(
+                "This platform does not support onbox diff or generate diff."
+                " The configuration was pushed unconditionally, so idempotency"
+                " and check mode cannot be guaranteed."
+            )
+
     if module._diff:
         if "diff" in resp:
             result["diff"] = {"prepared": resp["diff"]}
-        else:
+        elif "diff" not in result:
             diff = ""
             if config_diff:
                 if isinstance(config_diff, list):
@@ -448,6 +496,7 @@ def main():
                     candidate,
                     running,
                     rollback_id,
+                    flags,
                 )
             )
         except Exception as exc:
