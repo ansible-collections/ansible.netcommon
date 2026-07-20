@@ -1,8 +1,7 @@
 ---
 name: "Release collection 🚀"
 on:  # yamllint disable-line rule:truthy
-  release:
-    types: [published]
+  workflow_dispatch:
 
 jobs:
   release:
