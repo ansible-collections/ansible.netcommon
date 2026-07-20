@@ -1,0 +1,8 @@
+---
+bugfixes:
+  - netconf - Enable ``huge_tree=True`` for all XML parsing operations to support
+    NETCONF responses containing text nodes larger than 10MB (lxml's default
+    ``XML_MAX_TEXT_LENGTH`` limit). Fixes ``XMLSyntaxError: Resource limit exceeded``
+    when fetching or pushing large configurations via ``netconf_get`` or
+    ``netconf_config``
+    (https://github.com/ansible-collections/ansible.netcommon/issues/XXXX).
