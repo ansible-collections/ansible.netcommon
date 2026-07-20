@@ -422,7 +422,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data impor
 
 
 try:
-    from lxml.etree import fromstring, tostring
+    from lxml.etree import fromstring, tostring, XMLParser
 except ImportError:
     from xml.etree.ElementTree import fromstring, tostring
 
@@ -430,7 +430,8 @@ except ImportError:
 def validate_config(module, config, format="xml"):
     if format == "xml":
         try:
-            root = fromstring(config)
+            _parser = XMLParser(encoding="utf-8", recover=True, huge_tree=True)
+            root = fromstring(config, _parser)
             if not root.tag.endswith("config"):
                 module.fail_json(
                     msg="content value should have XML string with config tag as the root node"

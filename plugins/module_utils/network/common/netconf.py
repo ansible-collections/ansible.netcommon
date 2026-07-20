@@ -27,7 +27,7 @@ except (ImportError, AttributeError):
     HAS_NCCLIENT = False
 
 try:
-    from lxml.etree import Element, XMLSyntaxError, fromstring
+    from lxml.etree import Element, XMLSyntaxError, fromstring, XMLParser
 except ImportError:
     from xml.etree.ElementTree import Element, fromstring
 
@@ -64,8 +64,9 @@ class NetconfConnection(Connection):
         if "error" in response:
             rpc_error = response["error"].get("data")
             return self.parse_rpc_error(to_bytes(rpc_error, errors="surrogate_then_replace"))
-
-        return fromstring(to_bytes(response["result"], errors="surrogate_then_replace"))
+        
+        _parser = XMLParser(encoding="utf-8", recover=True, huge_tree=True)
+        return fromstring(to_bytes(response["result"], errors="surrogate_then_replace"), parser = _parser)
 
     def parse_rpc_error(self, rpc_error):
         if self.check_rc:
@@ -133,6 +134,7 @@ def remove_namespaces(data):
     return NCElement(
         to_text(data, errors="surrogate_then_replace").strip(),
         transform_reply(),
+        huge_tree=True,
     ).data_xml
 
 

@@ -23,7 +23,7 @@ string_types = (str,)
 try:
     HAS_LXML = True
     from lxml import etree
-    from lxml.etree import XMLSyntaxError, fromstring
+    from lxml.etree import XMLSyntaxError, fromstring, XMLParser
 
 except ImportError:
     HAS_LXML = False
@@ -46,7 +46,7 @@ except ImportError:
 def validate_and_normalize_data(data, fmt=None):
     """
     This function validates the data for given format (fmt).
-    If the fmt is None it tires to guess the data format.
+    If the fmt is None it tries to guess the data format.
     Currently support data format checks are
     1) xml
     2) json
@@ -76,7 +76,8 @@ def validate_and_normalize_data(data, fmt=None):
         data = data.strip()
         if (data.startswith("<") and data.endswith(">")) or fmt == "xml":
             try:
-                result = fromstring(data)
+                _parser = XMLParser(encoding="utf-8", recover=True, huge_tree=True)
+                result = fromstring(data,_parser)
                 if fmt and fmt != "xml":
                     raise Exception(
                         "Invalid format '%s'. Expected format is 'xml' for data '%s'" % (fmt, data)

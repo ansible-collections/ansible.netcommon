@@ -198,14 +198,18 @@ class NetconfBase(NetconfBaseBase):
         """
         if config is None:
             raise ValueError("config value must be provided")
-        resp = self.m.edit_config(
-            config,
-            format=format,
-            target=target,
-            default_operation=default_operation,
-            test_option=test_option,
-            error_option=error_option,
-        )
+        if isinstance(config, str):
+            from lxml.etree import XMLParser as _XMLParser
+
+            config = fromstring(config.encode("UTF-8"), parser=_XMLParser(huge_tree=True))
+            resp = self.m.edit_config(
+                config,
+                format=format,
+                target=target,
+                default_operation=default_operation,
+                test_option=test_option,
+                error_option=error_option,
+            )
         return resp.data_xml if hasattr(resp, "data_xml") else resp.xml
 
     def validate(self, source="candidate"):
