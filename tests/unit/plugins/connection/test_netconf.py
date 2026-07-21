@@ -453,8 +453,9 @@ def test_netconf_libssh_no_warnings_when_options_not_set():
     assert len(ssh_config_warnings) == 0, "No ssh_config warning should be shown"
     assert len(look_for_keys_warnings) == 0, "No look_for_keys warning should be shown"
 
+
 def test_netconf_huge_tree_supported():
-    """Test that no warnings are shown when huge_tree=true is passed"""
+    """Test that huge_tree=True is set on the manager after connect"""
     pc = PlayContext()
     conn = connection_loader.get("netconf", pc, "/dev/null")
 
@@ -462,5 +463,9 @@ def test_netconf_huge_tree_supported():
     mock_manager.session_id = "1234567890"
     netconf.manager.connect = MagicMock(return_value=mock_manager)
     conn._connect()
+
     params = netconf.manager.connect.call_args[1]
-    assert "huge_tree" in params
+    assert "huge_tree" not in params, "huge_tree should not be in connect() params"
+    assert (
+        mock_manager.huge_tree is True
+    ), "huge_tree should be set to True on manager after connect"

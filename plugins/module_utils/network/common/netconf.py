@@ -27,7 +27,7 @@ except (ImportError, AttributeError):
     HAS_NCCLIENT = False
 
 try:
-    from lxml.etree import Element, XMLSyntaxError, fromstring, XMLParser
+    from lxml.etree import Element, XMLParser, XMLSyntaxError, fromstring
 except ImportError:
     from xml.etree.ElementTree import Element, fromstring
 
@@ -64,9 +64,11 @@ class NetconfConnection(Connection):
         if "error" in response:
             rpc_error = response["error"].get("data")
             return self.parse_rpc_error(to_bytes(rpc_error, errors="surrogate_then_replace"))
-        
+
         _parser = XMLParser(encoding="utf-8", recover=True, huge_tree=True)
-        return fromstring(to_bytes(response["result"], errors="surrogate_then_replace"), parser = _parser)
+        return fromstring(
+            to_bytes(response["result"], errors="surrogate_then_replace"), parser=_parser
+        )
 
     def parse_rpc_error(self, rpc_error):
         if self.check_rc:

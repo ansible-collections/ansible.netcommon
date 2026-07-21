@@ -14,7 +14,7 @@ from copy import deepcopy
 
 
 try:
-    from lxml.etree import fromstring, tostring, XMLParser
+    from lxml.etree import XMLParser, fromstring, tostring
 except ImportError:
     from xml.etree.ElementTree import fromstring, tostring
 
@@ -124,7 +124,7 @@ def dispatch(module, request):
 
 def sanitize_xml(data):
     _parser = XMLParser(encoding="utf-8", recover=True, huge_tree=True)
-    tree = fromstring(to_bytes(deepcopy(data), errors="surrogate_then_replace"),_parser)
+    tree = fromstring(to_bytes(deepcopy(data), errors="surrogate_then_replace"), _parser)
     for element in tree.iter():
         # remove attributes
         attribute = element.attrib

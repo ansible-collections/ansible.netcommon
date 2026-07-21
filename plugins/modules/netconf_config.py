@@ -422,7 +422,7 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.utils.data impor
 
 
 try:
-    from lxml.etree import fromstring, tostring, XMLParser
+    from lxml.etree import XMLParser, fromstring, tostring
 except ImportError:
     from xml.etree.ElementTree import fromstring, tostring
 

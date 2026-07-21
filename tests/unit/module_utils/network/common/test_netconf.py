@@ -10,13 +10,12 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-import re
-
 import pytest
 
-from lxml.etree import XMLSyntaxError, fromstring,XMLParser
-
 from ansible.module_utils.common.text.converters import to_bytes
+from lxml.etree import XMLParser, XMLSyntaxError, fromstring
+
+
 TEN_MB = 10 * 1024 * 1024
 
 
@@ -36,6 +35,7 @@ def test_fromstring_succeeds_with_huge_tree_parser():
     assert result.tag == "data"
     assert len(result.text) > TEN_MB
 
+
 def test_fromstring_fails_on_huge_text_node():
     """Reproduce: lxml.etree.fromstring() rejects text nodes > 10MB
     without huge_tree=True.
@@ -45,5 +45,7 @@ def test_fromstring_fails_on_huge_text_node():
     """
     huge_xml = _build_huge_xml(TEN_MB + 1)
 
-    with pytest.raises(XMLSyntaxError, match="Resource limit exceeded: Text node too long, try XML_PARSE_HUGE"):
+    with pytest.raises(
+        XMLSyntaxError, match="Resource limit exceeded: Text node too long, try XML_PARSE_HUGE"
+    ):
         fromstring(to_bytes(huge_xml))
