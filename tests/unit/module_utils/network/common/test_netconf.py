@@ -24,7 +24,7 @@ def _build_huge_xml(size):
     Build an XML string with a single text node of the given size: {size}
     """
 
-    return f"<data>{'A'*size}</data>"
+    return f"<data>{'A' * size}</data>"
 
 
 def test_fromstring_succeeds_with_huge_tree_parser():
