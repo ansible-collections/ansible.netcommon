@@ -25,6 +25,11 @@ notes:
   C(supports_generate_diff), the configuration is pushed to the device unconditionally
   and the C(changed) status is determined by comparing a running-config snapshot taken
   before and after the change. Check mode is not supported in this scenario.
+- If the connection plugin's capabilities response is missing, empty, or not
+  a valid mapping, the module fails with an error instead of assuming the
+  platform supports neither C(supports_onbox_diff) nor C(supports_generate_diff).
+  This distinguishes a connection/cliconf plugin problem from a platform that
+  intentionally declares no diff support.
 short_description: Push text based configuration to network devices over network_cli
 description:
 - This module provides platform agnostic way of pushing text based configuration to
@@ -129,7 +134,11 @@ options:
       the diff. This is used for lines in the configuration that are automatically
       updated by the system. This argument takes a list of regular expressions or
       exact line matches. Note that this parameter will be ignored if the platform
-      has onbox diff support.
+      has onbox diff support. For platforms whose cliconf plugin supports generate
+      diff, this is passed to the connection plugin's diff generation. For platforms
+      whose cliconf plugin supports neither onbox diff nor generate diff, this is
+      instead applied locally by the module when comparing the before/after
+      running-config snapshots used to detect C(changed).
     type: list
     elements: str
   backup_options:
@@ -208,6 +217,10 @@ diff:
     platform's cliconf plugin, this is a dictionary with C(before) and C(after) keys
     containing the running configuration snapshots taken before and after the
     configuration was pushed.
+  - When I(diff_ignore_lines) is set, it only affects whether C(changed) (and therefore
+    whether this diff) is reported for that fallback path; the C(before) and C(after)
+    snapshots themselves are not filtered and may still contain lines matched by
+    I(diff_ignore_lines).
   returned: When I(supports_onbox_diff=True) in the platform's cliconf plugin, or when
     neither I(supports_onbox_diff) nor I(supports_generate_diff) is set and the C(--diff)
     option is used
@@ -241,6 +254,9 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.connection import Connection
 
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.config import (
+    NetworkConfig,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     warn_and_exit,
 )
@@ -259,7 +275,28 @@ def validate_args(module, device_operations):
         "diff_ignore_lines",
     ]
 
+    # diff_ignore_lines is normally delegated to the cliconf plugin's
+    # connection.get_diff() call, which is why the plugin must declare
+    # supports_diff_ignore_lines. However, when the platform supports neither
+    # onbox diff nor generate diff, diff_ignore_lines is instead applied
+    # locally by this module (see the fallback branch in run()) and does not
+    # depend on the connection plugin at all, so it should not be gated on
+    # that declaration in this case. Note that this only holds when run()
+    # will actually reach that fallback branch: a rollback request takes
+    # priority over device_operations entirely (see run()), so diff_ignore_lines
+    # is neither delegated nor applied locally when rollback is requested, and
+    # the platform's declaration should still be enforced in that case.
+    delegates_diff_ignore_lines = device_operations.get(
+        "supports_onbox_diff"
+    ) or device_operations.get("supports_generate_diff")
+    applies_diff_ignore_lines_locally = (
+        module.params["rollback"] is None and not delegates_diff_ignore_lines
+    )
+
     for feature in feature_list:
+        if feature == "diff_ignore_lines" and applies_diff_ignore_lines_locally:
+            continue
+
         if module.params[feature]:
             supports_feature = device_operations.get("supports_%s" % feature)
             if supports_feature is None:
@@ -393,7 +430,19 @@ def run(module, device_operations, connection, candidate, running, rollback_id, 
 
             running_after = connection.get_config(flags=flags or [])
 
-            if running != running_after:
+            # Compare the before/after snapshots with diff_ignore_lines applied
+            # (the same way the supports_generate_diff branch already does),
+            # rather than a raw string comparison. Without this, volatile lines
+            # that change on every fetch regardless of the actual configuration
+            # (timestamps, byte counts, etc.) would cause changed=True on every
+            # run, which is especially likely on the platforms that reach this
+            # branch since they lack well-formed CLI diff support to begin with.
+            running_config_obj = NetworkConfig(contents=running, ignore_lines=diff_ignore_lines)
+            running_after_config_obj = NetworkConfig(
+                contents=running_after, ignore_lines=diff_ignore_lines
+            )
+
+            if running_config_obj.sha1 != running_after_config_obj.sha1:
                 result["changed"] = True
                 if module._diff:
                     result["diff"] = {"before": running, "after": running_after}
@@ -464,11 +513,28 @@ def main():
     connection = Connection(module._socket_path)
     capabilities = module.from_json(connection.get_capabilities())
 
-    if capabilities:
-        device_operations = capabilities.get("device_operations", dict())
-        validate_args(module, device_operations)
-    else:
-        device_operations = dict()
+    # A well-formed capabilities response always includes device_operations
+    # (every cliconf plugin, including this collection's own "default" plugin,
+    # populates it). Anything else - an empty/null/non-dict response, or a dict
+    # that's missing device_operations entirely - indicates a connection or
+    # cliconf plugin problem rather than an intentional declaration that a
+    # platform supports neither onbox diff nor generate diff, so fail loudly
+    # instead of silently falling through to the fallback branch that pushes
+    # configuration unconditionally.
+    if not isinstance(capabilities, dict) or not isinstance(
+        capabilities.get("device_operations"), dict
+    ):
+        module.fail_json(
+            msg="Unable to retrieve device capabilities from the connection plugin."
+            " This usually indicates a connection or cliconf plugin problem rather"
+            " than an intentional declaration that a feature is unsupported, so the"
+            " module is failing rather than silently pushing configuration to the"
+            " device without knowing whether onbox diff or generate diff is"
+            " supported."
+        )
+
+    device_operations = capabilities["device_operations"]
+    validate_args(module, device_operations)
 
     if module.params["defaults"]:
         if "get_default_flag" in capabilities.get("rpc"):
