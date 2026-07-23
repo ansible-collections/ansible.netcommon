@@ -28,6 +28,9 @@ pylibsshext = pytest.importorskip("pylibsshext")
 
 @pytest.fixture(name="conn")
 def plugin_fixture():
+    libssh.SSH_CONNECTION_CACHE.clear()
+    libssh.SFTP_CONNECTION_CACHE.clear()
+
     pc = PlayContext()
     pc.port = 8080
     pc.timeout = 60
