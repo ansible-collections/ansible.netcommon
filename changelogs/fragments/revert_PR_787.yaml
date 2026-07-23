@@ -1,3 +1,0 @@
----
-trivial:
-  - reverting datastore locked PR "https://github.com/ansible-collections/ansible.netcommon/pull/787"
