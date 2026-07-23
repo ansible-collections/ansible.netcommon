@@ -619,10 +619,15 @@ def main():
                 result["changed"] = True
                 warn_and_exit(module, result)
 
-            # Validate and normalize config content locally before acquiring the
-            # datastore lock. These checks are pure local operations and do not
-            # require device interaction. Failing here avoids acquiring a lock
-            # that would then need to be released on an error path.
+            if execute_lock:
+                conn.lock(target=target)
+                locked = True
+            if before is None:
+                before = to_text(
+                    conn.get_config(source=target, filter=filter_spec),
+                    errors="surrogate_then_replace",
+                ).strip()
+            
             if format != "text":
                 # check for format of type json/xml/xpath
                 try:
@@ -645,18 +650,6 @@ def main():
                     format = config_format
 
             validate_config(module, config, format)
-
-            # Acquire the datastore lock only after local validation has passed.
-            # get_config (before snapshot) is kept inside the lock so the
-            # baseline state is consistent with the subsequent edit-config.
-            if execute_lock:
-                conn.lock(target=target)
-                locked = True
-            if before is None:
-                before = to_text(
-                    conn.get_config(source=target, filter=filter_spec),
-                    errors="surrogate_then_replace",
-                ).strip()
 
             kwargs = {
                 "config": config,
