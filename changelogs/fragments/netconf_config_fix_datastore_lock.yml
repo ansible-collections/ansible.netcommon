@@ -1,0 +1,6 @@
+---
+bugfixes:
+  - netconf_config - fix intermittent ``Datastore locked`` error on IOS-XR and
+    other NETCONF targets. Local content validation (format parsing and XML
+    syntax check) is now performed before acquiring the candidate datastore lock
+    so invalid content never causes a lock that cannot be cleanly released.
