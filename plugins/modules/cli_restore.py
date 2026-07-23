@@ -79,6 +79,10 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.connection import Connection, ConnectionError
 
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    warn_and_exit,
+)
+
 
 def validate_args(module, device_operations):
     """validate param if it is supported on the platform"""
@@ -121,7 +125,7 @@ def main():
         else:
             module.fail_json(msg=to_text(exc, errors="surrogate_then_replace").strip())
     result["__restore__"] = running
-    module.exit_json(**result)
+    warn_and_exit(module, result)
 
 
 if __name__ == "__main__":

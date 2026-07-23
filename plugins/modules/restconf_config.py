@@ -128,6 +128,7 @@ from ansible.module_utils.connection import ConnectionError
 
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     dict_diff,
+    warn_and_exit,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.restconf import restconf
 
@@ -213,7 +214,7 @@ def main():
     except ConnectionError as exc:
         module.fail_json(msg=str(exc), code=exc.code)
 
-    module.exit_json(**result)
+    warn_and_exit(module, result)
 
 
 if __name__ == "__main__":

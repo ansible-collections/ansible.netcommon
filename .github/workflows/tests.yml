@@ -8,26 +8,16 @@ concurrency:
 on:  # yamllint disable-line rule:truthy
   push:
     branches: [main]
-  pull_request_target:
+  pull_request:
     branches: [main]
   workflow_dispatch:
   schedule:
     - cron: "0 0 * * *"
 
 jobs:
-  sonar:
-    name: SonarCloud
-    uses: ansible/ansible-content-actions/.github/workflows/sonarcloud.yaml@main
-    with:
-      python_version: "3.12"
-      galaxy_dependencies: |
-        git+https://github.com/ansible-collections/ansible.utils.git
-      test_command: "pip install passlib && pytest tests/unit -v --cov-report xml --cov=./"
-    secrets:
-      SONAR_TOKEN: ${{ secrets.ANSIBLE_COLLECTIONS_ORG_SONAR_TOKEN_CICD_BOT }}
   changelog:
     uses: ansible/ansible-content-actions/.github/workflows/changelog.yaml@main
-    if: github.event_name == 'pull_request_target'
+    if: github.event_name == 'pull_request'
   build-import:
     uses: ansible/ansible-content-actions/.github/workflows/build_import.yaml@main
   ansible-lint:
@@ -69,7 +59,6 @@ jobs:
       - unit-galaxy
       - unit-source
       - ansible-lint
-      - sonar
       - report-status
     runs-on: ubuntu-latest
     steps:
@@ -81,6 +70,5 @@ jobs:
           '${{ needs.unit-galaxy.result }}',
           '${{ needs.ansible-lint.result }}',
           '${{ needs.unit-source.result }}',
-          '${{ needs.sonar.result }}',
           '${{ needs.report-status.result }}'
           ])"

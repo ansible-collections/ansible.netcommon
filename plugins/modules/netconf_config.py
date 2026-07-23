@@ -407,6 +407,9 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.connection import Connection, ConnectionError
 
+from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
+    warn_and_exit,
+)
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.netconf.netconf import (
     get_capabilities,
     get_config,
@@ -614,7 +617,7 @@ def main():
                     "check mode not supported as Netconf server doesn't support candidate capability"
                 )
                 result["changed"] = True
-                module.exit_json(**result)
+                warn_and_exit(module, result)
 
             # Validate and normalize config content locally before acquiring the
             # datastore lock. These checks are pure local operations and do not
@@ -703,7 +706,7 @@ def main():
         if locked:
             conn.unlock(target=target)
 
-    module.exit_json(**result)
+    warn_and_exit(module, result)
 
 
 if __name__ == "__main__":

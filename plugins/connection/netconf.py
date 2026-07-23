@@ -166,12 +166,12 @@ options:
 import json
 import logging
 import os
+import pickle
 
 from ansible.errors import AnsibleConnectionFailure, AnsibleError
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.common.text.converters import to_bytes, to_native, to_text
 from ansible.module_utils.parsing.convert_bool import BOOLEANS_FALSE, BOOLEANS_TRUE
-from ansible.module_utils.six.moves import cPickle
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.connection import ensure_connect
 from ansible.plugins.loader import netconf_loader
@@ -277,7 +277,7 @@ class Connection(NetworkConnectionBase):
     def update_play_context(self, pc_data):
         """Updates the play context information for the connection"""
         pc_data = to_bytes(pc_data)
-        pc_data = cPickle.loads(pc_data, encoding="bytes")
+        pc_data = pickle.loads(pc_data, encoding="bytes")
 
         play_context = PlayContext()
         play_context.deserialize(pc_data)
