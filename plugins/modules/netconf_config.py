@@ -627,7 +627,7 @@ def main():
                     conn.get_config(source=target, filter=filter_spec),
                     errors="surrogate_then_replace",
                 ).strip()
-            
+
             if format != "text":
                 # check for format of type json/xml/xpath
                 try:
