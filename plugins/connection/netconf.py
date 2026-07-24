@@ -207,6 +207,7 @@ class Connection(NetworkConnectionBase):
 
     transport = "ansible.netcommon.netconf"
     has_pipelining = False
+    huge_tree = True
 
     def __init__(self, play_context, new_stdin, *args, **kwargs):
         super(Connection, self).__init__(play_context, new_stdin, *args, **kwargs)
@@ -432,6 +433,7 @@ class Connection(NetworkConnectionBase):
                 params["sock"] = sock
 
             self._manager = manager.connect(**params)
+            self._manager.huge_tree = True
 
             self._manager._timeout = self.get_option("persistent_command_timeout")
         except SSHUnknownHostError as exc:

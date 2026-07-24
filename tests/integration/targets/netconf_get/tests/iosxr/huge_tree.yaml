@@ -1,0 +1,63 @@
+---
+- debug:
+    msg="START netconf_get iosxr/huge_tree.yaml on connection={{ ansible_connection
+    }}"
+
+# Push a single interface with a description >10MB.
+# This ensures the NETCONF response contains one <description>
+# text node exceeding lxml's XML_MAX_TEXT_LENGTH (10MB).
+
+- name: Setup - create one loopback with a >10MB description
+  vars:
+    ansible_connection: ansible.netcommon.netconf
+    ansible_command_timeout: 900
+  ansible.netcommon.netconf_config:
+    lock: never
+    content: |
+      <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
+          <interface-configuration>
+            <active>act</active>
+            <interface-name>Loopback9999</interface-name>
+            <description>{{ 'X' * 11000000 }}</description>
+          </interface-configuration>
+        </interface-configurations>
+      </config>
+
+- name: Fetch interface config via NETCONF - triggers huge_tree limit
+  register: result
+  vars:
+    ansible_connection: ansible.netcommon.netconf
+    ansible_command_timeout: 900
+  ansible.netcommon.netconf_get:
+    source: running
+    filter: <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"><interface-configuration><active>act</active><interface-name>Loopback9999</interface-name></interface-configuration></interface-configurations>
+    display: xml
+
+- assert:
+    that:
+      - result.stdout is defined
+      - result.stdout | length > 10485760
+    fail_msg: "Response size {{ result.stdout | length }} bytes - did not exceed 10MB"
+    success_msg: "Response size {{ result.stdout | length }} bytes - huge_tree parsing succeeded"
+
+- name: Teardown - remove the test loopback
+  vars:
+    ansible_connection: ansible.netcommon.netconf
+    ansible_command_timeout: 600
+  ansible.netcommon.netconf_config:
+    lock: never
+    content: |
+      <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+        <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg"
+                                  xmlns:nc="urn:ietf:params:xml:ns:netconf:base:1.0">
+          <interface-configuration nc:operation="delete">
+            <active>act</active>
+            <interface-name>Loopback9999</interface-name>
+          </interface-configuration>
+        </interface-configurations>
+      </config>
+
+- debug:
+    msg="END netconf_get iosxr/huge_tree.yaml on connection={{ ansible_connection
+    }}"

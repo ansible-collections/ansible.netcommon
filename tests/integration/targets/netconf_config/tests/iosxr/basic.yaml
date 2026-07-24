@@ -86,6 +86,7 @@
 - name: Configure using JSON string format configuration
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
+    lock: never
     format: json
     content: |
       {
@@ -130,6 +131,7 @@
 - name: Configure using direct native format configuration
   connection: ansible.netcommon.netconf
   ansible.netcommon.netconf_config:
+    lock: never
     format: json
     content:
       {
