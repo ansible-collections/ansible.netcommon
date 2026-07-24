@@ -1,0 +1,4 @@
+bugfixes:
+  - "libssh - Use ``persistent_connect_timeout`` option for the SSH connect timeout instead of the generic play context timeout,
+    ensuring that ``ansible_connect_timeout`` / ``ANSIBLE_PERSISTENT_CONNECT_TIMEOUT`` is respected
+    (https://github.com/ansible-collections/ansible.netcommon/issues/798)."
