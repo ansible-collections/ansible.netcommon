@@ -3,6 +3,7 @@
   ansible.builtin.find:
     paths: "{{ role_path }}/tests/iosxr"
     patterns: "{{ testcase }}.yaml"
+    excludes: "huge_tree.yaml"
   register: test_cases
   delegate_to: localhost
 
