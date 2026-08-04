@@ -181,7 +181,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Use this argument to specify one or more lines that should be ignored during the diff. This is used for lines in the configuration that are automatically updated by the system. This argument takes a list of regular expressions or exact line matches. Note that this parameter will be ignored if the platform has onbox diff support.</div>
+                        <div>Use this argument to specify one or more lines that should be ignored during the diff. This is used for lines in the configuration that are automatically updated by the system. This argument takes a list of regular expressions or exact line matches. Note that this parameter will be ignored if the platform has onbox diff support. For platforms whose cliconf plugin supports generate diff, this is passed to the connection plugin&#x27;s diff generation. For platforms whose cliconf plugin supports neither onbox diff nor generate diff, this is instead applied locally by the module when comparing the before/after running-config snapshots used to detect <code>changed</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -280,6 +280,8 @@ Notes
 .. note::
    - The commands will be returned only for platforms that do not support onbox diff. The ``--diff`` option with the playbook will return the difference in configuration for devices that has support for onbox diff
    - To ensure idempotency and correct diff the configuration lines in the relevant module options should be similar to how they appear if present in the running configuration on device including the indentation.
+   - For platforms whose cliconf plugin supports neither ``supports_onbox_diff`` nor ``supports_generate_diff``, the configuration is pushed to the device unconditionally and the ``changed`` status is determined by comparing a running-config snapshot taken before and after the change. Check mode is not supported in this scenario.
+   - If the connection plugin's capabilities response is missing, empty, or not a valid mapping, the module fails with an error instead of assuming the platform supports neither ``supports_onbox_diff`` nor ``supports_generate_diff``. This distinguishes a connection/cliconf plugin problem from a platform that intentionally declares no diff support.
    - This module is supported on ``ansible_network_os`` network platforms. See the :ref:`Network Platform Options <platform_options>` for details.
 
 
@@ -387,9 +389,11 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>When <em>supports_onbox_diff=True</em> in the platform&#x27;s cliconf plugin</td>
+                <td>When <em>supports_onbox_diff=True</em> in the platform&#x27;s cliconf plugin, or when neither <em>supports_onbox_diff</em> nor <em>supports_generate_diff</em> is set and the <code>--diff</code> option is used</td>
                 <td>
-                            <div>The diff generated on the device when the commands were applied</div>
+                            <div>The diff generated on the device when the commands were applied.</div>
+                            <div>When neither <em>supports_onbox_diff</em> nor <em>supports_generate_diff</em> is set in the platform&#x27;s cliconf plugin, this is a dictionary with <code>before</code> and <code>after</code> keys containing the running configuration snapshots taken before and after the configuration was pushed.</div>
+                            <div>When <em>diff_ignore_lines</em> is set, it only affects whether <code>changed</code> (and therefore whether this diff) is reported for that fallback path; the <code>before</code> and <code>after</code> snapshots themselves are not filtered and may still contain lines matched by <em>diff_ignore_lines</em>.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">--- system:/running-config
