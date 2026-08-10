@@ -28,6 +28,9 @@ pylibsshext = pytest.importorskip("pylibsshext")
 
 @pytest.fixture(name="conn")
 def plugin_fixture():
+    libssh.SSH_CONNECTION_CACHE.clear()
+    libssh.SFTP_CONNECTION_CACHE.clear()
+
     pc = PlayContext()
     pc.port = 8080
     pc.timeout = 60
@@ -63,7 +66,7 @@ def test_libssh_connect(conn, monkeypatch):
         password_prompt=None,
         private_key_password=None,
         port=8080,
-        timeout=60,
+        timeout=30,
         user="user1",
         private_key=None,
     )
@@ -409,3 +412,56 @@ def test_libssh_invalidate_ssh_close_exception_swallowed(conn):
     )
     conn._invalidate_ssh_session_after_scp_get_failure()
     assert conn.ssh is None
+
+
+def test_libssh_connect_uses_persistent_connect_timeout(conn, monkeypatch):
+    """Verify that _connect passes persistent_connect_timeout to Session.connect()."""
+    conn.set_options(
+        direct={
+            "remote_addr": "localhost",
+            "remote_user": "user1",
+            "password": "test",
+            "host_key_checking": False,
+            "persistent_connect_timeout": 15,
+        }
+    )
+
+    mock_session = MagicMock()
+    monkeypatch.setattr(libssh, "Session", mock_session)
+    mock_ssh = MagicMock()
+    mock_session.return_value = mock_ssh
+    conn._connect()
+    mock_ssh.connect.assert_called_with(
+        host="localhost",
+        host_key_checking=False,
+        look_for_keys=True,
+        password="test",
+        password_prompt=None,
+        private_key_password=None,
+        port=8080,
+        timeout=15,
+        user="user1",
+        private_key=None,
+    )
+
+
+def test_libssh_connect_ignores_play_context_timeout(conn, monkeypatch):
+    """Verify that play_context.timeout does NOT leak into Session.connect()."""
+    conn._play_context.timeout = 999
+    conn.set_options(
+        direct={
+            "remote_addr": "localhost",
+            "remote_user": "user1",
+            "password": "test",
+            "host_key_checking": False,
+            "persistent_connect_timeout": 10,
+        }
+    )
+
+    mock_session = MagicMock()
+    monkeypatch.setattr(libssh, "Session", mock_session)
+    mock_ssh = MagicMock()
+    mock_session.return_value = mock_ssh
+    conn._connect()
+    call_kwargs = mock_ssh.connect.call_args
+    assert call_kwargs[1]["timeout"] == 10
