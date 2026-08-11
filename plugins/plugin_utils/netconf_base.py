@@ -198,6 +198,10 @@ class NetconfBase(NetconfBaseBase):
         """
         if config is None:
             raise ValueError("config value must be provided")
+        if isinstance(config, str):
+            from lxml.etree import XMLParser as _XMLParser
+
+            config = fromstring(config.encode("UTF-8"), parser=_XMLParser(huge_tree=True))
         resp = self.m.edit_config(
             config,
             format=format,
