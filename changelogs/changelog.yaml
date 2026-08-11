@@ -1063,3 +1063,19 @@ releases:
       - ci_pull_request_trigger.yaml
       - revert_PR_787.yaml
     release_date: "2026-07-23"
+  8.6.2:
+    changes:
+      bugfixes:
+        - libssh - Use ``persistent_connect_timeout`` option for the SSH connect timeout
+          instead of the generic play context timeout, ensuring that ``ansible_connect_timeout``
+          / ``ANSIBLE_PERSISTENT_CONNECT_TIMEOUT`` is respected (https://github.com/ansible-collections/ansible.netcommon/issues/798).
+        - "netconf - Enable ``huge_tree=True`` for all XML parsing operations to support
+          NETCONF responses containing text nodes larger than 10MB (lxml's default
+          ``XML_MAX_TEXT_LENGTH`` limit). Fixes ``XMLSyntaxError: Resource limit exceeded``
+          when fetching or pushing large configurations via ``netconf_get`` or ``netconf_config``
+          (https://github.com/ansible-collections/ansible.netcommon/issues/255)."
+    fragments:
+      - 0-readme.yml
+      - 798-libssh-connect-timeout.yaml
+      - huge_tree_support.yaml
+    release_date: "2026-08-11"
