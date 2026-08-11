@@ -17,6 +17,8 @@ DOCUMENTATION = """
         - The python bindings use libssh C library (https://www.libssh.org/) to connect to targets
         - This plugin borrows a lot of settings from the ssh plugin as they both cover the same protocol.
     version_added: 1.1.0
+    extends_documentation_fragment:
+    - ansible.netcommon.connection_persistent
     options:
       remote_addr:
         description:
@@ -230,8 +232,6 @@ DOCUMENTATION = """
             key: config_file
         vars:
           - name: ansible_libssh_config_file
-# TODO:
-#timeout=self._play_context.timeout,
 """
 import logging
 import os
@@ -542,7 +542,7 @@ class Connection(ConnectionBase):
                 password_prompt=self.get_option("password_prompt"),
                 private_key=private_key,
                 private_key_password=self.get_option("private_key_passphrase"),
-                timeout=self._play_context.timeout,
+                timeout=self.get_option("persistent_connect_timeout"),
                 port=port,
                 **ssh_connect_kwargs,
             )
