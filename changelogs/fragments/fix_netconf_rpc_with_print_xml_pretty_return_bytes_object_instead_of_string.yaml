@@ -1,0 +1,6 @@
+---
+bugfixes:
+  - >-
+    netconf_rpc - Fix ``output`` returning a ``bytes`` object instead of ``str`` when
+      display is set to pretty or xml by passing encoding="unicode"
+      (https://github.com/ansible-collections/ansible.netcommon/issues/791).
