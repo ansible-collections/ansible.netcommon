@@ -4,6 +4,15 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.6.2
+======
+
+Bugfixes
+--------
+
+- libssh - Use ``persistent_connect_timeout`` option for the SSH connect timeout instead of the generic play context timeout, ensuring that ``ansible_connect_timeout`` / ``ANSIBLE_PERSISTENT_CONNECT_TIMEOUT`` is respected (https://github.com/ansible-collections/ansible.netcommon/issues/798).
+- netconf - Enable ``huge_tree=True`` for all XML parsing operations to support NETCONF responses containing text nodes larger than 10MB (lxml's default ``XML_MAX_TEXT_LENGTH`` limit). Fixes ``XMLSyntaxError: Resource limit exceeded`` when fetching or pushing large configurations via ``netconf_get`` or ``netconf_config`` (https://github.com/ansible-collections/ansible.netcommon/issues/255).
+
 v8.6.1
 ======
 
