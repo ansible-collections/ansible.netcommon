@@ -8,7 +8,6 @@ The parser functionality used by the network resource modules is leveraged here.
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 DOCUMENTATION = """
