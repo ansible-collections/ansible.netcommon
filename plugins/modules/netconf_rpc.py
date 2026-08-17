@@ -268,7 +268,7 @@ def main():
     xml_req = get_xml_request(module, rpc, xmlns, content)
     response = dispatch(module, xml_req)
 
-    xml_resp = tostring(response)
+    xml_resp = tostring(response, encoding="unicode")
     output = None
 
     if display == "xml":
@@ -279,7 +279,7 @@ def main():
         except Exception:
             raise ValueError(xml_resp)
     elif display == "pretty":
-        output = tostring(response, pretty_print=True)
+        output = tostring(response, pretty_print=True, encoding="unicode")
 
     result = {"stdout": xml_resp, "output": output}
 
