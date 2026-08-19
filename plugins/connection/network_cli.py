@@ -957,6 +957,21 @@ class Connection(NetworkConnectionBase):
         # Managing prompt context
         self._check_prompt = False
 
+        # Transcript recording for CISSHGO fixture generation.
+        # Enable via ANSIBLE_NETWORK_CLI_RECORD=1 to capture every
+        # command/response pair exchanged over the SSH channel.
+        # NOTE: Log accumulates in memory for the connection lifetime and
+        # flushes to disk on close(). Each entry is ~200-600 bytes; a
+        # 10,000-command playbook uses ~6MB. For very long-running sessions,
+        # consider splitting into shorter plays.
+        self._transcript_recording = os.environ.get(
+            "ANSIBLE_NETWORK_CLI_RECORD", ""
+        ).strip().lower() in ("1", "true", "yes")
+        self._transcript_log = [] if self._transcript_recording else None
+        self._transcript_output_dir = os.environ.get(
+            "ANSIBLE_NETWORK_CLI_RECORD_PATH", "/tmp/transcript-recordings"
+        )
+
         self._task_uuid = to_text(kwargs.get("task_uuid", ""))
         self._ssh_type_conn = None
         self._ssh_type = None
@@ -1266,6 +1281,15 @@ class Connection(NetworkConnectionBase):
 
             self.queue_message("vvvv", "ssh connection has completed successfully")
 
+            if self._transcript_recording:
+                self.queue_message(
+                    "warning",
+                    "Transcript recording is ENABLED. Raw commands and responses "
+                    "will be written to %s. Sensitive data (passwords, keys, IPs, "
+                    "hostnames) MUST be sanitized before committing fixtures to "
+                    "any repository." % self._transcript_output_dir,
+                )
+
         return self
 
     def _on_become(self, become_pass=None):
@@ -1307,6 +1331,9 @@ class Connection(NetworkConnectionBase):
         """
         Close the active connection to the device
         """
+        if self._transcript_recording and self._transcript_log:
+            self._flush_transcript_log()
+
         # only close the connection if its connected.
         if self._connected:
             self.queue_message("debug", "closing ssh connection to device")
@@ -1321,6 +1348,30 @@ class Connection(NetworkConnectionBase):
                 self._ssh_type_conn = None
                 self.queue_message("debug", "ssh connection has been closed successfully")
         super(Connection, self).close()
+
+    def _flush_transcript_log(self):
+        """Write recorded command/response pairs to a JSONL file."""
+        host = self._play_context.remote_addr
+        port = self._play_context.port or 22
+        safe_host = re.sub(r"[^\w.\-]", "_", host)
+        filename = "%s_%s.jsonl" % (safe_host, port)
+        try:
+            os.makedirs(self._transcript_output_dir, mode=0o700, exist_ok=True)
+            filepath = os.path.join(self._transcript_output_dir, filename)
+            fd = os.open(filepath, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
+            with os.fdopen(fd, "a") as f:
+                for entry in self._transcript_log:
+                    f.write(json.dumps(entry) + "\n")
+            self.queue_message(
+                "log",
+                "Transcript recorded: %d entries written to %s"
+                % (len(self._transcript_log), filepath),
+            )
+        except (IOError, OSError) as exc:
+            self.queue_message(
+                "warning",
+                "Failed to write transcript log to %s: %s" % (self._transcript_output_dir, exc),
+            )
 
     def _read_post_command_prompt_match(self):
         time.sleep(self.get_option("persistent_buffer_read_timeout"))
@@ -1593,6 +1644,15 @@ class Connection(NetworkConnectionBase):
                 strip_prompt,
             )
             response = to_text(response, errors="surrogate_then_replace")
+
+            if self._transcript_recording:
+                self._transcript_log.append(
+                    {
+                        "command": to_text(command, errors="surrogate_then_replace"),
+                        "response": response,
+                        "timestamp": time.time(),
+                    }
+                )
 
             if (not prompt) and (self._single_user_mode):
                 if self._needs_cache_invalidation(command):
