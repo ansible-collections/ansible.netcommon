@@ -19,7 +19,7 @@ short_description: netconf device configuration
 description:
   - Netconf is a network management protocol developed and standardized by the IETF.
     It is documented in RFC 6241.
-  - This module allows the user to send a configuration XML file to a netconf device,
+  - This module allows the user to send a configuration XML file to a netconf devices,
     and detects if there was a configuration change.
 version_added: 1.0.0
 extends_documentation_fragment:
