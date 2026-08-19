@@ -14,9 +14,9 @@ __metaclass__ = type
 DOCUMENTATION = """
 module: net_ping
 author: Jacob McGill (@jmcgill298)
-short_description: Tests reachability using ping from a network device
+short_description: Tests reachability using ICMP ping from a network device
 description:
-- Tests reachability using ping from network device to a remote destination.
+- Tests reachability using ICMP ping from network device to a remote destination.
 version_added: 1.0.0
 extends_documentation_fragment:
 - ansible.netcommon.network_agnostic
