@@ -8,8 +8,8 @@ This is the ntc_templates parser for use with the cli_parse module and action pl
 https://github.com/networktocode/ntc-templates
 
 """
-from __future__ import absolute_import, division, print_function
 
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -44,7 +44,6 @@ EXAMPLES = r"""
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
-
 
 try:
     from ntc_templates.parse import parse_output

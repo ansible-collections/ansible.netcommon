@@ -11,7 +11,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 import json
@@ -26,7 +25,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.n
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.parsing import Cli
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import to_list
-
 
 NET_TRANSPORT_ARGS = dict(
     host=dict(required=True),
