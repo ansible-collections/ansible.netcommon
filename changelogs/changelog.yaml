@@ -1079,3 +1079,19 @@ releases:
       - 798-libssh-connect-timeout.yaml
       - huge_tree_support.yaml
     release_date: "2026-08-11"
+  8.7.0:
+    changes:
+      bugfixes:
+        - "netconf_rpc - Fix ``output`` returning a ``bytes`` object instead of ``str``
+          when\n  display is set to pretty or xml by passing encoding=\"unicode\"\n
+          \ (https://github.com/ansible-collections/ansible.netcommon/issues/791)."
+      minor_changes:
+        - network_cli - Add transcript recording support to capture command/response
+          pairs exchanged over SSH sessions. Enable via ``ANSIBLE_NETWORK_CLI_RECORD=1``
+          environment variable. Recordings are written as JSONL files to ``/tmp/transcript-recordings/``
+          (configurable via ``ANSIBLE_NETWORK_CLI_RECORD_PATH``). Useful for generating
+          offline test fixtures for CISSHGO-based integration testing.
+    fragments:
+      - fix_netconf_rpc_with_print_xml_pretty_return_bytes_object_instead_of_string.yaml
+      - transcript-recording-network-cli.yaml
+    release_date: "2026-09-16"
