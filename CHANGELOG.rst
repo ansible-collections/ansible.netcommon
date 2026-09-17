@@ -4,6 +4,21 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.7.0
+======
+
+Minor Changes
+-------------
+
+- network_cli - Add transcript recording support to capture command/response pairs exchanged over SSH sessions. Enable via ``ANSIBLE_NETWORK_CLI_RECORD=1`` environment variable. Recordings are written as JSONL files to ``/tmp/transcript-recordings/`` (configurable via ``ANSIBLE_NETWORK_CLI_RECORD_PATH``). Useful for generating offline test fixtures for CISSHGO-based integration testing.
+
+Bugfixes
+--------
+
+- netconf_rpc - Fix ``output`` returning a ``bytes`` object instead of ``str`` when
+    display is set to pretty or xml by passing encoding="unicode"
+    (https://github.com/ansible-collections/ansible.netcommon/issues/791).
+
 v8.6.2
 ======
 
