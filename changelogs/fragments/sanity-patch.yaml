@@ -1,0 +1,3 @@
+---
+trivial:
+  - Update ignore-* fies in tests/sanity to remove the compat vendor python script
