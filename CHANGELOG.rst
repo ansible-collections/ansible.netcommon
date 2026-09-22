@@ -4,6 +4,14 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.7.1
+======
+
+Release Summary
+---------------
+
+Releasing 8.7.0 with sanity tests ignore files fix.
+
 v8.7.0
 ======
 
