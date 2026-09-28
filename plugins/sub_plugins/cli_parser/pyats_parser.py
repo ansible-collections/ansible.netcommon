@@ -8,8 +8,8 @@ This is the pyats parser for use with the cli_parse module and action plugin.
 https://developer.cisco.com/docs/pyats/#!parsing-device-output
 
 """
-from __future__ import absolute_import, division, print_function
 
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -44,7 +44,6 @@ EXAMPLES = r"""
 from ansible.module_utils.basic import missing_required_lib
 from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser import CliParserBase
-
 
 try:
     from genie.conf.base import Device
