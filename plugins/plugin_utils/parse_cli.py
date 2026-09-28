@@ -8,8 +8,8 @@
 """
 The parse_xml plugin code
 """
-from __future__ import absolute_import, division, print_function
 
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -24,7 +24,6 @@ from ansible.module_utils.common.text.converters import to_native
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.utils import (
     JinjaTemplate,
 )
-
 
 try:
     import yaml
