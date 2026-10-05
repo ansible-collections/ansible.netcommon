@@ -4,7 +4,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 from unittest.mock import patch
@@ -17,7 +16,6 @@ from ansible_collections.ansible.netcommon.tests.unit.modules.utils import (
     ModuleTestCase,
     set_module_args,
 )
-
 
 SAMPLE_RPC_REPLY = b'<rpc-reply xmlns="urn:ietf:params:xml:ns:netconf:base:1.0"><data/></rpc-reply>'
 
