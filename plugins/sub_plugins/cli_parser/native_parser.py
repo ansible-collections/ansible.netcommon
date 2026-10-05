@@ -8,8 +8,8 @@ This is the native parser for use with the cli_parse module and action plugin.
 The parser functionality used by the network resource modules is leveraged here.
 
 """
-from __future__ import absolute_import, division, print_function
 
+from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
@@ -48,7 +48,6 @@ from ansible_collections.ansible.utils.plugins.plugin_utils.base.cli_parser impo
 from ansible_collections.ansible.netcommon.plugins.module_utils.cli_parser.cli_parsertemplate import (
     CliParserTemplate,
 )
-
 
 try:
     import yaml
