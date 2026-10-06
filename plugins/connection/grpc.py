@@ -76,6 +76,7 @@ options:
     vars:
       - name: ansible_password
       - name: ansible_ssh_pass
+    secret: true
   private_key_file:
     description:
       - The PEM encoded private key file used to authenticate to the

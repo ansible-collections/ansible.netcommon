@@ -92,6 +92,7 @@ options:
     - name: ansible_ssh_pass
     - name: ansible_ssh_password
     - name: ansible_netconf_password
+    secret: true
   private_key_file:
     description:
     - The private SSH key or certificate file used to authenticate to the remote device
