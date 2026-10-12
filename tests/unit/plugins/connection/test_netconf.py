@@ -6,7 +6,6 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 from unittest.mock import MagicMock, PropertyMock, patch
@@ -14,7 +13,6 @@ from unittest.mock import MagicMock, PropertyMock, patch
 import pytest
 
 from ansible.playbook.play_context import PlayContext
-
 
 pytest.importorskip("ncclient")
 
