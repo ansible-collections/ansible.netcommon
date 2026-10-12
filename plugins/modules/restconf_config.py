@@ -5,7 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 
@@ -131,7 +130,6 @@ from ansible_collections.ansible.netcommon.plugins.module_utils.network.common.u
     warn_and_exit,
 )
 from ansible_collections.ansible.netcommon.plugins.module_utils.network.restconf import restconf
-
 
 string_types = (str,)
 

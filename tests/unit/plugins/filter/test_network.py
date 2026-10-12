@@ -16,7 +16,6 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 import os
@@ -29,7 +28,6 @@ from ansible_collections.ansible.netcommon.plugins.plugin_utils.parse_xml import
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.type5_pw import type5_pw
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_expander import vlan_expander
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.vlan_parser import vlan_parser
-
 
 fixture_path = os.path.join(os.path.dirname(__file__), "fixtures", "network")
 
