@@ -1,0 +1,2 @@
+bugfixes:
+  - network_cli - with ``ssh_type=libssh``, fail immediately with a clear error when the remote device closes the channel while a command is still running (for example due to a device-side exec or idle timeout), instead of polling the closed channel until ``persistent_command_timeout`` expires and reporting a misleading command timeout.
