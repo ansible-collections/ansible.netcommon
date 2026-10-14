@@ -82,7 +82,6 @@ options:
     - When specified, I(password) is ignored.
     vars:
     - name: ansible_httpapi_session_key
-    secret: true
   ca_path:
     description:
       - Path to CA cert bundle to use.
