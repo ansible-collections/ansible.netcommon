@@ -8,13 +8,19 @@
 The Ansible ``ansible.netcommon`` collection includes common content to help automate the management of network, security, and cloud devices.
 This includes connection plugins, such as ``network_cli``, ``httpapi``, and ``netconf``.
 
+## Requirements
+
+- Python 3.10 or later.
+- The `ansible.utils` collection, version 3.0.0 or later.
+- The Python packages `ansible-pylibssh` (version 1.4.0 or later), `jxmlease`, `ncclient`, `paramiko`, `xmltodict`, `grpcio`, and `protobuf`, listed in the collection's [requirements.txt](https://github.com/ansible-collections/ansible.netcommon/blob/main/requirements.txt).
+
+`ansible-pylibssh` provides the libssh backend for `ansible.netcommon.network_cli`. The Paramiko backend is deprecated; use the libssh backend for new deployments. See the [`network_cli` SSH type documentation](https://docs.ansible.com/projects/ansible/latest/collections/ansible/netcommon/network_cli_connection.html#parameter-ssh_type).
+
 ## Support
 
-As Red Hat Ansible Certified Content, this collection is entitled to support through the Ansible Automation Platform (AAP) using the **Create issue** button on the top right corner. If a support case cannot be opened with Red Hat and the collection has been obtained either from Galaxy or GitHub, there may be community help available on the [Ansible Forum](https://forum.ansible.com/).
+This collection is maintained by the Red Hat Ansible Network team. As Red Hat Ansible [Certified Content](https://catalog.redhat.com/software/search?target_platforms=Red%20Hat%20Ansible%20Automation%20Platform), it is entitled to [support](https://access.redhat.com/support/) through [Ansible Automation Platform](https://www.redhat.com/en/technologies/management/ansible) (AAP). Red Hat customers can open a support case by selecting the **Create issue** button in the top right corner of this collection's page in Automation Hub.
 
-Additionally, you can join us on [#network:ansible.com](https://matrix.to/#/#network:ansible.com) room or the [Ansible Forum Network Working Group](https://forum.ansible.com/g/network-wg).
-
-For more information you can check the communication section below.
+If you obtained this collection from [Ansible Galaxy](https://galaxy.ansible.com/ui/) or [GitHub](https://github.com/ansible-collections/ansible.netcommon), community support is available on the [Ansible Forum](https://forum.ansible.com/). You can also join the [#network:ansible.com Matrix room](https://matrix.to/#/#network:ansible.com) or the [Ansible Forum Network Working Group](https://forum.ansible.com/g/network-wg).
 
 ## Communication
 
@@ -110,17 +116,53 @@ Name | Description
 
 ## Installing this collection
 
-You can install the ``ansible.netcommon`` collection with the Ansible Galaxy CLI:
+Install the certified ``ansible.netcommon`` collection from Red Hat Ansible Automation Hub. Access to certified content requires a Red Hat account with an active Ansible Automation Platform subscription and an Automation Hub offline token. In the Red Hat Hybrid Cloud Console, go to **Automation Hub > Connect Hub**, load the offline token, and store it securely. See the [Red Hat token management instructions](https://docs.redhat.com/en/documentation/red_hat_ansible_automation_platform/2.6/secure-token_management_hub).
 
-    ansible-galaxy collection install ansible.netcommon
+Configure your `ansible.cfg` to use the hosted Automation Hub service:
 
-You can also include it in a `requirements.yml` file and install it with `ansible-galaxy collection install -r requirements.yml`, using the format:
+```ini
+[galaxy]
+server_list = automation_hub
+
+[galaxy_server.automation_hub]
+url = https://console.redhat.com/api/automation-hub/content/published/
+auth_url = https://sso.redhat.com/auth/realms/redhat-external/protocol/openid-connect/token
+token = <your_automation_hub_token>
+```
+
+Keep the token secret and out of source control. Then install the collection:
+
+```bash
+ansible-galaxy collection install ansible.netcommon --server automation_hub
+```
+
+For a `requirements.yml` file, identify Automation Hub as the source:
+
+```yaml
+---
+collections:
+  - name: ansible.netcommon
+    source: automation_hub
+```
+
+Install the requirements with `ansible-galaxy collection install -r requirements.yml`.
+
+### Installing from Ansible Galaxy for community use
+
+For community use outside Red Hat supported environments, install the collection from Ansible Galaxy:
+
+```bash
+ansible-galaxy collection install ansible.netcommon
+```
+
+You can also add it to a `requirements.yml` file:
 
 ```yaml
 ---
 collections:
   - name: ansible.netcommon
 ```
+
 ## Using this collection
 
 The most common use case for this collection is to include it as a dependency in a network device-specific collection. Use the Fully Qualified Collection Name (FQCN) when referring to content in this collection (for example, `ansible.netcommon.network_cli`).
