@@ -29,6 +29,7 @@ options:
     env:
     - name: ANSIBLE_BECOME_PASS
     - name: ANSIBLE_ENABLE_PASS
+    secret: true
 notes:
 - enable is really implemented in the network connection handler and as such can only
   be used with network connections.
