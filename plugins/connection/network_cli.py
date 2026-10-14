@@ -1503,6 +1503,18 @@ class Connection(NetworkConnectionBase):
                     break
 
             if not data:
+                # read_bulk_response() returns b"" both when no data is pending yet and
+                # after the remote side has closed the channel (EOF or CLOSE), so check
+                # is_eof explicitly. Without this, the loop keeps polling a closed
+                # channel until persistent_command_timeout expires.
+                if getattr(self._ssh_shell, "is_eof", False) is True:
+                    self._log_messages("response received before channel close: %s" % resp)
+                    raise AnsibleConnectionFailure(
+                        "Connection closed by the remote device while waiting for the "
+                        "command prompt (command: %s). This can be caused by a session "
+                        "or idle timeout on the device."
+                        % to_text(command or b"", errors="surrogate_then_replace").strip()
+                    )
                 continue
             self._last_recv_window = self._strip(data)
             resp += self._last_recv_window

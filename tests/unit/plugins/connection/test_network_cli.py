@@ -202,6 +202,53 @@ def test_network_cli_send(conn, response, ssh_type):
     assert to_text(conn._command_response) == "command response"
 
 
+def test_network_cli_send_libssh_remote_close(conn):
+    """A channel closed by the device must fail fast, not wait for command_timeout."""
+    conn.set_options(
+        direct={
+            "ssh_type": "libssh",
+            "terminal_stdout_re": [{"pattern": "device#"}],
+        }
+    )
+    mock__shell = MagicMock()
+    conn._terminal = MagicMock()
+    conn._ssh_shell = mock__shell
+    conn._connected = True
+
+    # Partial output, then the device closes the channel before the prompt returns.
+    # Afterwards pylibssh keeps returning b"" and reports is_eof.
+    mock__shell.read_bulk_response.side_effect = [b"command\npartial output", b""]
+    mock__shell.is_eof = True
+
+    with pytest.raises(AnsibleConnectionFailure, match="closed by the remote device"):
+        conn.send(b"command")
+    assert mock__shell.read_bulk_response.call_count == 2
+
+
+def test_network_cli_send_libssh_empty_read_without_eof(conn):
+    """An empty read on an open channel means no data yet, so keep reading."""
+    conn.set_options(
+        direct={
+            "ssh_type": "libssh",
+            "terminal_stdout_re": [{"pattern": "device#"}],
+        }
+    )
+    mock__shell = MagicMock()
+    conn._terminal = MagicMock()
+    conn._ssh_shell = mock__shell
+    conn._connected = True
+
+    mock__shell.read_bulk_response.side_effect = [
+        b"",
+        b"device#command\ncommand response\n\ndevice#",
+        None,
+    ]
+    mock__shell.is_eof = False
+
+    conn.send(b"command")
+    assert to_text(conn._command_response) == "command response"
+
+
 def test_network_cli_close(conn):
     conn._terminal = MagicMock()
     conn._ssh_shell = MagicMock()
