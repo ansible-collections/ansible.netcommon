@@ -62,7 +62,7 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
                 self._module.fail_json(
                     msg="value of running_config parameter must not be empty for state parsed"
                 )
-        return deepcopy(self.get_facts(self._empty_fact_val, data=data))
+            return deepcopy(self.get_facts(self._empty_fact_val, data=data))
 
     @property
     def result(self):
@@ -83,7 +83,7 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
             result["before"] = self.before
             if self.commands:
                 result["after"] = self.get_facts(self._empty_fact_val)
-        result["changed"] = self.changed
+            result["changed"] = self.changed
         return result
 
     def addcmd(self, data, tmplt, negate=False):
@@ -118,6 +118,17 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
             return empty_val
         return facts
 
+    def _dict_set_negate(self, parser, want_value):
+        """Return whether addcmd should negate for a dict with a set key.
+
+        Callable setval templates may render negation themselves (for example
+        NXOS dampening); only use compare-level negation for static setval.
+        """
+        if want_value.get("set") is False:
+            setval = self._tmplt.get_parser(parser).get("setval")
+            return not callable(setval)
+        return False
+
     def compare(self, parsers, want=None, have=None):
         """Run through all the parsers and compare
         the want and have dicts
@@ -141,6 +152,10 @@ class ResourceModule(RmEngineBase):  # pylint: disable=R0902
                     if inw is False and inh is None:
                         continue
                     self.addcmd(want, parser, not inw)
+                elif isinstance(inw, dict) and "set" in inw:
+                    if inw.get("set") is False and (not inh or not inh.get("set")):
+                        continue
+                    self.addcmd(want, parser, self._dict_set_negate(parser, inw))
                 else:
                     self.addcmd(want, parser, False)
             elif inw is None and inh is not None:
