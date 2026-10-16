@@ -208,7 +208,9 @@ def _to_native_text(value):
     AnsibleUnsafeText.encode() returns AnsibleUnsafeBytes. ssh-python rejects
     that subclass because its Cython bindings require an exact bytes object.
     """
-    if not isinstance(value, str):
+    # str covers AnsibleUnsafeText. bytes covers AnsibleUnsafeBytes, which
+    # encode() returns and which ssh-python also rejects.
+    if not isinstance(value, (str, bytes)):
         return value
     encoded = bytes(to_bytes(value, errors="surrogate_or_strict"))
     return to_text(encoded, errors="surrogate_or_strict")
