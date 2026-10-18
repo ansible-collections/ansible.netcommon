@@ -62,6 +62,7 @@ options:
     - name: ANSIBLE_REMOTE_USER
     vars:
     - name: ansible_user
+    - name: ansible_httpapi_user
   password:
     description:
     - Configures the user password used to authenticate to the remote device when
