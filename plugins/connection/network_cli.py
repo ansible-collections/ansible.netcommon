@@ -1394,12 +1394,24 @@ class Connection(NetworkConnectionBase):
 
     def _raise_libssh_channel_closed(self, command, resp):
         self._log_messages("response received before channel close: %s" % resp)
-        raise AnsibleConnectionFailure(
-            "Connection closed by the remote device while waiting for the "
-            "command prompt (command: %s). This can be caused by a session "
-            "or idle timeout on the device."
-            % to_text(command or b"", errors="surrogate_then_replace").strip()
+        if command:
+            waiting_for = "the command prompt (command: %s)" % (
+                to_text(command, errors="surrogate_then_replace").strip()
+            )
+        else:
+            waiting_for = "the initial prompt after login"
+        msg = (
+            "Connection closed by the remote device while waiting for %s. This can "
+            "be caused by a session or idle timeout on the device." % waiting_for
         )
+        # The tail of the output usually explains why the device closed the
+        # session (for example a final summary line), so include it in the error.
+        last_output = " ".join(to_text(resp, errors="surrogate_then_replace").split())
+        if last_output:
+            if len(last_output) > 200:
+                last_output = "..." + last_output[-200:]
+            msg += " Last output received: '%s'" % last_output
+        raise AnsibleConnectionFailure(msg)
 
     def receive_paramiko(
         self,

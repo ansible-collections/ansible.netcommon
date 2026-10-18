@@ -220,9 +220,11 @@ def test_network_cli_send_libssh_remote_close(conn):
     mock__shell.read_bulk_response.side_effect = [b"command\npartial output", b""]
     mock__shell.is_eof = True
 
-    with pytest.raises(AnsibleConnectionFailure, match="closed by the remote device"):
+    with pytest.raises(AnsibleConnectionFailure, match="closed by the remote device") as exc:
         conn.send(b"command")
     assert mock__shell.read_bulk_response.call_count == 2
+    assert "the command prompt (command: command)" in str(exc.value)
+    assert "Last output received: 'command partial output'" in str(exc.value)
 
 
 def test_network_cli_send_libssh_empty_read_without_eof(conn):
@@ -304,6 +306,33 @@ def test_network_cli_send_libssh_oserror_after_prompt_without_eof(conn):
 
     with pytest.raises(OSError, match="socket error"):
         conn.send(b"command")
+
+
+def test_network_cli_receive_libssh_remote_close_before_initial_prompt(conn):
+    """A device closing the session right after login reports the login phase."""
+    mock__shell = _libssh_conn(conn)
+    mock__shell.read_bulk_response.side_effect = [b"Login banner\n", b""]
+    mock__shell.is_eof = True
+
+    with pytest.raises(AnsibleConnectionFailure) as exc:
+        conn.receive()
+    assert "waiting for the initial prompt after login" in str(exc.value)
+    assert "(command:" not in str(exc.value)
+    assert "Last output received: 'Login banner'" in str(exc.value)
+
+
+def test_network_cli_send_libssh_remote_close_truncates_last_output(conn):
+    """Only the tail of a long partial response is included in the error."""
+    mock__shell = _libssh_conn(conn)
+    mock__shell.read_bulk_response.side_effect = [b"command\n" + b"x" * 300 + b" end", b""]
+    mock__shell.is_eof = True
+
+    with pytest.raises(AnsibleConnectionFailure) as exc:
+        conn.send(b"command")
+    tail = str(exc.value).split("Last output received: ")[1]
+    assert tail.startswith("'...")
+    assert tail.endswith(" end'")
+    assert len(tail) == len("'...'") + 200
 
 
 def test_network_cli_close(conn):
