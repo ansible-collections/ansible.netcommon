@@ -1,0 +1,9 @@
+trivial:
+  - Remove ``pytest-ansible`` from the test requirements.
+  - >-
+    Remove ``unit-source`` CI workflow. The original
+    `ansible-network unit_source.yml workflow passed
+    ``--ansible-host-pattern localhost``, an option provided by
+    ``pytest-ansible``. The tradeoff is dropping the original job's separate
+    Ansible/Python matrix and explicit install of ``ansible.utils`` from
+    GitHub ``main``.

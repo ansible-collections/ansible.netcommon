@@ -26,11 +26,6 @@ jobs:
     uses: ansible/ansible-content-actions/.github/workflows/sanity.yaml@main
   unit-galaxy:
     uses: ansible/ansible-content-actions/.github/workflows/unit.yaml@main
-  unit-source:
-    uses: ansible-network/github_actions/.github/workflows/unit_source.yml@main
-    with:
-      collection_pre_install: >-
-        git+https://github.com/ansible-collections/ansible.utils.git
 
   report-status:
     if: ${{ always() && github.event_name == 'schedule' }}
@@ -40,7 +35,6 @@ jobs:
       - sanity
       - unit-galaxy
       - ansible-lint
-      - unit-source
     uses: ansible/ansible-content-actions/.github/workflows/upload_upstream_results.yaml@main
     with:
       job_context: ${{ toJSON(needs) }}
@@ -57,7 +51,6 @@ jobs:
       - build-import
       - sanity
       - unit-galaxy
-      - unit-source
       - ansible-lint
       - report-status
     runs-on: ubuntu-latest
@@ -69,6 +62,5 @@ jobs:
           '${{ needs.sanity.result }}',
           '${{ needs.unit-galaxy.result }}',
           '${{ needs.ansible-lint.result }}',
-          '${{ needs.unit-source.result }}',
           '${{ needs.report-status.result }}'
           ])"
