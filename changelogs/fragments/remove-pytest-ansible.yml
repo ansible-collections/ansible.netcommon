@@ -1,0 +1,2 @@
+trivial:
+  - Remove ``pytest-ansible`` from the test requirements.
