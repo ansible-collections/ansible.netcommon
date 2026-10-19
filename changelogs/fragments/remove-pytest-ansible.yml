@@ -1,12 +1,13 @@
 trivial:
   - Remove ``pytest-ansible`` from the test requirements.
   - >-
-    Remove the redundant ``unit-source`` job, which ran the same tox-ansible
-    unit workflow as ``unit-galaxy``. The legacy `ansible-network
-    unit_source.yml command
+    Remove ``unit-source`` because, after switching it to tox-ansible, it ran
+    the same reusable workflow as ``unit-galaxy``. The original
+    `ansible-network unit_source.yml workflow
     <https://github.com/ansible-network/github_actions/blob/main/.github/workflows/unit_source.yml#L970>`_
     passed ``--ansible-host-pattern localhost``, an option provided by
     ``pytest-ansible``. Keeping ``unit-galaxy`` avoids duplicate CI work and
-    the legacy pytest-ansible coupling; the tradeoff is dropping the legacy
-    job's separate matrix and explicit install of ``ansible.utils`` from
+    preserves tox-based tests of the PR source with its declared Galaxy
+    dependencies. The tradeoff is dropping the original job's separate
+    Ansible/Python matrix and explicit install of ``ansible.utils`` from
     GitHub ``main``.
