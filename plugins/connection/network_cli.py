@@ -961,10 +961,8 @@ class Connection(NetworkConnectionBase):
         # Transcript recording for CISSHGO fixture generation.
         # Enable via ANSIBLE_NETWORK_CLI_RECORD=1 to capture every
         # command/response pair exchanged over the SSH channel.
-        # NOTE: Log accumulates in memory for the connection lifetime and
-        # flushes to disk on close(). Each entry is ~200-600 bytes; a
-        # 10,000-command playbook uses ~6MB. For very long-running sessions,
-        # consider splitting into shorter plays.
+        # Each response is flushed to disk immediately; close() flushes any
+        # remaining entries.
         self._transcript_recording = os.environ.get(
             "ANSIBLE_NETWORK_CLI_RECORD", ""
         ).strip().lower() in ("1", "true", "yes")
@@ -1356,17 +1354,18 @@ class Connection(NetworkConnectionBase):
         port = self._play_context.port or 22
         safe_host = re.sub(r"[^\w.\-]", "_", host)
         filename = "%s_%s.jsonl" % (safe_host, port)
+        entries = list(self._transcript_log)
         try:
             os.makedirs(self._transcript_output_dir, mode=0o700, exist_ok=True)
             filepath = os.path.join(self._transcript_output_dir, filename)
             fd = os.open(filepath, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
             with os.fdopen(fd, "a") as f:
-                for entry in self._transcript_log:
+                for entry in entries:
                     f.write(json.dumps(entry) + "\n")
+            del self._transcript_log[: len(entries)]
             self.queue_message(
                 "log",
-                "Transcript recorded: %d entries written to %s"
-                % (len(self._transcript_log), filepath),
+                "Transcript recorded: %d entries written to %s" % (len(entries), filepath),
             )
         except (IOError, OSError) as exc:
             self.queue_message(
@@ -1647,13 +1646,8 @@ class Connection(NetworkConnectionBase):
             response = to_text(response, errors="surrogate_then_replace")
 
             if self._transcript_recording:
-                self._transcript_log.append(
-                    {
-                        "command": to_text(command, errors="surrogate_then_replace"),
-                        "response": response,
-                        "timestamp": time.time(),
-                    }
-                )
+                self._record_transcript_entry(command, response)
+                self._flush_transcript_log()
 
             if (not prompt) and (self._single_user_mode):
                 if self._needs_cache_invalidation(command):
@@ -1673,6 +1667,19 @@ class Connection(NetworkConnectionBase):
                 "timeout value %s seconds reached while trying to send command: %s"
                 % (self._ssh_shell.gettimeout(), command.strip())
             )
+
+    def _record_transcript_entry(self, command, response):
+        """Append a command/response pair when transcript recording is enabled."""
+        if not self._transcript_recording:
+            return
+
+        self._transcript_log.append(
+            {
+                "command": to_text(command, errors="surrogate_then_replace"),
+                "response": to_text(response, errors="surrogate_then_replace"),
+                "timestamp": time.time(),
+            }
+        )
 
     def _handle_buffer_read_timeout(self, signum, frame):
         self.queue_message(
