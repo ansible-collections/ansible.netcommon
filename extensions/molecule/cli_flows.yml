@@ -89,3 +89,19 @@ flows:
       parser: nxos/native
       role_path: "{{ playbook_dir }}/../../../tests/integration/targets/cli_parse"
     scenario_id: cli-parse-native-cli-parse-native
+  cli_parse_ntc_templates:
+    task_file: tests/integration/targets/cli_parse/tasks/nxos_ntc_templates.yaml
+    vars:
+      parser: nxos/ntc_templates
+      role_path: "{{ playbook_dir }}/../../../tests/integration/targets/cli_parse"
+    scenario_id: cli-parse-ntc-templates-cli-parse-ntc-templates
+  cli_parse_textfsm:
+    task_file: tests/integration/targets/cli_parse/tasks/nxos_textfsm.yaml
+    vars:
+      role_path: "{{ playbook_dir }}/../../../tests/integration/targets/cli_parse"
+    scenario_id: cli-parse-textfsm-cli-parse-textfsm
+  nxos_config_src:
+    task_file: tests/integration/targets/cli_tests/tasks/nxos_template_file.yaml
+    vars:
+      role_path: "{{ playbook_dir }}/../../../tests/integration/targets/cli_tests"
+    scenario_id: nxos-config-src-nxos-config-src

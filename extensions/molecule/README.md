@@ -1,91 +1,87 @@
-# Molecule coverage for network CLI consumers
+# Molecule scenarios for `network_cli` consumers
 
-This directory contains independent Molecule scenarios for `ansible.netcommon`
-modules that send commands through `ansible.netcommon.network_cli`. The tests
-run against NX-OS-shaped CISSHGO transcript fixtures. They exercise these
-consumer flows over `network_cli`; they are not a vendor-platform coverage
-matrix and do not require a live network device.
+These scenarios exercise `ansible.netcommon` modules as they are consumed by
+collections through `ansible.netcommon.network_cli`. Each scenario has its own
+Molecule configuration, inventory, converge play, and cisshgo transcript
+fixture. They run without a live device and do not model vendor resource-module
+states.
 
 ## Scenarios
 
-Each flow has its own scenario directory, `molecule.yml`, `converge.yml`, and
-collection requirements:
+| Scenario | Coverage |
+| --- | --- |
+| `cli_command` | Sends `show version` with `ansible.netcommon.cli_command` and checks the response. |
+| `cli_config` | Applies hostname, feature, and interface configuration with `ansible.netcommon.cli_config`, then removes the temporary interface. |
+| `cli_backup` | Uses `ansible.netcommon.cli_backup` and checks that its controller-side backup file is non-empty. |
+| `cli_restore` | Restores a staged configuration with `ansible.netcommon.cli_restore`. |
+| `net_ping` | Calls `ansible.netcommon.net_ping` and checks that packets are received. |
+| `network_resource` | Merges an interface description, restores the captured interface configuration, and checks the restored state. |
+| `cli_parse_native` | Parses `show interface` output with the native parser and a checked-in NX-OS template. |
+| `cli_parse_ntc_templates` | Parses `show interface` with NTC Templates from both a command and the same text response, then compares the parsed results. |
+| `cli_parse_textfsm` | Gets `show version` through `cli_command`, parses it with the checked-in TextFSM template, and checks the boot image and platform fields. |
+| `nxos_config_src` | Renders a configuration file on the controller, passes its path to `cisco.nxos.nxos_config` through `network_cli`, and checks that configuration changed. |
 
-- `cli_command`
-- `cli_config`
-- `cli_backup`
-- `cli_restore`
-- `net_ping`
-- `network_resource`
-- `cli_parse_native`
+The parser scenarios exercise distinct integration paths. The NTC Templates
+and TextFSM dependencies are installed by each scenario's `prepare.yml` into
+the active Ansible Python environment. The integration suite's pyATS parser
+case is deferred because it requires a heavier controller dependency. Its XML
+parser case reads a checked-in XML fixture and does not exercise a network CLI
+session.
 
-The converge playbooks call their modules and assert the results explicitly.
-This keeps each consumer independently runnable and lets CI report failures by
-scenario.
+`cli_config` covers inline and templated configuration through the netcommon
+module. `nxos_config_src` is a separate caller flow for the NX-OS config
+module's `src` parameter; its temporary rendered file is removed even if the
+apply or assertion task fails.
 
 ## Fixtures and lifecycle
 
-`cisshgo_fixtures/` contains the CISSHGO version pin, listener and Ansible
-inventories, transcript map, and command/response fixtures. The version is
-pinned in `cisshgo_fixtures/CISSHGO_VERSION` (`v1.0.0`). The shared `create.yml`
-downloads that release when needed and starts the listeners defined by the
-scenario inventory. `destroy.yml` stops the listeners, and `verify.yml` checks
-the CISSHGO log for critical errors.
+`cisshgo_fixtures/` contains the pinned cisshgo version, per-scenario Ansible
+and cisshgo inventories, the transcript map, and reviewed command/response
+transcripts. The shared `create.yml` downloads the pinned cisshgo release and
+starts listeners described by the selected scenario inventory. `destroy.yml`
+stops those listeners, and `verify.yml` checks the cisshgo log.
 
-The `cli_flows.yml` manifest describes the source command flows used when
-recording or regenerating fixtures. Its `task_file` entries are inputs to that
-workflow; the checked-in scenario `converge.yml` files do not import the
-manifest or those integration-test task files.
+`cli_flows.yml` records the integration task files used as input when device
+flows are recorded and fixtures regenerated. Those entries are fixture
+provenance; checked-in `converge.yml` files define their tasks explicitly and
+do not import integration task files at runtime.
 
-To record new device responses, enable recording in the `network_cli`
-connection process with `ANSIBLE_NETWORK_CLI_RECORD=1` and set
-`ANSIBLE_NETWORK_CLI_RECORD_PATH` to a temporary output directory. Keep live
-recording plays and raw JSONL captures outside this collection. Commit the
-reviewed, generated CISSHGO fixtures instead of raw device recordings.
+Each scenario has a `requirements.yml` for the collections it needs. The
+parser scenarios install their Python parser packages during `prepare.yml`.
+No scenario depends on an absolute workstation path or a sibling collection
+checkout. CI installs collection requirements in its runner and exercises
+each scenario with both `libssh` and `paramiko`.
 
-## CI and dependencies
+## Run locally
 
-The collection test workflow discovers all seven scenarios under
-`extensions/molecule` and runs each with both `libssh` and `paramiko`. The
-Molecule job is included in the workflow's `all_green` result. CI installs the
-`cisco.nxos` and `ansible.utils` collections before running the scenarios.
-Individual `requirements.yml` files declare scenario dependencies; for example,
-`cli_parse_native` also needs `ansible.utils`.
-
-The dependency collection is named `cisco.nxos`. The scenario inventories use
-`cisco.nxos.nxos` as the `ansible_network_os` platform plugin name. These are
-different values: the former identifies the collection to install, and the
-latter selects its NX-OS platform plugin.
-
-The Molecule test harness is excluded from the built collection in `galaxy.yml`;
-it is CI and development content, not installed collection runtime content.
-
-## Run a scenario locally
-
-Activate a Python environment containing Ansible, Molecule, and the SSH backend
-dependencies. The `libssh` backend requires `ansible-pylibssh`; the `paramiko`
-backend requires Paramiko. Run the commands from the collection root. Molecule
-detects `extensions/molecule/config.yml` there and locates the scenarios under
-`extensions/molecule`.
-
-Install the scenario's collection requirements first, then run it with each
-backend:
+Run these commands from the collection root with Ansible, Molecule,
+`ansible-pylibssh`, and Paramiko available in the active Python environment.
+Install a scenario's collection requirements before running it:
 
 ```bash
 ansible-galaxy collection install \
-  -r extensions/molecule/cli_command/requirements.yml
-molecule test -s cli_command -- -e ansible_network_cli_ssh_type=libssh
-molecule test -s cli_command -- -e ansible_network_cli_ssh_type=paramiko
+  -r extensions/molecule/cli_parse_ntc_templates/requirements.yml
+molecule test -s cli_parse_ntc_templates -- -e ansible_network_cli_ssh_type=libssh
+molecule test -s cli_parse_ntc_templates -- -e ansible_network_cli_ssh_type=paramiko
 ```
 
-For another scenario, replace `cli_command` in the install path and both
-Molecule commands with its name. The `create.yml` playbook obtains the pinned
-CISSHGO release and starts its listeners as part of the Molecule lifecycle. No
-live device or sibling collection checkout is required.
-
-If Paramiko reports a host-key mismatch for the local CISSHGO listener after a
-previous run, remove only that listener's stale key and retry:
+Replace `cli_parse_ntc_templates` with another scenario name to run that
+scenario. To run the full set with both SSH backends, install each scenario's
+requirements and run:
 
 ```bash
-ssh-keygen -R '[127.0.0.1]:10000'
+for scenario in \
+  cli_command cli_config cli_backup cli_restore net_ping network_resource \
+  cli_parse_native cli_parse_ntc_templates cli_parse_textfsm nxos_config_src; do
+  ansible-galaxy collection install \
+    -r "extensions/molecule/${scenario}/requirements.yml"
+  for backend in libssh paramiko; do
+    molecule test -s "$scenario" \
+      -- -e "ansible_network_cli_ssh_type=$backend" || exit 1
+  done
+done
 ```
+
+Molecule uses `extensions/molecule/config.yml` to locate these scenarios. The
+test runner needs access to the pinned cisshgo release when it is not already
+installed; it does not need access to a network device.

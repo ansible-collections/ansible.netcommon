@@ -1,4 +1,3 @@
----
 platforms:
   cli_command_nxos:
     vendor: cisco
@@ -143,6 +142,35 @@ platforms:
     context_hierarchy: *id002
     end_context: "#"
     context_prefix_lines: *id003
+  nxos_config_src_nxos:
+    vendor: cisco
+    hostname: generic_host
+    username: admin
+    password: admin
+    command_transcripts:
+      terminal length 0: transcripts/common/generic_empty_return.txt
+      terminal width 0: transcripts/common/generic_empty_return.txt
+      terminal width 511: transcripts/common/generic_empty_return.txt
+      terminal width 512: transcripts/common/generic_empty_return.txt
+      show privilege: transcripts/common/show_privilege.txt
+      show version: transcripts/common/show_version.txt
+      show inventory: transcripts/common/generic_empty_return.txt
+      enable: transcripts/common/generic_empty_return.txt
+      write memory: transcripts/common/generic_empty_return.txt
+    context_search:
+      configure terminal: (config)#
+      interface: (config-if)#
+      enable: "#"
+      base: "#"
+    context_hierarchy:
+      (config-if)#: (config)#
+      (config)#: "#"
+      "#": ">"
+    end_context: "#"
+    context_prefix_lines:
+      "#": " "
+      (config)#: " "
+      (config-if)#: " "
 scenarios:
   cli-command-cli-command:
     platform: cli_command_nxos
@@ -239,3 +267,26 @@ scenarios:
         transcript: transcripts/cli_parse_native/cli_parse_native/before_show_interface.txt
       - command: sho int
         transcript: transcripts/cli_parse_native/cli_parse_native/before_show_interface_again.txt
+  cli-parse-ntc-templates-cli-parse-ntc-templates:
+    platform: cli_parse_native_nxos
+    sequence:
+      - command: show interface
+        transcript: transcripts/cli_parse_ntc_templates/cli_parse_ntc_templates/before_show_interface.txt
+  cli-parse-textfsm-cli-parse-textfsm:
+    platform: cli_parse_native_nxos
+    sequence: []
+  nxos-config-src-nxos-config-src:
+    platform: nxos_config_src_nxos
+    sequence:
+      - command: show running-config
+        transcript: transcripts/nxos_config_src/nxos_config_src/before_show_running_config.txt
+      - command: configure terminal
+        transcript: transcripts/nxos_config_src/nxos_config_src/configure_terminal.txt
+      - command: interface Loopback998
+        transcript: transcripts/common/generic_empty_return.txt
+      - command: description generic_host is the best
+        transcript: transcripts/common/generic_empty_return.txt
+      - command: shutdown
+        transcript: transcripts/common/generic_empty_return.txt
+      - command: end
+        transcript: transcripts/common/generic_empty_return.txt
