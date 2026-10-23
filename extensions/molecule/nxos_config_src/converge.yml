@@ -1,0 +1,41 @@
+---
+- name: Apply NX-OS configuration from a rendered source file
+  hosts: nxos_config_src_nxos_config_src
+  gather_facts: false
+  vars:
+    config_src_description: generic_host is the best
+  tasks:
+    - name: Create a temporary source file path on the controller
+      ansible.builtin.tempfile:
+        state: file
+        prefix: netcommon_nxos_config_
+        suffix: .cfg
+      delegate_to: localhost
+      register: rendered_config_file
+
+    - name: Render the configuration template on the controller
+      ansible.builtin.template:
+        src: "{{ playbook_dir }}/templates/config_src_recommended.j2"
+        dest: "{{ rendered_config_file.path }}"
+        mode: "0600"
+      delegate_to: localhost
+
+    - name: Apply configuration from the rendered source file
+      block:
+        - name: Apply the source file with NX-OS config
+          cisco.nxos.nxos_config:
+            src: "{{ rendered_config_file.path }}"
+            match: none
+            save_when: never
+          register: config_result
+
+        - name: Verify the source file changed the device configuration
+          ansible.builtin.assert:
+            that:
+              - config_result.changed
+      always:
+        - name: Remove the temporary source file from the controller
+          ansible.builtin.file:
+            path: "{{ rendered_config_file.path }}"
+            state: absent
+          delegate_to: localhost

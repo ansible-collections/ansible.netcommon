@@ -1,0 +1,30 @@
+---
+driver:
+  name: default
+platforms:
+  - name: cisshgo-cli_parse_ntc_templates-cli_parse_ntc_templates
+provisioner:
+  name: ansible
+  inventory:
+    links:
+      hosts: ../cisshgo_fixtures/inventories/ansible/cli_parse_ntc_templates.yaml
+  env:
+    ANSIBLE_FORCE_COLOR: "true"
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+    ANSIBLE_DEPRECATION_WARNINGS: "false"
+  playbooks:
+    create: ../_shared/create.yml
+    prepare: prepare.yml
+    converge: converge.yml
+    verify: ../_shared/verify.yml
+    destroy: ../_shared/destroy.yml
+scenario:
+  test_sequence:
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+prerun: false
+verifier:
+  name: ansible

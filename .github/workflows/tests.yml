@@ -32,6 +32,16 @@ jobs:
       collection_pre_install: >-
         git+https://github.com/ansible-collections/ansible.utils.git
 
+  molecule:
+    needs: [build-import]
+    uses: ansible-network/github_actions/.github/workflows/molecule.yml@main
+    with:
+      molecule_scenarios_path: extensions/molecule
+      collection_pre_install: >-
+        git+https://github.com/ansible-collections/cisco.nxos.git
+        git+https://github.com/ansible-collections/ansible.utils.git
+      ssh_backends: '["libssh", "paramiko"]'
+
   report-status:
     if: ${{ always() && github.event_name == 'schedule' }}
     needs:
@@ -41,6 +51,7 @@ jobs:
       - unit-galaxy
       - ansible-lint
       - unit-source
+      - molecule
     uses: ansible/ansible-content-actions/.github/workflows/upload_upstream_results.yaml@main
     with:
       job_context: ${{ toJSON(needs) }}
@@ -59,6 +70,7 @@ jobs:
       - unit-galaxy
       - unit-source
       - ansible-lint
+      - molecule
       - report-status
     runs-on: ubuntu-latest
     steps:
@@ -70,5 +82,6 @@ jobs:
           '${{ needs.unit-galaxy.result }}',
           '${{ needs.ansible-lint.result }}',
           '${{ needs.unit-source.result }}',
+          '${{ needs.molecule.result }}',
           '${{ needs.report-status.result }}'
           ])"

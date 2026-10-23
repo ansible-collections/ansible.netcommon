@@ -1,0 +1,107 @@
+---
+scenario: netcommon_cli
+connection: ansible.netcommon.network_cli
+platform:
+  name: nxos
+  network_os: cisco.nxos.nxos
+  vendor: cisco
+  hostname: cisshgo-nxos
+  username: admin
+  password: admin
+  context_search:
+    configure terminal: (config)#
+    interface: (config-if)#
+    enable: "#"
+    base: "#"
+  context_hierarchy:
+    (config-if)#: (config)#
+    (config)#: "#"
+    "#": ">"
+  end_context: "#"
+  context_prefix_lines:
+    "#": " "
+    (config)#: " "
+    (config-if)#: " "
+templates:
+  basic/config_src_recommended.j2: tests/integration/targets/cli_tests/templates/basic/config_src_recommended.j2
+  nxos_show_interface.yaml: tests/integration/targets/cli_parse/templates/nxos_show_interface.yaml
+flows:
+  cli_command:
+    task_file: tests/integration/targets/cli_tests/tasks/nxos_cli_command.yaml
+    scenario_id: cli-command-cli-command
+  cli_config:
+    task_file: tests/integration/targets/cli_tests/tasks/nxos_cli_config.yaml
+    scenario_id: cli-config-cli-config
+  cli_backup:
+    tasks:
+      - name: Back up the device configuration through network_cli
+        ansible.netcommon.cli_backup:
+          filename: netcommon_cli_backup.cfg
+          dir_path: "{{ playbook_dir }}"
+        register: backup_result
+      - name: Check that cli_backup wrote the backup file
+        ansible.builtin.stat:
+          path: "{{ backup_result.backup_path }}"
+        register: backup_file
+        delegate_to: localhost
+      - name: Assert that the cli_backup file is non-empty
+        ansible.builtin.assert:
+          that:
+            - backup_file.stat.exists
+            - backup_file.stat.size > 0
+      - name: Remove the temporary cli_backup file
+        ansible.builtin.file:
+          path: "{{ backup_result.backup_path }}"
+          state: absent
+        delegate_to: localhost
+    scenario_id: cli-backup-cli-backup
+  cli_restore:
+    tasks:
+      - name: Restore the staged full configuration backup
+        ansible.netcommon.cli_restore:
+          filename: netcommon_molecule_baseline_a61556b0.cfg
+          path: "bootflash:"
+        register: restore_result
+      - name: Assert that cli_restore completed
+        ansible.builtin.assert:
+          that:
+            - restore_result is defined
+    scenario_id: cli-restore-cli-restore
+  net_ping:
+    tasks:
+      - name: Ping the approved NX-OS destination
+        ansible.netcommon.net_ping:
+          dest: 192.168.255.77
+          count: 1
+        register: ping_result
+      - name: Assert that net_ping received the packet
+        ansible.builtin.assert:
+          that:
+            - ping_result.packets_rx | int == 1
+            - ping_result.packet_loss | regex_replace("%", "") | int == 0
+    scenario_id: net-ping-net-ping
+  network_resource:
+    task_file: tests/integration/targets/cli_tests/tasks/nxos_any_rm.yaml
+    scenario_id: network-resource-network-resource
+  cli_parse_native:
+    task_file: tests/integration/targets/cli_parse/tasks/nxos_native.yaml
+    vars:
+      parser: nxos/native
+      role_path: "{{ playbook_dir }}/../../../tests/integration/targets/cli_parse"
+    scenario_id: cli-parse-native-cli-parse-native
+  cli_parse_ntc_templates:
+    task_file: tests/integration/targets/cli_parse/tasks/nxos_ntc_templates.yaml
+    vars:
+      parser: nxos/ntc_templates
+      role_path: "{{ playbook_dir }}/../../../tests/integration/targets/cli_parse"
+    scenario_id: cli-parse-ntc-templates-cli-parse-ntc-templates
+  cli_parse_textfsm:
+    task_file: tests/integration/targets/cli_parse/tasks/nxos_textfsm.yaml
+    vars:
+      role_path: "{{ playbook_dir }}/../../../tests/integration/targets/cli_parse"
+    scenario_id: cli-parse-textfsm-cli-parse-textfsm
+  nxos_config_src:
+    task_file: tests/integration/targets/cli_tests/tasks/nxos_template_file.yaml
+    vars:
+      role_path: "{{ playbook_dir }}/../../../tests/integration/targets/cli_tests"
+    scenario_id: nxos-config-src-nxos-config-src

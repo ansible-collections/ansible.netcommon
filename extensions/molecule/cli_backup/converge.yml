@@ -1,0 +1,25 @@
+---
+- name: "Cli_backup CLI flow: cli_backup"
+  hosts: cli_backup_cli_backup
+  gather_facts: false
+  tasks:
+    - name: Back up the device configuration through network_cli
+      ansible.netcommon.cli_backup:
+        filename: netcommon_cli_backup.cfg
+        dir_path: "{{ playbook_dir }}"
+      register: backup_result
+    - name: Check that cli_backup wrote the backup file
+      ansible.builtin.stat:
+        path: "{{ backup_result.backup_path }}"
+      register: backup_file
+      delegate_to: localhost
+    - name: Assert that the cli_backup file is non-empty
+      ansible.builtin.assert:
+        that:
+          - backup_file.stat.exists
+          - backup_file.stat.size > 0
+    - name: Remove the temporary cli_backup file
+      ansible.builtin.file:
+        path: "{{ backup_result.backup_path }}"
+        state: absent
+      delegate_to: localhost

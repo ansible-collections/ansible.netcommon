@@ -1,0 +1,21 @@
+---
+all:
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_network_os: cisco.nxos.nxos
+    ansible_user: admin
+    ansible_password: admin
+    ansible_host: 127.0.0.1
+    ansible_command_timeout: 200
+    ansible_ssh_common_args: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+    ansible_network_cli_ssh_type: libssh
+    ansible_libssh_hostkeys: +ssh-rsa
+    ansible_become: false
+    ansible_network_import_modules: false
+  children:
+    cli_parse_textfsm:
+      children:
+        cli_parse_textfsm_cli_parse_textfsm:
+          hosts:
+            cisshgo-cli_parse_textfsm-cli_parse_textfsm:
+              ansible_port: 10000
