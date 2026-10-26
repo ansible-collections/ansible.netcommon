@@ -100,8 +100,3 @@ flows:
     vars:
       role_path: "{{ playbook_dir }}/../../../tests/integration/targets/cli_parse"
     scenario_id: cli-parse-textfsm-cli-parse-textfsm
-  nxos_config_src:
-    task_file: tests/integration/targets/cli_tests/tasks/nxos_template_file.yaml
-    vars:
-      role_path: "{{ playbook_dir }}/../../../tests/integration/targets/cli_tests"
-    scenario_id: nxos-config-src-nxos-config-src

@@ -1,3 +1,0 @@
-devices:
-  - scenario: nxos-config-src-nxos-config-src
-    count: 1

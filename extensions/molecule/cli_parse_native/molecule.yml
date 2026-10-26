@@ -1,4 +1,9 @@
 ---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: extensions/molecule/cli_parse_native/requirements.yml
+
 driver:
   name: default
 platforms:
@@ -12,6 +17,8 @@ provisioner:
     ANSIBLE_FORCE_COLOR: "true"
     ANSIBLE_HOST_KEY_CHECKING: "false"
     ANSIBLE_DEPRECATION_WARNINGS: "false"
+    ANSIBLE_TERMINAL_PLUGINS: ../cisshgo_fixtures/plugins/terminal
+    ANSIBLE_CLICONF_PLUGINS: ../cisshgo_fixtures/plugins/cliconf
   playbooks:
     create: ../_shared/create.yml
     converge: converge.yml
@@ -19,6 +26,7 @@ provisioner:
     destroy: ../_shared/destroy.yml
 scenario:
   test_sequence:
+    - dependency
     - create
     - converge
     - verify

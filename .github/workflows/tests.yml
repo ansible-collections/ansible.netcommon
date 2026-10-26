@@ -37,9 +37,6 @@ jobs:
     uses: ansible-network/github_actions/.github/workflows/molecule.yml@main
     with:
       molecule_scenarios_path: extensions/molecule
-      collection_pre_install: >-
-        git+https://github.com/ansible-collections/cisco.nxos.git
-        git+https://github.com/ansible-collections/ansible.utils.git
       ssh_backends: '["libssh", "paramiko"]'
 
   report-status:

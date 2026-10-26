@@ -21,12 +21,35 @@
           no interface Loopback998
       register: cli_config_cleanup
 
+    - name: Verify hostname on the device
+      ansible.netcommon.cli_command:
+        command: show running-config | include hostname
+      register: cli_config_hostname_state
+
+    - name: Verify NX-API feature on the device
+      ansible.netcommon.cli_command:
+        command: show running-config | include nxapi
+      register: cli_config_nxapi_state
+
+    - name: Reapply hostname and NX-API configuration
+      ansible.netcommon.cli_config:
+        config: |
+          hostname foo
+          feature nxapi
+      register: cli_config_hostname_feature_idempotent
+
     - name: Verify all cli_config calls completed
       ansible.builtin.assert:
         that:
           - cli_config_hostname_feature is defined
+          - cli_config_hostname_state is defined
+          - cli_config_nxapi_state is defined
+          - cli_config_hostname_feature_idempotent is defined
           - cli_config_interface is defined
           - cli_config_cleanup is defined
           - cli_config_hostname_feature.changed
+          - "'hostname foo' in cli_config_hostname_state.stdout"
+          - "'feature nxapi' in cli_config_nxapi_state.stdout"
+          - not cli_config_hostname_feature_idempotent.changed
           - cli_config_interface.changed
           - cli_config_cleanup.changed

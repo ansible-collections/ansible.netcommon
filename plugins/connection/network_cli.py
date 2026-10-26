@@ -1670,9 +1670,6 @@ class Connection(NetworkConnectionBase):
 
     def _record_transcript_entry(self, command, response):
         """Append a command/response pair when transcript recording is enabled."""
-        if not self._transcript_recording:
-            return
-
         self._transcript_log.append(
             {
                 "command": to_text(command, errors="surrogate_then_replace"),

@@ -18,6 +18,17 @@
         that:
           - backup_file.stat.exists
           - backup_file.stat.size > 0
+    - name: Read the backup file from the controller
+      ansible.builtin.slurp:
+        src: "{{ backup_result.backup_path }}"
+      register: backup_content
+      delegate_to: localhost
+    - name: Assert that the backup contains stable configuration lines
+      ansible.builtin.assert:
+        that:
+          - "'hostname dep-test' in (backup_content.content | b64decode)"
+          - "'feature bgp' in (backup_content.content | b64decode)"
+          - "'interface Ethernet1/1' in (backup_content.content | b64decode)"
     - name: Remove the temporary cli_backup file
       ansible.builtin.file:
         path: "{{ backup_result.backup_path }}"

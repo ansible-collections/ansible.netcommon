@@ -1,4 +1,9 @@
 ---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: extensions/molecule/net_ping/requirements.yml
+
 driver:
   name: default
 platforms:
@@ -19,6 +24,7 @@ provisioner:
     destroy: ../_shared/destroy.yml
 scenario:
   test_sequence:
+    - dependency
     - create
     - converge
     - verify

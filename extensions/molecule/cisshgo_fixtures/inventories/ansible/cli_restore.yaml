@@ -2,7 +2,7 @@
 all:
   vars:
     ansible_connection: ansible.netcommon.network_cli
-    ansible_network_os: cisco.nxos.nxos
+    ansible_network_os: molecule
     ansible_user: admin
     ansible_password: admin
     ansible_host: 127.0.0.1

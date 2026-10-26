@@ -8,6 +8,7 @@
         command: show interface
         parser:
           name: ansible.netcommon.ntc_templates
+          os: cisco_nxos
       register: ntc_templates_command
 
     - name: Parse the same output as text with NTC Templates
@@ -16,6 +17,7 @@
         parser:
           name: ansible.netcommon.ntc_templates
           command: show interface
+          os: cisco_nxos
       register: ntc_templates_text
 
     - name: Verify NTC Templates results

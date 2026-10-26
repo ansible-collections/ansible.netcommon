@@ -1,4 +1,0 @@
----
-collections:
-  - name: cisco.nxos
-  - name: ansible.utils

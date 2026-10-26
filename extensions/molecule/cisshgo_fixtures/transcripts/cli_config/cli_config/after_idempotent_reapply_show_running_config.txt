@@ -1,9 +1,9 @@
 !Command: show running-config
-!Running configuration last done at: Thu Oct 22 20:38:42 2026
-!Time: Thu Oct 22 20:48:27 2026
+!Running configuration last done at: Sun Oct 25 18:40:13 2026
+!Time: Sun Oct 25 18:56:59 2026
 
 version 10.4(2) Bios:version
-hostname generic_host
+hostname foo
 vdc foo id 1
   limit-resource vlan minimum 16 maximum 4094
   limit-resource vrf minimum 2 maximum 4097
@@ -17,16 +17,16 @@ feature interface-vlan
 feature hsrp
 feature dhcp
 
-! redacted sensitive configuration line
+no password strength-check
 ! redacted by network-molecule CLI-flow preprocessing
 ! redacted by network-molecule CLI-flow preprocessing
-! redacted sensitive configuration line
+username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
 ssh key rsa 2048
 ip domain-lookup
 ip name-server 192.168.255.1
 copp profile strict
-! redacted sensitive configuration line
-! redacted sensitive configuration line
+snmp-server user admin network-admin auth md5 483F6A256C39F90527E248E68883A143AEB3 priv aes-128 040E5C4F5DDF0F8BF9699060140A18985124 localizedV2key
+snmp-server user cisco network-admin auth md5 49626B7A636AEE1025BD18EB81ADCC41E9A3 priv aes-128 165A3D2A401DFC615ADE73F09887A94EFCC0 localizedV2key
 rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
 rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
 rmon event 3 log trap public description ERROR(3) owner PMON@ERROR

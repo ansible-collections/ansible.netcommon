@@ -1,6 +1,6 @@
 !Command: show running-config
-!Running configuration last done at: Wed Oct 21 23:38:19 2026
-!Time: Wed Oct 21 23:38:20 2026
+!Running configuration last done at: Thu Oct 22 07:56:14 2026
+!Time: Thu Oct 22 07:56:16 2026
 
 version 10.4(2) Bios:version
 hostname foo
@@ -24,9 +24,9 @@ username cisco passphrase  lifetime 99999 warntime 14 gracetime 3
 ssh key rsa 2048
 ip domain-lookup
 ip name-server 192.168.255.1
-copp profile strict
-snmp-server user admin network-admin auth md5 040F90283AEB9A92CCAF81F5CDA2639FFFCD priv aes-128 006084272498F8CD8F98DE888DEC6899C6D0 localizedV2key
-snmp-server user cisco network-admin auth md5 495336A9A9C95E642E4E27331C80964B2464 priv aes-128 005122F7FA9646642534607B1AB8DF123F76 localizedV2key
+copp profile stric
+snmp-server user admin network-admin auth md5 483F6A256C39F90527E248E68883A143AEB3 priv aes-128 040E5C4F5DDF0F8BF9699060140A18985124 localizedV2key
+snmp-server user cisco network-admin auth md5 49626B7A636AEE1025BD18EB81ADCC41E9A3 priv aes-128 165A3D2A401DFC615ADE73F09887A94EFCC0 localizedV2key
 rmon event 1 log trap public description FATAL(1) owner PMON@FATAL
 rmon event 2 log trap public description CRITICAL(2) owner PMON@CRITICAL
 rmon event 3 log trap public description ERROR(3) owner PMON@ERROR
@@ -47,7 +47,7 @@ route-map abc permit 10
 service dhcp
 ip dhcp relay
 ipv6 dhcp relay
-vrf context management
+vrf context managemen
 
 
 interface Vlan1
@@ -57,7 +57,7 @@ interface Vlan13
 
 interface Ethernet1/1
   description CONNECTION_TO_EXTERNAL_WORLD
-  no switchport
+  no switchpor
   ip address dhcp
   no shutdown
 
@@ -78,7 +78,7 @@ interface Ethernet1/8
 interface Ethernet1/9
 
 interface Ethernet1/10
-  no switchport
+  no switchpor
   ip dhcp relay source-interface port-channel234
 
 interface Ethernet1/11
@@ -190,10 +190,10 @@ interface Ethernet1/63
 interface Ethernet1/64
 
 interface mgmt0
-  vrf member management
+  vrf member managemen
 
 interface loopback998
-  description generic_host is the best
+  description generic_host is the bes
   shutdown
 icam monitor scale
 
