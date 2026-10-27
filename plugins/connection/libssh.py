@@ -677,8 +677,8 @@ class Connection(ConnectionBase):
 
             try:
                 self.sftp.put(
-                    to_bytes(in_path, errors="surrogate_or_strict"),
-                    to_bytes(out_path, errors="surrogate_or_strict"),
+                    to_text(in_path, errors="surrogate_or_strict"),
+                    to_text(out_path, errors="surrogate_or_strict"),
                 )
             except IOError:
                 raise AnsibleError("failed to transfer file to %s" % out_path)
@@ -722,8 +722,8 @@ class Connection(ConnectionBase):
 
         try:
             self.sftp.get(
-                to_bytes(in_path, errors="surrogate_or_strict"),
-                to_bytes(out_path, errors="surrogate_or_strict"),
+                to_text(in_path, errors="surrogate_or_strict"),
+                to_text(out_path, errors="surrogate_or_strict"),
             )
         except IOError:
             raise AnsibleError("failed to transfer file from %s" % in_path)
