@@ -939,28 +939,32 @@ def test_transcript_recording_default_output_dir(monkeypatch):
     assert conn._transcript_output_dir == "/tmp/transcript-recordings"
 
 
-def test_send_appends_to_transcript_log(conn):
-    """When recording is on, send() appends command/response to the log."""
+def test_send_flushes_transcript_log(conn, tmp_path):
+    """A recorded send writes its transcript without waiting for close()."""
     conn._transcript_recording = True
     conn._transcript_log = []
+    conn._transcript_output_dir = str(tmp_path)
+    conn._play_context.remote_addr = "192.168.1.1"
+    conn._play_context.port = 22
     conn._connected = True
     conn._ssh_shell = MagicMock()
     conn._history = []
     conn._single_user_mode = False
 
-    mock_terminal = _make_terminal_mock()
-    conn._terminal = mock_terminal
+    conn._terminal = _make_terminal_mock()
 
-    # Mock receive to return a known response
     with patch.object(conn, "receive", return_value=b"hostname box1\n"):
         with patch.object(conn, "update_cli_prompt_context"):
             conn.send(b"show running-config | section ^hostname")
 
-    assert len(conn._transcript_log) == 1
-    entry = conn._transcript_log[0]
+    outfile = tmp_path / "192.168.1.1_22.jsonl"
+    assert outfile.exists()
+    entries = [json.loads(line) for line in outfile.read_text().splitlines()]
+    assert len(entries) == 1
+    assert conn._transcript_log == []
+    entry = entries[0]
     assert entry["command"] == "show running-config | section ^hostname"
     assert entry["response"] == "hostname box1\n"
-    assert "timestamp" in entry
     assert isinstance(entry["timestamp"], float)
 
 
@@ -1003,6 +1007,10 @@ def test_flush_transcript_log_writes_jsonl(conn, tmp_path):
     assert json.loads(lines[0])["command"] == "terminal length 0"
     assert json.loads(lines[1])["command"] == "show version"
     assert json.loads(lines[1])["response"] == "Cisco IOS XE\n"
+    assert conn._transcript_log == []
+
+    conn._flush_transcript_log()
+    assert len(outfile.read_text().strip().splitlines()) == 2
 
 
 def test_flush_transcript_log_appends(conn, tmp_path):

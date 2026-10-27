@@ -1,0 +1,4 @@
+---
+devices:
+  - scenario: cli-restore-cli-restore
+    count: 1

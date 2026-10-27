@@ -1,0 +1,16 @@
+---
+- name: "Cli_command CLI flow: cli_command"
+  hosts: cli_command_cli_command
+  gather_facts: false
+  tasks:
+    - name: Run show version through network_cli
+      ansible.netcommon.cli_command:
+        command: show version
+      register: cli_command_result
+
+    - name: Verify the NX-OS show version response
+      ansible.builtin.assert:
+        that:
+          - cli_command_result.stdout is defined
+          - "'Cisco Nexus Operating System' in cli_command_result.stdout"
+          - "(cli_command_result.stdout | regex_search('NXOS:[ ]+version')) is not none"

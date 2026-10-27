@@ -1,0 +1,21 @@
+---
+all:
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+    ansible_network_os: molecule
+    ansible_user: admin
+    ansible_password: admin
+    ansible_host: 127.0.0.1
+    ansible_command_timeout: 200
+    ansible_ssh_common_args: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+    ansible_network_cli_ssh_type: libssh
+    ansible_libssh_hostkeys: +ssh-rsa
+    ansible_become: false
+    ansible_network_import_modules: false
+  children:
+    cli_config:
+      children:
+        cli_config_cli_config:
+          hosts:
+            cisshgo-cli_config-cli_config:
+              ansible_port: 10000
