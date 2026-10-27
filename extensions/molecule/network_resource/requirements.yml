@@ -1,0 +1,5 @@
+---
+collections:
+  - name: cisco.nxos
+    type: git
+    source: https://github.com/ansible-collections/cisco.nxos.git

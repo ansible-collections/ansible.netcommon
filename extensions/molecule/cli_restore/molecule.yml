@@ -1,0 +1,30 @@
+---
+driver:
+  name: default
+platforms:
+  - name: cisshgo-cli_restore-cli_restore
+provisioner:
+  name: ansible
+  inventory:
+    links:
+      hosts: ../cisshgo_fixtures/inventories/ansible/cli_restore.yaml
+  env:
+    ANSIBLE_FORCE_COLOR: "true"
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+    ANSIBLE_DEPRECATION_WARNINGS: "false"
+    ANSIBLE_TERMINAL_PLUGINS: ../cisshgo_fixtures/plugins/terminal
+    ANSIBLE_CLICONF_PLUGINS: ../cisshgo_fixtures/plugins/cliconf
+  playbooks:
+    create: ../_shared/create.yml
+    converge: converge.yml
+    verify: ../_shared/verify.yml
+    destroy: ../_shared/destroy.yml
+scenario:
+  test_sequence:
+    - create
+    - converge
+    - verify
+    - destroy
+prerun: false
+verifier:
+  name: ansible

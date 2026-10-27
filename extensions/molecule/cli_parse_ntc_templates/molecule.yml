@@ -1,0 +1,38 @@
+---
+dependency:
+  name: galaxy
+  options:
+    requirements-file: extensions/molecule/cli_parse_ntc_templates/requirements.yml
+
+driver:
+  name: default
+platforms:
+  - name: cisshgo-cli_parse_ntc_templates-cli_parse_ntc_templates
+provisioner:
+  name: ansible
+  inventory:
+    links:
+      hosts: ../cisshgo_fixtures/inventories/ansible/cli_parse_ntc_templates.yaml
+  env:
+    ANSIBLE_FORCE_COLOR: "true"
+    ANSIBLE_HOST_KEY_CHECKING: "false"
+    ANSIBLE_DEPRECATION_WARNINGS: "false"
+    ANSIBLE_TERMINAL_PLUGINS: ../cisshgo_fixtures/plugins/terminal
+    ANSIBLE_CLICONF_PLUGINS: ../cisshgo_fixtures/plugins/cliconf
+  playbooks:
+    create: ../_shared/create.yml
+    prepare: prepare.yml
+    converge: converge.yml
+    verify: ../_shared/verify.yml
+    destroy: ../_shared/destroy.yml
+scenario:
+  test_sequence:
+    - dependency
+    - create
+    - prepare
+    - converge
+    - verify
+    - destroy
+prerun: false
+verifier:
+  name: ansible
