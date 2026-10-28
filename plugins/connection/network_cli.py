@@ -1375,8 +1375,42 @@ class Connection(NetworkConnectionBase):
 
     def _read_post_command_prompt_match(self):
         time.sleep(self.get_option("persistent_buffer_read_timeout"))
-        data = self._ssh_shell.read_bulk_response()
+        try:
+            data = self._ssh_shell.read_bulk_response()
+        except OSError:
+            # The prompt has already matched, so the command has completed. A device
+            # that closes the channel right afterwards (for example after ``exit``)
+            # is not an error, even if pylibssh reports the close by raising.
+            if self._libssh_channel_is_eof():
+                return None
+            raise
         return data if data else None
+
+    def _libssh_channel_is_eof(self):
+        # ``Channel.is_eof`` exists in pylibssh >= 1.2.0; on older versions this
+        # returns False and the previous behaviour is kept.
+        return getattr(self._ssh_shell, "is_eof", False) is True
+
+    def _raise_libssh_channel_closed(self, command, resp):
+        self._log_messages("response received before channel close: %s" % resp)
+        if command:
+            waiting_for = "the command prompt (command: %s)" % (
+                to_text(command, errors="surrogate_then_replace").strip()
+            )
+        else:
+            waiting_for = "the initial prompt after login"
+        msg = (
+            "Connection closed by the remote device while waiting for %s. This can "
+            "be caused by a session or idle timeout on the device." % waiting_for
+        )
+        # The tail of the output usually explains why the device closed the
+        # session (for example a final summary line), so include it in the error.
+        last_output = " ".join(to_text(resp, errors="surrogate_then_replace").split())
+        if last_output:
+            if len(last_output) > 200:
+                last_output = "..." + last_output[-200:]
+            msg += " Last output received: '%s'" % last_output
+        raise AnsibleConnectionFailure(msg)
 
     def receive_paramiko(
         self,
@@ -1498,10 +1532,20 @@ class Connection(NetworkConnectionBase):
                     data = self._ssh_shell.read_bulk_response()
                 # TODO: Should be ConnectionError when pylibssh drops Python 2 support
                 except OSError:
+                    # pylibssh may report a channel closed by the remote side by
+                    # raising (a ConnectionError subclass) instead of returning b"".
+                    if self._libssh_channel_is_eof():
+                        self._raise_libssh_channel_closed(command, resp)
                     # Socket has closed
                     break
 
             if not data:
+                # read_bulk_response() returns b"" both when no data is pending yet and
+                # after the remote side has closed the channel (EOF or CLOSE), so check
+                # is_eof explicitly. Without this, the loop keeps polling a closed
+                # channel until persistent_command_timeout expires.
+                if self._libssh_channel_is_eof():
+                    self._raise_libssh_channel_closed(command, resp)
                 continue
             self._last_recv_window = self._strip(data)
             resp += self._last_recv_window
