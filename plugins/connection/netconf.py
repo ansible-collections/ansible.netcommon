@@ -203,6 +203,20 @@ except Exception as err:
 logging.getLogger("ncclient").setLevel(logging.INFO)
 
 
+def _to_native_text(value):
+    """Return a native str so libssh does not receive AnsibleUnsafeBytes.
+
+    AnsibleUnsafeText.encode() returns AnsibleUnsafeBytes. ssh-python rejects
+    that subclass because its Cython bindings require an exact bytes object.
+    """
+    # str covers AnsibleUnsafeText. bytes covers AnsibleUnsafeBytes, which
+    # encode() returns and which ssh-python also rejects.
+    if not isinstance(value, (str, bytes)):
+        return value
+    encoded = bytes(to_bytes(value, errors="surrogate_or_strict"))
+    return to_text(encoded, errors="surrogate_or_strict")
+
+
 class Connection(NetworkConnectionBase):
     """NetConf connections"""
 
@@ -419,6 +433,8 @@ class Connection(NetworkConnectionBase):
                     )
 
                 params["use_libssh"] = use_libssh
+                for key in ("host", "username", "password", "key_filename"):
+                    params[key] = _to_native_text(params[key])
 
             else:
                 params["look_for_keys"] = look_for_keys
