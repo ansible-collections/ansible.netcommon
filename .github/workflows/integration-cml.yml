@@ -40,8 +40,68 @@ name: "Integration tests 💻"
           - "libssh"
           - "paramiko"
         default: "libssh"
+permissions:
+  contents: read
+# One run per PR. A new push supersedes the previous run rather than letting two
+# runs contend for the same lab. cancel-in-progress is safe because lab-destroy
+# uses always(), so a cancelled run still tears its own lab down.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 jobs:
+  # Runs first and gates everything below it. Approval is granted to one
+  # commit: only a "labeled" event approves, and the netcommon checkout below
+  # pins github.event.pull_request.head.sha from that same payload, so the code
+  # under test is exactly the code that was present when the label was applied.
+  # Every other event -- synchronize, opened, reopened -- is unapproved, even
+  # when the PR still carries the label, so a push can never re-run against an
+  # approval nobody granted for it. This job checks out nothing and runs no PR
+  # code; it needs no write scopes.
+  gate:
+    name: "Check approval"
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    outputs:
+      approved: ${{ steps.check.outputs.approved }}
+    steps:
+      - name: Revoke "safe to test" on new commits
+        # Runs before any other job, so the label is gone by the time anything
+        # touching the CML secrets could start. Re-approving the new head SHA
+        # means a maintainer applies the label again.
+        if: ${{ github.event.action != 'labeled' && contains(github.event.pull_request.labels.*.name, 'safe to test') }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          gh api --method DELETE --silent \
+            "repos/${REPO}/issues/${PR_NUMBER}/labels/safe%20to%20test"
+          echo "Revoked 'safe to test' on #${PR_NUMBER}: head is now ${HEAD_SHA}"
+
+      - name: Determine approval
+        id: check
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          LABEL_NAME: ${{ github.event.label.name }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            approved=true
+          elif [ "$ACTION" = "labeled" ] && [ "$LABEL_NAME" = "safe to test" ]; then
+            approved=true
+          else
+            approved=false
+          fi
+          echo "approved=$approved" >> "$GITHUB_OUTPUT"
+          echo "event=${EVENT_NAME} action=${ACTION:-n/a} label=${LABEL_NAME:-n/a} -> approved=${approved}"
+
   lab-create:
+    needs: gate
+    if: ${{ needs.gate.outputs.approved == 'true' }}
     uses: ansible/ansible-content-actions/.github/workflows/cml_lab_create.yaml@main
     with:
       topology_path: tests/integration/labs/multi.yaml
@@ -52,10 +112,13 @@ jobs:
       virl_password: ${{ secrets.VIRL_PASSWORD }}
 
   integration-tests:
-    needs: lab-create
+    needs: [gate, lab-create]
     name: "${{ github.event_name == 'workflow_dispatch' && github.event.inputs.ssh_type || 'libssh' }} & ansible-core ${{ matrix.ansible_version }}"
     runs-on: ubuntu-latest
-    if: ${{ !github.event.pull_request || contains(github.event.pull_request.labels.*.name, 'safe to test') }}
+    # Read the gate, not github.event.pull_request.labels: the payload is a
+    # snapshot taken when the event fired, so on a synchronize it still shows a
+    # label the gate has since revoked.
+    if: ${{ needs.gate.outputs.approved == 'true' }}
     env:
       PY_COLORS: "1"
       ANSIBLE_COLLECTIONS_PATHS: "/home/runner/.ansible/collections"
@@ -258,8 +321,11 @@ jobs:
           LAB_NODES: ${{ needs.lab-create.outputs.lab_nodes_json }}
 
   lab-destroy:
-    if: ${{ always() }}
-    needs: integration-tests
+    # always() ignores skipped upstreams, so this has to check lab-create
+    # explicitly -- otherwise every unapproved run (where the whole chain skips)
+    # would still call lab destroy with no lab of its own to tear down.
+    if: ${{ always() && needs.lab-create.result == 'success' }}
+    needs: [lab-create, integration-tests]
     uses: ansible/ansible-content-actions/.github/workflows/cml_lab_destroy.yaml@main
     secrets:
       virl_host: ${{ secrets.VIRL_HOST }}

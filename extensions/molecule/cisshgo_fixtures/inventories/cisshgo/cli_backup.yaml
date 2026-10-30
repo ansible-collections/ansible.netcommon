@@ -1,0 +1,4 @@
+---
+devices:
+  - scenario: cli-backup-cli-backup
+    count: 1

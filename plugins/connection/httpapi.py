@@ -71,6 +71,7 @@ options:
     - name: ansible_password
     - name: ansible_httpapi_pass
     - name: ansible_httpapi_password
+    secret: true
   session_key:
     type: dict
     description:

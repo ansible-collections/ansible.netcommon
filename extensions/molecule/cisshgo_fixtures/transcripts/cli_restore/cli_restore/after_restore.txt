@@ -1,0 +1,18 @@
+Version match between user file and running configuration.
+Pre-check for User config PASSED
+ADVISORY: Config Replace operation started...
+Modifying running configuration from another VSH terminal in parallel
+is not recommended, as this may lead to Config Replace failure.
+
+Collecting Running-Config
+Generating Rollback patch for switch profile
+Rollback Patch is Empty
+Collecting Running-Config
+Generating Rollback Patch
+Executing Rollback Patch
+During CR operation,will retain L3 configuration
+when vrf member change on interface
+Generating Running-config for verification
+Generating Rollback Patch
+
+Configure replace completed successfully. Please run 'show config-replace log exec' to see if there is any configuration that requires reload to take effect.

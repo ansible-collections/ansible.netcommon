@@ -58,6 +58,7 @@ DOCUMENTATION = """
             - name: ansible_ssh_password
             - name: ansible_libssh_pass
             - name: ansible_libssh_password
+        secret: true
       password_prompt:
         description:
           - Text to match when using keyboard-interactive authentication to determine if the prompt is
@@ -75,6 +76,7 @@ DOCUMENTATION = """
         vars:
             - name: ansible_private_key_password
             - name: ansible_private_key_passphrase
+        secret: true
       host_key_auto_add:
         description: 'TODO: write it'
         env: [{name: ANSIBLE_LIBSSH_HOST_KEY_AUTO_ADD}]
