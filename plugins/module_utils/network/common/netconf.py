@@ -11,13 +11,11 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 import sys
 
 from ansible.module_utils.common.text.converters import to_bytes, to_text
 from ansible.module_utils.connection import Connection, ConnectionError
-
 
 try:
     from ncclient.xml_ import NCElement, new_ele, sub_ele
