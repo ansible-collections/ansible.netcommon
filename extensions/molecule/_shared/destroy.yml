@@ -1,0 +1,35 @@
+---
+- name: "Destroy — Stop CISSHGO ({{ scenario_name | default('unknown') }})"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    scenario_name: "{{ lookup('env', 'MOLECULE_SCENARIO_NAME') }}"
+    molecule_dir: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') | dirname }}"
+    fixtures_dir: "{{ molecule_dir }}/cisshgo_fixtures"
+    cisshgo_inventory_path: "{{ fixtures_dir }}/inventories/cisshgo/{{ scenario_name }}.yaml"
+    cisshgo_inv: "{{ lookup('file', cisshgo_inventory_path) | from_yaml }}"
+    starting_port: 10000
+    listener_ports: >-
+      {{ range(starting_port, starting_port + (cisshgo_inv.devices | length)) | list }}
+  tasks:
+    - name: Find scenario CISSHGO process(es)
+      ansible.builtin.shell: |
+        pgrep -f "cisshgo.*--inventory.*inventories/cisshgo/{{ scenario_name }}.yaml" || true
+      register: _pids
+      changed_when: false
+
+    - name: Stop CISSHGO
+      ansible.builtin.command: "kill {{ item }}"
+      loop: "{{ _pids.stdout_lines }}"
+      when: _pids.stdout_lines | length > 0
+      changed_when: true
+      failed_when: false
+
+    - name: Wait for listener ports to close
+      ansible.builtin.wait_for:
+        port: "{{ item }}"
+        state: stopped
+        timeout: 10
+      loop: "{{ listener_ports }}"
+      failed_when: false

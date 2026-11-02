@@ -1,0 +1,4 @@
+---
+devices:
+  - scenario: cli-parse-native-cli-parse-native
+    count: 1

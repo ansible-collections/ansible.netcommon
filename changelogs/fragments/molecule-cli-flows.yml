@@ -1,0 +1,3 @@
+---
+trivial:
+  - Add independent Molecule CISSHGO scenarios for network CLI consumer flows, exercised with libssh and paramiko.

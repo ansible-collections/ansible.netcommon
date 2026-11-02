@@ -1,0 +1,4 @@
+---
+devices:
+  - scenario: cli-parse-ntc-templates-cli-parse-ntc-templates
+    count: 1

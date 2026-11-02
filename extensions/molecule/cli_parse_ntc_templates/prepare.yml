@@ -1,0 +1,12 @@
+---
+- name: Install NTC Templates parser dependencies
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Install NTC Templates and TextFSM on the controller
+      ansible.builtin.pip:
+        name:
+          - ntc_templates
+          - textfsm
+        state: present
+        executable: "{{ ansible_playbook_python | dirname }}/pip"

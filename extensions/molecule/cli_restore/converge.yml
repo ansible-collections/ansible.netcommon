@@ -1,0 +1,16 @@
+---
+- name: "Cli_restore CLI flow: cli_restore"
+  hosts: cli_restore_cli_restore
+  gather_facts: false
+  tasks:
+    - name: Restore the staged full configuration backup
+      ansible.netcommon.cli_restore:
+        filename: netcommon_molecule_baseline_a61556b0.cfg
+        path: "bootflash:"
+      register: restore_result
+    - name: Assert that cli_restore completed
+      ansible.builtin.assert:
+        that:
+          - restore_result is defined
+          - restore_result['__restore__'] is defined
+          - "'Configure replace completed successfully.' in restore_result['__restore__']"

@@ -1,0 +1,4 @@
+---
+devices:
+  - scenario: cli-command-cli-command
+    count: 1

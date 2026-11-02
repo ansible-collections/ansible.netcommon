@@ -1,0 +1,37 @@
+---
+- name: "Network_resource CLI flow: network_resource"
+  hosts: network_resource_network_resource
+  gather_facts: false
+  tasks:
+    - name: Merge an interface description
+      ansible.netcommon.network_resource:
+        os_name: cisco.nxos.nxos
+        name: nxos_interfaces
+        config:
+          - name: Ethernet1/1
+            description: Configured by Ansible
+        state: merged
+      register: network_resource_merged
+
+    - name: Restore the interface configuration captured before the merge
+      ansible.netcommon.network_resource:
+        os_name: cisco.nxos.nxos
+        name: nxos_interfaces
+        config: "{{ network_resource_merged['before'] }}"
+        state: replaced
+      register: network_resource_restored
+
+    - name: Verify replacing the original interface configuration is idempotent
+      ansible.netcommon.network_resource:
+        os_name: cisco.nxos.nxos
+        name: nxos_interfaces
+        config: "{{ network_resource_merged['before'] }}"
+        state: replaced
+      register: network_resource_idempotent
+
+    - name: Assert the original interface configuration was restored
+      ansible.builtin.assert:
+        that:
+          - network_resource_merged['before'] is defined
+          - network_resource_restored is defined
+          - not network_resource_idempotent.changed

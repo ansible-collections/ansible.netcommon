@@ -1,0 +1,157 @@
+---
+# Starts CISSHGO for a scenario (ports derived from cisshgo inventory at runtime).
+# Installs the pinned release under ~/.local/share/cisshgo/<version> and, on macOS,
+# clears quarantine and ad-hoc signs it once so Gatekeeper does not prompt.
+- name: "Create — Start CISSHGO ({{ scenario_name | default('unknown') }})"
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    scenario_name: "{{ lookup('env', 'MOLECULE_SCENARIO_NAME') }}"
+    molecule_dir: "{{ lookup('env', 'MOLECULE_SCENARIO_DIRECTORY') | dirname }}"
+    fixtures_dir: "{{ molecule_dir }}/cisshgo_fixtures"
+    transcript_map: "{{ fixtures_dir }}/transcript_map.yaml"
+    cisshgo_inventory_path: "{{ fixtures_dir }}/inventories/cisshgo/{{ scenario_name }}.yaml"
+    cisshgo_inv: "{{ lookup('file', cisshgo_inventory_path) | from_yaml }}"
+    cisshgo_log: "/tmp/cisshgo-{{ scenario_name }}.log"
+    starting_port: 10000
+    listener_ports: >-
+      {{ range(starting_port, starting_port + (cisshgo_inv.devices | length)) | list }}
+    cisshgo_version: "{{ lookup('file', fixtures_dir + '/CISSHGO_VERSION') | trim }}"
+    cisshgo_home: "{{ lookup('env', 'HOME') }}/.local/share/cisshgo/{{ cisshgo_version }}"
+    cisshgo_bin: "{{ cisshgo_home }}/cisshgo"
+
+  tasks:
+    - name: Gather localhost platform facts
+      ansible.builtin.setup:
+        gather_subset:
+          - "!all"
+          - "!min"
+          - "platform"
+
+    - name: Compute cisshgo release coordinates
+      ansible.builtin.set_fact:
+        _release_os: "{{ 'linux' if ansible_system == 'Linux' else 'darwin' }}"
+        _release_arch: "{{ 'arm64' if ansible_architecture in ['aarch64', 'arm64'] else 'amd64' }}"
+        _version_no_v: "{{ cisshgo_version | regex_replace('^v', '') }}"
+
+    - name: Set cisshgo archive name and URL
+      ansible.builtin.set_fact:
+        _archive_name: "cisshgo_{{ _version_no_v }}_{{ _release_os }}_{{ _release_arch }}.tar.gz"
+        _release_url: "https://github.com/tbotnz/cisshgo/releases/download/{{ cisshgo_version }}/cisshgo_{{ _version_no_v }}_{{ _release_os }}_{{ _release_arch }}.tar.gz"
+
+    - name: Stat managed cisshgo binary
+      ansible.builtin.stat:
+        path: "{{ cisshgo_bin }}"
+      register: _cisshgo_stat
+
+    - name: Install pinned cisshgo release
+      when: not _cisshgo_stat.stat.exists
+      block:
+        - name: Ensure cisshgo install dir
+          ansible.builtin.file:
+            path: "{{ cisshgo_home }}"
+            state: directory
+            mode: "0755"
+
+        - name: Download pinned cisshgo release
+          ansible.builtin.get_url:
+            url: "{{ _release_url }}"
+            dest: "{{ cisshgo_home }}/{{ _archive_name }}"
+            mode: "0644"
+            timeout: 120
+
+        - name: Extract pinned cisshgo release
+          ansible.builtin.command:
+            argv:
+              - tar
+              - -xzf
+              - "{{ cisshgo_home }}/{{ _archive_name }}"
+              - -C
+              - "{{ cisshgo_home }}"
+          changed_when: true
+
+    - name: Confirm managed cisshgo binary
+      ansible.builtin.stat:
+        path: "{{ cisshgo_bin }}"
+      register: _cisshgo_ready
+
+    - name: Fail if cisshgo binary is missing
+      ansible.builtin.assert:
+        that:
+          - _cisshgo_ready.stat.exists
+          - _cisshgo_ready.stat.isreg
+        fail_msg: "Pinned cisshgo {{ cisshgo_version }} was not installed at {{ cisshgo_bin }}"
+
+    - name: Ensure cisshgo binary is executable
+      ansible.builtin.file:
+        path: "{{ cisshgo_bin }}"
+        mode: "0755"
+
+    - name: Clear macOS quarantine and ad-hoc sign cisshgo
+      when: ansible_system == "Darwin"
+      ansible.builtin.shell: |
+        set -euo pipefail
+        if [ ! -f "{{ cisshgo_home }}/.trusted" ]; then
+          xattr -cr "{{ cisshgo_bin }}"
+          codesign --force --sign - "{{ cisshgo_bin }}"
+          touch "{{ cisshgo_home }}/.trusted"
+        fi
+      args:
+        executable: /bin/bash
+      changed_when: false
+
+    - name: Kill stale CISSHGO processes for this scenario
+      ansible.builtin.shell: |
+        pkill -f "cisshgo.*inventories/cisshgo/{{ scenario_name }}.yaml" || true
+      changed_when: false
+      failed_when: false
+
+    - name: Start CISSHGO
+      ansible.builtin.shell: |
+        cd "{{ fixtures_dir }}" && \
+        nohup "{{ cisshgo_bin }}" \
+          --transcript-map "{{ transcript_map }}" \
+          --inventory "{{ cisshgo_inventory_path }}" \
+          --starting-port {{ starting_port }} \
+          > "{{ cisshgo_log }}" 2>&1 &
+        echo "PID=$!"
+      register: _start
+      changed_when: true
+
+    - name: Brief pause to let CISSHGO bind or crash
+      ansible.builtin.pause:
+        seconds: 2
+
+    - name: Snapshot CISSHGO log after launch
+      ansible.builtin.command: cat {{ cisshgo_log }}
+      register: _startup_log
+      changed_when: false
+      failed_when: false
+
+    - name: Fail fast if CISSHGO crashed on startup
+      ansible.builtin.assert:
+        that:
+          - "'FATAL' not in _startup_log.stdout"
+          - "'panic:' not in _startup_log.stdout"
+          - "'address already in use' not in _startup_log.stdout"
+          - "'parsing transcript map' not in _startup_log.stdout"
+          - "'transcript map validation failed' not in _startup_log.stdout"
+          - "'unknown platform' not in _startup_log.stdout"
+          - "'not found' not in _startup_log.stdout"
+        fail_msg: "CISSHGO exited immediately or failed to bind — see log above"
+
+    - name: Wait for every listener port
+      ansible.builtin.wait_for:
+        host: 127.0.0.1
+        port: "{{ item }}"
+        timeout: 30
+        state: started
+      loop: "{{ listener_ports }}"
+      register: _port_wait
+      ignore_errors: true
+
+    - name: Fail the create play if any port failed
+      ansible.builtin.fail:
+        msg: "CISSHGO did not bind one or more listener ports"
+      when: _port_wait.results | selectattr('failed', 'equalto', true) | list | length > 0
