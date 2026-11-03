@@ -1381,9 +1381,11 @@ class Connection(NetworkConnectionBase):
             # The prompt has already matched, so the command has completed. A device
             # that closes the channel right afterwards (for example after ``exit``)
             # is not an error, even if pylibssh reports the close by raising.
-            if self._libssh_channel_is_eof():
-                return None
-            raise
+            if not self._libssh_channel_is_eof():
+                raise
+            data = None
+        if not data and self._libssh_channel_is_eof():
+            self._drop_closed_connection()
         return data if data else None
 
     def _libssh_channel_is_eof(self):
@@ -1392,25 +1394,31 @@ class Connection(NetworkConnectionBase):
         return getattr(self._ssh_shell, "is_eof", False) is True
 
     def _raise_libssh_channel_closed(self, command, resp):
-        self._log_messages("response received before channel close: %s" % resp)
-        if command:
-            waiting_for = "the command prompt (command: %s)" % (
-                to_text(command, errors="surrogate_then_replace").strip()
-            )
-        else:
-            waiting_for = "the initial prompt after login"
-        msg = (
+        # The command and the output may contain secrets (e.g. configuration
+        # lines), so they only go to the persistent log, not into the error.
+        self._log_messages(
+            "channel closed while waiting for a prompt (command: %s); response "
+            "received before the close: %s"
+            % (to_text(command or b"", errors="surrogate_then_replace").strip(), resp)
+        )
+        waiting_for = "the command prompt" if command else "the initial prompt after login"
+        self._drop_closed_connection()
+        raise AnsibleConnectionFailure(
             "Connection closed by the remote device while waiting for %s. This can "
             "be caused by a session or idle timeout on the device." % waiting_for
         )
-        # The tail of the output usually explains why the device closed the
-        # session (for example a final summary line), so include it in the error.
-        last_output = " ".join(to_text(resp, errors="surrogate_then_replace").split())
-        if last_output:
-            if len(last_output) > 200:
-                last_output = "..." + last_output[-200:]
-            msg += " Last output received: '%s'" % last_output
-        raise AnsibleConnectionFailure(msg)
+
+    def _drop_closed_connection(self):
+        # Close the connection so that the next task gets a fresh one instead of
+        # reusing the channel the remote device has closed.
+        try:
+            self.close()
+        except Exception as exc:
+            self._log_messages("error while closing the connection: %s" % to_text(exc))
+        finally:
+            self._ssh_shell = None
+            self._ssh_type_conn = None
+            self._connected = False
 
     def receive_paramiko(
         self,

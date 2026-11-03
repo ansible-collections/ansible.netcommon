@@ -211,8 +211,10 @@ def test_network_cli_send_libssh_remote_close(conn):
         }
     )
     mock__shell = MagicMock()
+    mock__ssh_type_conn = MagicMock()
     conn._terminal = MagicMock()
     conn._ssh_shell = mock__shell
+    conn._ssh_type_conn = mock__ssh_type_conn
     conn._connected = True
 
     # Partial output, then the device closes the channel before the prompt returns.
@@ -223,8 +225,17 @@ def test_network_cli_send_libssh_remote_close(conn):
     with pytest.raises(AnsibleConnectionFailure, match="closed by the remote device") as exc:
         conn.send(b"command")
     assert mock__shell.read_bulk_response.call_count == 2
-    assert "the command prompt (command: command)" in str(exc.value)
-    assert "Last output received: 'command partial output'" in str(exc.value)
+    assert "waiting for the command prompt." in str(exc.value)
+    # The command and the device output may contain secrets, so neither may be
+    # in the error.
+    assert "(command:" not in str(exc.value)
+    assert "partial output" not in str(exc.value)
+    # The closed channel is dropped, so the next task reconnects.
+    mock__shell.close.assert_called_once()
+    mock__ssh_type_conn.close.assert_called_once()
+    assert conn._connected is False
+    assert conn._ssh_shell is None
+    assert conn._ssh_type_conn is None
 
 
 def test_network_cli_send_libssh_empty_read_without_eof(conn):
@@ -285,6 +296,7 @@ def test_network_cli_send_libssh_remote_close_raised(conn):
 def test_network_cli_send_libssh_remote_close_after_prompt(conn):
     """A channel closed right after the prompt matched keeps the command output."""
     mock__shell = _libssh_conn(conn)
+    conn._ssh_type_conn = MagicMock()
     mock__shell.read_bulk_response.side_effect = [
         b"device#command\ncommand response\n\ndevice#",
         _ChannelClosedError("channel closed by peer"),
@@ -293,6 +305,23 @@ def test_network_cli_send_libssh_remote_close_after_prompt(conn):
 
     conn.send(b"command")
     assert to_text(conn._command_response) == "command response"
+    # The closed channel is dropped, so the next task gets a fresh connection.
+    assert conn._connected is False
+
+
+def test_network_cli_send_libssh_eof_after_prompt_without_raise(conn):
+    """A close right after the prompt is also detected when pylibssh returns b''."""
+    mock__shell = _libssh_conn(conn)
+    conn._ssh_type_conn = MagicMock()
+    mock__shell.read_bulk_response.side_effect = [
+        b"device#command\ncommand response\n\ndevice#",
+        b"",
+    ]
+    mock__shell.is_eof = True
+
+    conn.send(b"command")
+    assert to_text(conn._command_response) == "command response"
+    assert conn._connected is False
 
 
 def test_network_cli_send_libssh_oserror_after_prompt_without_eof(conn):
@@ -318,21 +347,23 @@ def test_network_cli_receive_libssh_remote_close_before_initial_prompt(conn):
         conn.receive()
     assert "waiting for the initial prompt after login" in str(exc.value)
     assert "(command:" not in str(exc.value)
-    assert "Last output received: 'Login banner'" in str(exc.value)
+    assert "Login banner" not in str(exc.value)
+    assert conn._connected is False
 
 
-def test_network_cli_send_libssh_remote_close_truncates_last_output(conn):
-    """Only the tail of a long partial response is included in the error."""
+def test_network_cli_send_libssh_remote_close_when_close_fails(conn):
+    """An error while closing the dead connection must not hide the real failure."""
     mock__shell = _libssh_conn(conn)
-    mock__shell.read_bulk_response.side_effect = [b"command\n" + b"x" * 300 + b" end", b""]
+    conn._ssh_type_conn = MagicMock()
+    conn._terminal.on_close_shell.side_effect = OSError("channel already closed")
+    mock__shell.read_bulk_response.side_effect = [b"command\n", b""]
     mock__shell.is_eof = True
 
-    with pytest.raises(AnsibleConnectionFailure) as exc:
+    with pytest.raises(AnsibleConnectionFailure, match="closed by the remote device"):
         conn.send(b"command")
-    tail = str(exc.value).split("Last output received: ")[1]
-    assert tail.startswith("'...")
-    assert tail.endswith(" end'")
-    assert len(tail) == len("'...'") + 200
+    assert conn._connected is False
+    assert conn._ssh_shell is None
+    assert conn._ssh_type_conn is None
 
 
 def test_network_cli_close(conn):
