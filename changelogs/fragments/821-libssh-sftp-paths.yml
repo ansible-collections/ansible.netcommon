@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - libssh connection plugin - pass text paths to pylibssh SFTP operations so file transfers work
+    with pylibssh versions that require string paths.
