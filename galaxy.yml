@@ -23,7 +23,6 @@ build_ignore:
   - sonar-project.properties
   - codecov.yml
   - extensions/molecule
-  - changelogs
   - docs
   - .github
 version: 8.7.1

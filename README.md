@@ -14,11 +14,11 @@ This includes connection plugins, such as ``network_cli``, ``httpapi``, and ``ne
 - The `ansible.utils` collection, version 3.0.0 or later.
 - The Python packages `ansible-pylibssh` (version 1.4.0 or later), `jxmlease`, `ncclient`, `paramiko`, `xmltodict`, `grpcio`, and `protobuf`, listed in the collection's [requirements.txt](https://github.com/ansible-collections/ansible.netcommon/blob/main/requirements.txt).
 
-`ansible-pylibssh` provides the libssh backend for `ansible.netcommon.network_cli`. The Paramiko backend is deprecated; use the libssh backend for new deployments. See the [`network_cli` SSH type documentation](https://docs.ansible.com/projects/ansible/latest/collections/ansible/netcommon/network_cli_connection.html#parameter-ssh_type).
+`ansible-pylibssh` provides the libssh backend for `ansible.netcommon.network_cli`. The `paramiko` backend is now deprecated. Refer to the following [forum post](https://forum.ansible.com/t/deprecation-notice-paramiko-deprecated-for-network-cli-migrate-to-libssh-ansible-pylibssh/45782) for more information.
 
 ## Support
 
-This collection is maintained by the Red Hat Ansible Network team. As Red Hat Ansible [Certified Content](https://catalog.redhat.com/software/search?target_platforms=Red%20Hat%20Ansible%20Automation%20Platform), it is entitled to [support](https://access.redhat.com/support/) through [Ansible Automation Platform](https://www.redhat.com/en/technologies/management/ansible) (AAP). Red Hat customers can open a support case by selecting the **Create issue** button in the top right corner of this collection's page in Automation Hub.
+As Red Hat Ansible [Certified Content](https://catalog.redhat.com/software/search?target_platforms=Red%20Hat%20Ansible%20Automation%20Platform), it is entitled to [support](https://access.redhat.com/support/) through [Ansible Automation Platform](https://www.redhat.com/en/technologies/management/ansible) (AAP). Red Hat customers can open a support case by selecting the **Create issue** button in the top right corner of this collection's page in Automation Hub.
 
 If you obtained this collection from [Ansible Galaxy](https://galaxy.ansible.com/ui/) or [GitHub](https://github.com/ansible-collections/ansible.netcommon), community support is available on the [Ansible Forum](https://forum.ansible.com/). You can also join the [#network:ansible.com Matrix room](https://matrix.to/#/#network:ansible.com) or the [Ansible Forum Network Working Group](https://forum.ansible.com/g/network-wg).
 
