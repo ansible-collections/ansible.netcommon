@@ -5,6 +5,7 @@ exclude_paths:
   - docs
   - .github
   - tests/unit/plugins/action/network/test_network.py
+  - extensions/molecule
 warn_list:
   - no-log-password
 skip_list:
