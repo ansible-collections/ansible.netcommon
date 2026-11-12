@@ -190,6 +190,95 @@ def test_netconf_connect_with_libssh_enabled():
     assert params["port"] == 830
 
 
+def _is_plain_type(value, expected):
+    """True only for the exact type, not a subclass.
+
+    isinstance() would pass for AnsibleUnsafeText and AnsibleUnsafeBytes.
+    Those subclasses are the bug this test has to keep failing on.
+    """
+    return type(value) is expected  # pylint: disable=unidiomatic-typecheck
+
+
+def test_netconf_libssh_strips_unsafe_text():
+    """use_libssh connect args must be plain str so ssh-python accepts them."""
+
+    class UnsafeText(str):
+        def encode(self, encoding="utf-8", errors="strict"):
+            class UnsafeBytes(bytes):
+                pass
+
+            return UnsafeBytes(super().encode(encoding, errors))
+
+    pc = PlayContext()
+    pc.remote_addr = UnsafeText("test.example.com")
+    pc.remote_user = UnsafeText("testuser")
+    pc.password = UnsafeText("testpass")
+    pc.private_key_file = UnsafeText("/tmp/id_rsa")
+    pc.port = 830
+
+    conn = connection_loader.get("ansible.netcommon.netconf", pc, "/dev/null")
+
+    original_get_option = conn.get_option
+
+    def get_option_side_effect(option):
+        options = {
+            "use_libssh": True,
+            "host_key_checking": False,
+            "persistent_connect_timeout": 30,
+            "look_for_keys": True,
+            "netconf_ssh_config": None,
+        }
+        if option in options:
+            return options[option]
+        return original_get_option(option)
+
+    conn.get_option = MagicMock(side_effect=get_option_side_effect)
+
+    mock_manager = MagicMock()
+    mock_manager.session_id = "test-session-unsafe"
+    netconf.manager.connect = MagicMock(return_value=mock_manager)
+
+    rc, out, err = conn._connect()
+
+    assert rc == 0
+    assert out == b"test-session-unsafe"
+    assert err == b""
+
+    params = netconf.manager.connect.call_args[1]
+    for key in ("host", "username", "password", "key_filename"):
+        assert _is_plain_type(params[key], str)
+        assert _is_plain_type(params[key].encode("utf-8"), bytes)
+    assert params["host"] == "test.example.com"
+    assert params["username"] == "testuser"
+    assert params["password"] == "testpass"
+    assert params["key_filename"] == "/tmp/id_rsa"
+
+
+def test_to_native_text_strips_bytes_subclasses():
+    """Bytes and AnsibleUnsafeBytes must become a plain str, or ssh-python rejects them."""
+
+    class UnsafeBytes(bytes):
+        pass
+
+    class UnsafeText(str):
+        def encode(self, encoding="utf-8", errors="strict"):
+            return UnsafeBytes(super().encode(encoding, errors))
+
+    samples = (
+        (UnsafeText("host.example"), "host.example"),
+        (UnsafeBytes(b"secret"), "secret"),
+        (b"plain-bytes", "plain-bytes"),
+        ("plain-text", "plain-text"),
+    )
+    for raw, expected in samples:
+        converted = netconf._to_native_text(raw)
+        assert _is_plain_type(converted, str)
+        assert _is_plain_type(converted.encode("utf-8"), bytes)
+        assert converted == expected
+
+    assert netconf._to_native_text(None) is None
+
+
 def test_netconf_connect_with_libssh_disabled():
     """Test _connect() with use_libssh=False sets use_libssh parameter to False"""
     pc = PlayContext()
