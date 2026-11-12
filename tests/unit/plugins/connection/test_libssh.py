@@ -16,7 +16,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 from ansible.errors import AnsibleError, AnsibleFileNotFound
-from ansible.module_utils.common.text.converters import to_bytes
+from ansible.module_utils.common.text.converters import to_text
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
 
@@ -111,7 +111,8 @@ def test_libssh_put_file_not_exist(mocked_super, conn):
 
 @patch("os.path.exists")
 @patch("ansible.plugins.connection.ConnectionBase.put_file")
-def test_libssh_put_file(mocked_super, mock_exists, conn, monkeypatch):
+@pytest.mark.parametrize("file_path", ["test_libssh.py", b"test_libssh.py"])
+def test_libssh_put_file(mocked_super, mock_exists, conn, monkeypatch, file_path):
     conn.set_options(
         direct={
             "remote_addr": "localhost",
@@ -124,24 +125,26 @@ def test_libssh_put_file(mocked_super, mock_exists, conn, monkeypatch):
     mock_ssh = MagicMock(**attr)
     monkeypatch.setattr(libssh, "Session", lambda: mock_ssh)
 
-    file_path = "test_libssh.py"
     conn.put_file(in_path=file_path, out_path=file_path)
-    mock_sftp.put.assert_called_with(to_bytes(file_path), to_bytes(file_path))
+    mock_sftp.put.assert_called_with(
+        to_text(file_path, errors="surrogate_or_strict"),
+        to_text(file_path, errors="surrogate_or_strict"),
+    )
 
 
 @patch("ansible.plugins.connection.ConnectionBase.fetch_file")
-def test_libssh_fetch_file(mocked_super, conn, monkeypatch):
+@pytest.mark.parametrize("file_path", ["test_libssh.py", b"test_libssh.py"])
+def test_libssh_fetch_file(mocked_super, conn, monkeypatch, file_path):
     mock_session = MagicMock()
     monkeypatch.setattr(libssh, "Session", mock_session)
     mock_ssh = MagicMock()
     mock_session.return_value = mock_ssh
 
-    file_path = "test_libssh.py"
     conn.fetch_file(in_path=file_path, out_path=file_path)
 
     conn.sftp.get.assert_called_with(
-        to_bytes(file_path),
-        to_bytes(file_path),
+        to_text(file_path, errors="surrogate_or_strict"),
+        to_text(file_path, errors="surrogate_or_strict"),
     )
 
 

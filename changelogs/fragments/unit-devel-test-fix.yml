@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - Address ansible devel changes for loader.py by creating init.py
+    for actions to prevent failures during collection loading.
