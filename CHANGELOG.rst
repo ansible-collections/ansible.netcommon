@@ -4,6 +4,31 @@ Ansible Netcommon Collection Release Notes
 
 .. contents:: Topics
 
+v8.8.0
+======
+
+Release Summary
+---------------
+
+Releasing 8.8.0 with minor changes marking connection plugin credential options as sensitive, along with libssh and netconf related bugfixes.
+
+Minor Changes
+-------------
+
+- enable become plugin - mark the ``become_pass`` option as sensitive so that ansible-core 2.22+ will automatically redact its values in outputs (https://github.com/ansible-collections/ansible.netcommon/pull/816).
+- grpc connection plugin - mark the ``password`` option as sensitive so that ansible-core 2.22+ will automatically redact its values in outputs (https://github.com/ansible-collections/ansible.netcommon/pull/816).
+- httpapi connection plugin - mark the ``password`` option as sensitive so that ansible-core 2.22+ will automatically redact its values in outputs (https://github.com/ansible-collections/ansible.netcommon/pull/816).
+- libssh connection plugin - mark the ``password`` and ``private_key_passphrase`` options as sensitive so that ansible-core 2.22+ will automatically redact its values in outputs (https://github.com/ansible-collections/ansible.netcommon/pull/816).
+- netconf connection plugin - mark the ``password`` option as sensitive so that ansible-core 2.22+ will automatically redact its values in outputs (https://github.com/ansible-collections/ansible.netcommon/pull/816).
+- network_cli connection plugin - mark the ``password`` option as sensitive so that ansible-core 2.22+ will automatically redact its values in outputs (https://github.com/ansible-collections/ansible.netcommon/pull/816).
+
+Bugfixes
+--------
+
+- Address ansible devel changes for loader.py by creating init.py for actions to prevent failures during collection loading.
+- libssh connection plugin - pass text paths to pylibssh SFTP operations so file transfers work with pylibssh versions that require string paths.
+- network_cli - with ``ssh_type=libssh``, fail immediately with a clear error when the remote device closes the channel while waiting for a prompt (for example due to a device-side exec or idle timeout, or right after login), instead of polling the closed channel until ``persistent_command_timeout`` expires and reporting a misleading command timeout. The closed connection is dropped so that the next task starts a fresh one (https://github.com/ansible-collections/ansible.netcommon/pull/820).
+
 v8.7.1
 ======
 
