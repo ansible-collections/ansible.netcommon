@@ -1,0 +1,2 @@
+bugfixes:
+  - "enable become plugin - declare the type of ``become_pass`` so the plugin loads with ansible-core 2.22 (https://github.com/ansible-collections/ansible.netcommon/issues/832)."
