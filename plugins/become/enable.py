@@ -18,6 +18,7 @@ description:
 version_added: 1.0.0
 options:
   become_pass:
+    type: string
     description: password
     ini:
     - section: enable_become_plugin
