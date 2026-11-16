@@ -4,14 +4,12 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 import json
 
 from ansible.module_utils.common.text.converters import to_text
 from ansible.plugins.cliconf import CliconfBase
-
 
 DOCUMENTATION = """
 name: molecule

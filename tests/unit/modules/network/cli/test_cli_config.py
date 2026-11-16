@@ -5,7 +5,6 @@
 # Make coding more python3-ish
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 from unittest.mock import MagicMock, patch
@@ -17,7 +16,6 @@ from ansible_collections.ansible.netcommon.plugins.modules import cli_config
 from ansible_collections.ansible.netcommon.tests.unit.modules.utils import set_module_args
 
 from .cli_module import TestCliModule
-
 
 # NetworkConfig(ignore_lines=[...]) permanently adds the supplied patterns to
 # the module-level DEFAULT_IGNORE_LINES_RE set (see module_utils/network/common
