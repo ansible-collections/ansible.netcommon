@@ -113,3 +113,9 @@ venv.bak/
 .vscode/
 .ansible/
 backup/
+
+# cisshgo / Molecule ephemeral files and local recordings
+extensions/molecule/*/.cisshgo.log
+extensions/molecule/*/.cisshgo.pid
+extensions/molecule/captured/
+extensions/molecule/recordings/

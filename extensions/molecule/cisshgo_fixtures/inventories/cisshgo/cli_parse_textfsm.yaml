@@ -1,0 +1,4 @@
+---
+devices:
+  - scenario: cli-parse-textfsm-cli-parse-textfsm
+    count: 1

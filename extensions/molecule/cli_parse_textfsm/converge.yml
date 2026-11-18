@@ -1,0 +1,24 @@
+---
+- name: Parse CLI output with TextFSM
+  hosts: cli_parse_textfsm_cli_parse_textfsm
+  gather_facts: false
+  tasks:
+    - name: Fetch show version output through network_cli
+      ansible.netcommon.cli_command:
+        command: show version
+      register: version_output
+
+    - name: Parse show version output with TextFSM
+      ansible.builtin.set_fact:
+        parsed_version: >-
+          {{ version_output.stdout
+          | parse_cli_textfsm(
+              playbook_dir + '/templates/nxos_show_version.textfsm'
+            ) }}
+
+    - name: Verify TextFSM results
+      ansible.builtin.assert:
+        that:
+          - parsed_version | length > 0
+          - parsed_version[0].BOOT_IMAGE == 'bootflash:///nxos64-cs.10.4.2.F.bin'
+          - parsed_version[0].PLATFORM == 'C9300v'

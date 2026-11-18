@@ -1,0 +1,33 @@
+---
+- name: Parse CLI output with NTC Templates
+  hosts: cli_parse_ntc_templates_cli_parse_ntc_templates
+  gather_facts: false
+  tasks:
+    - name: Parse show interface output with NTC Templates
+      ansible.utils.cli_parse:
+        command: show interface
+        parser:
+          name: ansible.netcommon.ntc_templates
+          os: cisco_nxos
+      register: ntc_templates_command
+
+    - name: Parse the same output as text with NTC Templates
+      ansible.utils.cli_parse:
+        text: "{{ ntc_templates_command.stdout }}"
+        parser:
+          name: ansible.netcommon.ntc_templates
+          command: show interface
+          os: cisco_nxos
+      register: ntc_templates_text
+
+    - name: Verify NTC Templates results
+      ansible.builtin.assert:
+        that:
+          - ntc_templates_command.stdout is defined
+          - ntc_templates_command.stdout_lines is defined
+          - ntc_templates_command.parsed == ntc_templates_text.parsed
+          - >-
+            (ntc_templates_command.parsed
+            | selectattr('interface', 'search', 'mgmt0')
+            | list
+            | length) > 0

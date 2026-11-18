@@ -961,10 +961,8 @@ class Connection(NetworkConnectionBase):
         # Transcript recording for CISSHGO fixture generation.
         # Enable via ANSIBLE_NETWORK_CLI_RECORD=1 to capture every
         # command/response pair exchanged over the SSH channel.
-        # NOTE: Log accumulates in memory for the connection lifetime and
-        # flushes to disk on close(). Each entry is ~200-600 bytes; a
-        # 10,000-command playbook uses ~6MB. For very long-running sessions,
-        # consider splitting into shorter plays.
+        # Each response is flushed to disk immediately; close() flushes any
+        # remaining entries.
         self._transcript_recording = os.environ.get(
             "ANSIBLE_NETWORK_CLI_RECORD", ""
         ).strip().lower() in ("1", "true", "yes")
@@ -1356,17 +1354,18 @@ class Connection(NetworkConnectionBase):
         port = self._play_context.port or 22
         safe_host = re.sub(r"[^\w.\-]", "_", host)
         filename = "%s_%s.jsonl" % (safe_host, port)
+        entries = list(self._transcript_log)
         try:
             os.makedirs(self._transcript_output_dir, mode=0o700, exist_ok=True)
             filepath = os.path.join(self._transcript_output_dir, filename)
             fd = os.open(filepath, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o600)
             with os.fdopen(fd, "a") as f:
-                for entry in self._transcript_log:
+                for entry in entries:
                     f.write(json.dumps(entry) + "\n")
+            del self._transcript_log[: len(entries)]
             self.queue_message(
                 "log",
-                "Transcript recorded: %d entries written to %s"
-                % (len(self._transcript_log), filepath),
+                "Transcript recorded: %d entries written to %s" % (len(entries), filepath),
             )
         except (IOError, OSError) as exc:
             self.queue_message(
@@ -1376,8 +1375,50 @@ class Connection(NetworkConnectionBase):
 
     def _read_post_command_prompt_match(self):
         time.sleep(self.get_option("persistent_buffer_read_timeout"))
-        data = self._ssh_shell.read_bulk_response()
+        try:
+            data = self._ssh_shell.read_bulk_response()
+        except OSError:
+            # The prompt has already matched, so the command has completed. A device
+            # that closes the channel right afterwards (for example after ``exit``)
+            # is not an error, even if pylibssh reports the close by raising.
+            if not self._libssh_channel_is_eof():
+                raise
+            data = None
+        if not data and self._libssh_channel_is_eof():
+            self._drop_closed_connection()
         return data if data else None
+
+    def _libssh_channel_is_eof(self):
+        # ``Channel.is_eof`` exists in pylibssh >= 1.2.0; on older versions this
+        # returns False and the previous behaviour is kept.
+        return getattr(self._ssh_shell, "is_eof", False) is True
+
+    def _raise_libssh_channel_closed(self, command, resp):
+        # The command and the output may contain secrets (e.g. configuration
+        # lines), so they only go to the persistent log, not into the error.
+        self._log_messages(
+            "channel closed while waiting for a prompt (command: %s); response "
+            "received before the close: %s"
+            % (to_text(command or b"", errors="surrogate_then_replace").strip(), resp)
+        )
+        waiting_for = "the command prompt" if command else "the initial prompt after login"
+        self._drop_closed_connection()
+        raise AnsibleConnectionFailure(
+            "Connection closed by the remote device while waiting for %s. This can "
+            "be caused by a session or idle timeout on the device." % waiting_for
+        )
+
+    def _drop_closed_connection(self):
+        # Close the connection so that the next task gets a fresh one instead of
+        # reusing the channel the remote device has closed.
+        try:
+            self.close()
+        except Exception as exc:
+            self._log_messages("error while closing the connection: %s" % to_text(exc))
+        finally:
+            self._ssh_shell = None
+            self._ssh_type_conn = None
+            self._connected = False
 
     def receive_paramiko(
         self,
@@ -1499,10 +1540,20 @@ class Connection(NetworkConnectionBase):
                     data = self._ssh_shell.read_bulk_response()
                 # TODO: Should be ConnectionError when pylibssh drops Python 2 support
                 except OSError:
+                    # pylibssh may report a channel closed by the remote side by
+                    # raising (a ConnectionError subclass) instead of returning b"".
+                    if self._libssh_channel_is_eof():
+                        self._raise_libssh_channel_closed(command, resp)
                     # Socket has closed
                     break
 
             if not data:
+                # read_bulk_response() returns b"" both when no data is pending yet and
+                # after the remote side has closed the channel (EOF or CLOSE), so check
+                # is_eof explicitly. Without this, the loop keeps polling a closed
+                # channel until persistent_command_timeout expires.
+                if self._libssh_channel_is_eof():
+                    self._raise_libssh_channel_closed(command, resp)
                 continue
             self._last_recv_window = self._strip(data)
             resp += self._last_recv_window
@@ -1647,13 +1698,8 @@ class Connection(NetworkConnectionBase):
             response = to_text(response, errors="surrogate_then_replace")
 
             if self._transcript_recording:
-                self._transcript_log.append(
-                    {
-                        "command": to_text(command, errors="surrogate_then_replace"),
-                        "response": response,
-                        "timestamp": time.time(),
-                    }
-                )
+                self._record_transcript_entry(command, response)
+                self._flush_transcript_log()
 
             if (not prompt) and (self._single_user_mode):
                 if self._needs_cache_invalidation(command):
@@ -1673,6 +1719,16 @@ class Connection(NetworkConnectionBase):
                 "timeout value %s seconds reached while trying to send command: %s"
                 % (self._ssh_shell.gettimeout(), command.strip())
             )
+
+    def _record_transcript_entry(self, command, response):
+        """Append a command/response pair when transcript recording is enabled."""
+        self._transcript_log.append(
+            {
+                "command": to_text(command, errors="surrogate_then_replace"),
+                "response": to_text(response, errors="surrogate_then_replace"),
+                "timestamp": time.time(),
+            }
+        )
 
     def _handle_buffer_read_timeout(self, signum, frame):
         self.queue_message(

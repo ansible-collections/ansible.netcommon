@@ -20,8 +20,9 @@ build_ignore:
   - .isort.cfg
   - .gitignore
   - .flake8
-  - .ansible-lint
   - sonar-project.properties
   - codecov.yml
-  - .github/
-version: 8.7.1
+  - extensions/molecule
+  - docs
+  - .github
+version: 8.8.0

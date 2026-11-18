@@ -1,0 +1,4 @@
+---
+devices:
+  - scenario: network-resource-network-resource
+    count: 1

@@ -1,0 +1,4 @@
+---
+devices:
+  - scenario: net-ping-net-ping
+    count: 1

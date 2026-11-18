@@ -1,0 +1,3 @@
+---
+# CI runs one scenario per job; no shared default scenario infrastructure.
+shared_state: false

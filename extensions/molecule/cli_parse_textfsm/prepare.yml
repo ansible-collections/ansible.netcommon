@@ -1,0 +1,10 @@
+---
+- name: Install TextFSM parser dependency
+  hosts: localhost
+  gather_facts: false
+  tasks:
+    - name: Install TextFSM on the controller
+      ansible.builtin.pip:
+        name: textfsm
+        state: present
+        executable: "{{ ansible_playbook_python | dirname }}/pip"
