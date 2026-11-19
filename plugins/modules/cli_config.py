@@ -476,7 +476,7 @@ def run(module, device_operations, connection, candidate, running, rollback_id, 
         if "warnings" in result:
             result["warnings"].append(msg)
         else:
-            result["warnings"] = msg
+            result["warnings"] = [msg]
     return result
 
 
