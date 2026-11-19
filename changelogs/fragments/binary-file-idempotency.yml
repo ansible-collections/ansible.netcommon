@@ -1,0 +1,7 @@
+---
+bugfixes:
+  - net_get and net_put action plugins - fix idempotency check to handle binary files
+    and non-UTF-8 encoded files by falling back to binary mode when text mode decoding
+    fails. This resolves UTF-8 decode errors when downloading/uploading files from
+    network devices like Mikrotik RouterOS that serve binary or non-UTF-8 encoded
+    configuration files.

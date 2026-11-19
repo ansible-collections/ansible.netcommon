@@ -126,3 +126,42 @@ def test_handle_existing_file_checksum_mismatch_returns_true(net_put_action):
         ActionModule._handle_existing_file(action, conn, str(src), "/remote/cfg", "sftp", 30)
         is True
     )
+
+
+def test_handle_existing_file_binary_files_same_checksum(net_put_action):
+    """Binary files with non-UTF-8 bytes are handled gracefully."""
+    action, tmp_path = net_put_action
+    binary_data = b"\x88\x89\x8a\x8b"
+    src = tmp_path / "local.bin"
+    src.write_bytes(binary_data)
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(binary_data)
+
+    conn.get_file.side_effect = _get_file
+    result = ActionModule._handle_existing_file(
+        action, conn, str(src), "/remote/binary.bin", "sftp", 30
+    )
+    assert result is False
+
+
+def test_handle_existing_file_binary_files_different_checksum(net_put_action):
+    """Binary files with different content trigger upload."""
+    action, tmp_path = net_put_action
+    src = tmp_path / "local.bin"
+    src.write_bytes(b"\x88\x89\x8a\x8b")
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(b"\x77\x78\x79\x7a")
+
+    conn.get_file.side_effect = _get_file
+    result = ActionModule._handle_existing_file(
+        action, conn, str(src), "/remote/binary.bin", "sftp", 30
+    )
+    assert result is True

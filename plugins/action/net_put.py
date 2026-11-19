@@ -157,21 +157,27 @@ class ActionModule(ActionBase):
                 return True
             raise
         try:
-            with open(source, "r") as f:
-                new_content = f.read()
-            with open(tmp_source_file, "r") as f:
-                old_content = f.read()
+            try:
+                with open(source, "r") as f:
+                    new_content = f.read()
+                with open(tmp_source_file, "r") as f:
+                    old_content = f.read()
+                new_content_b = to_bytes(new_content, errors="surrogate_or_strict")
+                old_content_b = to_bytes(old_content, errors="surrogate_or_strict")
+            except UnicodeDecodeError:
+                with open(source, "rb") as f:
+                    new_content_b = f.read()
+                with open(tmp_source_file, "rb") as f:
+                    old_content_b = f.read()
         except (IOError, OSError):
             os.remove(tmp_source_file)
             raise
 
         sha1 = hashlib.sha1()
-        old_content_b = to_bytes(old_content, errors="surrogate_or_strict")
         sha1.update(old_content_b)
         checksum_old = sha1.digest()
 
         sha1 = hashlib.sha1()
-        new_content_b = to_bytes(new_content, errors="surrogate_or_strict")
         sha1.update(new_content_b)
         checksum_new = sha1.digest()
         os.remove(tmp_source_file)
