@@ -5,7 +5,6 @@
 
 from __future__ import absolute_import, division, print_function
 
-
 __metaclass__ = type
 
 from time import sleep
@@ -15,7 +14,6 @@ from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
 
 from ansible_collections.ansible.netcommon.plugins.plugin_utils.compat import telnetlib
-
 
 text_type = str
 display = Display()
