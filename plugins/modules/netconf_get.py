@@ -46,7 +46,9 @@ options:
         or XPath or JSON string or native python dictionary, if the filter is in XPath
         format the NETCONF server running on remote host should support xpath capability
         else it will result in an error. If the filter is in JSON format the xmltodict library
-        should be installed on the control node for JSON to XML conversion.
+        should be installed on the control node for JSON to XML conversion. To select several
+        subtrees in one request, wrap them in a NETCONF C(<filter type="subtree">) element;
+        that element is sent as the request filter and is not wrapped again.
     type: raw
   display:
     description:
@@ -266,10 +268,13 @@ output:
         - Contains formatted response received from remote host as per the value in display format.
       type: str
 """
+from copy import deepcopy
+
+
 try:
-    from lxml.etree import tostring
+    from lxml.etree import Element, tostring
 except ImportError:
-    from xml.etree.ElementTree import tostring
+    from xml.etree.ElementTree import Element, tostring
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.common.text.converters import to_text
@@ -300,6 +305,28 @@ except ImportError:
     HAS_JXMLEASE = False
 
 
+NETCONF_BASE_NS = "urn:ietf:params:xml:ns:netconf:base:1.0"
+
+
+def subtree_filter_from_wrapper(element):
+    """Return the filter as a complete <filter type="subtree"> string when
+    the user's XML is already wrapped in a NETCONF <filter> element, else None.
+
+    A ("subtree", xml) tuple makes ncclient put the XML inside a new <filter>
+    element, so a user supplied <filter> would end up nested in another one.
+    """
+    if element is None or not isinstance(element.tag, str):
+        return None
+    if element.tag not in ("filter", "{%s}filter" % NETCONF_BASE_NS):
+        return None
+    if element.get("type", "subtree") != "subtree":
+        return None
+    wrapper = Element("{%s}filter" % NETCONF_BASE_NS, {"type": "subtree"})
+    for child in element:
+        wrapper.append(deepcopy(child))
+    return to_text(tostring(wrapper))
+
+
 def main():
     """entry point for module execution"""
     argument_spec = dict(
@@ -322,8 +349,10 @@ def main():
     except Exception as exc:
         module.fail_json(msg=to_text(exc))
 
+    wrapped_filter = None
     if filter_type == "xml":
         filter_type = "subtree"
+        wrapped_filter = subtree_filter_from_wrapper(filter_data)
     elif filter_type == "json":
         try:
             filter = dict_to_xml(filter_data)
@@ -384,7 +413,10 @@ def main():
             "It can be installed using `pip install jxmlease`"
         )
 
-    filter_spec = (filter_type, filter) if filter_type else None
+    if wrapped_filter is not None:
+        filter_spec = wrapped_filter
+    else:
+        filter_spec = (filter_type, filter) if filter_type else None
 
     if source is not None:
         response = get_config(module, source, filter_spec, execute_lock)

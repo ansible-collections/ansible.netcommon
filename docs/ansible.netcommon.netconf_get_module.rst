@@ -75,7 +75,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>This argument specifies the string which acts as a filter to restrict the portions of the data to be are retrieved from the remote device. If this option is not specified entire configuration or state data is returned in result depending on the value of <code>source</code> option. The <code>filter</code> value can be either XML string or XPath or JSON string or native python dictionary, if the filter is in XPath format the NETCONF server running on remote host should support xpath capability else it will result in an error. If the filter is in JSON format the xmltodict library should be installed on the control node for JSON to XML conversion.</div>
+                        <div>This argument specifies the string which acts as a filter to restrict the portions of the data to be are retrieved from the remote device. If this option is not specified entire configuration or state data is returned in result depending on the value of <code>source</code> option. The <code>filter</code> value can be either XML string or XPath or JSON string or native python dictionary, if the filter is in XPath format the NETCONF server running on remote host should support xpath capability else it will result in an error. If the filter is in JSON format the xmltodict library should be installed on the control node for JSON to XML conversion. To select several subtrees in one request, wrap them in a NETCONF <code>&lt;filter type=&quot;subtree&quot;&gt;</code> element; that element is sent as the request filter and is not wrapped again.</div>
                 </td>
             </tr>
             <tr>

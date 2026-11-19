@@ -1,0 +1,2 @@
+bugfixes:
+  - "netconf_get - a ``filter`` that is already wrapped in a NETCONF ``<filter type=\"subtree\">`` element is now sent as the request filter instead of being nested in a second ``<filter>`` element, so several subtrees can be fetched in one request (https://github.com/ansible-collections/ansible.netcommon/issues/790)."
