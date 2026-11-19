@@ -1,0 +1,2 @@
+bugfixes:
+  - netconf - pass plain strings to ncclient when ``use_libssh`` is enabled so ssh-python does not reject ``AnsibleUnsafeBytes`` from Ansible credentials (https://github.com/ansible-collections/ansible.netcommon/issues/815).
