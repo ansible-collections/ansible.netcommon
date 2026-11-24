@@ -12,6 +12,7 @@ __metaclass__ = type
 import json
 import re
 
+from types import SimpleNamespace
 from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest
@@ -873,6 +874,51 @@ def test_paramiko_connection_connect_uncached_without_paramiko():
     finally:
         network_cli.HAS_PARAMIKO = orig_has
         network_cli.PARAMIKO_IMPORT_ERR = orig_err
+
+
+@pytest.mark.parametrize("has_parent_connection", [True, False])
+def test_paramiko_connection_deprecation_warning_delivery(monkeypatch, has_parent_connection):
+    from ansible_collections.ansible.netcommon.plugins.connection import network_cli
+
+    pc = PlayContext()
+    pc.remote_addr = "host"
+    pc.remote_user = "user"
+    parent_connection = MagicMock() if has_parent_connection else None
+    if parent_connection is not None:
+        parent_connection.get_option.side_effect = AttributeError
+
+    paramiko_conn = network_cli._ParamikoConnection(
+        pc, "/dev/null", parent_connection=parent_connection
+    )
+    paramiko_conn.set_option("host_key_checking", False)
+
+    mock_ssh = MagicMock()
+    monkeypatch.setattr(
+        network_cli,
+        "paramiko",
+        SimpleNamespace(
+            __version__="3.0.0",
+            Transport=SimpleNamespace(_preferred_pubkeys=(), _preferred_keys=()),
+            SSHClient=lambda: mock_ssh,
+        ),
+    )
+    monkeypatch.setattr(network_cli, "HAS_PARAMIKO", True)
+    mock_display = MagicMock()
+    monkeypatch.setattr(network_cli, "display", mock_display)
+
+    paramiko_conn._connect_uncached()
+
+    if parent_connection is not None:
+        parent_connection.queue_message.assert_called_once_with(
+            "deprecated", network_cli.PARAMIKO_DEPRECATION_MSG
+        )
+        mock_display.deprecated.assert_not_called()
+    else:
+        mock_display.deprecated.assert_called_once_with(
+            network_cli.PARAMIKO_DEPRECATION_MSG,
+            date="2028-02-01",
+            collection_name="ansible.netcommon",
+        )
 
 
 def test_network_cli_copy_file_libssh(conn):
