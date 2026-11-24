@@ -11,8 +11,8 @@ __metaclass__ = type
 
 import json
 import re
-from types import SimpleNamespace
 
+from types import SimpleNamespace
 from unittest.mock import MagicMock, PropertyMock, patch
 
 import pytest

@@ -649,7 +649,9 @@ class _ParamikoConnection:
             raise AnsibleError("paramiko is not installed: %s" % to_native(PARAMIKO_IMPORT_ERR))
 
         # Emit deprecation warning for paramiko usage
-        if self._parent_connection is not None and hasattr(self._parent_connection, "queue_message"):
+        if self._parent_connection is not None and hasattr(
+            self._parent_connection, "queue_message"
+        ):
             self._parent_connection.queue_message("deprecated", PARAMIKO_DEPRECATION_MSG)
         else:
             display.deprecated(
