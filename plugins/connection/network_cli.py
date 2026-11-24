@@ -394,6 +394,13 @@ AUTHENTICITY_ERR_MSG = (
     "Set host_key_auto_add=True to add the key and save it to known_hosts, or add the key manually."
 )
 
+PARAMIKO_DEPRECATION_MSG = (
+    "The paramiko-based SSH transport for network_cli (ssh_type=paramiko) is deprecated and "
+    "will be removed from ansible.netcommon in a release after 2028-02-01. paramiko support was "
+    "removed from ansible-core in version 2.21; this compatibility layer is transitional. "
+    "Migrate to ssh_type=libssh by installing ansible-pylibssh."
+)
+
 # SSH Options Regex for parsing proxy commands
 SETTINGS_REGEX = re.compile(r"(\w+)(?:\s*=\s*|\s+)(.+)")
 
@@ -642,15 +649,14 @@ class _ParamikoConnection:
             raise AnsibleError("paramiko is not installed: %s" % to_native(PARAMIKO_IMPORT_ERR))
 
         # Emit deprecation warning for paramiko usage
-        display.deprecated(
-            "The paramiko-based SSH transport for network_cli is deprecated. "
-            "paramiko support is removed from ansible-core in version 2.21 and "
-            "this compatibility layer in ansible.netcommon is provided as a "
-            "transitional measure. Please migrate to using ssh_type=libssh by "
-            "installing ansible-pylibssh. ",
-            date="2028-02-01",
-            collection_name="ansible.netcommon",
-        )
+        if self._parent_connection is not None and hasattr(self._parent_connection, "queue_message"):
+            self._parent_connection.queue_message("deprecated", PARAMIKO_DEPRECATION_MSG)
+        else:
+            display.deprecated(
+                PARAMIKO_DEPRECATION_MSG,
+                date="2028-02-01",
+                collection_name="ansible.netcommon",
+            )
 
         # Log paramiko availability for debugging
         display.vvvv(

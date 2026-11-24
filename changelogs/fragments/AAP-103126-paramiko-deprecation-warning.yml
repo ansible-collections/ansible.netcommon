@@ -1,0 +1,2 @@
+bugfixes:
+  - "network_cli - the deprecation warning for ``ssh_type=paramiko`` is now shown in playbook output. It was previously raised inside the persistent connection process with ``display.deprecated()``, which only reached the Ansible log file (when ``log_path`` was set) and never the playbook or automation controller job output. It is now queued on the connection and relayed to the controller, the same way the ``ssh_type=auto`` fallback warning is (https://redhat.atlassian.net/browse/AAP-103126)."
