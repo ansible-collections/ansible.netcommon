@@ -1,0 +1,164 @@
+---
+# Platform agnostic coverage for the net_get and net_put idempotency check.
+#
+# net_get and net_put are generic netcommon action plugins, so this file holds
+# no platform specifics at all. The remote path, the delete command and the
+# transfer protocol come from vars/<os>.yaml, which is the only thing that has
+# to be added to cover another platform.
+#
+# The payload cannot be decoded as text: it starts with 0x88, which is never a
+# valid UTF-8 lead byte. That is the shape of the RouterOS backup file in issue
+# 824. Against a text mode checksum comparison the second transfer warns
+# "'utf-8' codec can't decode byte ... idempotency check failed", reports
+# changed, and leaves a uuid named temporary file in the playbook directory.
+- name: Load the platform specific transfer settings
+  ansible.builtin.include_vars: "{{ os | lower }}.yaml"
+
+- name: Generate a non-UTF-8 binary payload
+  ansible.builtin.command:
+    argv:
+      - python3
+      - -c
+      - |
+        import os, sys
+        with open(sys.argv[1], "wb") as f:
+            f.write(b"\x88\x89\x8a\x8b" + os.urandom(65532))
+      - "{{ netcommon_local_file }}"
+  delegate_to: localhost
+  changed_when: true
+
+# The first net_put must be a fresh copy for the changed assertion below to
+# mean anything. Cleanup at the end of a previous run is best effort, and on
+# some platforms the CLI delete cannot reach the transfer directory at all,
+# so clear any leftover before starting rather than trusting it is gone.
+- name: Remove any file left behind by an earlier run
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.cli_command:
+    command: "{{ netcommon_delete_command }}"
+  failed_when: false
+
+- name: Record the playbook directory contents before any transfer
+  ansible.builtin.find:
+    paths: "{{ playbook_dir }}"
+    file_type: file
+  delegate_to: localhost
+  register: netcommon_files_before
+
+- name: Copy the binary file to the device
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.net_put:
+    src: "{{ netcommon_local_file }}"
+    dest: "{{ netcommon_remote_file }}"
+    protocol: "{{ netcommon_transfer_protocol }}"
+    mode: binary
+  register: netcommon_put_first
+
+- name: Copy the same binary file again
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.net_put:
+    src: "{{ netcommon_local_file }}"
+    dest: "{{ netcommon_remote_file }}"
+    protocol: "{{ netcommon_transfer_protocol }}"
+    mode: binary
+  register: netcommon_put_second
+
+- name: Assert that net_put copied the file and is then idempotent
+  ansible.builtin.assert:
+    that:
+      - netcommon_put_first.changed
+      - netcommon_put_first.destination is defined
+      - not netcommon_put_second.changed
+      - "'idempotency check failed' not in (netcommon_put_second.msg | default(''))"
+    fail_msg: >-
+      Second net_put on {{ os }} reported changed={{ netcommon_put_second.changed }}
+      msg={{ netcommon_put_second.msg | default('<none>') }}
+
+- name: Download the binary file from the device
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.net_get:
+    src: "{{ netcommon_remote_file }}"
+    dest: "{{ netcommon_fetched_file }}"
+    protocol: "{{ netcommon_transfer_protocol }}"
+  register: netcommon_get_first
+
+- name: Download the same binary file again
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.net_get:
+    src: "{{ netcommon_remote_file }}"
+    dest: "{{ netcommon_fetched_file }}"
+    protocol: "{{ netcommon_transfer_protocol }}"
+  register: netcommon_get_second
+
+- name: Assert that net_get downloaded the file and is then idempotent
+  ansible.builtin.assert:
+    that:
+      - netcommon_get_first.changed
+      - netcommon_get_first.destination is defined
+      - not netcommon_get_second.changed
+      - "'idempotency check failed' not in (netcommon_get_second.msg | default(''))"
+    fail_msg: >-
+      Second net_get on {{ os }} reported changed={{ netcommon_get_second.changed }}
+      msg={{ netcommon_get_second.msg | default('<none>') }}
+
+- name: Checksum the file that was uploaded
+  ansible.builtin.stat:
+    path: "{{ netcommon_local_file }}"
+    checksum_algorithm: sha1
+  delegate_to: localhost
+  register: netcommon_sent
+
+- name: Checksum the file that was downloaded
+  ansible.builtin.stat:
+    path: "{{ netcommon_fetched_file }}"
+    checksum_algorithm: sha1
+  delegate_to: localhost
+  register: netcommon_received
+
+- name: Assert that the binary file round tripped unchanged
+  ansible.builtin.assert:
+    that:
+      - netcommon_received.stat.exists
+      - netcommon_sent.stat.checksum == netcommon_received.stat.checksum
+    fail_msg: >-
+      Round trip on {{ os }} altered the file:
+      sent {{ netcommon_sent.stat.checksum }}
+      received {{ netcommon_received.stat.checksum | default('<missing>') }}
+
+- name: Record the playbook directory contents after the transfers
+  ansible.builtin.find:
+    paths: "{{ playbook_dir }}"
+    file_type: file
+  delegate_to: localhost
+  register: netcommon_files_after
+
+- name: Assert that no temporary files were left behind
+  ansible.builtin.assert:
+    that:
+      - netcommon_leaked | length == 0
+    fail_msg: "net_get/net_put left temporary files behind on {{ os }}: {{ netcommon_leaked }}"
+  vars:
+    netcommon_leaked: >-
+      {{ (netcommon_files_after.files | map(attribute='path') | list)
+         | difference(netcommon_files_before.files | map(attribute='path') | list)
+         | reject('equalto', netcommon_fetched_file) | list }}
+
+- name: Remove the binary file from the device
+  vars:
+    ansible_connection: ansible.netcommon.network_cli
+  ansible.netcommon.cli_command:
+    command: "{{ netcommon_delete_command }}"
+  failed_when: false
+
+- name: Remove the local binary files
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ netcommon_local_file }}"
+    - "{{ netcommon_fetched_file }}"
+  delegate_to: localhost

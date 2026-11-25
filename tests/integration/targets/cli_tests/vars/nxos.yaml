@@ -1,0 +1,13 @@
+---
+# Platform specifics for the net_get / net_put transfer test.
+#
+# nxosv9000 boots with scpServer enabled and sftpServer disabled, and the lab
+# topology does not turn sftp on, so scp is the transport that is actually
+# available. This needs the scp python package on the controller, which the
+# integration workflow installs.
+#
+# The scp server is already rooted at /bootflash, so the transfer path is a
+# bare filename. The CLI delete command still needs the bootflash: prefix.
+netcommon_remote_file: "netcommon_binary_test.bin"
+netcommon_delete_command: "delete bootflash:/netcommon_binary_test.bin no-prompt"
+netcommon_transfer_protocol: scp

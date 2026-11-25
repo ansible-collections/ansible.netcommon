@@ -18,6 +18,10 @@
 - name: Run a config module test - network_cli
   ansible.builtin.include_tasks: "{{ os | lower }}_cli_config.yaml"
   when: "os in ['nxos']"
-# - name: Run a net_put module test - network_cli
-#   ansible.builtin.include_tasks: "{{ os | lower }}_net_put.yaml"
-#   when: "os in ['nxos']"
+
+- name: Run a net_get and net_put file transfer test - network_cli
+  ansible.builtin.include_tasks: net_transfer.yaml
+  vars:
+    netcommon_local_file: "{{ playbook_dir }}/netcommon_binary_{{ os }}.bin"
+    netcommon_fetched_file: "{{ playbook_dir }}/netcommon_fetched_{{ os }}.bin"
+  when: "os in ['nxos', 'iosxr']"

@@ -1,0 +1,10 @@
+---
+# Platform specifics for the net_get / net_put transfer test.
+#
+# IOS-XR sftp reaches the underlying Linux filesystem, so /tmp is used rather
+# than /harddisk:. The CLI "delete" command does not operate on that path, so
+# the pre-clean and post-clean steps are best effort only; the test does not
+# depend on them succeeding.
+netcommon_remote_file: "/tmp/netcommon_binary_test.bin"
+netcommon_delete_command: "delete /noprompt /tmp/netcommon_binary_test.bin"
+netcommon_transfer_protocol: sftp

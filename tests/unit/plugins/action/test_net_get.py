@@ -7,6 +7,8 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import os
+
 from unittest.mock import MagicMock
 
 import pytest
@@ -114,6 +116,94 @@ def test_handle_existing_file_binary_files_different_checksum(net_get_action):
         action, conn, "/remote/binary.bin", str(dest), "sftp", 30
     )
     assert result is True
+
+
+def test_handle_existing_file_mixed_text_and_binary_returns_true(net_get_action):
+    """Local side is valid UTF-8, remote side is not -> True (download needed)."""
+    action, tmp_path = net_get_action
+    dest = tmp_path / "local.bin"
+    dest.write_bytes(b"plain-ascii\n")
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(b"plain-ascii\n\x88")
+
+    conn.get_file.side_effect = _get_file
+    result = ActionModule._handle_existing_file(
+        action, conn, "/remote/binary.bin", str(dest), "sftp", 30
+    )
+    assert result is True
+
+
+def test_handle_existing_file_crlf_difference_is_a_change(net_get_action):
+    """Line endings are compared byte for byte, regardless of file encoding."""
+    action, tmp_path = net_get_action
+    dest = tmp_path / "running.cfg"
+    dest.write_bytes(b"line1\nline2\n")
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(b"line1\r\nline2\r\n")
+
+    conn.get_file.side_effect = _get_file
+    result = ActionModule._handle_existing_file(
+        action, conn, "/remote/running.cfg", str(dest), "sftp", 30
+    )
+    assert result is True
+
+
+def test_handle_existing_file_removes_tmp_file(net_get_action):
+    """The uuid-named temp copy is cleaned up once the comparison is done."""
+    action, tmp_path = net_get_action
+    dest = tmp_path / "running.cfg"
+    dest.write_bytes(b"\x88\x89\x8a\x8b")
+    before = set(os.listdir(str(tmp_path)))
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(b"\x88\x89\x8a\x8b")
+
+    conn.get_file.side_effect = _get_file
+    result = ActionModule._handle_existing_file(
+        action, conn, "/remote/running.cfg", str(dest), "sftp", 30
+    )
+    assert result is False
+    assert set(os.listdir(str(tmp_path))) == before
+
+
+@pytest.mark.skipif(
+    hasattr(os, "geteuid") and os.geteuid() == 0,
+    reason="root bypasses file permission checks",
+)
+def test_handle_existing_file_removes_tmp_file_on_read_error(net_get_action):
+    """A read failure propagates but still cleans up the uuid-named temp copy."""
+    action, tmp_path = net_get_action
+    dest = tmp_path / "unreadable.cfg"
+    dest.write_bytes(b"\x88\x89")
+    dest.chmod(0o000)
+    before = set(os.listdir(str(tmp_path)))
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(b"\x88\x89")
+
+    conn.get_file.side_effect = _get_file
+    try:
+        with pytest.raises((IOError, OSError)):
+            ActionModule._handle_existing_file(
+                action, conn, "/remote/running.cfg", str(dest), "sftp", 30
+            )
+        assert set(os.listdir(str(tmp_path))) == before
+    finally:
+        dest.chmod(0o644)
 
 
 def test_handle_existing_file_remote_missing_returns_true(net_get_action):

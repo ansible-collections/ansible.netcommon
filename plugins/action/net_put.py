@@ -22,6 +22,20 @@ from ansible.utils.display import Display
 
 display = Display()
 
+SHA1_CHUNK_SIZE = 65536
+
+
+def _sha1_of_file(path):
+    """Compute the sha1 digest of a file, reading it in binary.
+
+    :return: The sha1 digest of the file contents as bytes.
+    """
+    sha1 = hashlib.sha1()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(SHA1_CHUNK_SIZE), b""):
+            sha1.update(chunk)
+    return sha1.digest()
+
 
 class ActionModule(ActionBase):
     def run(self, tmp=None, task_vars=None):
@@ -157,29 +171,13 @@ class ActionModule(ActionBase):
                 return True
             raise
         try:
-            try:
-                with open(source, "r") as f:
-                    new_content = f.read()
-                with open(tmp_source_file, "r") as f:
-                    old_content = f.read()
-                new_content_b = to_bytes(new_content, errors="surrogate_or_strict")
-                old_content_b = to_bytes(old_content, errors="surrogate_or_strict")
-            except UnicodeDecodeError:
-                with open(source, "rb") as f:
-                    new_content_b = f.read()
-                with open(tmp_source_file, "rb") as f:
-                    old_content_b = f.read()
+            checksum_new = _sha1_of_file(source)
+            checksum_old = _sha1_of_file(tmp_source_file)
         except (IOError, OSError):
-            os.remove(tmp_source_file)
+            if os.path.exists(tmp_source_file):
+                os.remove(tmp_source_file)
             raise
 
-        sha1 = hashlib.sha1()
-        sha1.update(old_content_b)
-        checksum_old = sha1.digest()
-
-        sha1 = hashlib.sha1()
-        sha1.update(new_content_b)
-        checksum_new = sha1.digest()
         os.remove(tmp_source_file)
         if checksum_old == checksum_new:
             return False

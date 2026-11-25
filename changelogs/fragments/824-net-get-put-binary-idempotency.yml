@@ -1,0 +1,4 @@
+---
+bugfixes:
+  - "net_get and net_put action plugins - compute the idempotency checksum by reading both files in binary instead of decoding them as text, so binary and non-UTF-8 encoded files no longer fail with ``'utf-8' codec can't decode byte``."
+  - "net_get and net_put action plugins - remove the temporary uuid-named file left behind in the playbook directory when the idempotency check could not read one of the files."
