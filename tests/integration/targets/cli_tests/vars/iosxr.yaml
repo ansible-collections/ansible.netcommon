@@ -1,0 +1,5 @@
+---
+# IOS-XR sftp reaches the Linux filesystem, so /tmp rather than /harddisk:.
+netcommon_remote_file: "/tmp/netcommon_binary_test.bin"
+netcommon_delete_command: "delete /noprompt /tmp/netcommon_binary_test.bin"
+netcommon_transfer_protocol: sftp

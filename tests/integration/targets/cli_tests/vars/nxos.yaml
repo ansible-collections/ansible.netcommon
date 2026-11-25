@@ -1,0 +1,5 @@
+---
+# nxosv9000 ships sftpServer disabled; its scp server is rooted at /bootflash.
+netcommon_remote_file: "netcommon_binary_test.bin"
+netcommon_delete_command: "delete bootflash:/netcommon_binary_test.bin no-prompt"
+netcommon_transfer_protocol: scp

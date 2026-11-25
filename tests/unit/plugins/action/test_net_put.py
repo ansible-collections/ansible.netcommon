@@ -7,6 +7,8 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
+import os
+
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -126,3 +128,128 @@ def test_handle_existing_file_checksum_mismatch_returns_true(net_put_action):
         ActionModule._handle_existing_file(action, conn, str(src), "/remote/cfg", "sftp", 30)
         is True
     )
+
+
+def test_handle_existing_file_binary_files_same_checksum(net_put_action):
+    """Binary files with non-UTF-8 bytes are handled gracefully."""
+    action, tmp_path = net_put_action
+    binary_data = b"\x88\x89\x8a\x8b"
+    src = tmp_path / "local.bin"
+    src.write_bytes(binary_data)
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(binary_data)
+
+    conn.get_file.side_effect = _get_file
+    result = ActionModule._handle_existing_file(
+        action, conn, str(src), "/remote/binary.bin", "sftp", 30
+    )
+    assert result is False
+
+
+def test_handle_existing_file_binary_files_different_checksum(net_put_action):
+    """Binary files with different content trigger upload."""
+    action, tmp_path = net_put_action
+    src = tmp_path / "local.bin"
+    src.write_bytes(b"\x88\x89\x8a\x8b")
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(b"\x77\x78\x79\x7a")
+
+    conn.get_file.side_effect = _get_file
+    result = ActionModule._handle_existing_file(
+        action, conn, str(src), "/remote/binary.bin", "sftp", 30
+    )
+    assert result is True
+
+
+def test_handle_existing_file_mixed_text_and_binary_returns_true(net_put_action):
+    """Local side is valid UTF-8, remote side is not -> True (upload needed)."""
+    action, tmp_path = net_put_action
+    src = tmp_path / "local.bin"
+    src.write_bytes(b"plain-ascii\n")
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(b"plain-ascii\n\x88")
+
+    conn.get_file.side_effect = _get_file
+    result = ActionModule._handle_existing_file(
+        action, conn, str(src), "/remote/binary.bin", "sftp", 30
+    )
+    assert result is True
+
+
+def test_handle_existing_file_crlf_difference_is_a_change(net_put_action):
+    """Line endings are compared byte for byte, regardless of file encoding."""
+    action, tmp_path = net_put_action
+    src = tmp_path / "local.cfg"
+    src.write_bytes(b"line1\nline2\n")
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(b"line1\r\nline2\r\n")
+
+    conn.get_file.side_effect = _get_file
+    result = ActionModule._handle_existing_file(action, conn, str(src), "/remote/cfg", "sftp", 30)
+    assert result is True
+
+
+def test_handle_existing_file_removes_tmp_file(net_put_action):
+    """The uuid-named temp copy is cleaned up once the comparison is done."""
+    action, tmp_path = net_put_action
+    src = tmp_path / "local.bin"
+    src.write_bytes(b"\x88\x89\x8a\x8b")
+    before = set(os.listdir(str(tmp_path)))
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(b"\x88\x89\x8a\x8b")
+
+    conn.get_file.side_effect = _get_file
+    result = ActionModule._handle_existing_file(
+        action, conn, str(src), "/remote/binary.bin", "sftp", 30
+    )
+    assert result is False
+    assert set(os.listdir(str(tmp_path))) == before
+
+
+@pytest.mark.skipif(
+    hasattr(os, "geteuid") and os.geteuid() == 0,
+    reason="root bypasses file permission checks",
+)
+def test_handle_existing_file_removes_tmp_file_on_read_error(net_put_action):
+    """A read failure propagates but still cleans up the uuid-named temp copy."""
+    action, tmp_path = net_put_action
+    src = tmp_path / "unreadable.bin"
+    src.write_bytes(b"\x88\x89")
+    src.chmod(0o000)
+    before = set(os.listdir(str(tmp_path)))
+
+    conn = MagicMock()
+
+    def _get_file(source=None, destination=None, **kwargs):
+        with open(destination, "wb") as fp:
+            fp.write(b"\x88\x89")
+
+    conn.get_file.side_effect = _get_file
+    try:
+        with pytest.raises((IOError, OSError)):
+            ActionModule._handle_existing_file(
+                action, conn, str(src), "/remote/binary.bin", "sftp", 30
+            )
+        assert set(os.listdir(str(tmp_path))) == before
+    finally:
+        src.chmod(0o644)

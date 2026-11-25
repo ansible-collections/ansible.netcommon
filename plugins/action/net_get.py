@@ -15,13 +15,27 @@ import uuid
 from urllib.parse import urlsplit
 
 from ansible.errors import AnsibleError
-from ansible.module_utils.common.text.converters import to_bytes, to_text
+from ansible.module_utils.common.text.converters import to_text
 from ansible.module_utils.connection import Connection, ConnectionError
 from ansible.plugins.action import ActionBase
 from ansible.utils.display import Display
 
 
 display = Display()
+
+SHA1_CHUNK_SIZE = 65536
+
+
+def _sha1_of_file(path):
+    """Compute the sha1 digest of a file, reading it in binary.
+
+    :return: The sha1 digest of the file contents as bytes.
+    """
+    sha1 = hashlib.sha1()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(SHA1_CHUNK_SIZE), b""):
+            sha1.update(chunk)
+    return sha1.digest()
 
 
 class ActionModule(ActionBase):
@@ -136,23 +150,13 @@ class ActionModule(ActionBase):
                 return True
 
         try:
-            with open(tmp_dest_file, "r") as f:
-                new_content = f.read()
-            with open(dest, "r") as f:
-                old_content = f.read()
+            checksum_new = _sha1_of_file(tmp_dest_file)
+            checksum_old = _sha1_of_file(dest)
         except (IOError, OSError):
-            os.remove(tmp_dest_file)
+            if os.path.exists(tmp_dest_file):
+                os.remove(tmp_dest_file)
             raise
 
-        sha1 = hashlib.sha1()
-        old_content_b = to_bytes(old_content, errors="surrogate_or_strict")
-        sha1.update(old_content_b)
-        checksum_old = sha1.digest()
-
-        sha1 = hashlib.sha1()
-        new_content_b = to_bytes(new_content, errors="surrogate_or_strict")
-        sha1.update(new_content_b)
-        checksum_new = sha1.digest()
         os.remove(tmp_dest_file)
         if checksum_old == checksum_new:
             return False
