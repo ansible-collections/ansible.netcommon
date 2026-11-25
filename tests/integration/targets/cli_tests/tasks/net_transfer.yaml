@@ -1,16 +1,5 @@
 ---
-# Platform agnostic coverage for the net_get and net_put idempotency check.
-#
-# net_get and net_put are generic netcommon action plugins, so this file holds
-# no platform specifics at all. The remote path, the delete command and the
-# transfer protocol come from vars/<os>.yaml, which is the only thing that has
-# to be added to cover another platform.
-#
-# The payload cannot be decoded as text: it starts with 0x88, which is never a
-# valid UTF-8 lead byte. That is the shape of the RouterOS backup file in issue
-# 824. Against a text mode checksum comparison the second transfer warns
-# "'utf-8' codec can't decode byte ... idempotency check failed", reports
-# changed, and leaves a uuid named temporary file in the playbook directory.
+# 0x88 is never a valid UTF-8 lead byte, so the payload cannot be read as text.
 - name: Load the platform specific transfer settings
   ansible.builtin.include_vars: "{{ os | lower }}.yaml"
 
@@ -27,10 +16,7 @@
   delegate_to: localhost
   changed_when: true
 
-# The first net_put must be a fresh copy for the changed assertion below to
-# mean anything. Cleanup at the end of a previous run is best effort, and on
-# some platforms the CLI delete cannot reach the transfer directory at all,
-# so clear any leftover before starting rather than trusting it is gone.
+# Teardown is best effort, so the first net_put needs a guaranteed clean slate.
 - name: Remove any file left behind by an earlier run
   vars:
     ansible_connection: ansible.netcommon.network_cli
