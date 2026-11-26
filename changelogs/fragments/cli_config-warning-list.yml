@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - cli_config - report the warning about matching the running configuration as one message, instead of one warning per character, when the module reports a change.

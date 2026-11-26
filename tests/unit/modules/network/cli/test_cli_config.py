@@ -192,6 +192,16 @@ class TestCliConfigModule(TestCliModule):
             comment=None,
         )
 
+    @patch("ansible.module_utils.basic.AnsibleModule.warn")
+    def test_cli_config_changed_warns_with_the_whole_message(self, warn_mock):
+        self.conn.get_config.side_effect = ["running before", "running after"]
+
+        set_module_args({"config": "hostname foo"})
+        self.execute_module(changed=True)
+        warnings = [call[0][0] for call in warn_mock.call_args_list]
+        self.assertTrue(any(w.startswith("To ensure idempotency") for w in warnings), warnings)
+        self.assertTrue(all(len(w) > 1 for w in warnings), warnings)
+
     def test_cli_config_no_diff_support_unchanged(self):
         self.conn.get_config.side_effect = ["same config", "same config"]
 
