@@ -391,6 +391,7 @@ Parameters
                             </div>
                                 <div>env:ANSIBLE_REMOTE_USER</div>
                                 <div>var: ansible_user</div>
+                                <div>var: ansible_httpapi_user</div>
                     </td>
                 <td>
                         <div>The username used to authenticate to the remote device when the API connection is first established.  If the remote_user is not specified, the connection will use the username of the logged in user.</div>
